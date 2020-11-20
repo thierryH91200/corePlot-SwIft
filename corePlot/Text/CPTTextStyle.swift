@@ -17,9 +17,9 @@ class CPTTextStyle: NSObject {
     var lineBreakMode = NSLineBreakMode.byWordWrapping
     
     
-    func textStyle(with textStyle: CPTTextStyle?) -> CPTTextStyle {
+    init( textStyle: CPTTextStyle?)  {
         
-        let newTextStyle = super.init()
+//        let newTextStyle = super.init()
 
         newTextStyle?.font = textStyle?.font
         newTextStyle?.color = textStyle?.color
@@ -28,7 +28,6 @@ class CPTTextStyle: NSObject {
         newTextStyle?.textAlignment = textStyle?.textAlignment
         newTextStyle?.lineBreakMode = textStyle?.lineBreakMode
 
-        return newTextStyle
     }
     
     override init ()

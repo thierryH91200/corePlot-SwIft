@@ -8,8 +8,9 @@
 import AppKit
 
 extension CPTLayer {
+    
     // MARK: - Drawing
-    -(void)display
+    func display()
     {
         if ( self.hidden ) {
             return;

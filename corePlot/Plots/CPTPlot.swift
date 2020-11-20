@@ -7,8 +7,81 @@
 
 import Cocoa
 
-protocol CPTPlotDataSource {
+class CPTPlot: CPTAnnotationHostLayer {
+    
+    var dataSource : CPTPlotDataSource?
+    var title : String?
+    var attributedTitle = NSAttributedString()
+    vat plotSpace : CPTPlotSpace?
+    var adjustLabelAnchors = false
+    
+    var dataNeedsReloading = false
+    var  cachedData = [ Dictionary<String, Any>]()
+    
+    var needsRelabel = false
+    var  labelIndexRange = NSRange()
+    var labelAnnotations = [CPTAnnotation]()
+    var dataLabels = [CPTLayer]()
+    
+    var pointingDeviceDownLabelIndex = 0 ;
+    var cachedDataCount = 0
+    var inTitleUpdate = false ;
+    
+    var numberOfRecords = 0
+    
+    var cachePrecision = CPTPlotCachePrecision.auto
 
+    
+    enum CPTPlotCachePrecision: Int {
+        case auto
+        case double
+        case decimal
+    }
+    
+    
+    
+    init(frame: CGRect)
+    {
+        super.init()
+        cachedData           = [Dictionary<String, Any>]()
+        cachedDataCount      = 0;
+        cachePrecision       = .auto
+        dataSource           = nil;
+        title                = nil;
+        attributedTitle      = nil
+        plotSpace            = nil
+        dataNeedsReloading   = false;
+        needsRelabel         = true;
+        adjustLabelAnchors   = true;
+        showLabels           = true;
+        labelOffset          = CPTFloat(0.0);
+        labelRotation        = CPTFloat(0.0);
+        labelField           = 0;
+        labelTextStyle       = nil;
+        labelFormatter       = nil;
+        labelShadow          = nil;
+        labelIndexRange      = NSRange(0, 0);
+        labelAnnotations     = nil;
+        alignsPointsToPixels = true;
+        inTitleUpdate        = false;
+        
+        pointingDeviceDownLabelIndex = NSNotFound;
+        drawLegendSwatchDecoration   = YES;
+        
+        self.masksToBounds              = YES;
+        self.needsDisplayOnBoundsChange = YES;
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+}
+
+
+
+
+@objc protocol CPTPlotDataSource {
 
 func numberOfRecordsForPlot(plot:  CPTPlot) -> Int
 
@@ -20,7 +93,7 @@ func numberOfRecordsForPlot(plot:  CPTPlot) -> Int
      *  @return The number of data points for the plot.
      **/
 
-    func numbersForPlot( plot : CPTPlot, fieldEnum :Int, recordIndexRange:(NSRange)indexRange -> [Int]
+    func numbersForPlot( plot : CPTPlot, fieldEnum :Int, indexRange : NSRange) -> [Int]
 
 /** @brief @optional Gets a plot data value for the given plot and field.
  *  Implement one and only one of the optional methods in this section.
@@ -35,7 +108,7 @@ func numberOfRecordsForPlot(plot:  CPTPlot) -> Int
  *  @param idx The data index of interest.
  *  @return A data point.
  **/
-func numberForPlot(nonnull CPTPlot *)plot field:(NSUInteger)fieldEnum recordIndex:(NSUInteger)idx;
+    func numberForPlot(plot: CPTPlot, field:Int, recordIndex:Int) -> Double
 
 /** @brief @optional Gets a range of plot data for the given plot and field.
  *  Implement one and only one of the optional methods in this section.
@@ -44,7 +117,7 @@ func numberForPlot(nonnull CPTPlot *)plot field:(NSUInteger)fieldEnum recordInde
  *  @param indexRange The range of the data indexes of interest.
  *  @return A retained C array of data points.
  **/
--(nullable double *)doublesForPlot:(nonnull CPTPlot *)plot field:(NSUInteger)fieldEnum recordIndexRange:(NSRange)indexRange NS_RETURNS_INNER_POINTER;
+    func doublesForPlot(plot: CPTPlot, fieldEnum:Int, indexRange:NSRange) -> [Double]
 
 /** @brief @optional Gets a plot data value for the given plot and field.
  *  Implement one and only one of the optional methods in this section.
@@ -53,7 +126,7 @@ func numberForPlot(nonnull CPTPlot *)plot field:(NSUInteger)fieldEnum recordInde
  *  @param idx The data index of interest.
  *  @return A data point.
  **/
--(double)doubleForPlot:(nonnull CPTPlot *)plot field:(NSUInteger)fieldEnum recordIndex:(NSUInteger)idx;
+    func doubleForPlot(plot: CPTPlot, fieldEnum:Int,  idx: Int) ->Double
 
 /** @brief @optional Gets a range of plot data for the given plot and field.
  *  Implement one and only one of the optional methods in this section.
@@ -62,7 +135,7 @@ func numberForPlot(nonnull CPTPlot *)plot field:(NSUInteger)fieldEnum recordInde
  *  @param indexRange The range of the data indexes of interest.
  *  @return A one-dimensional array of data points.
  **/
--(nullable CPTNumericData *)dataForPlot:(nonnull CPTPlot *)plot field:(NSUInteger)fieldEnum recordIndexRange:(NSRange)indexRange;
+    func dataForPlot(plot: CPTPlot,  fieldEnum: Int, indexRange:NSRange ) -> CPTNumericData
 
 /** @brief @optional Gets a range of plot data for all fields of the given plot simultaneously.
  *  Implement one and only one of the optional methods in this section.
@@ -78,7 +151,7 @@ func numberForPlot(nonnull CPTPlot *)plot field:(NSUInteger)fieldEnum recordInde
  *  @param indexRange The range of the data indexes of interest.
  *  @return A two-dimensional array of data points.
  **/
--(nullable CPTNumericData *)dataForPlot:(nonnull CPTPlot *)plot recordIndexRange:(NSRange)indexRange;
+    @objc optional func dataForPlot(plot : CPTPlot , indexRange:NSRange)-> [CPTNumericData]
 
 /// @}
 
@@ -90,7 +163,7 @@ func numberForPlot(nonnull CPTPlot *)plot field:(NSUInteger)fieldEnum recordInde
  *  @param indexRange The range of the data indexes of interest.
  *  @return An array of data labels.
  **/
--(nullable CPTLayerArray *)dataLabelsForPlot:(nonnull CPTPlot *)plot recordIndexRange:(NSRange)indexRange;
+    @objc optional func dataLabelsForPlot(plot:  CPTPlot,  indexRange:NSRange)-> [CPTLayer]
 
 /** @brief @optional Gets a data label for the given plot.
  *  This method will not be called if
@@ -102,13 +175,80 @@ func numberForPlot(nonnull CPTPlot *)plot field:(NSUInteger)fieldEnum recordInde
  *  If you return @nil, the default data label will be used. If you return an instance of NSNull,
  *  no label will be shown for the index in question.
  **/
--(nullable CPTLayer *)dataLabelForPlot:(nonnull CPTPlot *)plot recordIndex:(NSUInteger)idx;
+    @objc optional func dataLabelForPlot(plot: CPTPlot, recordIndex:Int )-> CPTLayer
+
+}
+
+
+protocol CPTPlotDelegate: CPTLayerDelegate {
+
+@optional
+
+/// @name Point Selection
+/// @{
+
+/** @brief @optional Informs the delegate that a data label
+ *  @if MacOnly was both pressed and released. @endif
+ *  @if iOSOnly received both the touch down and up events. @endif
+ *  @param plot The plot.
+ *  @param idx The index of the
+ *  @if MacOnly clicked data label. @endif
+ *  @if iOSOnly touched data label. @endif
+ **/
+-(void)plot:(nonnull CPTPlot *)plot dataLabelWasSelectedAtRecordIndex:(NSUInteger)idx;
+
+/** @brief @optional Informs the delegate that a data label
+ *  @if MacOnly was both pressed and released. @endif
+ *  @if iOSOnly received both the touch down and up events. @endif
+ *  @param plot The plot.
+ *  @param idx The index of the
+ *  @if MacOnly clicked data label. @endif
+ *  @if iOSOnly touched data label. @endif
+ *  @param event The event that triggered the selection.
+ **/
+-(void)plot:(nonnull CPTPlot *)plot dataLabelWasSelectedAtRecordIndex:(NSUInteger)idx withEvent:(nonnull CPTNativeEvent *)event;
+
+/** @brief @optional Informs the delegate that a data label
+ *  @if MacOnly was pressed. @endif
+ *  @if iOSOnly touch started. @endif
+ *  @param plot The plot.
+ *  @param idx The index of the
+ *  @if MacOnly clicked data label. @endif
+ *  @if iOSOnly touched data label. @endif
+ **/
+-(void)plot:(nonnull CPTPlot *)plot dataLabelTouchDownAtRecordIndex:(NSUInteger)idx;
+
+/** @brief @optional Informs the delegate that a data label
+ *  @if MacOnly was pressed. @endif
+ *  @if iOSOnly touch started. @endif
+ *  @param plot The plot.
+ *  @param idx The index of the
+ *  @if MacOnly clicked data label. @endif
+ *  @if iOSOnly touched data label. @endif
+ *  @param event The event that triggered the selection.
+ **/
+-(void)plot:(nonnull CPTPlot *)plot dataLabelTouchDownAtRecordIndex:(NSUInteger)idx withEvent:(nonnull CPTNativeEvent *)event;
+
+/** @brief @optional Informs the delegate that a data label
+ *  @if MacOnly was released. @endif
+ *  @if iOSOnly touch ended. @endif
+ *  @param plot The plot.
+ *  @param idx The index of the
+ *  @if MacOnly clicked data label. @endif
+ *  @if iOSOnly touched data label. @endif
+ **/
+-(void)plot:(nonnull CPTPlot *)plot dataLabelTouchUpAtRecordIndex:(NSUInteger)idx;
+
+/** @brief @optional Informs the delegate that a data label
+ *  @if MacOnly was released. @endif
+ *  @if iOSOnly touch ended. @endif
+ *  @param plot The plot.
+ *  @param idx The index of the
+ *  @if MacOnly clicked data label. @endif
+ *  @if iOSOnly touched data label. @endif
+ *  @param event The event that triggered the selection.
+ **/
+-(void)plot:(nonnull CPTPlot *)plot dataLabelTouchUpAtRecordIndex:(NSUInteger)idx withEvent:(nonnull CPTNativeEvent *)event;
 
 /// @}
-
-@end
-
-
-class CPTPlot: CPTAnnotationHostLayer {
-
 }

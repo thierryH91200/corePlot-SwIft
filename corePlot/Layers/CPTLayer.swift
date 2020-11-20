@@ -10,6 +10,7 @@ class CPTLayer : CALayer
     
     var masksToBorder        = false;
     var shadow   : CPTShadow?            = nil
+    
 
     var _shadowMargin   : CGSize?            = nil
     var shadowMargin : CGSize {
@@ -72,8 +73,6 @@ class CPTLayer : CALayer
     }
     
     override init () {
-//        super.init()
-//        super.init ( frame : CGRect())
         super.init ( layer : CALayer())
     }
     

@@ -65,6 +65,27 @@ protocol CPTPieChartDataSource {
 
 
 class CPTPieChart: CPTPlot {
+    
+    /// @name Appearance
+    /// @{
+    var  pieRadius: CGFloat
+    var  pieInnerRadius : CGFloat
+    var CGFloat startAngle: CGFloat
+    var CGFloat endAngle: CGFloat
+    var  sliceDirection: CPTPieDirection
+    var  centerAnchor: CGPoint
+    /// @}
+
+    /// @name Drawing
+    /// @{
+    @property (nonatomic, readwrite, copy, nullable) CPTLineStyle *borderLineStyle;
+    @property (nonatomic, readwrite, copy, nullable) CPTFill *overlayFill;
+    /// @}
+
+    /// @name Data Labels
+    /// @{
+    @property (nonatomic, readwrite, assign) BOOL labelRotationRelativeToRadius;
+
 
 }
 

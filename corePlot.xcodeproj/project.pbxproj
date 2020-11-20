@@ -87,6 +87,7 @@
 		03DDD4622562893900CAB29B /* CPTTextLayer ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DDD4612562893900CAB29B /* CPTTextLayer ext.swift */; };
 		03DDD4662562BB1D00CAB29B /* CPTAxis  Accessors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DDD4652562BB1D00CAB29B /* CPTAxis  Accessors.swift */; };
 		03DDD46C256311BF00CAB29B /* CPTPlatformSpecificDefines.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DDD46B256311BF00CAB29B /* CPTPlatformSpecificDefines.swift */; };
+		03E3D50325683D4200FB3F07 /* CPTPlotAccessors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E3D50225683D4200FB3F07 /* CPTPlotAccessors.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -183,6 +184,7 @@
 		03DDD4612562893900CAB29B /* CPTTextLayer ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTTextLayer ext.swift"; sourceTree = "<group>"; };
 		03DDD4652562BB1D00CAB29B /* CPTAxis  Accessors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTAxis  Accessors.swift"; sourceTree = "<group>"; };
 		03DDD46B256311BF00CAB29B /* CPTPlatformSpecificDefines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTPlatformSpecificDefines.swift; sourceTree = "<group>"; };
+		03E3D50225683D4200FB3F07 /* CPTPlotAccessors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTPlotAccessors.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -429,6 +431,7 @@
 				0320B013255C8CA400D32BF9 /* CPTPlot.swift */,
 				0320B00F255C8C4300D32BF9 /* CPTPlotGroup.swift */,
 				030A651B255FD024002B3D13 /* CPTPieChart.swift */,
+				03E3D50225683D4200FB3F07 /* CPTPlotAccessors.swift */,
 			);
 			path = Plots;
 			sourceTree = "<group>";
@@ -647,6 +650,7 @@
 				033390902565675F00C231D9 /* CPTImage ext3.swift in Sources */,
 				0320AFC8255C512C00D32BF9 /* CPTStocksTheme.swift in Sources */,
 				0320B000255C75DE00D32BF9 /* CPTPlotRange.swift in Sources */,
+				03E3D50325683D4200FB3F07 /* CPTPlotAccessors.swift in Sources */,
 				030A650A255FBB8F002B3D13 /* CPTAnimationOperation.swift in Sources */,
 				03384E4A255D12A4003C5BD3 /* CPTMutableLineStyle.swift in Sources */,
 				0320AFBD255C0F1A00D32BF9 /* CPTConstraintsRelative.swift in Sources */,

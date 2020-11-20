@@ -8,6 +8,7 @@
 import Cocoa
 
 class PieChartController: NSViewController , CPTPieChartDataSource{
+    
 
     private var pieGraph : CPTXYGraph? = nil
     let dataForChart = [20.0, 30.0, 60.0]
@@ -33,13 +34,13 @@ class PieChartController: NSViewController , CPTPieChartDataSource{
         newGraph.axisSet = nil
 
         let whiteText = CPTMutableTextStyle()
-        whiteText.color = CPTColor.whiteColor()
+        whiteText.color = NSColor.white
 
         newGraph.titleTextStyle = whiteText
         newGraph.title          = "Graph Title"
 
         // Add pie chart
-        let piePlot = CPTPieChart(frame: CGRect())
+        let piePlot = CPTPieChart(frame: CGRect)
         piePlot.dataSource      = self
         piePlot.pieRadius       = 131.0
         piePlot.identifier      = "Pie Chart 1"

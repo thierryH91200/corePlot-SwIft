@@ -8,7 +8,187 @@
 import Cocoa
 
 class CPTPlotSpace: NSObject {
+    
+    var categoryNames : Dictionary<Int, String >? = [:]
+    var delegate : CPTPlotSpaceDelegate?
+    var identifier : Any?
+    var allowsUserInteraction : Bool?
+    var isDragging : Bool?
+    var graph : CPTGraph?
+    
+    override init()
+    {
+        super.init()
+        identifier            = nil;
+        allowsUserInteraction = false
+        isDragging            = false
+        graph                 = nil
+        delegate              = nil;
+        categoryNames         = nil;
+    }
+//    #pragma mark Categorical Data
+//
+//    /// @cond
+//
+//    /** @internal
+//     *  @brief Gets the ordered set of categories for the given coordinate, creating it if necessary.
+//     *  @param coordinate The axis coordinate.
+//     *  @return The ordered set of categories for the given coordinate.
+//     */
+//    -(nonnull CPTMutableCategorySet *)orderedSetForCoordinate:(CPTCoordinate)coordinate
+//    {
+//        NSMutableDictionary<NSNumber *, CPTMutableCategorySet *> *names = self.categoryNames;
+//
+//        if ( !names ) {
+//            names = [[NSMutableDictionary alloc] init];
+//
+//            self.categoryNames = names;
+//        }
+//
+//        NSNumber *cacheKey = @(coordinate);
+//
+//        CPTMutableCategorySet *categories = names[cacheKey];
+//
+//        if ( !categories ) {
+//            categories = [[NSMutableOrderedSet alloc] init];
+//
+//            names[cacheKey] = categories;
+//        }
+//
+//        return categories;
+//    }
+//
+//    /// @endcond
+//
+//    /**
+//     *  @brief Add a new category name for the given coordinate.
+//     *
+//     *  Category names must be unique for each coordinate. Adding the same name more than once has no effect.
+//     *
+//     *  @param category The category name.
+//     *  @param coordinate The axis coordinate.
+//     */
+//    -(void)addCategory:(nonnull NSString *)category forCoordinate:(CPTCoordinate)coordinate
+//    {
+//        NSParameterAssert(category);
+//
+//        CPTMutableCategorySet *categories = [self orderedSetForCoordinate:coordinate];
+//
+//        [categories addObject:category];
+//    }
+//
+//    /**
+//     *  @brief Removes the named category for the given coordinate.
+//     *  @param category The category name.
+//     *  @param coordinate The axis coordinate.
+//     */
+//    -(void)removeCategory:(nonnull NSString *)category forCoordinate:(CPTCoordinate)coordinate
+//    {
+//        NSParameterAssert(category);
+//
+//        CPTMutableCategorySet *categories = [self orderedSetForCoordinate:coordinate];
+//
+//        [categories removeObject:category];
+//    }
+//
+//    /**
+//     *  @brief Add a new category name for the given coordinate at the given index in the list of category names.
+//     *
+//     *  Category names must be unique for each coordinate. Adding the same name more than once has no effect.
+//     *
+//     *  @param category The category name.
+//     *  @param coordinate The axis coordinate.
+//     *  @param idx The index in the list of category names.
+//     */
+//    -(void)insertCategory:(nonnull NSString *)category forCoordinate:(CPTCoordinate)coordinate atIndex:(NSUInteger)idx
+//    {
+//        NSParameterAssert(category);
+//
+//        CPTMutableCategorySet *categories = [self orderedSetForCoordinate:coordinate];
+//
+//        NSParameterAssert(idx <= categories.count);
+//
+//        [categories insertObject:category atIndex:idx];
+//    }
+//
+//    /**
+//     *  @brief Replace all category names for the given coordinate with the names in the supplied array.
+//     *  @param newCategories An array of category names.
+//     *  @param coordinate The axis coordinate.
+//     */
+//    -(void)setCategories:(nullable CPTStringArray *)newCategories forCoordinate:(CPTCoordinate)coordinate
+//    {
+//        NSMutableDictionary<NSNumber *, CPTMutableCategorySet *> *names = self.categoryNames;
+//
+//        if ( !names ) {
+//            names = [[NSMutableDictionary alloc] init];
+//
+//            self.categoryNames = names;
+//        }
+//
+//        NSNumber *cacheKey = @(coordinate);
+//
+//        if ( [newCategories isKindOfClass:[NSArray class]] ) {
+//            CPTStringArray *categories = newCategories;
+//
+//            names[cacheKey] = [NSMutableOrderedSet orderedSetWithArray:categories];
+//        }
+//        else {
+//            [names removeObjectForKey:cacheKey];
+//        }
+//    }
+//
+//    /**
+//     *  @brief Remove all categories for every coordinate.
+//     */
+//    -(void)removeAllCategories
+//    {
+//        self.categoryNames = nil;
+//    }
+//
+//    /**
+//     *  @brief Returns a list of all category names for the given coordinate.
+//     *  @param coordinate The axis coordinate.
+//     *  @return An array of category names.
+//     */
+//    -(nonnull CPTStringArray *)categoriesForCoordinate:(CPTCoordinate)coordinate
+//    {
+//        CPTMutableCategorySet *categories = [self orderedSetForCoordinate:coordinate];
+//
+//        return categories.array;
+//    }
+//
+//    /**
+//     *  @brief Returns the category name for the given coordinate at the given index in the list of category names.
+//     *  @param coordinate The axis coordinate.
+//     *  @param idx The index in the list of category names.
+//     *  @return The category name.
+//     */
+//    -(nullable NSString *)categoryForCoordinate:(CPTCoordinate)coordinate atIndex:(NSUInteger)idx
+//    {
+//        CPTMutableCategorySet *categories = [self orderedSetForCoordinate:coordinate];
+//
+//        NSParameterAssert(idx < categories.count);
+//
+//        return categories[idx];
+//    }
+//
+//    /**
+//     *  @brief Returns the index of the given category name in the list of category names for the given coordinate.
+//     *  @param category The category name.
+//     *  @param coordinate The axis coordinate.
+//     *  @return The category index.
+//     */
+//    -(NSUInteger)indexOfCategory:(nonnull NSString *)category forCoordinate:(CPTCoordinate)coordinate
+//    {
+//        NSParameterAssert(category);
+//
+//        CPTMutableCategorySet *categories = [self orderedSetForCoordinate:coordinate];
+//
+//        return [categories indexOfObject:category];
+//    }
 
+    
 }
 
 protocol CPTPlotSpaceDelegate: NSObject {
