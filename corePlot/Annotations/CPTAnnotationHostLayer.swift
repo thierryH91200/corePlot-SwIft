@@ -1,0 +1,124 @@
+//
+//  CPTAnnotationHostLayer.swift
+//  corePlot
+//
+//  Created by thierryH24 on 09/11/2020.
+//
+
+//==============================
+//  OK
+//==============================
+
+
+import AppKit
+
+class CPTAnnotationHostLayer: CPTLayer {
+    
+    var annotations = [CPTAnnotation] ()
+    
+    
+    // MARK: - Init/Dealloc
+    override init()
+    {
+        super.init()
+        annotationHostLayer = nil;
+        contentLayer        = nil;
+        displacement        = CGPoint()
+        contentAnchorPoint  = CGPoint(x: 0.5, y: 0.5);
+        rotation            = CGFloat(0.0)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: -  Accessors
+    var _contentLayer: CPTLayer?
+    var contentLayer : CPTLayer? {
+        get {
+            return _contentLayer
+        }
+        set {
+            if ( newValue != _contentLayer ) {
+                _contentLayer!.removeFromSuperlayer()
+                _contentLayer = newValue
+                if  newValue != nil {
+                    let layer = newValue;
+                    
+                    let hostLayer = self.annotationHostLayer;
+                    hostLayer!.addSublayer(layer!)
+                }
+            }
+        }
+    }
+    
+    var _annotationHostLayer : CPTAnnotationHostLayer?
+    var annotationHostLayer : CPTAnnotationHostLayer? {
+        get {
+            return _annotationHostLayer
+        }
+        set {
+            if newValue != _annotationHostLayer  {
+                let myContent = self.contentLayer
+                
+                myContent!.removeFromSuperlayer()
+                _annotationHostLayer = newValue
+                if (( myContent ) != nil) {
+                    newValue!.addSublayer(myContent!)
+                }
+            }
+        }
+    }
+    
+    var _displacement: CGPoint?
+    var displacement : CGPoint? {
+        get {
+            return  _displacement
+            
+        }
+        set {
+            if _displacement!.equalTo(newValue!) == false {
+                _displacement = newValue!
+                self.contentLayer?.superlayer!.setNeedsLayout()
+            }
+        }
+    }
+    var _contentAnchorPoint: CGPoint?
+    var contentAnchorPoint : CGPoint? {
+        get {
+            return  _contentAnchorPoint
+        }
+        set {
+            if _contentAnchorPoint!.equalTo(newValue!) == false {
+                _contentAnchorPoint = newValue!
+                self.contentLayer?.superlayer!.setNeedsLayout()
+            }
+        }
+    }
+    
+    var _rotation : CGFloat?
+    var rotation : CGFloat? {
+        get {
+            return _rotation
+        }
+        set {
+            if _rotation != rotation! {
+                _rotation = newValue!
+                self.contentLayer?.superlayer!.setNeedsLayout()
+            }
+        }
+    }
+    
+    
+    
+    // MARK: -  Layout
+    /** @brief Positions the content layer relative to its reference anchor.
+     *
+     *  This method must be overridden by subclasses. The default implementation
+     *  does nothing.
+     **/
+    func positionContentLayer()
+    {
+        // Do nothing--implementation provided by subclasses
+    }
+}

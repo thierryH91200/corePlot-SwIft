@@ -1,0 +1,987 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0307347A2567BDA8008B7413 /* CPTLayer extDrawing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030734792567BDA8008B7413 /* CPTLayer extDrawing.swift */; };
+		03073485256815B6008B7413 /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03073484256815B6008B7413 /* Notification.swift */; };
+		030A6506255FBB44002B3D13 /* CPTAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030A6505255FBB44002B3D13 /* CPTAnimation.swift */; };
+		030A650A255FBB8F002B3D13 /* CPTAnimationOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030A6509255FBB8F002B3D13 /* CPTAnimationOperation.swift */; };
+		030A650E255FC04B002B3D13 /* CPTAnimationPeriod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030A650D255FC04B002B3D13 /* CPTAnimationPeriod.swift */; };
+		030A6512255FC5E0002B3D13 /* CPTAnimationCGFloatPeriod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030A6511255FC5DF002B3D13 /* CPTAnimationCGFloatPeriod.swift */; };
+		030A6517255FCE9A002B3D13 /* PieChartController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030A6515255FCE9A002B3D13 /* PieChartController.swift */; };
+		030A6518255FCE9A002B3D13 /* PieChartController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 030A6516255FCE9A002B3D13 /* PieChartController.xib */; };
+		030A651C255FD024002B3D13 /* CPTPieChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030A651B255FD024002B3D13 /* CPTPieChart.swift */; };
+		030A6521255FFA4C002B3D13 /* CPTPlotSpace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030A6520255FFA4C002B3D13 /* CPTPlotSpace.swift */; };
+		030A652525600740002B3D13 /* CPTXYPlotSpace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030A652425600740002B3D13 /* CPTXYPlotSpace.swift */; };
+		030A652A25601394002B3D13 /* CPTXYAxisSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030A652925601394002B3D13 /* CPTXYAxisSet.swift */; };
+		030A652E256013D9002B3D13 /* CPTXYAxis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030A652D256013D9002B3D13 /* CPTXYAxis.swift */; };
+		0320AFB5255C0EA100D32BF9 /* CPTConstraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0320AFB4255C0EA100D32BF9 /* CPTConstraints.swift */; };
+		0320AFB9255C0EE100D32BF9 /* CPTConstraintsFixed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0320AFB8255C0EE100D32BF9 /* CPTConstraintsFixed.swift */; };
+		0320AFBD255C0F1A00D32BF9 /* CPTConstraintsRelative.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0320AFBC255C0F1A00D32BF9 /* CPTConstraintsRelative.swift */; };
+		0320AFC4255C50B400D32BF9 /* CPTDarkGradientTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0320AFC3255C50B400D32BF9 /* CPTDarkGradientTheme.swift */; };
+		0320AFC8255C512C00D32BF9 /* CPTStocksTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0320AFC7255C512C00D32BF9 /* CPTStocksTheme.swift */; };
+		0320AFCC255C515800D32BF9 /* CPTSlateTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0320AFCB255C515800D32BF9 /* CPTSlateTheme.swift */; };
+		0320AFD0255C518900D32BF9 /* CPTPlainBlackTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0320AFCF255C518900D32BF9 /* CPTPlainBlackTheme.swift */; };
+		0320AFD4255C5A7000D32BF9 /* CPTXYGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0320AFD3255C5A7000D32BF9 /* CPTXYGraph.swift */; };
+		0320AFE8255C6A1800D32BF9 /* CPTAxisSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0320AFE7255C6A1800D32BF9 /* CPTAxisSet.swift */; };
+		0320AFEC255C6A6200D32BF9 /* CPTAxis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0320AFEB255C6A6200D32BF9 /* CPTAxis.swift */; };
+		0320AFF0255C6A8600D32BF9 /* CPTGridLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0320AFEF255C6A8600D32BF9 /* CPTGridLines.swift */; };
+		0320AFF4255C6AB200D32BF9 /* CPTGridLineGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0320AFF3255C6AB200D32BF9 /* CPTGridLineGroup.swift */; };
+		0320AFFA255C749600D32BF9 /* CPTLineStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0320AFF9255C749600D32BF9 /* CPTLineStyle.swift */; };
+		0320B000255C75DE00D32BF9 /* CPTPlotRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0320AFFF255C75DE00D32BF9 /* CPTPlotRange.swift */; };
+		0320B004255C89FF00D32BF9 /* CPTPlotArea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0320B003255C89FF00D32BF9 /* CPTPlotArea.swift */; };
+		0320B008255C8A2800D32BF9 /* CPTLimitBand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0320B007255C8A2800D32BF9 /* CPTLimitBand.swift */; };
+		0320B00C255C8A5400D32BF9 /* CPTPlotAreaFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0320B00B255C8A5400D32BF9 /* CPTPlotAreaFrame.swift */; };
+		0320B010255C8C4300D32BF9 /* CPTPlotGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0320B00F255C8C4300D32BF9 /* CPTPlotGroup.swift */; };
+		0320B014255C8CA400D32BF9 /* CPTPlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0320B013255C8CA400D32BF9 /* CPTPlot.swift */; };
+		0320B018255C8CF500D32BF9 /* CPTBarPlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0320B017255C8CF500D32BF9 /* CPTBarPlot.swift */; };
+		032EE4FF25665B950085F4E1 /* CPTBorderLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032EE4FE25665B940085F4E1 /* CPTBorderLayer.swift */; };
+		032EE50325665BC70085F4E1 /* CPTMaskLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032EE50225665BC70085F4E1 /* CPTMaskLayer.swift */; };
+		032EE507256674B30085F4E1 /* CPTPathExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032EE506256674B30085F4E1 /* CPTPathExtensions.swift */; };
+		032EE50B2566CC4D0085F4E1 /* CPTGraph ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032EE50A2566CC4D0085F4E1 /* CPTGraph ext.swift */; };
+		0333908C2565658900C231D9 /* CPTImage ext2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0333908B2565658900C231D9 /* CPTImage ext2.swift */; };
+		033390902565675F00C231D9 /* CPTImage ext3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0333908F2565675E00C231D9 /* CPTImage ext3.swift */; };
+		033390982565850F00C231D9 /* CPTImagePlatformSpecific.swift in Sources */ = {isa = PBXBuildFile; fileRef = 033390972565850F00C231D9 /* CPTImagePlatformSpecific.swift */; };
+		033667072557DFBD00B109CE /* CPTDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 033667062557DFBD00B109CE /* CPTDefinitions.swift */; };
+		03384E4A255D12A4003C5BD3 /* CPTMutableLineStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03384E49255D12A4003C5BD3 /* CPTMutableLineStyle.swift */; };
+		03411EC725646EA300CE639F /* CPTImage ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03411EC625646EA300CE639F /* CPTImage ext.swift */; };
+		034C436625679565003FAD33 /* CPTLayer ext1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034C436525679565003FAD33 /* CPTLayer ext1.swift */; };
+		037244412545FE4600B59C97 /* corePlot.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 037244372545FE4600B59C97 /* corePlot.framework */; };
+		037244462545FE4600B59C97 /* corePlotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037244452545FE4600B59C97 /* corePlotTests.swift */; };
+		037244482545FE4600B59C97 /* corePlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 0372443A2545FE4600B59C97 /* corePlot.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		037244542545FF1700B59C97 /* CPTLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037244532545FF1700B59C97 /* CPTLayer.swift */; };
+		03848EFB255F2F7000F1C1D5 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 03848EFA255F2F7000F1C1D5 /* README.md */; };
+		0397469B2557269E008CF3E6 /* CPTShadow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397469A2557269E008CF3E6 /* CPTShadow.swift */; };
+		0397469F2557281B008CF3E6 /* CPTColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397469E2557281B008CF3E6 /* CPTColor.swift */; };
+		039746A325572B55008CF3E6 /* CPTImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 039746A225572B55008CF3E6 /* CPTImage.swift */; };
+		03A7D46C25616F5A00D3FED1 /* CPTGradient Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A7D46B25616F5A00D3FED1 /* CPTGradient Extension.swift */; };
+		03A9CCDE2559565E0096853D /* CPTGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A9CCDD2559565E0096853D /* CPTGraph.swift */; };
+		03A9CCE22559569E0096853D /* CPTBorderedLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A9CCE12559569E0096853D /* CPTBorderedLayer.swift */; };
+		03A9CCE6255956F70096853D /* CPTAnnotationHostLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A9CCE5255956F70096853D /* CPTAnnotationHostLayer.swift */; };
+		03A9CCEA255957510096853D /* CPTLayerAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A9CCE9255957510096853D /* CPTLayerAnnotation.swift */; };
+		03A9CCEE255957890096853D /* CPTAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A9CCED255957890096853D /* CPTAnnotation.swift */; };
+		03A9CCF225595D320096853D /* CPTPlotSpaceAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A9CCF125595D320096853D /* CPTPlotSpaceAnnotation.swift */; };
+		03A9CCF6255973CD0096853D /* CPTGradient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A9CCF5255973CD0096853D /* CPTGradient.swift */; };
+		03A9CCFA2559A2D60096853D /* CPTLineCap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A9CCF92559A2D60096853D /* CPTLineCap.swift */; };
+		03A9CCFF2559A78C0096853D /* CPTFill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A9CCFE2559A78C0096853D /* CPTFill.swift */; };
+		03A9CD032559AA410096853D /* CPTFillImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A9CD022559AA410096853D /* CPTFillImage.swift */; };
+		03A9CD072559AAE70096853D /* CPTFillGradient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A9CD062559AAE70096853D /* CPTFillGradient.swift */; };
+		03A9CD0B2559B0A60096853D /* CPTPlainWhiteTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A9CD0A2559B0A60096853D /* CPTPlainWhiteTheme.swift */; };
+		03A9CD0F2559B0DE0096853D /* CPTXYTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A9CD0E2559B0DE0096853D /* CPTXYTheme.swift */; };
+		03A9CD132559B1120096853D /* CPTTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A9CD122559B1120096853D /* CPTTheme.swift */; };
+		03A9CD172559B32B0096853D /* CPTTextLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A9CD162559B32B0096853D /* CPTTextLayer.swift */; };
+		03A9CD1B2559B4AC0096853D /* CPTTextStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A9CD1A2559B4AC0096853D /* CPTTextStyle.swift */; };
+		03A9CD332559CCF70096853D /* CPTGraphHostingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A9CD322559CCF70096853D /* CPTGraphHostingView.swift */; };
+		03BB66A2255AC0CF002C20A3 /* CPTFillColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03BB66A1255AC0CF002C20A3 /* CPTFillColor.swift */; };
+		03C433C1255EC38D00F00A24 /* CPTColorSpace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C433C0255EC38D00F00A24 /* CPTColorSpace.swift */; };
+		03C433C7255ED3AA00F00A24 /* CPTLegend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C433C6255ED3AA00F00A24 /* CPTLegend.swift */; };
+		03C433CB255ED3D600F00A24 /* CPTLegendEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C433CA255ED3D600F00A24 /* CPTLegendEntry.swift */; };
+		03DDD45625626DC200CAB29B /* CPTAxisLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DDD45525626DC200CAB29B /* CPTAxisLabel.swift */; };
+		03DDD45A25626DF500CAB29B /* CPTAxisTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DDD45925626DF500CAB29B /* CPTAxisTitle.swift */; };
+		03DDD45E2562748C00CAB29B /* CPTAxisLabelGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DDD45D2562748C00CAB29B /* CPTAxisLabelGroup.swift */; };
+		03DDD4622562893900CAB29B /* CPTTextLayer ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DDD4612562893900CAB29B /* CPTTextLayer ext.swift */; };
+		03DDD4662562BB1D00CAB29B /* CPTAxis  Accessors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DDD4652562BB1D00CAB29B /* CPTAxis  Accessors.swift */; };
+		03DDD46C256311BF00CAB29B /* CPTPlatformSpecificDefines.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DDD46B256311BF00CAB29B /* CPTPlatformSpecificDefines.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		037244422545FE4600B59C97 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0372442E2545FE4600B59C97 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 037244362545FE4600B59C97;
+			remoteInfo = corePlot;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		030734792567BDA8008B7413 /* CPTLayer extDrawing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTLayer extDrawing.swift"; sourceTree = "<group>"; };
+		03073484256815B6008B7413 /* Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
+		030A6505255FBB44002B3D13 /* CPTAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTAnimation.swift; sourceTree = "<group>"; };
+		030A6509255FBB8F002B3D13 /* CPTAnimationOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTAnimationOperation.swift; sourceTree = "<group>"; };
+		030A650D255FC04B002B3D13 /* CPTAnimationPeriod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTAnimationPeriod.swift; sourceTree = "<group>"; };
+		030A6511255FC5DF002B3D13 /* CPTAnimationCGFloatPeriod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTAnimationCGFloatPeriod.swift; sourceTree = "<group>"; };
+		030A6515255FCE9A002B3D13 /* PieChartController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieChartController.swift; sourceTree = "<group>"; };
+		030A6516255FCE9A002B3D13 /* PieChartController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PieChartController.xib; sourceTree = "<group>"; };
+		030A651B255FD024002B3D13 /* CPTPieChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTPieChart.swift; sourceTree = "<group>"; };
+		030A6520255FFA4C002B3D13 /* CPTPlotSpace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTPlotSpace.swift; sourceTree = "<group>"; };
+		030A652425600740002B3D13 /* CPTXYPlotSpace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTXYPlotSpace.swift; sourceTree = "<group>"; };
+		030A652925601394002B3D13 /* CPTXYAxisSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTXYAxisSet.swift; sourceTree = "<group>"; };
+		030A652D256013D9002B3D13 /* CPTXYAxis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTXYAxis.swift; sourceTree = "<group>"; };
+		0320AFB4255C0EA100D32BF9 /* CPTConstraints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTConstraints.swift; sourceTree = "<group>"; };
+		0320AFB8255C0EE100D32BF9 /* CPTConstraintsFixed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTConstraintsFixed.swift; sourceTree = "<group>"; };
+		0320AFBC255C0F1A00D32BF9 /* CPTConstraintsRelative.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTConstraintsRelative.swift; sourceTree = "<group>"; };
+		0320AFC3255C50B400D32BF9 /* CPTDarkGradientTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTDarkGradientTheme.swift; sourceTree = "<group>"; };
+		0320AFC7255C512C00D32BF9 /* CPTStocksTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTStocksTheme.swift; sourceTree = "<group>"; };
+		0320AFCB255C515800D32BF9 /* CPTSlateTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTSlateTheme.swift; sourceTree = "<group>"; };
+		0320AFCF255C518900D32BF9 /* CPTPlainBlackTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTPlainBlackTheme.swift; sourceTree = "<group>"; };
+		0320AFD3255C5A7000D32BF9 /* CPTXYGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTXYGraph.swift; sourceTree = "<group>"; };
+		0320AFE7255C6A1800D32BF9 /* CPTAxisSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTAxisSet.swift; sourceTree = "<group>"; };
+		0320AFEB255C6A6200D32BF9 /* CPTAxis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTAxis.swift; sourceTree = "<group>"; };
+		0320AFEF255C6A8600D32BF9 /* CPTGridLines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTGridLines.swift; sourceTree = "<group>"; };
+		0320AFF3255C6AB200D32BF9 /* CPTGridLineGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTGridLineGroup.swift; sourceTree = "<group>"; };
+		0320AFF9255C749600D32BF9 /* CPTLineStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTLineStyle.swift; sourceTree = "<group>"; };
+		0320AFFF255C75DE00D32BF9 /* CPTPlotRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTPlotRange.swift; sourceTree = "<group>"; };
+		0320B003255C89FF00D32BF9 /* CPTPlotArea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTPlotArea.swift; sourceTree = "<group>"; };
+		0320B007255C8A2800D32BF9 /* CPTLimitBand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTLimitBand.swift; sourceTree = "<group>"; };
+		0320B00B255C8A5400D32BF9 /* CPTPlotAreaFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTPlotAreaFrame.swift; sourceTree = "<group>"; };
+		0320B00F255C8C4300D32BF9 /* CPTPlotGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTPlotGroup.swift; sourceTree = "<group>"; };
+		0320B013255C8CA400D32BF9 /* CPTPlot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTPlot.swift; sourceTree = "<group>"; };
+		0320B017255C8CF500D32BF9 /* CPTBarPlot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTBarPlot.swift; sourceTree = "<group>"; };
+		032EE4FE25665B940085F4E1 /* CPTBorderLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTBorderLayer.swift; sourceTree = "<group>"; };
+		032EE50225665BC70085F4E1 /* CPTMaskLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTMaskLayer.swift; sourceTree = "<group>"; };
+		032EE506256674B30085F4E1 /* CPTPathExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTPathExtensions.swift; sourceTree = "<group>"; };
+		032EE50A2566CC4D0085F4E1 /* CPTGraph ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTGraph ext.swift"; sourceTree = "<group>"; };
+		0333908B2565658900C231D9 /* CPTImage ext2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTImage ext2.swift"; sourceTree = "<group>"; };
+		0333908F2565675E00C231D9 /* CPTImage ext3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTImage ext3.swift"; sourceTree = "<group>"; };
+		033390972565850F00C231D9 /* CPTImagePlatformSpecific.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTImagePlatformSpecific.swift; sourceTree = "<group>"; };
+		033667062557DFBD00B109CE /* CPTDefinitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTDefinitions.swift; sourceTree = "<group>"; };
+		03384E49255D12A4003C5BD3 /* CPTMutableLineStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTMutableLineStyle.swift; sourceTree = "<group>"; };
+		03411EC625646EA300CE639F /* CPTImage ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTImage ext.swift"; sourceTree = "<group>"; };
+		034C436525679565003FAD33 /* CPTLayer ext1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTLayer ext1.swift"; sourceTree = "<group>"; };
+		037244372545FE4600B59C97 /* corePlot.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = corePlot.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0372443A2545FE4600B59C97 /* corePlot.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = corePlot.h; sourceTree = "<group>"; };
+		0372443B2545FE4600B59C97 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		037244402545FE4600B59C97 /* corePlotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = corePlotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		037244452545FE4600B59C97 /* corePlotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = corePlotTests.swift; sourceTree = "<group>"; };
+		037244472545FE4600B59C97 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		037244532545FF1700B59C97 /* CPTLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTLayer.swift; sourceTree = "<group>"; };
+		03848EFA255F2F7000F1C1D5 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		0397469A2557269E008CF3E6 /* CPTShadow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTShadow.swift; sourceTree = "<group>"; };
+		0397469E2557281B008CF3E6 /* CPTColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTColor.swift; sourceTree = "<group>"; };
+		039746A225572B55008CF3E6 /* CPTImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTImage.swift; sourceTree = "<group>"; };
+		03A7D46B25616F5A00D3FED1 /* CPTGradient Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTGradient Extension.swift"; sourceTree = "<group>"; };
+		03A9CCDD2559565E0096853D /* CPTGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTGraph.swift; sourceTree = "<group>"; };
+		03A9CCE12559569E0096853D /* CPTBorderedLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTBorderedLayer.swift; sourceTree = "<group>"; };
+		03A9CCE5255956F70096853D /* CPTAnnotationHostLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTAnnotationHostLayer.swift; sourceTree = "<group>"; };
+		03A9CCE9255957510096853D /* CPTLayerAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTLayerAnnotation.swift; sourceTree = "<group>"; };
+		03A9CCED255957890096853D /* CPTAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTAnnotation.swift; sourceTree = "<group>"; };
+		03A9CCF125595D320096853D /* CPTPlotSpaceAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTPlotSpaceAnnotation.swift; sourceTree = "<group>"; };
+		03A9CCF5255973CD0096853D /* CPTGradient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTGradient.swift; sourceTree = "<group>"; };
+		03A9CCF92559A2D60096853D /* CPTLineCap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTLineCap.swift; sourceTree = "<group>"; };
+		03A9CCFE2559A78C0096853D /* CPTFill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTFill.swift; sourceTree = "<group>"; };
+		03A9CD022559AA410096853D /* CPTFillImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTFillImage.swift; sourceTree = "<group>"; };
+		03A9CD062559AAE70096853D /* CPTFillGradient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTFillGradient.swift; sourceTree = "<group>"; };
+		03A9CD0A2559B0A60096853D /* CPTPlainWhiteTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTPlainWhiteTheme.swift; sourceTree = "<group>"; };
+		03A9CD0E2559B0DE0096853D /* CPTXYTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTXYTheme.swift; sourceTree = "<group>"; };
+		03A9CD122559B1120096853D /* CPTTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTTheme.swift; sourceTree = "<group>"; };
+		03A9CD162559B32B0096853D /* CPTTextLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTTextLayer.swift; sourceTree = "<group>"; };
+		03A9CD1A2559B4AC0096853D /* CPTTextStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTTextStyle.swift; sourceTree = "<group>"; };
+		03A9CD322559CCF70096853D /* CPTGraphHostingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTGraphHostingView.swift; sourceTree = "<group>"; };
+		03BB66A1255AC0CF002C20A3 /* CPTFillColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTFillColor.swift; sourceTree = "<group>"; };
+		03C433C0255EC38D00F00A24 /* CPTColorSpace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTColorSpace.swift; sourceTree = "<group>"; };
+		03C433C6255ED3AA00F00A24 /* CPTLegend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTLegend.swift; sourceTree = "<group>"; };
+		03C433CA255ED3D600F00A24 /* CPTLegendEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTLegendEntry.swift; sourceTree = "<group>"; };
+		03DDD45525626DC200CAB29B /* CPTAxisLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTAxisLabel.swift; sourceTree = "<group>"; };
+		03DDD45925626DF500CAB29B /* CPTAxisTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTAxisTitle.swift; sourceTree = "<group>"; };
+		03DDD45D2562748C00CAB29B /* CPTAxisLabelGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTAxisLabelGroup.swift; sourceTree = "<group>"; };
+		03DDD4612562893900CAB29B /* CPTTextLayer ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTTextLayer ext.swift"; sourceTree = "<group>"; };
+		03DDD4652562BB1D00CAB29B /* CPTAxis  Accessors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTAxis  Accessors.swift"; sourceTree = "<group>"; };
+		03DDD46B256311BF00CAB29B /* CPTPlatformSpecificDefines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTPlatformSpecificDefines.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		037244342545FE4600B59C97 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0372443D2545FE4600B59C97 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				037244412545FE4600B59C97 /* corePlot.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		030A652825601353002B3D13 /* XY Axes */ = {
+			isa = PBXGroup;
+			children = (
+				030A652D256013D9002B3D13 /* CPTXYAxis.swift */,
+				030A652925601394002B3D13 /* CPTXYAxisSet.swift */,
+			);
+			path = "XY Axes";
+			sourceTree = "<group>";
+		};
+		032EE4FD256656900085F4E1 /* CPTImage */ = {
+			isa = PBXGroup;
+			children = (
+				0333908B2565658900C231D9 /* CPTImage ext2.swift */,
+				0333908F2565675E00C231D9 /* CPTImage ext3.swift */,
+				039746A225572B55008CF3E6 /* CPTImage.swift */,
+				03411EC625646EA300CE639F /* CPTImage ext.swift */,
+			);
+			name = CPTImage;
+			sourceTree = "<group>";
+		};
+		033390952565847500C231D9 /* iOS Specifics */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "iOS Specifics";
+			sourceTree = "<group>";
+		};
+		033390962565849800C231D9 /* Mac Specific */ = {
+			isa = PBXGroup;
+			children = (
+				033390972565850F00C231D9 /* CPTImagePlatformSpecific.swift */,
+			);
+			name = "Mac Specific";
+			sourceTree = "<group>";
+		};
+		0372442D2545FE4600B59C97 = {
+			isa = PBXGroup;
+			children = (
+				030A6515255FCE9A002B3D13 /* PieChartController.swift */,
+				030A6516255FCE9A002B3D13 /* PieChartController.xib */,
+				03848EFA255F2F7000F1C1D5 /* README.md */,
+				037244392545FE4600B59C97 /* corePlot */,
+				037244442545FE4600B59C97 /* corePlotTests */,
+				037244382545FE4600B59C97 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		037244382545FE4600B59C97 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				037244372545FE4600B59C97 /* corePlot.framework */,
+				037244402545FE4600B59C97 /* corePlotTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		037244392545FE4600B59C97 /* corePlot */ = {
+			isa = PBXGroup;
+			children = (
+				03BB65EB255A6F7C002C20A3 /* Source */,
+				03A9CD312559CCAA0096853D /* Mac Specific */,
+				0372443B2545FE4600B59C97 /* Info.plist */,
+				0372443A2545FE4600B59C97 /* corePlot.h */,
+			);
+			path = corePlot;
+			sourceTree = "<group>";
+		};
+		037244442545FE4600B59C97 /* corePlotTests */ = {
+			isa = PBXGroup;
+			children = (
+				037244452545FE4600B59C97 /* corePlotTests.swift */,
+				037244472545FE4600B59C97 /* Info.plist */,
+			);
+			path = corePlotTests;
+			sourceTree = "<group>";
+		};
+		03A9CCC8255929400096853D /* Numeric Data */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Numeric Data";
+			sourceTree = "<group>";
+		};
+		03A9CCC92559295B0096853D /* Types and Functions */ = {
+			isa = PBXGroup;
+			children = (
+				033667062557DFBD00B109CE /* CPTDefinitions.swift */,
+				0320AFFF255C75DE00D32BF9 /* CPTPlotRange.swift */,
+			);
+			path = "Types and Functions";
+			sourceTree = "<group>";
+		};
+		03A9CCCA255929750096853D /* Layers */ = {
+			isa = PBXGroup;
+			children = (
+				037244532545FF1700B59C97 /* CPTLayer.swift */,
+				03A9CCE12559569E0096853D /* CPTBorderedLayer.swift */,
+				032EE4FE25665B940085F4E1 /* CPTBorderLayer.swift */,
+				032EE50225665BC70085F4E1 /* CPTMaskLayer.swift */,
+				034C436525679565003FAD33 /* CPTLayer ext1.swift */,
+				030734792567BDA8008B7413 /* CPTLayer extDrawing.swift */,
+			);
+			path = Layers;
+			sourceTree = "<group>";
+		};
+		03A9CCCB255929950096853D /* Animation */ = {
+			isa = PBXGroup;
+			children = (
+				030A6505255FBB44002B3D13 /* CPTAnimation.swift */,
+				030A6509255FBB8F002B3D13 /* CPTAnimationOperation.swift */,
+				030A650D255FC04B002B3D13 /* CPTAnimationPeriod.swift */,
+				030A6511255FC5DF002B3D13 /* CPTAnimationCGFloatPeriod.swift */,
+			);
+			path = Animation;
+			sourceTree = "<group>";
+		};
+		03A9CCCC255929A90096853D /* Annotations */ = {
+			isa = PBXGroup;
+			children = (
+				03A9CCED255957890096853D /* CPTAnnotation.swift */,
+				03A9CCE5255956F70096853D /* CPTAnnotationHostLayer.swift */,
+				03A9CCE9255957510096853D /* CPTLayerAnnotation.swift */,
+				03A9CCF125595D320096853D /* CPTPlotSpaceAnnotation.swift */,
+				03073484256815B6008B7413 /* Notification.swift */,
+			);
+			path = Annotations;
+			sourceTree = "<group>";
+		};
+		03A9CCCD255929C50096853D /* Layout */ = {
+			isa = PBXGroup;
+			children = (
+				0320AFB4255C0EA100D32BF9 /* CPTConstraints.swift */,
+				0320AFB8255C0EE100D32BF9 /* CPTConstraintsFixed.swift */,
+				0320AFBC255C0F1A00D32BF9 /* CPTConstraintsRelative.swift */,
+			);
+			path = Layout;
+			sourceTree = "<group>";
+		};
+		03A9CCCE25592DA20096853D /* Graphs */ = {
+			isa = PBXGroup;
+			children = (
+				03A9CCDD2559565E0096853D /* CPTGraph.swift */,
+				0320AFD3255C5A7000D32BF9 /* CPTXYGraph.swift */,
+				032EE50A2566CC4D0085F4E1 /* CPTGraph ext.swift */,
+			);
+			path = Graphs;
+			sourceTree = "<group>";
+		};
+		03A9CCCF25592EE60096853D /* Text */ = {
+			isa = PBXGroup;
+			children = (
+				03A9CD162559B32B0096853D /* CPTTextLayer.swift */,
+				03A9CD1A2559B4AC0096853D /* CPTTextStyle.swift */,
+				03DDD4612562893900CAB29B /* CPTTextLayer ext.swift */,
+			);
+			path = Text;
+			sourceTree = "<group>";
+		};
+		03A9CCD025592EF70096853D /* Drawing */ = {
+			isa = PBXGroup;
+			children = (
+				032EE4FD256656900085F4E1 /* CPTImage */,
+				0397469E2557281B008CF3E6 /* CPTColor.swift */,
+				03C433C0255EC38D00F00A24 /* CPTColorSpace.swift */,
+				03A7D46B25616F5A00D3FED1 /* CPTGradient Extension.swift */,
+				03A9CCF5255973CD0096853D /* CPTGradient.swift */,
+				03A9CCF92559A2D60096853D /* CPTLineCap.swift */,
+				0320AFF9255C749600D32BF9 /* CPTLineStyle.swift */,
+				03384E49255D12A4003C5BD3 /* CPTMutableLineStyle.swift */,
+				0397469A2557269E008CF3E6 /* CPTShadow.swift */,
+				03A9CCFD2559A75E0096853D /* Fills */,
+				033390952565847500C231D9 /* iOS Specifics */,
+				033390962565849800C231D9 /* Mac Specific */,
+				032EE506256674B30085F4E1 /* CPTPathExtensions.swift */,
+			);
+			path = Drawing;
+			sourceTree = "<group>";
+		};
+		03A9CCD125592F170096853D /* Value Transformers */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Value Transformers";
+			sourceTree = "<group>";
+		};
+		03A9CCD225592F5E0096853D /* Formatters */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Formatters;
+			sourceTree = "<group>";
+		};
+		03A9CCD325592F920096853D /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Categories;
+			sourceTree = "<group>";
+		};
+		03A9CCD425592FA90096853D /* Plot Areas */ = {
+			isa = PBXGroup;
+			children = (
+				0320B003255C89FF00D32BF9 /* CPTPlotArea.swift */,
+				0320B007255C8A2800D32BF9 /* CPTLimitBand.swift */,
+				0320B00B255C8A5400D32BF9 /* CPTPlotAreaFrame.swift */,
+			);
+			path = "Plot Areas";
+			sourceTree = "<group>";
+		};
+		03A9CCD525592FD20096853D /* Spaces */ = {
+			isa = PBXGroup;
+			children = (
+				030A6520255FFA4C002B3D13 /* CPTPlotSpace.swift */,
+				030A652425600740002B3D13 /* CPTXYPlotSpace.swift */,
+			);
+			path = Spaces;
+			sourceTree = "<group>";
+		};
+		03A9CCD625592FF10096853D /* Plots */ = {
+			isa = PBXGroup;
+			children = (
+				0320B017255C8CF500D32BF9 /* CPTBarPlot.swift */,
+				0320B013255C8CA400D32BF9 /* CPTPlot.swift */,
+				0320B00F255C8C4300D32BF9 /* CPTPlotGroup.swift */,
+				030A651B255FD024002B3D13 /* CPTPieChart.swift */,
+			);
+			path = Plots;
+			sourceTree = "<group>";
+		};
+		03A9CCD72559300B0096853D /* Plot Symbols */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Plot Symbols";
+			sourceTree = "<group>";
+		};
+		03A9CCD8255930360096853D /* Legends */ = {
+			isa = PBXGroup;
+			children = (
+				03C433C6255ED3AA00F00A24 /* CPTLegend.swift */,
+				03C433CA255ED3D600F00A24 /* CPTLegendEntry.swift */,
+			);
+			path = Legends;
+			sourceTree = "<group>";
+		};
+		03A9CCD92559303A0096853D /* Axes */ = {
+			isa = PBXGroup;
+			children = (
+				03DDD4652562BB1D00CAB29B /* CPTAxis  Accessors.swift */,
+				0320AFEB255C6A6200D32BF9 /* CPTAxis.swift */,
+				0320AFE7255C6A1800D32BF9 /* CPTAxisSet.swift */,
+				0320AFF3255C6AB200D32BF9 /* CPTGridLineGroup.swift */,
+				0320AFEF255C6A8600D32BF9 /* CPTGridLines.swift */,
+				03DDD45425626D5300CAB29B /* Labels */,
+				030A652825601353002B3D13 /* XY Axes */,
+			);
+			path = Axes;
+			sourceTree = "<group>";
+		};
+		03A9CCDA2559306E0096853D /* Themes */ = {
+			isa = PBXGroup;
+			children = (
+				0320AFC3255C50B400D32BF9 /* CPTDarkGradientTheme.swift */,
+				0320AFCF255C518900D32BF9 /* CPTPlainBlackTheme.swift */,
+				03A9CD0A2559B0A60096853D /* CPTPlainWhiteTheme.swift */,
+				0320AFCB255C515800D32BF9 /* CPTSlateTheme.swift */,
+				0320AFC7255C512C00D32BF9 /* CPTStocksTheme.swift */,
+				03A9CD122559B1120096853D /* CPTTheme.swift */,
+				03A9CD0E2559B0DE0096853D /* CPTXYTheme.swift */,
+			);
+			path = Themes;
+			sourceTree = "<group>";
+		};
+		03A9CCFD2559A75E0096853D /* Fills */ = {
+			isa = PBXGroup;
+			children = (
+				03A9CCFE2559A78C0096853D /* CPTFill.swift */,
+				03A9CD022559AA410096853D /* CPTFillImage.swift */,
+				03A9CD062559AAE70096853D /* CPTFillGradient.swift */,
+				03BB66A1255AC0CF002C20A3 /* CPTFillColor.swift */,
+			);
+			path = Fills;
+			sourceTree = "<group>";
+		};
+		03A9CD312559CCAA0096853D /* Mac Specific */ = {
+			isa = PBXGroup;
+			children = (
+				03A9CD322559CCF70096853D /* CPTGraphHostingView.swift */,
+				03DDD46B256311BF00CAB29B /* CPTPlatformSpecificDefines.swift */,
+			);
+			path = "Mac Specific";
+			sourceTree = "<group>";
+		};
+		03BB65EB255A6F7C002C20A3 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				03A9CCCB255929950096853D /* Animation */,
+				03A9CCCC255929A90096853D /* Annotations */,
+				03A9CCD92559303A0096853D /* Axes */,
+				03A9CCD325592F920096853D /* Categories */,
+				03A9CCD025592EF70096853D /* Drawing */,
+				03A9CCD225592F5E0096853D /* Formatters */,
+				03A9CCCE25592DA20096853D /* Graphs */,
+				03A9CCCA255929750096853D /* Layers */,
+				03A9CCCD255929C50096853D /* Layout */,
+				03A9CCD8255930360096853D /* Legends */,
+				03A9CCC8255929400096853D /* Numeric Data */,
+				03A9CCD425592FA90096853D /* Plot Areas */,
+				03A9CCD72559300B0096853D /* Plot Symbols */,
+				03A9CCD625592FF10096853D /* Plots */,
+				03A9CCD525592FD20096853D /* Spaces */,
+				03A9CCCF25592EE60096853D /* Text */,
+				03A9CCDA2559306E0096853D /* Themes */,
+				03A9CCC92559295B0096853D /* Types and Functions */,
+				03A9CCD125592F170096853D /* Value Transformers */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		03DDD45425626D5300CAB29B /* Labels */ = {
+			isa = PBXGroup;
+			children = (
+				03DDD45525626DC200CAB29B /* CPTAxisLabel.swift */,
+				03DDD45925626DF500CAB29B /* CPTAxisTitle.swift */,
+				03DDD45D2562748C00CAB29B /* CPTAxisLabelGroup.swift */,
+			);
+			path = Labels;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		037244322545FE4600B59C97 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				037244482545FE4600B59C97 /* corePlot.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		037244362545FE4600B59C97 /* corePlot */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0372444B2545FE4600B59C97 /* Build configuration list for PBXNativeTarget "corePlot" */;
+			buildPhases = (
+				037244322545FE4600B59C97 /* Headers */,
+				037244332545FE4600B59C97 /* Sources */,
+				037244342545FE4600B59C97 /* Frameworks */,
+				037244352545FE4600B59C97 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = corePlot;
+			productName = corePlot;
+			productReference = 037244372545FE4600B59C97 /* corePlot.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		0372443F2545FE4600B59C97 /* corePlotTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0372444E2545FE4600B59C97 /* Build configuration list for PBXNativeTarget "corePlotTests" */;
+			buildPhases = (
+				0372443C2545FE4600B59C97 /* Sources */,
+				0372443D2545FE4600B59C97 /* Frameworks */,
+				0372443E2545FE4600B59C97 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				037244432545FE4600B59C97 /* PBXTargetDependency */,
+			);
+			name = corePlotTests;
+			productName = corePlotTests;
+			productReference = 037244402545FE4600B59C97 /* corePlotTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0372442E2545FE4600B59C97 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1210;
+				LastUpgradeCheck = 1210;
+				TargetAttributes = {
+					037244362545FE4600B59C97 = {
+						CreatedOnToolsVersion = 12.1;
+						LastSwiftMigration = 1210;
+					};
+					0372443F2545FE4600B59C97 = {
+						CreatedOnToolsVersion = 12.1;
+					};
+				};
+			};
+			buildConfigurationList = 037244312545FE4600B59C97 /* Build configuration list for PBXProject "corePlot" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 0372442D2545FE4600B59C97;
+			productRefGroup = 037244382545FE4600B59C97 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				037244362545FE4600B59C97 /* corePlot */,
+				0372443F2545FE4600B59C97 /* corePlotTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		037244352545FE4600B59C97 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				03848EFB255F2F7000F1C1D5 /* README.md in Resources */,
+				030A6518255FCE9A002B3D13 /* PieChartController.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0372443E2545FE4600B59C97 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		037244332545FE4600B59C97 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				033390902565675F00C231D9 /* CPTImage ext3.swift in Sources */,
+				0320AFC8255C512C00D32BF9 /* CPTStocksTheme.swift in Sources */,
+				0320B000255C75DE00D32BF9 /* CPTPlotRange.swift in Sources */,
+				030A650A255FBB8F002B3D13 /* CPTAnimationOperation.swift in Sources */,
+				03384E4A255D12A4003C5BD3 /* CPTMutableLineStyle.swift in Sources */,
+				0320AFBD255C0F1A00D32BF9 /* CPTConstraintsRelative.swift in Sources */,
+				03A9CD0B2559B0A60096853D /* CPTPlainWhiteTheme.swift in Sources */,
+				03A9CCEE255957890096853D /* CPTAnnotation.swift in Sources */,
+				03DDD4662562BB1D00CAB29B /* CPTAxis  Accessors.swift in Sources */,
+				03A9CD332559CCF70096853D /* CPTGraphHostingView.swift in Sources */,
+				0320AFFA255C749600D32BF9 /* CPTLineStyle.swift in Sources */,
+				0320AFC4255C50B400D32BF9 /* CPTDarkGradientTheme.swift in Sources */,
+				03A9CD172559B32B0096853D /* CPTTextLayer.swift in Sources */,
+				0307347A2567BDA8008B7413 /* CPTLayer extDrawing.swift in Sources */,
+				0320B018255C8CF500D32BF9 /* CPTBarPlot.swift in Sources */,
+				03A9CCF6255973CD0096853D /* CPTGradient.swift in Sources */,
+				03DDD4622562893900CAB29B /* CPTTextLayer ext.swift in Sources */,
+				037244542545FF1700B59C97 /* CPTLayer.swift in Sources */,
+				0320AFB5255C0EA100D32BF9 /* CPTConstraints.swift in Sources */,
+				03C433C7255ED3AA00F00A24 /* CPTLegend.swift in Sources */,
+				0320AFCC255C515800D32BF9 /* CPTSlateTheme.swift in Sources */,
+				03411EC725646EA300CE639F /* CPTImage ext.swift in Sources */,
+				03DDD45625626DC200CAB29B /* CPTAxisLabel.swift in Sources */,
+				030A6512255FC5E0002B3D13 /* CPTAnimationCGFloatPeriod.swift in Sources */,
+				0320AFB9255C0EE100D32BF9 /* CPTConstraintsFixed.swift in Sources */,
+				03DDD46C256311BF00CAB29B /* CPTPlatformSpecificDefines.swift in Sources */,
+				03A9CD1B2559B4AC0096853D /* CPTTextStyle.swift in Sources */,
+				0333908C2565658900C231D9 /* CPTImage ext2.swift in Sources */,
+				0397469F2557281B008CF3E6 /* CPTColor.swift in Sources */,
+				0320AFD0255C518900D32BF9 /* CPTPlainBlackTheme.swift in Sources */,
+				030A652A25601394002B3D13 /* CPTXYAxisSet.swift in Sources */,
+				030A650E255FC04B002B3D13 /* CPTAnimationPeriod.swift in Sources */,
+				032EE50B2566CC4D0085F4E1 /* CPTGraph ext.swift in Sources */,
+				030A6517255FCE9A002B3D13 /* PieChartController.swift in Sources */,
+				030A6506255FBB44002B3D13 /* CPTAnimation.swift in Sources */,
+				0397469B2557269E008CF3E6 /* CPTShadow.swift in Sources */,
+				0320B014255C8CA400D32BF9 /* CPTPlot.swift in Sources */,
+				03A9CCEA255957510096853D /* CPTLayerAnnotation.swift in Sources */,
+				0320B008255C8A2800D32BF9 /* CPTLimitBand.swift in Sources */,
+				03A9CD032559AA410096853D /* CPTFillImage.swift in Sources */,
+				03A9CCE22559569E0096853D /* CPTBorderedLayer.swift in Sources */,
+				03073485256815B6008B7413 /* Notification.swift in Sources */,
+				0320AFE8255C6A1800D32BF9 /* CPTAxisSet.swift in Sources */,
+				0320B010255C8C4300D32BF9 /* CPTPlotGroup.swift in Sources */,
+				03DDD45A25626DF500CAB29B /* CPTAxisTitle.swift in Sources */,
+				03A9CCE6255956F70096853D /* CPTAnnotationHostLayer.swift in Sources */,
+				0320AFD4255C5A7000D32BF9 /* CPTXYGraph.swift in Sources */,
+				03DDD45E2562748C00CAB29B /* CPTAxisLabelGroup.swift in Sources */,
+				039746A325572B55008CF3E6 /* CPTImage.swift in Sources */,
+				03A9CCDE2559565E0096853D /* CPTGraph.swift in Sources */,
+				034C436625679565003FAD33 /* CPTLayer ext1.swift in Sources */,
+				032EE4FF25665B950085F4E1 /* CPTBorderLayer.swift in Sources */,
+				030A651C255FD024002B3D13 /* CPTPieChart.swift in Sources */,
+				032EE507256674B30085F4E1 /* CPTPathExtensions.swift in Sources */,
+				03A9CD0F2559B0DE0096853D /* CPTXYTheme.swift in Sources */,
+				0320B004255C89FF00D32BF9 /* CPTPlotArea.swift in Sources */,
+				030A652525600740002B3D13 /* CPTXYPlotSpace.swift in Sources */,
+				03A9CCFF2559A78C0096853D /* CPTFill.swift in Sources */,
+				0320AFF4255C6AB200D32BF9 /* CPTGridLineGroup.swift in Sources */,
+				03A7D46C25616F5A00D3FED1 /* CPTGradient Extension.swift in Sources */,
+				032EE50325665BC70085F4E1 /* CPTMaskLayer.swift in Sources */,
+				03A9CD072559AAE70096853D /* CPTFillGradient.swift in Sources */,
+				03A9CD132559B1120096853D /* CPTTheme.swift in Sources */,
+				03A9CCFA2559A2D60096853D /* CPTLineCap.swift in Sources */,
+				030A6521255FFA4C002B3D13 /* CPTPlotSpace.swift in Sources */,
+				03A9CCF225595D320096853D /* CPTPlotSpaceAnnotation.swift in Sources */,
+				0320B00C255C8A5400D32BF9 /* CPTPlotAreaFrame.swift in Sources */,
+				030A652E256013D9002B3D13 /* CPTXYAxis.swift in Sources */,
+				03BB66A2255AC0CF002C20A3 /* CPTFillColor.swift in Sources */,
+				0320AFEC255C6A6200D32BF9 /* CPTAxis.swift in Sources */,
+				033667072557DFBD00B109CE /* CPTDefinitions.swift in Sources */,
+				0320AFF0255C6A8600D32BF9 /* CPTGridLines.swift in Sources */,
+				03C433C1255EC38D00F00A24 /* CPTColorSpace.swift in Sources */,
+				033390982565850F00C231D9 /* CPTImagePlatformSpecific.swift in Sources */,
+				03C433CB255ED3D600F00A24 /* CPTLegendEntry.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0372443C2545FE4600B59C97 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				037244462545FE4600B59C97 /* corePlotTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		037244432545FE4600B59C97 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 037244362545FE4600B59C97 /* corePlot */;
+			targetProxy = 037244422545FE4600B59C97 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		037244492545FE4600B59C97 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		0372444A2545FE4600B59C97 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		0372444C2545FE4600B59C97 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 84WLNJ2YG4;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = corePlot/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = th.corePlot;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		0372444D2545FE4600B59C97 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 84WLNJ2YG4;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = corePlot/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = th.corePlot;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		0372444F2545FE4600B59C97 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 84WLNJ2YG4;
+				INFOPLIST_FILE = corePlotTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = th.corePlotTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		037244502545FE4600B59C97 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 84WLNJ2YG4;
+				INFOPLIST_FILE = corePlotTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = th.corePlotTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		037244312545FE4600B59C97 /* Build configuration list for PBXProject "corePlot" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				037244492545FE4600B59C97 /* Debug */,
+				0372444A2545FE4600B59C97 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0372444B2545FE4600B59C97 /* Build configuration list for PBXNativeTarget "corePlot" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0372444C2545FE4600B59C97 /* Debug */,
+				0372444D2545FE4600B59C97 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0372444E2545FE4600B59C97 /* Build configuration list for PBXNativeTarget "corePlotTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0372444F2545FE4600B59C97 /* Debug */,
+				037244502545FE4600B59C97 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0372442E2545FE4600B59C97 /* Project object */;
+}
