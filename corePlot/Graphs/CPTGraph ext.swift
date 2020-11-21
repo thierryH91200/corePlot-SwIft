@@ -102,13 +102,12 @@ extension CPTGraph {
         return nil
     }
 
-    #pragma mark -
-    #pragma mark Organizing Plots
+    // MARK: - Organizing Plots
 
     /** @brief Add a plot to the default plot space.
      *  @param plot The plot.
      **/
-    -(void)addPlot:(nonnull CPTPlot *)plot
+    func addPlot(plot : CPTPlot )
     {
         [self addPlot:plot toPlotSpace:self.defaultPlotSpace];
     }
@@ -117,7 +116,7 @@ extension CPTGraph {
      *  @param plot The plot.
      *  @param space The plot space.
      **/
-    -(void)addPlot:(nonnull CPTPlot *)plot toPlotSpace:(nullable CPTPlotSpace *)space
+    func addPlot(plot: CPTPlot, space:CPTPlotSpace )
     {
         if ( plot ) {
             [self.plots addObject:plot];
@@ -130,19 +129,19 @@ extension CPTGraph {
     /** @brief Remove a plot from the graph.
      *  @param plot The plot to remove.
      **/
-    -(void)removePlot:(nullable CPTPlot *)plot
+    func removePlot(plot: CPTPlot )
     {
         if ( plot ) {
-            CPTPlot *thePlot = plot;
+            let thePlot = plot;
 
-            if ( [self.plots containsObject:thePlot] ) {
-                thePlot.plotSpace = nil;
-                thePlot.graph     = nil;
-                [self.plotAreaFrame.plotGroup removePlot:thePlot];
-                [self.plots removeObject:thePlot];
+            if self.plots.contains(plot ) {
+                thePlot.plotSpace = nil
+                thePlot.graph     = nil
+                self.plotAreaFrame.plotGroup.removePlot:thePlot
+                self.plots.removeObject:thePlot
             }
             else {
-                [NSException raise:CPTException format:@"Tried to remove CPTPlot which did not exist."];
+                print("Tried to remove CPTPlot which did not exist.")
             }
         }
     }
@@ -151,7 +150,7 @@ extension CPTGraph {
      *  @param plot The plot.
      *  @param idx An index within the bounds of the plot array.
      **/
-    -(void)insertPlot:(nonnull CPTPlot *)plot atIndex:(NSUInteger)idx
+    func insertPlot(plot: CPTPlot, atIndex:Int)
     {
         [self insertPlot:plot atIndex:idx intoPlotSpace:self.defaultPlotSpace];
     }
@@ -161,7 +160,7 @@ extension CPTGraph {
      *  @param idx An index within the bounds of the plot array.
      *  @param space The plot space.
      **/
-    -(void)insertPlot:(nonnull CPTPlot *)plot atIndex:(NSUInteger)idx intoPlotSpace:(nullable CPTPlotSpace *)space
+    func insertPlot(plot: CPTPlot, atIndex:Int, space: CPTPlotSpace)
     {
         if ( plot ) {
             [self.plots insertObject:plot atIndex:idx];
@@ -174,7 +173,7 @@ extension CPTGraph {
     /** @brief Remove a plot from the graph.
      *  @param identifier The identifier of the plot to remove.
      **/
-    -(void)removePlotWithIdentifier:(nullable id<NSCopying>)identifier
+    func removePlotWithIdentifier:(nullable id<NSCopying>)identifier
     {
         CPTPlot *plotToRemove = [self plotWithIdentifier:identifier];
 
@@ -186,8 +185,7 @@ extension CPTGraph {
         }
     }
 
-    #pragma mark -
-    #pragma mark Retrieving Plot Spaces
+    // MARK: - Retrieving Plot Spaces
 
     -(nullable CPTPlotSpace *)defaultPlotSpace
     {
@@ -225,12 +223,9 @@ extension CPTGraph {
         return nil;
     }
 
-    #pragma mark -
-    #pragma mark Set Plot Area
+    // MARK: Set Plot Area
 
-    /// @cond
-
-    -(void)setPlotAreaFrame:(nullable CPTPlotAreaFrame *)newArea
+    func setPlotAreaFrame(newArea: CPTPlotAreaFrame)
     {
         if ( plotAreaFrame != newArea ) {
             plotAreaFrame.graph = nil;
@@ -245,21 +240,20 @@ extension CPTGraph {
                 theFrame.graph = self;
             }
 
-            for ( CPTPlotSpace *space in self.plotSpaces ) {
-                space.graph = self;
+            for space in self.plotSpaces  {
+                space.graph = self
             }
         }
     }
 
     /// @endcond
 
-    #pragma mark -
-    #pragma mark Organizing Plot Spaces
+    // MARK: Organizing Plot Spaces
 
     /** @brief Add a plot space to the graph.
      *  @param space The plot space.
      **/
-    -(void)addPlotSpace:(nonnull CPTPlotSpace *)space
+    func addPlotSpace(space : CPTPlotSpace )
     {
         NSParameterAssert(space);
 
@@ -280,7 +274,7 @@ extension CPTGraph {
     /** @brief Remove a plot space from the graph.
      *  @param plotSpace The plot space.
      **/
-    -(void)removePlotSpace:(nullable CPTPlotSpace *)plotSpace
+    func removePlotSpace(plotSpace: CPTPlotSpace )
     {
         if ( plotSpace ) {
             CPTPlotSpace *thePlotSpace = plotSpace;
@@ -525,7 +519,7 @@ extension CPTGraph {
             title = [newTitle copy];
 
             if ( !self.inTitleUpdate ) {
-                self.inTitleUpdate   = YES;
+                self.inTitleUpdate   = true
                 self.attributedTitle = nil;
                 self.inTitleUpdate   = NO;
 
@@ -565,7 +559,7 @@ extension CPTGraph {
             attributedTitle = [newTitle copy];
 
             if ( !self.inTitleUpdate ) {
-                self.inTitleUpdate = YES;
+                self.inTitleUpdate = true
 
                 CPTLayerAnnotation *theTitleAnnotation = self.titleAnnotation;
 
@@ -673,7 +667,7 @@ func setTitlePlotAreaFrameAnchor(newAnchor : CPTRectAnchor)
      *  @param interactionPoint The coordinates of the interaction.
      *  @return Whether the event was handled or not.
      **/
-    func pointingDeviceDownEvent(event CPTNativeEvent, interactionPoint:CGPoint) ->Bool
+    func pointingDeviceDownEvent(event :CPTNativeEvent, interactionPoint:CGPoint) ->Bool
     {
         // Plots
         for ( CPTPlot *plot in [self.plots reverseObjectEnumerator] ) {
@@ -736,31 +730,33 @@ func setTitlePlotAreaFrameAnchor(newAnchor : CPTRectAnchor)
      *  @param interactionPoint The coordinates of the interaction.
      *  @return Whether the event was handled or not.
      **/
-    -(BOOL)pointingDeviceUpEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
+    func pointingDeviceUpEvent(event : CPTNativeEvent, interactionPoint:CGPoint)-> Bool
     {
-        BOOL handledEvent = NO;
+        var handledEvent = false
 
         // Plots
-        for ( CPTPlot *plot in [self.plots reverseObjectEnumerator] ) {
-            if ( [plot pointingDeviceUpEvent:event atPoint:interactionPoint] ) {
-                handledEvent = YES;
+        let reversedCollection = plots.reversed()
+
+        for plot in reversedCollection {
+            if ( [plot pointingDeviceUpEvent:event, atPoint:interactionPoint] ) {
+                handledEvent = true
                 break;
             }
         }
 
         // Axes Set
         if ( !handledEvent && [self.axisSet pointingDeviceUpEvent:event atPoint:interactionPoint] ) {
-            handledEvent = YES;
+            handledEvent = true
         }
 
         // Plot area
         if ( !handledEvent && [self.plotAreaFrame pointingDeviceUpEvent:event atPoint:interactionPoint] ) {
-            handledEvent = YES;
+            handledEvent = true
         }
 
         // Legend
         if ( !handledEvent && [self.legend pointingDeviceUpEvent:event atPoint:interactionPoint] ) {
-            handledEvent = YES;
+            handledEvent = true;
         }
 
         // Plot spaces
@@ -774,7 +770,7 @@ func setTitlePlotAreaFrameAnchor(newAnchor : CPTRectAnchor)
         }
 
         if ( handledEvent ) {
-            return YES;
+            return true;
         }
         else {
             return [super pointingDeviceUpEvent:event atPoint:interactionPoint];
@@ -806,23 +802,23 @@ func pointingDeviceDraggedEvent(event : CPTNativeEvent, atPoint:CGPoint)-> Bool
         // Plots
         for ( CPTPlot *plot in [self.plots reverseObjectEnumerator] ) {
             if ( [plot pointingDeviceDraggedEvent:event atPoint:interactionPoint] ) {
-                return YES;
+                return true
             }
         }
 
         // Axes Set
         if ( [self.axisSet pointingDeviceDraggedEvent:event atPoint:interactionPoint] ) {
-            return YES;
+            return true
         }
 
         // Plot area
         if ( [self.plotAreaFrame pointingDeviceDraggedEvent:event atPoint:interactionPoint] ) {
-            return YES;
+            return true
         }
 
         // Legend
         if ( [self.legend pointingDeviceDraggedEvent:event atPoint:interactionPoint] ) {
-            return YES;
+            return true
         }
 
         // Plot spaces
@@ -836,7 +832,7 @@ func pointingDeviceDraggedEvent(event : CPTNativeEvent, atPoint:CGPoint)-> Bool
         }
 
         if ( handledEvent ) {
-            return YES;
+            return true
         }
         else {
             return [super pointingDeviceDraggedEvent:event atPoint:interactionPoint];
@@ -868,23 +864,23 @@ func pointingDeviceCancelledEvent(event: CPTNativeEvent )-> Bool
         // Plots
         for ( CPTPlot *plot in [self.plots reverseObjectEnumerator] ) {
             if ( [plot pointingDeviceCancelledEvent:event] ) {
-                return YES;
+                return true
             }
         }
 
         // Axes Set
     if self.axisSet.pointingDeviceCancelledEvent:(event ) {
-            return YES;
+            return true
         }
 
         // Plot area
         if ( [self.plotAreaFrame pointingDeviceCancelledEvent:event] ) {
-            return YES;
+            return true
         }
 
         // Legend
         if ( [self.legend pointingDeviceCancelledEvent:event] ) {
-            return YES;
+            return true
         }
 
         // Plot spaces
@@ -896,7 +892,7 @@ func pointingDeviceCancelledEvent(event: CPTNativeEvent )-> Bool
         }
 
         if ( handledEvent ) {
-            return YES;
+            return true
         }
         else {
             return super.pointingDeviceCancelledEvent:event];
@@ -930,23 +926,23 @@ func pointingDeviceCancelledEvent(event: CPTNativeEvent )-> Bool
         // Plots
         for ( CPTPlot *plot in [self.plots reverseObjectEnumerator] ) {
             if ( [plot scrollWheelEvent:event fromPoint:fromPoint toPoint:toPoint] ) {
-                return YES;
+                return true
             }
         }
 
         // Axes Set
         if ( [self.axisSet scrollWheelEvent:event fromPoint:fromPoint toPoint:toPoint] ) {
-            return YES;
+            return true
         }
 
         // Plot area
         if ( [self.plotAreaFrame scrollWheelEvent:event fromPoint:fromPoint toPoint:toPoint] ) {
-            return YES;
+            return true
         }
 
         // Legend
         if ( [self.legend scrollWheelEvent:event fromPoint:fromPoint toPoint:toPoint] ) {
-            return YES;
+            return true
         }
 
         // Plot spaces
@@ -958,7 +954,7 @@ func pointingDeviceCancelledEvent(event: CPTNativeEvent )-> Bool
         }
 
         if ( handledEvent ) {
-            return YES;
+            return true
         }
         else {
             return [super scrollWheelEvent:event fromPoint:fromPoint toPoint:toPoint];

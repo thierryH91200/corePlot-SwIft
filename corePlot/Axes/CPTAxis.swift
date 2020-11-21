@@ -18,12 +18,18 @@ class CPTAxis : CPTLayer {
         case divisions     ///< Divide the plot range into equal parts.
     }
     
-//    typedef NSSet<CPTAxisLabel > CPTAxisLabelSet;
     
-//    typedef NSArray<CPTPlotRange *> CPTPlotRangeArray;
+    // MARK: Axis.m
+    var   needsRelabel = false
+    var  pointingDeviceDownLabel: CPTAxisLabel
+    var  pointingDeviceDownTickLabel:CPTAxisLabel
+    var  labelFormatterChanged = false
+    var   minorLabelFormatterChanged = false
+    var  mutableBackgroundLimitBands: CPTMutableLimitBandArray
+    var  tickOffset = CGFloat(0)
+    var   inTitleUpdate = false
+    var   labelsUpdated = false
 
-
-    
     // MARK: Axis
     var coordinate : CPTCoordinate
     var labelingOrigin : NSNumber
@@ -33,12 +39,11 @@ class CPTAxis : CPTLayer {
     var axisLineCapMin : CPTLineCap
     var xisLineCapMax : CPTLineCap
     
-    
     // MARK: Title
     var titleTextStyle: CPTTextStyle
-    var  axisTitle: CPTAxisTitle
-    var  titleOffset: CGFloat
-    var  title = "title"
+    var axisTitle: CPTAxisTitle
+    var titleOffset: CGFloat
+    var title = "title"
     var  atributedTitle =  NSAttributedString()
     var  titleRotation : CGFloat
     var  titleDirection : CPTSign = .none
@@ -46,7 +51,7 @@ class CPTAxis : CPTLayer {
     var  defaultTitleLocation : NSNumber
     
     // MARK: Labels
-    var  labelingPolicy :   CPTAxisLabelingPolicy
+    var  labelingPolicy =  CPTAxisLabelingPolicy.automatic
     var  labelOffset = CGFloat(0.0)
     var  minorTickLabelOffset: CGFloat
     var  labelRotation: CGFloat
@@ -60,20 +65,53 @@ class CPTAxis : CPTLayer {
     var labelFormatter: Formatter
     var minorTickLabelFormatter: Formatter
     
+    // MARK:  Major Ticks
+    var majorIntervalLength = 0
+    var  majorTickLength = CGFloat(0)
+    var  majorTickLineStyle: CPTLineStyle;
+    var majorTickLocations: CPTNumberSet
+    var  preferredNumberOfMajorTicks = 0
+    
+    // MARK:  Minor Ticks
+    var minorTicksPerInterval = 0
+    var minorTickLength = CGFloat(0.0)
+    var minorTickLineStyle: CPTLineStyle
+    var minorTickLocations: CPTNumberSet
+    
+    // MARK:  Grid Lines
+    var  majorGridLineStyle: CPTLineStyle
+    var  minorGridLineStyle: CPTLineStyle
+    var   *gridLinesRange : CPTPlotRange
+    
+    // MARK:  Background Bands
+    var  majorGridLineStyle : CPTFillArray
+    var alternatingBandAnchor = 0.0
+    var  backgroundLimitBands : CPTLimitBandArray
+    
+    // MARK:  Plot Space
+    var  plotSpace : CPTPlotSpace
+    
+    // MARK:  Layers
+    var separateLayers = false
+    var plotArea: CPTPlotArea
+    var minorGridLines : CPTGridLines
+    var majorGridLines: CPTGridLines
+    var axisSet: CPTAxisSet
+    
+    
     var axisLabels: CPTAxisLabelSet
     var minorTickAxisLabels : CPTAxisLabelSet
-    var needsRelabel = false
     var labelExclusionRanges = [CPTPlot]()
     var labelShadow: CPTShadow
     var minorTickLabelShadow: CPTShadow
-
-
+    
+    var mutableBackgroundLimitBands = [CPTLimitBand]()
     
     override init( frame : CGRect  )
     {
-//        super.init(Frame: frame)
-//        plotSpace                   = nil;
-//        majorTickLocations          = [NSSet set];
+        //        super.init(Frame: frame)
+        //        plotSpace                   = nil;
+        //        majorTickLocations          = [NSSet set];
         
         minorTickLocations          = [NSSet set];
         preferredNumberOfMajorTicks = 0;
@@ -132,7 +170,7 @@ class CPTAxis : CPTLayer {
         gridLinesRange              = nil;
         alternatingBandFills        = nil;
         alternatingBandAnchor       = nil;
-        mutableBackgroundLimitBands = nil;
+        BackgroundLimitBands.remove = nil;
         minorGridLines              = nil;
         majorGridLines              = nil;
         pointingDeviceDownLabel     = nil;
@@ -140,239 +178,108 @@ class CPTAxis : CPTLayer {
         inTitleUpdate               = NO;
         labelsUpdated               = NO;
         
-        self.needsDisplayOnBoundsChange = YES;
+        self.needsDisplayOnBoundsChange = true
+    }
+    
+    
+    
+    
+    
+
+    init(layer :  CPTAxis )
+    {
+        super.init(layer: layer)
+        let theLayer = CPTAxis( )
+        
+        plotSpace                   = theLayer.plotSpace;
+        majorTickLocations          = theLayer.majorTickLocations;
+        minorTickLocations          = theLayer.minorTickLocations;
+        preferredNumberOfMajorTicks = theLayer.preferredNumberOfMajorTicks;
+        minorTickLength             = theLayer.minorTickLength;
+        majorTickLength             = theLayer.majorTickLength;
+        labelOffset                 = theLayer.labelOffset;
+        minorTickLabelOffset        = theLayer.labelOffset;
+        labelRotation               = theLayer.labelRotation;
+        minorTickLabelRotation      = theLayer.labelRotation;
+        labelAlignment              = theLayer.labelAlignment;
+        minorTickLabelAlignment     = theLayer.labelAlignment;
+        title                       = theLayer.title;
+        attributedTitle             = theLayer.attributedTitle;
+        titleOffset                 = theLayer.titleOffset;
+        axisLineStyle               = theLayer.axisLineStyle;
+        majorTickLineStyle          = theLayer.majorTickLineStyle;
+        minorTickLineStyle          = theLayer.minorTickLineStyle;
+        tickLabelDirection          = theLayer.tickLabelDirection;
+        minorTickLabelDirection     = theLayer.minorTickLabelDirection;
+        majorGridLineStyle          = theLayer.majorGridLineStyle;
+        minorGridLineStyle          = theLayer.minorGridLineStyle;
+        axisLineCapMin              = theLayer.axisLineCapMin;
+        axisLineCapMax              = theLayer.axisLineCapMax;
+        labelingOrigin              = theLayer.labelingOrigin;
+        majorIntervalLength         = theLayer.majorIntervalLength;
+        minorTicksPerInterval       = theLayer.minorTicksPerInterval;
+        coordinate                  = theLayer.coordinate;
+        labelingPolicy              = theLayer.labelingPolicy;
+        labelFormatter              = theLayer.labelFormatter;
+        minorTickLabelFormatter     = theLayer.minorTickLabelFormatter;
+        axisLabels                  = theLayer.axisLabels;
+        minorTickAxisLabels         = theLayer.minorTickAxisLabels;
+        tickDirection               = theLayer.tickDirection;
+        labelTextStyle              = theLayer.labelTextStyle;
+        minorTickLabelTextStyle     = theLayer.minorTickLabelTextStyle;
+        axisTitle                   = theLayer.axisTitle;
+        titleTextStyle              = theLayer.titleTextStyle;
+        titleRotation               = theLayer.titleRotation;
+        titleDirection              = theLayer.titleDirection;
+        titleLocation               = theLayer.titleLocation;
+        needsRelabel                = theLayer.needsRelabel;
+        labelExclusionRanges        = theLayer.labelExclusionRanges;
+        plotArea                    = theLayer.plotArea;
+        separateLayers              = theLayer.separateLayers;
+        labelShadow                 = theLayer.labelShadow;
+        minorTickLabelShadow        = theLayer.minorTickLabelShadow;
+        visibleRange                = theLayer.visibleRange;
+        visibleAxisRange            = theLayer.visibleAxisRange;
+        gridLinesRange              = theLayer.gridLinesRange;
+        alternatingBandFills        = theLayer.alternatingBandFills;
+        alternatingBandAnchor       = theLayer.alternatingBandAnchor;
+        mutableBackgroundLimitBands = theLayer.mutableBackgroundLimitBands;
+        minorGridLines              = theLayer.minorGridLines;
+        majorGridLines              = theLayer.majorGridLines;
+        pointingDeviceDownLabel     = theLayer.pointingDeviceDownLabel;
+        pointingDeviceDownTickLabel = theLayer.pointingDeviceDownTickLabel;
+        inTitleUpdate               = theLayer.inTitleUpdate;
+        labelsUpdated               = theLayer.labelsUpdated;
     }
 
 
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+
+
+// MARK: Animation
+
+    func needsDisplayForKey(aKey:String )-> Bool
+    {
+        var keys        = Set<String>()
+        
+        keys.insert("titleOffset")
+        keys.insert("titleRotation")
+        keys.insert("labelOffset")
+        keys.insert("minorTickLabelOffset")
+        keys.insert("labelRotation")
+        keys.insert("minorTickLabelRotation")
+        
+        if keys.contains(aKey ) {
+            return true
+        }
+        else {
+            return CPTLayer.needsDisplay(forKey: aKey)
+        }
+    }
 }
-
-
-//
-//    // MARK: Labels
-// var  labelingPolicy :   CPTAxisLabelingPolicy
-//    var  labelOffset :CGFloat
-//    var  minorTickLabelOffset: CGFloat
-//    var  labelRotation: CGFloat
-//    var  minorTickLabelRotation: CGFloat
-//    var CPTAlignment labelAlignment;
-//    var CPTAlignment minorTickLabelAlignment;
-//    var CPTTextStyle *labelTextStyle;
-//    var CPTTextStyle *minorTickLabelTextStyle;
-//    var CPTSign tickLabelDirection;
-//    var CPTSign minorTickLabelDirection;
-//    var NSFormatter *labelFormatter;
-//    var NSFormatter *minorTickLabelFormatter;
-//    var CPTAxisLabelSet *axisLabels;
-//    var CPTAxisLabelSet *minorTickAxisLabels;
-//    @property (nonatomic, readonly) BOOL needsRelabel;
-//    var CPTPlotRangeArray *labelExclusionRanges;
-//    var CPTShadow *labelShadow;
-//    var CPTShadow *minorTickLabelShadow;
-//
-//
-//    // MARK: Major Ticks
-// var  majorIntervalLength : NSNumber
-//    var CGFloat majorTickLength;
-// var  majorTickLineStyle: CPTLineStyle
-//    var CPTNumberSet *majorTickLocations;
-//    var NSUInteger preferredNumberOfMajorTicks;
-//
-//    // MARK: Minor Ticks
-//    var NSUInteger minorTicksPerInterval;
-//    var CGFloat minorTickLength;
-//    var CPTLineStyle *minorTickLineStyle;
-//    var CPTNumberSet *minorTickLocations;
-//
-//    // MARK: Grid Lines
-//    var CPTLineStyle majorGridLineStyle;
-//    var CPTLineStyle minorGridLineStyle;
-//    var CPTPlotRange gridLinesRange;
-//
-//    // MARK: Background Bands
-//    var CPTFillArray alternatingBandFills;
-//    var NSNumber alternatingBandAnchor;
-//    var CPTLimitBandArray backgroundLimitBands;
-//
-//    // MARK: Plot Space
-//    var CPTPlotSpace plotSpace;
-//
-//    // MARK: Layers
-// var  separateLayers: Bool = false
-//    var plotArea: CPTPlotArea
-//    var minorGridLines: CPTGridLines
-//    var  majorGrid: LinesCPTGridLines;
-//    var axisSet: CPTAxisSet;
-//
-//    init( frame : CGRect  )
-//    {
-//        super.init(newFrame: newFrame)
-//            plotSpace                   = nil;
-//            majorTickLocations          = [NSSet set];
-//            minorTickLocations          = [NSSet set];
-//            preferredNumberOfMajorTicks = 0;
-//            minorTickLength             = CGFloat(3.0);
-//            majorTickLength             = CGFloat(5.0);
-//            labelOffset                 = CGFloat(2.0);
-//            minorTickLabelOffset        = CGFloat(2.0);
-//            labelRotation               = CGFloat(0.0);
-//            minorTickLabelRotation      = CGFloat(0.0);
-//            labelAlignment              = CPTAlignmentCenter;
-//            minorTickLabelAlignment     = CPTAlignmentCenter;
-//            title                       = nil;
-//            attributedTitle             = nil;
-//            titleOffset                 = CGFloat(30.0);
-//            axisLineStyle               = CPTLineStyle()
-//            majorTickLineStyle          = [[CPTLineStyle alloc] init];
-//            minorTickLineStyle          = [[CPTLineStyle alloc] init];
-//            tickLabelDirection          = CPTSignNone;
-//        minorTickLabelDirection     = .none
-//            majorGridLineStyle          = nil
-//            minorGridLineStyle          = nil
-//            axisLineCapMin              = nil
-//            axisLineCapMax              = nil
-//            labelingOrigin              = 0.0
-//            majorIntervalLength         = 1.0;
-//            minorTicksPerInterval       = 1
-//            coordinate                  = CPTCoordinateX;
-//            labelingPolicy              = CPTAxisLabelingPolicyFixedInterval;
-//            labelTextStyle              = [[CPTTextStyle alloc] init];
-//
-//            NSNumberFormatter *newFormatter = [[NSNumberFormatter alloc] init];
-//            newFormatter.minimumIntegerDigits  = 1;
-//            newFormatter.maximumFractionDigits = 1;
-//            newFormatter.minimumFractionDigits = 1;
-//
-//            labelFormatter              = newFormatter;
-//            minorTickLabelTextStyle     = [[CPTTextStyle alloc] init];
-//            minorTickLabelFormatter     = nil;
-//            labelFormatterChanged       = YES;
-//            minorLabelFormatterChanged  = NO;
-//            axisLabels                  = [NSSet set];
-//            minorTickAxisLabels         = [NSSet set];
-//            tickDirection               = CPTSignNone;
-//            axisTitle                   = nil;
-//            titleTextStyle              = [[CPTTextStyle alloc] init];
-//            titleRotation               = CPTNAN;
-//            titleLocation               = @(NAN);
-//            needsRelabel                = YES;
-//            labelExclusionRanges        = nil;
-//            plotArea                    = nil;
-//            separateLayers              = NO;
-//            labelShadow                 = nil;
-//            minorTickLabelShadow        = nil;
-//            visibleRange                = nil;
-//            visibleAxisRange            = nil;
-//            gridLinesRange              = nil;
-//            alternatingBandFills        = nil;
-//            alternatingBandAnchor       = nil;
-//            mutableBackgroundLimitBands = nil;
-//            minorGridLines              = nil;
-//            majorGridLines              = nil;
-//            pointingDeviceDownLabel     = nil;
-//            pointingDeviceDownTickLabel = nil;
-//            inTitleUpdate               = NO;
-//            labelsUpdated               = NO;
-//
-//            self.needsDisplayOnBoundsChange = YES;
-//        }
-//        return self;
-//    }
-//
-//
-//    -(nonnull instancetype)initWithLayer:(nonnull id)layer
-//    {
-//        if ((self = [super initWithLayer:layer])) {
-//            CPTAxis *theLayer = (CPTAxis *)layer;
-//
-//            plotSpace                   = theLayer->plotSpace;
-//            majorTickLocations          = theLayer->majorTickLocations;
-//            minorTickLocations          = theLayer->minorTickLocations;
-//            preferredNumberOfMajorTicks = theLayer->preferredNumberOfMajorTicks;
-//            minorTickLength             = theLayer->minorTickLength;
-//            majorTickLength             = theLayer->majorTickLength;
-//            labelOffset                 = theLayer->labelOffset;
-//            minorTickLabelOffset        = theLayer->labelOffset;
-//            labelRotation               = theLayer->labelRotation;
-//            minorTickLabelRotation      = theLayer->labelRotation;
-//            labelAlignment              = theLayer->labelAlignment;
-//            minorTickLabelAlignment     = theLayer->labelAlignment;
-//            title                       = theLayer->title;
-//            attributedTitle             = theLayer->attributedTitle;
-//            titleOffset                 = theLayer->titleOffset;
-//            axisLineStyle               = theLayer->axisLineStyle;
-//            majorTickLineStyle          = theLayer->majorTickLineStyle;
-//            minorTickLineStyle          = theLayer->minorTickLineStyle;
-//            tickLabelDirection          = theLayer->tickLabelDirection;
-//            minorTickLabelDirection     = theLayer->minorTickLabelDirection;
-//            majorGridLineStyle          = theLayer->majorGridLineStyle;
-//            minorGridLineStyle          = theLayer->minorGridLineStyle;
-//            axisLineCapMin              = theLayer->axisLineCapMin;
-//            axisLineCapMax              = theLayer->axisLineCapMax;
-//            labelingOrigin              = theLayer->labelingOrigin;
-//            majorIntervalLength         = theLayer->majorIntervalLength;
-//            minorTicksPerInterval       = theLayer->minorTicksPerInterval;
-//            coordinate                  = theLayer->coordinate;
-//            labelingPolicy              = theLayer->labelingPolicy;
-//            labelFormatter              = theLayer->labelFormatter;
-//            minorTickLabelFormatter     = theLayer->minorTickLabelFormatter;
-//            axisLabels                  = theLayer->axisLabels;
-//            minorTickAxisLabels         = theLayer->minorTickAxisLabels;
-//            tickDirection               = theLayer->tickDirection;
-//            labelTextStyle              = theLayer->labelTextStyle;
-//            minorTickLabelTextStyle     = theLayer->minorTickLabelTextStyle;
-//            axisTitle                   = theLayer->axisTitle;
-//            titleTextStyle              = theLayer->titleTextStyle;
-//            titleRotation               = theLayer->titleRotation;
-//            titleDirection              = theLayer->titleDirection;
-//            titleLocation               = theLayer->titleLocation;
-//            needsRelabel                = theLayer->needsRelabel;
-//            labelExclusionRanges        = theLayer->labelExclusionRanges;
-//            plotArea                    = theLayer->plotArea;
-//            separateLayers              = theLayer->separateLayers;
-//            labelShadow                 = theLayer->labelShadow;
-//            minorTickLabelShadow        = theLayer->minorTickLabelShadow;
-//            visibleRange                = theLayer->visibleRange;
-//            visibleAxisRange            = theLayer->visibleAxisRange;
-//            gridLinesRange              = theLayer->gridLinesRange;
-//            alternatingBandFills        = theLayer->alternatingBandFills;
-//            alternatingBandAnchor       = theLayer->alternatingBandAnchor;
-//            mutableBackgroundLimitBands = theLayer->mutableBackgroundLimitBands;
-//            minorGridLines              = theLayer->minorGridLines;
-//            majorGridLines              = theLayer->majorGridLines;
-//            pointingDeviceDownLabel     = theLayer->pointingDeviceDownLabel;
-//            pointingDeviceDownTickLabel = theLayer->pointingDeviceDownTickLabel;
-//            inTitleUpdate               = theLayer->inTitleUpdate;
-//            labelsUpdated               = theLayer->labelsUpdated;
-//        }
-//        return self;
-//    }
-//
-//    #pragma mark -
-//    #pragma mark Animation
-//
-//    /// @cond
-//
-//    +(BOOL)needsDisplayForKey:(nonnull NSString *)aKey
-//    {
-//        static NSSet<NSString *> *keys   = nil;
-//        static dispatch_once_t onceToken = 0;
-//
-//        dispatch_once(&onceToken, ^{
-//            keys = [NSSet setWithArray:@[@"titleOffset",
-//                                         @"titleRotation",
-//                                         @"labelOffset",
-//                                         @"minorTickLabelOffset",
-//                                         @"labelRotation",
-//                                         @"minorTickLabelRotation"]];
-//        });
-//
-//        if ( [keys containsObject:aKey] ) {
-//            return YES;
-//        }
-//        else {
-//            return [super needsDisplayForKey:aKey];
-//        }
-//    }
 //
 //    /// @endcond
 //

@@ -52,7 +52,7 @@ class CPTGraph: CPTBorderedLayer {
     // MARK: Layers
     var axisSet : CPTAxisSet
     var newAxisSet : CPTAxisSet?
-    var  plotAreaFrame : CPTPlotAreaFrame
+    var plotAreaFrame : CPTPlotAreaFrame
     var defaultPlotSpace : CPTPlotSpace
     var newPlotSpace : CPTPlotSpace?
     var topDownLayerOrder : CPTNumberArray
@@ -65,7 +65,7 @@ class CPTGraph: CPTBorderedLayer {
     override init(frame : CGRect) {
         super.init(frame: frame)
         hostingView = nil
-        plots = [Any]()
+        plots.removeAll()
         
         // Margins
         paddingLeft = CGFloat(20.0)

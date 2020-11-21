@@ -45,8 +45,8 @@ class CPTXYGraph: CPTGraph {
     {
         let newAxisSet = CPTXYAxisSet( frame: self.bounds)
 
-        newAxisSet.xAxis.plotSpace = self.defaultPlotSpace;
-        newAxisSet.yAxis.plotSpace = self.defaultPlotSpace;
+        newAxisSet.xAxis.plotSpace = self.defaultPlotSpace
+        newAxisSet.yAxis.plotSpace = self.defaultPlotSpace
         return newAxisSet;
     }
 }
