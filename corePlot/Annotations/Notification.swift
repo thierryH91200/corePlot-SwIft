@@ -13,6 +13,9 @@ public extension Notification.Name {
     
     static let CPTLayerBoundsDidChangeNotification           = Notification.Name( "CPTLayerBoundsDidChangeNotification")
     static let CoordinateMappingDidChangeNotification  = Notification.Name( "CoordinateMappingDidChangeNotification")
+    static let boundsDidChange  = Notification.Name( "boundsDidChange")
+    
+    
     static let updateBalance             = Notification.Name( "updateBalance")
     static let updateAccount             = Notification.Name( "updateAccount")
 

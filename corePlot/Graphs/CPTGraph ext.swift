@@ -17,9 +17,7 @@ extension CPTGraph {
     {
         self.reloadDataIfNeeded()
         self.axisSet.axes.makeObjectsPerformSelector(@selector(relabel))
-
-    #if TARGET_OS_OSX
-        // Workaround since @available macro is not there
+        
         if ( [NSView instancesRespondToSelector:@selector(effectiveAppearance)] ) {
             let  *oldAppearance = NSAppearance.currentAppearance;
             let view                = self.hostingView;
@@ -28,69 +26,33 @@ extension CPTGraph {
             NSAppearance.currentAppearance = oldAppearance;
         }
         else {
-            [super layoutAndRenderInContext:context];
+            super.layoutAndRenderInContext(context: context)
         }
-    #else
-    #ifdef __IPHONE_13_0
-        if ( @available(iOS 13, *)) {
-            if ( [UITraitCollection instancesRespondToSelector:@selector(performAsCurrentTraitCollection:)] ) {
-                UITraitCollection *traitCollection = ((UIView *)self.hostingView).traitCollection;
-                if ( traitCollection ) {
-                    [traitCollection performAsCurrentTraitCollection: ^{
-                     super.layoutAndRenderInContext(context)
-                    }];
-                }
-                else {
-                    super.layoutAndRenderInContext(context)
-                }
-            }
-            else {
-                super.layoutAndRenderInContext(context)
-            }
-        }
-        else {
-            super.layoutAndRenderInContext(context)
-        }
-    super.layoutAndRenderInContext(context)
-    #endif
-    #endif
-    #pragma clang diagnostic pop
     }
 
-    /// @endcond
-
-    #pragma mark -
-    #pragma mark Animation
-
-    /// @cond
-
-    +(BOOL)needsDisplayForKey:(nonnull NSString *)aKey
+// MARK: Animation
+    func needsDisplayForKey(aKey: String )-> Bool
     {
-        static NSSet<NSString *> *keys   = nil;
-        static dispatch_once_t onceToken = 0;
-
-        dispatch_once(&onceToken, ^{
-            keys = [NSSet setWithArray:@[@"titleDisplacement",
-                                         @"legendDisplacement"]];
-        });
-
-        if ( [keys containsObject:aKey] ) {
-            return YES;
+        var keys        = Set<String>()
+        
+        
+        keys.insert("titleDisplacement")
+        keys.insert("legendDisplacement")
+        
+        if keys.contains(aKey ) {
+            return true;
         }
         else {
-            return [super needsDisplayForKey:aKey];
+            return CPTBorderedLayer.needsDisplay(forKey: aKey)
         }
     }
-
-    /// @endcond
-
-    #pragma mark -
-    #pragma mark Retrieving Plots
+    
+   // MARK: - Retrieving Plots
 
     /**
      *  @brief Makes all plots reload their data.
      **/
-    -(void)reloadData
+    func reloadData()
     {
         [self.plots makeObjectsPerformSelector:@selector(reloadData)];
         [self.plotSpaces makeObjectsPerformSelector:@selector(removeAllCategories)];
@@ -99,7 +61,7 @@ extension CPTGraph {
     /**
      *  @brief Makes all plots reload their data if their data cache is out of date.
      **/
-    -(void)reloadDataIfNeeded
+    func reloadDataIfNeeded()
     {
         [self.plots makeObjectsPerformSelector:@selector(reloadDataIfNeeded)];
     }
@@ -116,7 +78,7 @@ extension CPTGraph {
      *  @param idx An index within the bounds of the plot array.
      *  @return The plot at the given index.
      **/
-    -(nullable CPTPlot *)plotAtIndex:(NSUInteger)idx
+    func plotAtIndex(idx : Int) -> CPTPlot?
     {
         if ( idx < self.plots.count ) {
             return (self.plots)[idx];
@@ -130,14 +92,14 @@ extension CPTGraph {
      *  @param identifier A plot identifier.
      *  @return The plot with the given identifier or @nil if it was not found.
      **/
-    -(nullable CPTPlot *)plotWithIdentifier:(nullable id<NSCopying>)identifier
+    func plotWithIdentifier(identifier: Any)-> CPTPlot?
     {
-        for ( CPTPlot *plot in self.plots ) {
-            if ( [plot.identifier isEqual:identifier] ) {
+        for plot in self.plots {
+            if (plot.identifier as AnyObject).isEqual(identifier ) {
                 return plot;
             }
         }
-        return nil;
+        return nil
     }
 
     #pragma mark -
@@ -644,34 +606,34 @@ extension CPTGraph {
         }
     }
 
-    -(void)setTitleTextStyle:(nullable CPTTextStyle *)newStyle
-    {
-        if ( newStyle != titleTextStyle ) {
-            titleTextStyle = [newStyle copy];
-
-            if ( !self.inTitleUpdate ) {
-                self.inTitleUpdate   = YES;
-                self.attributedTitle = nil;
-                self.inTitleUpdate   = NO;
-
-                CPTTextLayer *titleLayer = (CPTTextLayer *)self.titleAnnotation.contentLayer;
-                if ( [titleLayer isKindOfClass:[CPTTextLayer class]] ) {
-                    titleLayer.textStyle = titleTextStyle;
-                }
+func setTitleTextStyle(newStyle: CPTTextStyle )
+{
+    if ( newStyle != titleTextStyle ) {
+        titleTextStyle = newStyle
+        
+        if ( !self.inTitleUpdate ) {
+            self.inTitleUpdate   = true
+            self.attributedTitle = nil;
+            self.inTitleUpdate   = false;
+            
+            CPTTextLayer *titleLayer = (CPTTextLayer *)self.titleAnnotation.contentLayer;
+            if ( [titleLayer isKindOfClass:[CPTTextLayer class]] ) {
+                titleLayer.textStyle = titleTextStyle;
             }
         }
     }
+}
 
-    -(void)setTitleDisplacement:(CGPoint)newDisplace
-    {
-        if ( !CGPointEqualToPoint(newDisplace, titleDisplacement)) {
-            titleDisplacement = newDisplace;
-
-            self.titleAnnotation.displacement = newDisplace;
-        }
+func setTitleDisplacement(newDisplace:CGPoint)
+{
+    if ( !CGPointEqualToPoint(newDisplace, titleDisplacement)) {
+        titleDisplacement = newDisplace;
+        
+        self.titleAnnotation.displacement = newDisplace;
     }
+}
 
-    -(void)setTitlePlotAreaFrameAnchor:(CPTRectAnchor)newAnchor
+func setTitlePlotAreaFrameAnchor(newAnchor : CPTRectAnchor)
     {
         if ( newAnchor != titlePlotAreaFrameAnchor ) {
             titlePlotAreaFrameAnchor = newAnchor;
@@ -686,8 +648,7 @@ extension CPTGraph {
 
     /// @endcond
 
-    #pragma mark -
-    #pragma mark Event Handling
+   // MARK: - Event Handling
 
     /// @name User Interaction
     /// @{
@@ -712,42 +673,43 @@ extension CPTGraph {
      *  @param interactionPoint The coordinates of the interaction.
      *  @return Whether the event was handled or not.
      **/
-    -(BOOL)pointingDeviceDownEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
+    func pointingDeviceDownEvent(event CPTNativeEvent, interactionPoint:CGPoint) ->Bool
     {
         // Plots
         for ( CPTPlot *plot in [self.plots reverseObjectEnumerator] ) {
             if ( [plot pointingDeviceDownEvent:event atPoint:interactionPoint] ) {
-                return YES;
+                return true;
             }
         }
 
         // Axes Set
         if ( [self.axisSet pointingDeviceDownEvent:event atPoint:interactionPoint] ) {
-            return YES;
+            return true
         }
 
         // Plot area
         if ( [self.plotAreaFrame pointingDeviceDownEvent:event atPoint:interactionPoint] ) {
-            return YES;
+            return true
         }
 
         // Legend
         if ( [self.legend pointingDeviceDownEvent:event atPoint:interactionPoint] ) {
-            return YES;
+            return true;
         }
 
         // Plot spaces
         // Plot spaces do not block events, because several spaces may need to receive
         // the same event sequence (e.g., dragging coordinate translation)
-        BOOL handledEvent = NO;
+        
+        var handledEvent = false;
 
-        for ( CPTPlotSpace *space in self.plotSpaces ) {
+        for space in self.plotSpaces {
             BOOL handled = [space pointingDeviceDownEvent:event atPoint:interactionPoint];
             handledEvent |= handled;
         }
 
-        if ( handledEvent ) {
-            return YES;
+        if  handledEvent == true {
+            return true
         }
         else {
             return [super pointingDeviceDownEvent:event atPoint:interactionPoint];
@@ -839,7 +801,7 @@ extension CPTGraph {
      *  @param interactionPoint The coordinates of the interaction.
      *  @return Whether the event was handled or not.
      **/
-    -(BOOL)pointingDeviceDraggedEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
+func pointingDeviceDraggedEvent(event : CPTNativeEvent, atPoint:CGPoint)-> Bool
     {
         // Plots
         for ( CPTPlot *plot in [self.plots reverseObjectEnumerator] ) {
@@ -868,7 +830,7 @@ extension CPTGraph {
         // the same event sequence (e.g., dragging coordinate translation)
         BOOL handledEvent = NO;
 
-        for ( CPTPlotSpace *space in self.plotSpaces ) {
+        for space in self.plotSpaces  {
             BOOL handled = [space pointingDeviceDraggedEvent:event atPoint:interactionPoint];
             handledEvent |= handled;
         }
@@ -901,7 +863,7 @@ extension CPTGraph {
      *  @param event The OS event.
      *  @return Whether the event was handled or not.
      **/
-    -(BOOL)pointingDeviceCancelledEvent:(nonnull CPTNativeEvent *)event
+func pointingDeviceCancelledEvent(event: CPTNativeEvent )-> Bool
     {
         // Plots
         for ( CPTPlot *plot in [self.plots reverseObjectEnumerator] ) {
@@ -911,7 +873,7 @@ extension CPTGraph {
         }
 
         // Axes Set
-        if ( [self.axisSet pointingDeviceCancelledEvent:event] ) {
+    if self.axisSet.pointingDeviceCancelledEvent:(event ) {
             return YES;
         }
 
@@ -926,7 +888,7 @@ extension CPTGraph {
         }
 
         // Plot spaces
-        BOOL handledEvent = NO;
+        let handledEvent = false
 
         for ( CPTPlotSpace *space in self.plotSpaces ) {
             BOOL handled = [space pointingDeviceCancelledEvent:event];
@@ -937,7 +899,7 @@ extension CPTGraph {
             return YES;
         }
         else {
-            return [super pointingDeviceCancelledEvent:event];
+            return super.pointingDeviceCancelledEvent:event];
         }
     }
 

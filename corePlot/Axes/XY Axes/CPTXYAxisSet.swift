@@ -26,7 +26,11 @@ class CPTXYAxisSet: CPTAxisSet {
 
             self.axes = [xAxis, yAxis]
         }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
-
-
 }
+
+
+

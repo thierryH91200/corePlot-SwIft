@@ -11,30 +11,27 @@ class CPTLayer : CALayer
     var masksToBorder        = false;
     var shadow   : CPTShadow?            = nil
     
-
-    var _shadowMargin   : CGSize?            = nil
+    var _shadowMargin   : CGSize? = nil
     var shadowMargin : CGSize {
         
-            get {
-                var margin = CGSize()
-                let myShadow = self.shadow;
+        get {
+            var margin = CGSize()
+            let myShadow = self.shadow;
+            
+            if (( myShadow ) != nil) {
+                let shadowOffset  = myShadow?.shadowOffset
+                let shadowRadius = myShadow?.shadowBlurRadius
                 
-                if (( myShadow ) != nil) {
-                    let shadowOffset  = myShadow?.shadowOffset
-                    let shadowRadius = myShadow?.shadowBlurRadius
-                    
-                    margin = CGSize(width: ceil(abs(shadowOffset!.width) + abs(shadowRadius!)),
-                                    height: ceil(abs(shadowOffset!.height) + abs(shadowRadius!)));
-                }
-                
-                return margin;
+                margin = CGSize(width: ceil(abs(shadowOffset!.width) + abs(shadowRadius!)),
+                                height: ceil(abs(shadowOffset!.height) + abs(shadowRadius!)));
             }
+            return margin;
+        }
         
         set {
             _shadowMargin = newValue
         }
     }
-
     
     var renderingRecursively = false
     var useFastRendering     = false
@@ -42,7 +39,7 @@ class CPTLayer : CALayer
     
     var outerBorderPath  :CGPath?    = nil
     var innerBorderPath  :CGPath?    = nil;
-    var identifier  : NSObject?         = nil;
+    var identifier  : Any?         = nil;
     
     typealias CPTSublayerSet = Set<CALayer>
     
@@ -99,17 +96,6 @@ class CPTLayer : CALayer
         }
     }
     
-    @objc func setNeedsDisplayAllLayers() {
-        setNeedsDisplay()
-        
-        for subLayer in sublayers! {
-            if subLayer.responds(to: #selector(CPTLayer.setNeedsDisplayAllLayers)) {
-                subLayer.setNeedsDisplay()
-            } else {
-                subLayer.setNeedsDisplay()
-            }
-        }
-    }
     
     override func draw(in context: CGContext) {
         useFastRendering = true
@@ -132,23 +118,6 @@ class CPTLayer : CALayer
         }
     }
     
-    
-    override func display()
-    {
-        guard self.isHidden == false else {return}
-        
-        if NSView.instancesRespondToSelector:@selector(effectiveAppearance)] ) {
-            let oldAppearance = NSAppearance.current;
-            NSAppearance.currentAppearance = NSView self.graph.hostingView.effectiveAppearance
-            
-            super.display()
-            NSAppearance.current = oldAppearance;
-        }
-        else {
-            super.display()
-        }
-    }
-        
     func renderAsVector(in context: CGContext) {
         // This is where subclasses do their drawing
         if renderingRecursively {
@@ -159,11 +128,11 @@ class CPTLayer : CALayer
     
     func recursivelyRenderInContext( context : CGContext)
     {
-        if ( self.isHidden == false ) {
+        guard self.isHidden == false else { return}
             // render self
             context.saveGState()
             
-            self.applyTransform(self.transform, toContext:context)
+            self.applyTransform(transform3D: self.transform, context:context)
             
             self.renderingRecursively = true;
             if ( !self.masksToBounds ) {
@@ -185,10 +154,10 @@ class CPTLayer : CALayer
                 let currentSublayerBounds       = currentSublayer.bounds;
                 context.translateBy(x: currentSublayerFrameOrigin.x - currentSublayerBounds.origin.x,
                                     y: currentSublayerFrameOrigin.y - currentSublayerBounds.origin.y);
-                [self applyTransform:self.sublayerTransform toContext:context];
+                self.applyTransform(transform3D: self.sublayerTransform, context:context)
                 
                 if currentSublayer is CPTLayer == true {
-                    [(CPTLayer *) currentSublayer recursivelyRenderInContext:context];
+                    currentSublayer = recursivelyRenderInContext(context: context)
                 }
                 else {
                     if ( self.masksToBounds ) {
@@ -196,12 +165,11 @@ class CPTLayer : CALayer
                     }
                     currentSublayer.draw(in: context)
                 }
-                CGContextRestoreGState(context);
+                context.restoreGState();
                 
             }
             
-            CGContextRestoreGState(context);
-        }
+            context.restoreGState();
     }
     
     func maskingPath() -> CGPath? {
@@ -245,7 +213,7 @@ class CPTLayer : CALayer
                 let sizeOffset = shadowMargin
                 let selfBounds = bounds
                 let adjustedSize = CGSize(
-                    width: selfBounds.size.width + sizeOffset!.width * CGFloat(2.0),
+                    width: selfBounds.size.width + sizeOffset.width * CGFloat(2.0),
                     height: selfBounds.size.height + sizeOffset.height * CGFloat(2.0))
                 
                 if adjustedSize.width > CGFloat(0.0) {
@@ -255,7 +223,6 @@ class CPTLayer : CALayer
                     newAnchorPoint.y = (newAnchorPoint.y - CGFloat(0.5)) * (selfBounds.size.height / adjustedSize.height) + CGFloat(0.5)
                 }
             }
-            
             super.anchorPoint = newAnchorPoint
         }
     }
@@ -282,29 +249,20 @@ class CPTLayer : CALayer
                 if (( self.shadow ) != nil) {
                     let sizeOffset = self.shadowMargin;
                     
-                    newBounds.origin.x    -= sizeOffset!.width;
-                    newBounds.origin.y    -= sizeOffset!.height
-                    newBounds.size.width  += sizeOffset!.width * CGFloat(2.0);
-                    newBounds.size.height += sizeOffset!.height * CGFloat(2.0);
+                    newBounds.origin.x    -= sizeOffset.width;
+                    newBounds.origin.y    -= sizeOffset.height
+                    newBounds.size.width  += sizeOffset.width * CGFloat(2.0);
+                    newBounds.size.height += sizeOffset.height * CGFloat(2.0);
                 }
                 super.bounds = newBounds
                 
                 self.outerBorderPath = nil
                 self.innerBorderPath = nil
                 
-                NotificationCenter.default.post(name: NSNotification.Name( boundsDidChange),  object:self)
+                NotificationCenter.default.post(name: Notification.Name( boundsDidChange),  object:self)
             }
         }
         
-    }
-    
-    func renderAsVectorInContext(context: CGContext)
-    {
-        // This is where subclasses do their drawing
-        if ( self.renderingRecursively ) {
-            self.applyMaskToContext(context: context)
-        }
-        self.shadow?.shadowIn(context: context)
     }
     
     func applyMaskToContext(context : CGContext)
@@ -312,7 +270,7 @@ class CPTLayer : CALayer
         let *mySuperlayer = self.superlayer
 
         if ( [mySuperlayer isKindOfClass:[CPTLayer class]] ) {
-            [mySuperlayer applySublayerMaskToContext:context forSublayer:self withOffset:CGPointZero];
+            [mySuperlayer applySublayerMaskToContext:context forSublayer:self withOffset:CGPoint())
         }
 
         let maskPath = self.maskingPath()
@@ -321,6 +279,4 @@ class CPTLayer : CALayer
             context.clip();
         }
     }
-
-
 }

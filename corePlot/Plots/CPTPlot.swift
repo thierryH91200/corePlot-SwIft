@@ -16,10 +16,10 @@ class CPTPlot: CPTAnnotationHostLayer {
     var adjustLabelAnchors = false
     
     var dataNeedsReloading = false
-    var  cachedData = [ Dictionary<String, Any>]()
+    var cachedData = [ Dictionary<String, Any>]()
     
     var needsRelabel = false
-    var  labelIndexRange = NSRange()
+    var labelIndexRange = NSRange()
     var labelAnnotations = [CPTAnnotation]()
     var dataLabels = [CPTLayer]()
     
@@ -28,7 +28,6 @@ class CPTPlot: CPTAnnotationHostLayer {
     var inTitleUpdate = false ;
     
     var numberOfRecords = 0
-    
     var cachePrecision = CPTPlotCachePrecision.auto
 
     
