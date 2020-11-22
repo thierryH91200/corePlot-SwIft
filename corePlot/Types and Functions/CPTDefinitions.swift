@@ -61,7 +61,7 @@ typealias CPTRGBAColor = _CPTRGBAColor
 enum CPTSign : Int {
     case none = 0 ///< No offset
     case positive = 1 ///< Positive offset
-    static let negative = -1 ///< Negative offset
+    case negative = -1 ///< Negative offset
 }
 /**
  *  @brief Locations around the edge of a rectangle.

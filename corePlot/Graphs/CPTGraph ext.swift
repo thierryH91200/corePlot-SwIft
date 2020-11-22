@@ -173,7 +173,7 @@ extension CPTGraph {
     /** @brief Remove a plot from the graph.
      *  @param identifier The identifier of the plot to remove.
      **/
-    func removePlotWithIdentifier:(nullable id<NSCopying>)identifier
+    func removePlotWithIdentifier(identifier: Any)
     {
         CPTPlot *plotToRemove = [self plotWithIdentifier:identifier];
 
