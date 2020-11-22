@@ -36,7 +36,6 @@ class CPTMaskLayer: CPTLayer {
         super.renderAsVectorInContext(context: context)
 
         let theMaskedLayer = superlayer as? CPTLayer
-        
         if (( theMaskedLayer ) != nil) {
             
             context.setFillColor(red: CGFloat(0.0), green: CGFloat(0.0), blue: CGFloat(0.0), alpha: CGFloat(1.0));

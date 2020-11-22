@@ -18,6 +18,9 @@ class CPTAxis : CPTLayer {
         case divisions     ///< Divide the plot range into equal parts.
     }
     
+    // MARK: -
+    var axisLineStyle : CPTTextStyle
+    
     
     // MARK: Axis.m
     var   needsRelabel = false
@@ -25,7 +28,7 @@ class CPTAxis : CPTLayer {
     var  pointingDeviceDownTickLabel:CPTAxisLabel
     var  labelFormatterChanged = false
     var   minorLabelFormatterChanged = false
-    var  mutableBackgroundLimitBands: CPTMutableLimitBandArray
+//    var  mutableBackgroundLimitBands: CPTMutableLimitBandArray
     var  tickOffset = CGFloat(0)
     var   inTitleUpdate = false
     var   labelsUpdated = false
@@ -37,7 +40,7 @@ class CPTAxis : CPTLayer {
     var visibleRange : CPTPlotRange
     var visibleAxisRange : CPTPlotRange
     var axisLineCapMin : CPTLineCap
-    var xisLineCapMax : CPTLineCap
+    var axisLineCapMax : CPTLineCap
     
     // MARK: Title
     var titleTextStyle: CPTTextStyle
@@ -81,12 +84,12 @@ class CPTAxis : CPTLayer {
     // MARK:  Grid Lines
     var  majorGridLineStyle: CPTLineStyle
     var  minorGridLineStyle: CPTLineStyle
-    var   *gridLinesRange : CPTPlotRange
+    var   gridLinesRange : CPTPlotRange
     
     // MARK:  Background Bands
-    var  majorGridLineStyle : CPTFillArray
+    var majorGridLineStyle : CPTFillArray
     var alternatingBandAnchor = 0.0
-    var  backgroundLimitBands : CPTLimitBandArray
+    var backgroundLimitBands : CPTLimitBandArray
     
     // MARK:  Plot Space
     var  plotSpace : CPTPlotSpace
@@ -99,8 +102,9 @@ class CPTAxis : CPTLayer {
     var axisSet: CPTAxisSet
     
     
-    var axisLabels: CPTAxisLabelSet
-    var minorTickAxisLabels : CPTAxisLabelSet
+    var axisLabels: Set<Double>
+    var minorTickAxisLabels : Set<Double>
+    
     var labelExclusionRanges = [CPTPlot]()
     var labelShadow: CPTShadow
     var minorTickLabelShadow: CPTShadow
@@ -113,7 +117,7 @@ class CPTAxis : CPTLayer {
         //        plotSpace                   = nil;
         //        majorTickLocations          = [NSSet set];
         
-        minorTickLocations          = [NSSet set];
+        minorTickLocations.removeAll() 
         preferredNumberOfMajorTicks = 0;
         minorTickLength             = CGFloat(3.0);
         majorTickLength             = CGFloat(5.0);
@@ -121,26 +125,26 @@ class CPTAxis : CPTLayer {
         minorTickLabelOffset        = CGFloat(2.0);
         labelRotation               = CGFloat(0.0);
         minorTickLabelRotation      = CGFloat(0.0);
-        labelAlignment              = CPTAlignmentCenter
-        minorTickLabelAlignment     = CPTAlignmentCenter
-        title                       = nil;
+        labelAlignment              = .center
+        minorTickLabelAlignment     = .center
+        title                       = ""
         attributedTitle             = nil;
-        titleOffset                 = CGFloat(30.0);
+        titleOffset                 = CGFloat(30.0)
         axisLineStyle               = CPTLineStyle()
-        majorTickLineStyle          = [[CPTLineStyle alloc] init];
-        minorTickLineStyle          = [[CPTLineStyle alloc] init];
-        tickLabelDirection          = CPTSignNone
+        majorTickLineStyle          = CPTLineStyle()
+        minorTickLineStyle          = CPTLineStyle()
+        tickLabelDirection          = .none
         minorTickLabelDirection     = .none
-        majorGridLineStyle          = nil
+        majorGridLineStyle          = CPTLineStyle()
         minorGridLineStyle          = nil
-        axisLineCapMin              = nil
-        axisLineCapMax              = nil
+        axisLineCapMin              = CPTLineCap()
+        axisLineCapMax              = CPTLineCap()
         labelingOrigin              = 0.0
         majorIntervalLength         = 1.0;
         minorTicksPerInterval       = 1
-        coordinate                  = CPTCoordinateX;
-        labelingPolicy              = CPTAxisLabelingPolicyFixedInterval;
-        labelTextStyle              = CPTTextStyle alloc()
+        coordinate                  = .x
+        labelingPolicy              = .fixedInterval;
+        labelTextStyle              = CPTTextStyle()
         
         var newFormatter = NumberFormatter()
         newFormatter.minimumIntegerDigits  = 1
@@ -155,8 +159,8 @@ class CPTAxis : CPTLayer {
         axisLabels                  = [NSSet set];
         minorTickAxisLabels         = [NSSet set];
         tickDirection               = CPTSignNone;
-        axisTitle                   = nil;
-        titleTextStyle              = [[CPTTextStyle alloc] init];
+        axisTitle                   = ""
+        titleTextStyle              = CPTTextStyle()
         titleRotation               = CPTNAN;
         titleLocation               = @(NAN);
         needsRelabel                = YES;
@@ -181,11 +185,6 @@ class CPTAxis : CPTLayer {
         self.needsDisplayOnBoundsChange = true
     }
     
-    
-    
-    
-    
-
     init(layer :  CPTAxis )
     {
         super.init(layer: layer)
@@ -252,15 +251,11 @@ class CPTAxis : CPTLayer {
         labelsUpdated               = theLayer.labelsUpdated;
     }
 
-
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-
-
-// MARK: Animation
-
+// MARK: - Animation
     func needsDisplayForKey(aKey:String )-> Bool
     {
         var keys        = Set<String>()

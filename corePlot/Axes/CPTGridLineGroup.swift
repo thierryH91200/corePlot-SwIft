@@ -37,7 +37,7 @@ class CPTGridLineGroup: CPTLayer {
     }
     
     // MARK: Drawing
-    override func renderAsVectorInContext(context : CGContext)
+    @objc override func renderAsVectorInContext(context : CGContext)
     {
         guard self.isHidden == false else { return }
         

@@ -13,7 +13,7 @@ extension CPTLayer {
     override func display()
     {
         guard self.isHidden == false else {return}
-        
+        @objc      
         if NSView.instancesRespondToSelector:@selector(effectiveAppearance)] ) {
             let oldAppearance = NSAppearance.current;
             NSAppearance.currentAppearance = NSView self.graph.hostingView.effectiveAppearance
@@ -26,7 +26,7 @@ extension CPTLayer {
         }
     }
     
-    func drawInContext(context: CGContext)
+    @objc func drawInContext(context: CGContext)
     {
         if ( context ) {
             self.useFastRendering = true
@@ -40,13 +40,13 @@ extension CPTLayer {
     
     
     /**
-     * @brief Recursively marks this layer and all sublayers as needing to be redrawn.
+     * @brief Recurs@objc ively marks this layer and all sublayers as needing to be redrawn.
      **/
     @objc func setNeedsDisplayAllLayers() {
         
         self.setNeedsDisplay()
         
-        for subLayer in self.sublayers  {
+        for subLayer in self.sublayers!  {
             
             if subLayer.responds(to: #selector(setNeedsDisplayAllLayers)) {
                 subLayer.setNeedsDisplayAllLayers()
@@ -67,7 +67,7 @@ extension CPTLayer {
      *  @param context The graphics context to draw into.
      **/
     
-    func renderAsVectorInContext(context: CGContext)
+    @objc func renderAsVectorInContext(context: CGContext)
     {
         // This is where subclasses do their drawing
         if ( self.renderingRecursively ) {
@@ -79,53 +79,49 @@ extension CPTLayer {
     /** @brief Draws layer content and the content of all sublayers into the provided graphics context.
      *  @param context The graphics context to draw into.
      **/
-//    func recursivelyRenderInContext(context: CGContext)
-//    {
-//        guard self.isHidden == false else { return }
-//        // render self
-//
-//        context.saveGState();
-//
-//        [self.applyTransform(transform3D: self.transform ,context:context)
-//
-//        self.renderingRecursively = YES;
-//        if ( !self.masksToBounds ) {
-//            CGContextSaveGState(context);
-//        }
-//        [self renderAsVectorInContext(context)
-//        if ( !self.masksToBounds ) {
-//            CGContextRestoreGState(context);
-//        }
-//        self.renderingRecursively = false
-//
-//        // render sublayers
-//        let sublayersCopy = self.sublayers
-//        for currentSublayer in sublayersCopy {
-//            CGContextSaveGState(context);
-//
-//            // Shift origin of context to match starting coordinate of sublayer
-//            let currentSublayerFrameOrigin = currentSublayer.frame.origin;
-//            let  currentSublayerBounds       = currentSublayer.bounds;
-//            CGContextTranslateCTM(context,
-//                                  currentSublayerFrameOrigin.x - currentSublayerBounds.origin.x,
-//                                  currentSublayerFrameOrigin.y - currentSublayerBounds.origin.y);
-//
-//            self.applyTransform(transform3D: self.sublayerTransform ,context:context)
-//
-//
-//            if ( [currentSublayer isKindOfClass:[CPTLayer class]] ) {
-//                [(CPTLayer *) currentSublayer recursivelyRenderInContext:context];
-//            }
-//            else {
-//                if ( self.masksToBounds ) {
-//                    CGContextClipToRect(context, currentSublayer.bounds);
-//                }
-//                currentSublayer.drawInContext(context)
-//            }
-//            CGContextRestoreGState(context)
-//        }
-//        CGContextRestoreGState(context);
-//    }
+    func recursivelyRenderInContext( context : CGContext)
+    {
+        guard self.isHidden == false else { return}
+        // render self
+        context.saveGState()
+        
+        self.applyTransform(transform3D: self.transform, context:context)
+        
+        self.renderingRecursively = true;
+        if ( !self.masksToBounds ) {
+            context.saveGState();
+        }
+        self.renderAsVectorInContext(context: context)
+        if ( !self.masksToBounds ) {
+            context.restoreGState()
+        }
+        self.renderingRecursively = false;
+        
+        // render sublayers
+        let sublayersCopy = self.sublayers
+        for currentSublayer in sublayersCopy! {
+            context.saveGState();
+            
+            // Shift origin of context to match starting coordinate of sublayer
+            let currentSublayerFrameOrigin = currentSublayer.frame.origin;
+            let currentSublayerBounds       = currentSublayer.bounds;
+            context.translateBy(x: currentSublayerFrameOrigin.x - currentSublayerBounds.origin.x,
+                                y: currentSublayerFrameOrigin.y - currentSublayerBounds.origin.y);
+            self.applyTransform(transform3D: self.sublayerTransform, context:context)
+            
+            if currentSublayer is CPTLayer == true {
+                currentSublayer = recursivelyRenderInContext(context: context)
+            }
+            else {
+                if ( self.masksToBounds ) {
+                    context.clip(to: currentSublayer.bounds);
+                }
+                currentSublayer.draw(in: context)
+            }
+            context.restoreGState();
+        }
+        context.restoreGState();
+    }
     
     
     func applyTransform(transform3D: CATransform3D, context: CGContext)
@@ -138,10 +134,10 @@ extension CPTLayer {
                                             y: selfBounds.origin.y + anchorPoint.y * selfBounds.size.height);
                 
                 var affineTransform = CGAffineTransform(translationX: -anchorOffset.x, y: -anchorOffset.y);
-                affineTransform = CGAffineTransformConcat(affineTransform, CATransform3DGetAffineTransform(transform3D));
-                affineTransform = CGAffineTransformTranslate(affineTransform, anchorOffset.x, anchorOffset.y);
+                affineTransform = affineTransform.concatenating(CATransform3DGetAffineTransform(transform3D));
+                affineTransform = affineTransform.translatedBy(x: anchorOffset.x, y: anchorOffset.y);
                 
-                let transformedBounds = CGRectApplyAffineTransform(selfBounds, affineTransform);
+                let transformedBounds = selfBounds.applying(affineTransform);
                 
                 context.translateBy(x: -transformedBounds.origin.x, y: -transformedBounds.origin.y);
                 context.concatenate(affineTransform);
@@ -163,14 +159,13 @@ extension CPTLayer {
      **/
     func dataForPDFRepresentationOfLayer () -> NSData
     {
-        
         var pdfData = Data()
         var dataConsumer: CGDataConsumer? = nil
         if let data = pdfData as? CFMutableData {
             dataConsumer = CGDataConsumer(data: data)
         }
         
-        let mediaBox = CPTRectMake(0.0, 0.0, bounds.size.width, bounds.size.height)
+        var mediaBox = CGRect(x: 0.0, y: 0.0, width: bounds.size.width, height: bounds.size.height)
         var pdfContext: CGContext? = nil
         if let dataConsumer = dataConsumer {
             pdfContext = CGContext(consumer: dataConsumer, mediaBox: &mediaBox, nil)
@@ -185,8 +180,8 @@ extension CPTLayer {
         
         CPTPopCGContext()
         
-        CGContextRelease(pdfContext)
-        CGDataConsumerRelease(dataConsumer)
+        CGContextRelease(pdfContext!)
+        CGDataConsumerRelease(dataConsumer!)
         
         return pdfData;
     }

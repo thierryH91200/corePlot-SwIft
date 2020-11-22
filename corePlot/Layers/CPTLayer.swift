@@ -126,51 +126,6 @@ class CPTLayer : CALayer
         shadow?.shadowIn(context:  context)
     }
     
-    func recursivelyRenderInContext( context : CGContext)
-    {
-        guard self.isHidden == false else { return}
-            // render self
-            context.saveGState()
-            
-            self.applyTransform(transform3D: self.transform, context:context)
-            
-            self.renderingRecursively = true;
-            if ( !self.masksToBounds ) {
-                context.saveGState();
-            }
-            self.renderAsVectorInContext(context: context)
-            if ( !self.masksToBounds ) {
-                context.restoreGState()
-            }
-            self.renderingRecursively = false;
-            
-            // render sublayers
-            let sublayersCopy = self.sublayers
-            for currentSublayer in sublayersCopy! {
-                context.saveGState();
-                
-                // Shift origin of context to match starting coordinate of sublayer
-                let currentSublayerFrameOrigin = currentSublayer.frame.origin;
-                let currentSublayerBounds       = currentSublayer.bounds;
-                context.translateBy(x: currentSublayerFrameOrigin.x - currentSublayerBounds.origin.x,
-                                    y: currentSublayerFrameOrigin.y - currentSublayerBounds.origin.y);
-                self.applyTransform(transform3D: self.sublayerTransform, context:context)
-                
-                if currentSublayer is CPTLayer == true {
-                    currentSublayer = recursivelyRenderInContext(context: context)
-                }
-                else {
-                    if ( self.masksToBounds ) {
-                        context.clip(to: currentSublayer.bounds);
-                    }
-                    currentSublayer.draw(in: context)
-                }
-                context.restoreGState();
-                
-            }
-            
-            context.restoreGState();
-    }
     
     func maskingPath() -> CGPath? {
         if masksToBounds {

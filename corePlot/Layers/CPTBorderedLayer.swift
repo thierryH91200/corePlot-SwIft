@@ -20,7 +20,7 @@ class CPTBorderedLayer: CPTAnnotationHostLayer {
     
     var _needsDisplayOnBoundsChange  = false
     
-    override init (frame :CGRect)
+    init (frame :CGRect)
     {
         borderLineStyle = nil
         fill            = nil
@@ -29,7 +29,7 @@ class CPTBorderedLayer: CPTAnnotationHostLayer {
         self.needsDisplayOnBoundsChange = true
     }
     
-    override init( layer : CPTLayer)
+    init( layer : CPTLayer)
     {
         let theLayer = CPTBorderedLayer(layer: layer)
         
