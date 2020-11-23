@@ -8,99 +8,78 @@
 import Cocoa
 
 class CPTPlotArea: CPTAnnotationHostLayer {
-  
-    //MARK: Comparison
-    var minorGridLineGroup : CPTGridLineGroup
-    var majorGridLineGroup: CPTGridLineGroup
-    var axisSet: CPTAxisSet
-    var plotGroup: CPTPlotGroup
-    var axisLabelGroup : CPTAxisLabelGroup
-    var axisTitleGroup: CPTAxisLabelGroup
+    
+    
+    var touchedPoint = CGPoint(x: 0,y: 0)
+    var bottomUpLayerOrder : CPTGraphLayerType?
+    
+    //MARK: Layers
+    var minorGridLineGroup : CPTGridLineGroup?
+    var majorGridLineGroup: CPTGridLineGroup?
+    var axisSet: CPTAxisSet?
+    var plotGroup: CPTPlotGroup?
+    var axisLabelGroup : CPTAxisLabelGroup?
+    var axisTitleGroup: CPTAxisLabelGroup?
 
     //MARK:  Layer Ordering
     var topDownLayerOrder = [CGFloat]()
 
     //MARK:  Decorations
-    @property (nonatomic, readwrite, copy, nullable)  *borderLineStyle: CPTLineStyle
-    @property (nonatomic, readwrite, copy, nullable)  *fill: CPTFill
+    var borderLineStyle: CPTLineStyle?
+    var fill: CPTFill?
 
     //MARK:  Dimensions
     var   widthDecimal = CGFloat(0)
     var  heightDecimal = CGFloat(0)
     
-    #pragma mark Init/Dealloc
-
-    /// @name Initialization
-    /// @{
-
-    /** @brief Initializes a newly allocated CPTPlotArea object with the provided frame rectangle.
-     *
-     *  This is the designated initializer. The initialized layer will have the following properties:
-     *  - @ref minorGridLineGroup = @nil
-     *  - @ref majorGridLineGroup = @nil
-     *  - @ref axisSet = @nil
-     *  - @ref plotGroup = @nil
-     *  - @ref axisLabelGroup = @nil
-     *  - @ref axisTitleGroup = @nil
-     *  - @ref fill = @nil
-     *  - @ref topDownLayerOrder = @nil
-     *  - @ref plotGroup = a new CPTPlotGroup with the same frame rectangle
-     *  - @ref needsDisplayOnBoundsChange = @YES
-     *
-     *  @param newFrame The frame rectangle.
-     *  @return The initialized CPTPlotArea object.
-     **/
-    -(nonnull instancetype)initWithFrame:(CGRect)newFrame
+    //MARK:  Init/Dealloc
+    init(frame:frame)
     {
-        if ((self = [super initWithFrame:newFrame])) {
-            minorGridLineGroup = nil;
-            majorGridLineGroup = nil;
-            axisSet            = nil;
-            plotGroup          = nil;
-            axisLabelGroup     = nil;
-            axisTitleGroup     = nil;
-            fill               = nil;
-            touchedPoint       = CPTPointMake(NAN, NAN);
-            topDownLayerOrder  = nil;
-            bottomUpLayerOrder = calloc(kCPTNumberOfLayers, sizeof(CPTGraphLayerType));
-            [self updateLayerOrder];
-
-            CPTPlotGroup *newPlotGroup = [[CPTPlotGroup alloc] initWithFrame:newFrame];
-            self.plotGroup = newPlotGroup;
-
-            CGSize boundsSize = self.bounds.size;
-            widthDecimal  = CPTDecimalFromCGFloat(boundsSize.width);
-            heightDecimal = CPTDecimalFromCGFloat(boundsSize.height);
-
-            self.needsDisplayOnBoundsChange = YES;
-        }
-        return self;
+        super.init(frame:newFrame)
+        minorGridLineGroup = nil;
+        majorGridLineGroup = nil;
+        axisSet            = nil;
+        plotGroup          = nil;
+        axisLabelGroup     = nil;
+        axisTitleGroup     = nil;
+        fill               = nil;
+        touchedPoint       = CGPoint(x:CGFloat.nan,y:  CGFloat.nan)
+        topDownLayerOrder  = nil;
+        bottomUpLayerOrder = calloc(kCPTNumberOfLayers, sizeof(CPTGraphLayerType));
+        self.updateLayerOrder()
+        
+        let newPlotGroup = CPTPlotGroup(frame:frame)
+        self.plotGroup = newPlotGroup;
+        
+        let boundsSize = self.bounds.size;
+        widthDecimal  = CPTDecimalFromCGFloat(boundsSize.width)
+        heightDecimal = CPTDecimalFromCGFloat(boundsSize.height)
+        
+        self.needsDisplayOnBoundsChange = true;
     }
 
-    /// @}
-
-    /// @cond
-
-    -(nonnull instancetype)initWithLayer:(nonnull id)layer
+    init(layer:layer)
     {
-        if ((self = [super initWithLayer:layer])) {
-            CPTPlotArea *theLayer = (CPTPlotArea *)layer;
+        super.init(layer:layer)
+            let theLayer = CPTPlotArea(layer)
 
-            minorGridLineGroup = theLayer->minorGridLineGroup;
-            majorGridLineGroup = theLayer->majorGridLineGroup;
-            axisSet            = theLayer->axisSet;
-            plotGroup          = theLayer->plotGroup;
-            axisLabelGroup     = theLayer->axisLabelGroup;
-            axisTitleGroup     = theLayer->axisTitleGroup;
-            fill               = theLayer->fill;
-            touchedPoint       = theLayer->touchedPoint;
-            topDownLayerOrder  = theLayer->topDownLayerOrder;
+            minorGridLineGroup = theLayer.minorGridLineGroup;
+            majorGridLineGroup = theLayer.majorGridLineGroup;
+            axisSet            = theLayer.axisSet;
+            plotGroup          = theLayer.plotGroup;
+            axisLabelGroup     = theLayer.axisLabelGroup;
+            axisTitleGroup     = theLayer.axisTitleGroup;
+            fill               = theLayer.fill;
+            touchedPoint       = theLayer.touchedPoint;
+            topDownLayerOrder  = theLayer.topDownLayerOrder;
             bottomUpLayerOrder = calloc(kCPTNumberOfLayers, sizeof(CPTGraphLayerType));
-            memcpy(bottomUpLayerOrder, theLayer->bottomUpLayerOrder, kCPTNumberOfLayers * sizeof(CPTGraphLayerType));
-            widthDecimal  = theLayer->widthDecimal;
-            heightDecimal = theLayer->heightDecimal;
-        }
-        return self;
+            memcpy(bottomUpLayerOrder, theLayer.bottomUpLayerOrder, kCPTNumberOfLayers * sizeof(CPTGraphLayerType));
+            widthDecimal  = theLayer.widthDecimal;
+            heightDecimal = theLayer.heightDecimal;
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
 //    #pragma mark -

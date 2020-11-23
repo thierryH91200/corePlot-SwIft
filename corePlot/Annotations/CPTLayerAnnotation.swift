@@ -54,12 +54,12 @@ class CPTLayerAnnotation: CPTAnnotation {
                 var newPosition    = theAnchorLayer?.convert(referencePoint, to: hostLayer)
                 
                 let offset = self.displacement;
-                newPosition?.x += offset.x;
-                newPosition?.y += offset.y;
+                newPosition?.x += offset!.x;
+                newPosition?.y += offset!.y;
                 
-                content?.anchorPoint = self.contentAnchorPoint;
+                content?.anchorPoint = self.contentAnchorPoint!;
                 content?.position    = newPosition!
-                content?.transform   = CATransform3DMakeRotation(self.rotation, CGFloat(0.0), CGFloat(0.0), CGFloat(1.0));
+                content?.transform   = CATransform3DMakeRotation(self.rotation!, CGFloat(0.0), CGFloat(0.0), CGFloat(1.0));
                 content?.pixelAlign()
             }
         }
