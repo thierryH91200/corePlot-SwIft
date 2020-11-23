@@ -51,6 +51,9 @@
 		03384E4A255D12A4003C5BD3 /* CPTMutableLineStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03384E49255D12A4003C5BD3 /* CPTMutableLineStyle.swift */; };
 		03411EC725646EA300CE639F /* CPTImage ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03411EC625646EA300CE639F /* CPTImage ext.swift */; };
 		034C436625679565003FAD33 /* CPTLayer ext1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034C436525679565003FAD33 /* CPTLayer ext1.swift */; };
+		03525995256C185500FEA155 /* CPTLayer accessors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03525994256C185500FEA155 /* CPTLayer accessors.swift */; };
+		03525999256C18EB00FEA155 /* CPTLayer Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03525998256C18EB00FEA155 /* CPTLayer Layout.swift */; };
+		0352599D256C19A500FEA155 /* CPTLayer masking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0352599C256C19A500FEA155 /* CPTLayer masking.swift */; };
 		037244412545FE4600B59C97 /* corePlot.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 037244372545FE4600B59C97 /* corePlot.framework */; };
 		037244462545FE4600B59C97 /* corePlotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037244452545FE4600B59C97 /* corePlotTests.swift */; };
 		037244482545FE4600B59C97 /* corePlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 0372443A2545FE4600B59C97 /* corePlot.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -145,6 +148,9 @@
 		03384E49255D12A4003C5BD3 /* CPTMutableLineStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTMutableLineStyle.swift; sourceTree = "<group>"; };
 		03411EC625646EA300CE639F /* CPTImage ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTImage ext.swift"; sourceTree = "<group>"; };
 		034C436525679565003FAD33 /* CPTLayer ext1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTLayer ext1.swift"; sourceTree = "<group>"; };
+		03525994256C185500FEA155 /* CPTLayer accessors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTLayer accessors.swift"; sourceTree = "<group>"; };
+		03525998256C18EB00FEA155 /* CPTLayer Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTLayer Layout.swift"; sourceTree = "<group>"; };
+		0352599C256C19A500FEA155 /* CPTLayer masking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTLayer masking.swift"; sourceTree = "<group>"; };
 		037244372545FE4600B59C97 /* corePlot.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = corePlot.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0372443A2545FE4600B59C97 /* corePlot.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = corePlot.h; sourceTree = "<group>"; };
 		0372443B2545FE4600B59C97 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -302,11 +308,14 @@
 			isa = PBXGroup;
 			children = (
 				037244532545FF1700B59C97 /* CPTLayer.swift */,
+				03525994256C185500FEA155 /* CPTLayer accessors.swift */,
 				030734792567BDA8008B7413 /* CPTLayer Drawing ext.swift */,
 				03A9CCE12559569E0096853D /* CPTBorderedLayer.swift */,
 				032EE4FE25665B940085F4E1 /* CPTBorderLayer.swift */,
 				032EE50225665BC70085F4E1 /* CPTMaskLayer.swift */,
 				034C436525679565003FAD33 /* CPTLayer ext1.swift */,
+				03525998256C18EB00FEA155 /* CPTLayer Layout.swift */,
+				0352599C256C19A500FEA155 /* CPTLayer masking.swift */,
 			);
 			path = Layers;
 			sourceTree = "<group>";
@@ -651,6 +660,7 @@
 				0320AFC8255C512C00D32BF9 /* CPTStocksTheme.swift in Sources */,
 				0320B000255C75DE00D32BF9 /* CPTPlotRange.swift in Sources */,
 				03E3D50325683D4200FB3F07 /* CPTPlotAccessors.swift in Sources */,
+				03525999256C18EB00FEA155 /* CPTLayer Layout.swift in Sources */,
 				030A650A255FBB8F002B3D13 /* CPTAnimationOperation.swift in Sources */,
 				03384E4A255D12A4003C5BD3 /* CPTMutableLineStyle.swift in Sources */,
 				0320AFBD255C0F1A00D32BF9 /* CPTConstraintsRelative.swift in Sources */,
@@ -674,6 +684,7 @@
 				030A6512255FC5E0002B3D13 /* CPTAnimationCGFloatPeriod.swift in Sources */,
 				0320AFB9255C0EE100D32BF9 /* CPTConstraintsFixed.swift in Sources */,
 				03DDD46C256311BF00CAB29B /* CPTPlatformSpecificDefines.swift in Sources */,
+				0352599D256C19A500FEA155 /* CPTLayer masking.swift in Sources */,
 				03A9CD1B2559B4AC0096853D /* CPTTextStyle.swift in Sources */,
 				0333908C2565658900C231D9 /* CPTImage ext2.swift in Sources */,
 				0397469F2557281B008CF3E6 /* CPTColor.swift in Sources */,
@@ -723,6 +734,7 @@
 				03C433C1255EC38D00F00A24 /* CPTColorSpace.swift in Sources */,
 				033390982565850F00C231D9 /* CPTImagePlatformSpecific.swift in Sources */,
 				03C433CB255ED3D600F00A24 /* CPTLegendEntry.swift in Sources */,
+				03525995256C185500FEA155 /* CPTLayer accessors.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

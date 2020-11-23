@@ -14,12 +14,6 @@ import AppKit
 
 class CPTAnnotation: NSObject {
     
-//    var contentLayer:  CPTLayer?
-    var annotationHostLayer : CPTAnnotationHostLayer?
-    var contentAnchorPoint : CGPoint = .zero
-    var displacement : CGPoint = .zero
-    var rotation = CGFloat(0)
-    
     override init()
     {
         annotationHostLayer = nil;
@@ -28,59 +22,86 @@ class CPTAnnotation: NSObject {
         contentAnchorPoint  = CGPoint(x: 0.5, y: 0.5);
         rotation            = CGFloat(0.0);
     }
-    var _contentLayer:  CPTLayer?
-    var contentLayer:  CPTLayer? {
-        get { return  _contentLayer }
-     set {
-        if newValue != _contentLayer {
-            _contentLayer!.removeFromSuperlayer()
-            _contentLayer = newValue
-            if let newLayer = newValue {
+    
+    var _contentLayer: CPTLayer?
+    var contentLayer : CPTLayer? {
+        get {
+            return _contentLayer
+        }
+        set {
+            if ( newValue != _contentLayer ) {
+                _contentLayer!.removeFromSuperlayer()
+                _contentLayer = newValue
+                if  newValue != nil {
+                    let layer = newValue;
+                    
+                    let hostLayer = self.annotationHostLayer;
+                    hostLayer!.addSublayer(layer!)
+                }
+            }
+        }
+    }
+    
+    var _annotationHostLayer : CPTAnnotationHostLayer?
+    var annotationHostLayer : CPTAnnotationHostLayer? {
+        get {
+            return _annotationHostLayer
+        }
+        set {
+            if newValue != _annotationHostLayer  {
+                let myContent = self.contentLayer
                 
-                let hostLayer = annotationHostLayer
-                hostLayer?.addSublayer(newLayer)
-            }
-        }
-    }
-    }
-    func setAnnotationHostLayer(_ newLayer: CPTAnnotationHostLayer?) {
-        if newLayer != annotationHostLayer {
-            let myContent = contentLayer
-            
-            myContent?.removeFromSuperlayer()
-            annotationHostLayer = newLayer
-            if let myContent = myContent {
-                newLayer?.addSublayer(myContent)
+                myContent!.removeFromSuperlayer()
+                _annotationHostLayer = newValue
+                if (( myContent ) != nil) {
+                    newValue!.addSublayer(myContent!)
+                }
             }
         }
     }
     
-    func setDisplacement(_ newDisplacement : CGPoint)
-    {
-        if newDisplacement.equalTo(displacement) {
-            displacement = newDisplacement
-            self.contentLayer?.superlayer?.needsLayout()
-        }
-    }
-    
-    func setContentAnchorPoint( newAnchorPoint: CGPoint)
-    {
-        if !newAnchorPoint.equalTo( contentAnchorPoint) {
-            contentAnchorPoint = newAnchorPoint;
-            self.contentLayer?.superlayer?.needsLayout()
-        }
-    }
-    
-    func setRotation(newRotation : CGFloat)
-    {
-        if ( newRotation != rotation ) {
-            rotation = newRotation;
-            self.contentLayer?.superlayer?.needsLayout()
+    var _displacement: CGPoint?
+    var displacement : CGPoint? {
+        get {
+            return  _displacement
             
         }
+        set {
+            if _displacement!.equalTo(newValue!) == false {
+                _displacement = newValue!
+                self.contentLayer?.superlayer!.setNeedsLayout()
+            }
+        }
+    }
+    var _contentAnchorPoint: CGPoint?
+    var contentAnchorPoint : CGPoint? {
+        get {
+            return  _contentAnchorPoint
+        }
+        set {
+            if _contentAnchorPoint!.equalTo(newValue!) == false {
+                _contentAnchorPoint = newValue!
+                self.contentLayer?.superlayer!.setNeedsLayout()
+            }
+        }
     }
     
+    var _rotation : CGFloat?
+    var rotation : CGFloat? {
+        get {
+            return _rotation
+        }
+        set {
+            if _rotation != rotation! {
+                _rotation = newValue!
+                self.contentLayer?.superlayer!.setNeedsLayout()
+            }
+        }
+    }
+    
+// MARK: Layout
     func positionContentLayer()
     {
+        // Do nothing--implementation provided by subclasses
     }
 }

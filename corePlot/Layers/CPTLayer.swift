@@ -13,12 +13,11 @@ public class CPTLayer : CALayer
     var paddingRight : CGFloat        = 0.0
     var paddingBottom : CGFloat       = 0.0
     
-    var masksToBorder        = false;
+    var masksToBorder     = false;
     var shadow   : CPTShadow?            = nil
     
     var _shadowMargin   : CGSize? = nil
     var shadowMargin : CGSize {
-        
         get {
             var margin = CGSize()
             let myShadow = self.shadow;
@@ -109,15 +108,16 @@ public class CPTLayer : CALayer
     }
     
     func applyMask(to context: CGContext) {
-        let mySuperlayer = superlayer as? CPTLayer
         
-        if mySuperlayer is CPTLayer {
+        let mySuperlayer = self.superlayer
+        
+        if (mySuperlayer is CPTLayer) == true {
             mySuperlayer?.applySublayerMask(to: context, forSublayer: self, withOffset: CGPoint.zero)
         }
         
-        let maskPath = self.maskingPath
+//        let maskPath = self.maskingPath
         
-        if let maskPath = maskPath {
+        if let maskPath = self.maskingPath {
             context.addPath(maskPath)
             context.clip()
         }

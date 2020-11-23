@@ -21,66 +21,49 @@ public class CPTAnnotationHostLayer: CPTLayer {
     override init()
     {
         super.init()
+        annotations.removeAll()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: -  Accessors
+    // MARK: -  Annotations
+    func addAnnotation(_ annotation: CPTAnnotation?) {
+        if annotation != nil {
+            
+            if annotations.contains(annotation!) == false {
+                if let theAnnotation = annotation {
+                    annotations.append(theAnnotation)
+                }
+            }
+            annotation?.annotationHostLayer = self
+            annotation?.positionContentLayer()
+        }
+    }
+    
+    // Removes an annotation from the receiver.
+    func removeAnnotation(_ annotation: CPTAnnotation?) {
+        
+        if let index = annotations.firstIndex(of: annotation!) {
+            annotations.remove(at: index)
+        }
+    }
+
+
+    
+    //     Removes all annotations from the receiver.
+    func removeAllAnnotations() {
+        
+        for annotation in annotations {
+            annotation.annotationHostLayer = nil
+        }
+        annotations.removeAll()
+    }
     
     
-//    -(void)addAnnotation:(nullable CPTAnnotation *)annotation
-//    {
-//        if ( annotation ) {
-//            CPTAnnotation *theAnnotation = annotation;
-//
-//            CPTMutableAnnotationArray *annotationArray = self.mutableAnnotations;
-//            if ( ![annotationArray containsObject:theAnnotation] ) {
-//                [annotationArray addObject:theAnnotation];
-//            }
-//            theAnnotation.annotationHostLayer = self;
-//            [theAnnotation positionContentLayer];
-//        }
-//    }
-//
-//    /**
-//     *  @brief Removes an annotation from the receiver.
-//     **/
-//    -(void)removeAnnotation:(nullable CPTAnnotation *)annotation
-//    {
-//        if ( annotation ) {
-//            CPTAnnotation *theAnnotation = annotation;
-//
-//            if ( [self.mutableAnnotations containsObject:theAnnotation] ) {
-//                theAnnotation.annotationHostLayer = nil;
-//                [self.mutableAnnotations removeObject:theAnnotation];
-//            }
-//            else {
-//                CPTAnnotationHostLayer *hostLayer = theAnnotation.annotationHostLayer;
-//                [NSException raise:CPTException format:@"Tried to remove CPTAnnotation from %@. Host layer was %@.", self, hostLayer];
-//            }
-//        }
-//    }
-//
-//    /**
-//     *  @brief Removes all annotations from the receiver.
-//     **/
-//    -(void)removeAllAnnotations
-//    {
-//        CPTMutableAnnotationArray *allAnnotations = self.mutableAnnotations;
-//
-//        for ( CPTAnnotation *annotation in allAnnotations ) {
-//            annotation.annotationHostLayer = nil;
-//        }
-//        [allAnnotations removeAllObjects];
-//    }
-//
-//    #pragma mark -
-//    #pragma mark Layout
-//
-//    /// @cond
-//
+    
+    // MARK: -  Layout
 //    -(nullable CPTSublayerSet *)sublayersExcludedFromAutomaticLayout
 //    {
 //        CPTMutableAnnotationArray *annotations = self.mutableAnnotations;
@@ -106,113 +89,84 @@ public class CPTAnnotationHostLayer: CPTLayer {
 //        }
 //    }
 //
-//    -(void)layoutSublayers
-//    {
-//        [super layoutSublayers];
-//        [self.mutableAnnotations makeObjectsPerformSelector:@selector(positionContentLayer)];
-//    }
+    public override func layoutSublayers()
+    {
+        super.layoutSublayers()
+//        self.annotations.    makeObjectsPerformSelector:@selector(positionContentLayer)
+        
+        for annotation in annotations {
+            annotation.positionContentLayer()
+        }
+
+    }
 //
-//    /// @endcond
-//
-//    #pragma mark -
-//    #pragma mark Event Handling
-//
-//    /// @name User Interaction
-//    /// @{
 //
 //    /**
 //     *  @brief Informs the receiver that the user has
 //     *  @if MacOnly pressed the mouse button. @endif
 //     *  @if iOSOnly touched the screen. @endif
 //     *
-//     *
-//     *  The event is passed in turn to each annotation layer that contains the interaction point.
-//     *  If any layer handles the event, subsequent layers are not notified and
-//     *  this method immediately returns @YES.
-//     *
-//     *  @param event The OS event.
-//     *  @param interactionPoint The coordinates of the interaction.
-//     *  @return Whether the event was handled or not.
-//     **/
-//    -(BOOL)pointingDeviceDownEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
-//    {
-//        for ( CPTAnnotation *annotation in self.annotations ) {
-//            CPTLayer *content = annotation.contentLayer;
-//            if ( content ) {
-//                if ( CGRectContainsPoint(content.frame, interactionPoint)) {
-//                    BOOL handled = [content pointingDeviceDownEvent:event atPoint:interactionPoint];
-//                    if ( handled ) {
-//                        return YES;
-//                    }
-//                }
-//            }
-//        }
-//
-//        return [super pointingDeviceDownEvent:event atPoint:interactionPoint];
-//    }
-//
+//     */
+    override func pointingDeviceDownEvent(event: CPTNativeEvent, atPoint interactionPoint: CGPoint)-> Bool
+    {
+        for annotation in self.annotations  {
+            let content = annotation.contentLayer;
+            if (( content ) != nil) {
+                if ( content!.frame.contains(interactionPoint)) {
+                    let  handled = content!.pointingDeviceDownEvent(event: event, atPoint:interactionPoint)
+                    if  handled == true  {
+                        return true
+                    }
+                }
+            }
+        }
+        return super.pointingDeviceDownEvent(event: event, atPoint:interactionPoint)
+    }
+
 //    /**
 //     *  @brief Informs the receiver that the user has
 //     *  @if MacOnly released the mouse button. @endif
 //     *  @if iOSOnly lifted their finger off the screen. @endif
 //     *
 //     *
-//     *  The event is passed in turn to each annotation layer that contains the interaction point.
-//     *  If any layer handles the event, subsequent layers are not notified and
-//     *  this method immediately returns @YES.
-//     *
-//     *  @param event The OS event.
-//     *  @param interactionPoint The coordinates of the interaction.
-//     *  @return Whether the event was handled or not.
-//     **/
-//    -(BOOL)pointingDeviceUpEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
-//    {
-//        for ( CPTAnnotation *annotation in self.annotations ) {
-//            CPTLayer *content = annotation.contentLayer;
-//            if ( content ) {
-//                if ( CGRectContainsPoint(content.frame, interactionPoint)) {
-//                    BOOL handled = [content pointingDeviceUpEvent:event atPoint:interactionPoint];
-//                    if ( handled ) {
-//                        return YES;
-//                    }
-//                }
-//            }
-//        }
-//
-//        return [super pointingDeviceUpEvent:event atPoint:interactionPoint];
-//    }
-//
+    override func pointingDeviceUpEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint ) -> Bool
+    {
+        for annotation in self.annotations {
+            let content = annotation.contentLayer;
+            if (( content ) != nil) {
+                if ( content!.frame.contains(interactionPoint)) {
+                    let  handled = content!.pointingDeviceUpEvent(event: event, atPoint:interactionPoint)
+                    if ( handled == true) {
+                        return true
+                    }
+                }
+            }
+        }
+        return super.pointingDeviceUpEvent(event: event, atPoint:interactionPoint)
+    }
 //    /**
 //     *  @brief Informs the receiver that the user has moved
 //     *  @if MacOnly the mouse with the button pressed. @endif
 //     *  @if iOSOnly their finger while touching the screen. @endif
 //     *
 //     *
-//     *  The event is passed in turn to each annotation layer that contains the interaction point.
-//     *  If any layer handles the event, subsequent layers are not notified and
-//     *  this method immediately returns @YES.
-//     *
-//     *  @param event The OS event.
-//     *  @param interactionPoint The coordinates of the interaction.
-//     *  @return Whether the event was handled or not.
-//     **/
-//    -(BOOL)pointingDeviceDraggedEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
-//    {
-//        for ( CPTAnnotation *annotation in self.annotations ) {
-//            CPTLayer *content = annotation.contentLayer;
-//            if ( content ) {
-//                if ( CGRectContainsPoint(content.frame, interactionPoint)) {
-//                    BOOL handled = [content pointingDeviceDraggedEvent:event atPoint:interactionPoint];
-//                    if ( handled ) {
-//                        return YES;
-//                    }
-//                }
-//            }
-//        }
-//
-//        return [super pointingDeviceDraggedEvent:event atPoint:interactionPoint];
-//    }
-//
+    override func pointingDeviceDraggedEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint) -> Bool
+{
+    for annotation in self.annotations {
+        let content = annotation.contentLayer;
+        if (( content ) != nil) {
+            if ( content!.frame.contains(interactionPoint)) {
+                let handled = content!.pointingDeviceDraggedEvent(event: event, atPoint:interactionPoint)
+                if ( handled ) {
+                    return true;
+                }
+            }
+        }
+    }
+
+        return super.pointingDeviceDraggedEvent(event: event, atPoint:interactionPoint)
+}
+
 //    /**
 //     *  @brief Informs the receiver that tracking of
 //     *  @if MacOnly mouse moves @endif
@@ -220,29 +174,18 @@ public class CPTAnnotationHostLayer: CPTLayer {
 //     *  has been cancelled for any reason.
 //     *
 //     *
-//     *  The event is passed in turn to each annotation layer.
-//     *  If any layer handles the event, subsequent layers are not notified and
-//     *  this method immediately returns @YES.
-//     *
-//     *  @param event The OS event.
-//     *  @return Whether the event was handled or not.
-//     **/
-//    -(BOOL)pointingDeviceCancelledEvent:(nonnull CPTNativeEvent *)event
-//    {
-//        for ( CPTAnnotation *annotation in self.annotations ) {
-//            CPTLayer *content = annotation.contentLayer;
-//            if ( content ) {
-//                BOOL handled = [content pointingDeviceCancelledEvent:event];
-//                if ( handled ) {
-//                    return YES;
-//                }
-//            }
-//        }
-//
-//        return [super pointingDeviceCancelledEvent:event];
-//    }
-//
-    
+    func pointingDeviceCancelledEvent(_ event: CPTNativeEvent) -> Bool {
+        for annotation in annotations {
+            let content = annotation.contentLayer
+            if let content = content {
+                let handled = content.pointingDeviceCancelledEvent(event: event)
+                if handled {
+                    return true
+                }
+            }
+        }
+        return super.pointingDeviceCancelledEvent(event: event)
+    }
     
     
 }
