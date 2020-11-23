@@ -12,7 +12,7 @@
 
 import AppKit
 
-class CPTAnnotationHostLayer: CPTLayer {
+public class CPTAnnotationHostLayer: CPTLayer {
     
     var annotations = [CPTAnnotation] ()
     

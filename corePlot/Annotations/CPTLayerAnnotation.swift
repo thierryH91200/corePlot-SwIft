@@ -33,8 +33,7 @@ class CPTLayerAnnotation: CPTAnnotation {
                                                 object:newAnchorLayer)
     }
 
-    @objc override func positionContentLayer()//(_ notification: Notification)
-    {
+    @objc override func positionContentLayer()   {
         let content = self.contentLayer
         
         if  content != nil  {

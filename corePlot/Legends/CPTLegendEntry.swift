@@ -5,7 +5,7 @@
 //  Created by thierryH24 on 13/11/2020.
 //
 
-import Cocoa
+import AppKit
 
 class CPTLegendEntry: NSObject {
 
@@ -17,8 +17,6 @@ class CPTLegendEntry: NSObject {
     var row = 0
     var column = 0
     var titleSize =  CGSize()
-
-
     
     override init()
     {
@@ -28,7 +26,6 @@ class CPTLegendEntry: NSObject {
             row       = 0;
             column    = 0;
             textStyle = nil;
-        
     }
 
     
@@ -36,7 +33,7 @@ class CPTLegendEntry: NSObject {
     {
         let thePlot = self.plot
 
-        return [thePlot titleForLegendEntryAtIndex:self.index];
+        return thePlot.titleForLegendEntryAtIndex(index:self)
     }
     
      func attributedTitle() -> NSAttributedString
@@ -49,7 +46,7 @@ class CPTLegendEntry: NSObject {
     func titleSize() -> CGSize
     {
         let theTitleSize = CGSize()
-        let styledTitle = self.attributedTitle;
+        let styledTitle = self.attributedTitle
 
         if ( styledTitle.length > 0 ) {
             theTitleSize = styledTitle sizeAsDrawn

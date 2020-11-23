@@ -1,7 +1,12 @@
 
 import AppKit
 
-class CPTLayer : CALayer
+@objc
+public protocol CPTLayerDelegate {
+    
+}
+
+public class CPTLayer : CALayer
 {
     var paddingLeft : CGFloat         = 0.0
     var paddingTop   : CGFloat        = 0.0
@@ -97,7 +102,7 @@ class CPTLayer : CALayer
     }
     
     
-    override func draw(in context: CGContext) {
+    public override func draw(in context: CGContext) {
         useFastRendering = true
         renderAsVector(in: context)
         useFastRendering = false
@@ -142,7 +147,7 @@ class CPTLayer : CALayer
         }
     }
     
-    override var cornerRadius: CGFloat {
+    public override var cornerRadius: CGFloat {
         get {
             return super.cornerRadius
         }
@@ -158,7 +163,7 @@ class CPTLayer : CALayer
         }
     }
     
-    override var anchorPoint: CGPoint {
+    public override var anchorPoint: CGPoint {
         get {
             return super.anchorPoint
         }
@@ -182,7 +187,7 @@ class CPTLayer : CALayer
         }
     }
     
-    override var bounds : CGRect {
+    public override var bounds : CGRect {
         get {
             var actualBounds = super.bounds
             
@@ -196,7 +201,6 @@ class CPTLayer : CALayer
             }
             return actualBounds;
         }
-        
         set {
 
             var newBounds = newValue
@@ -214,17 +218,16 @@ class CPTLayer : CALayer
                 self.outerBorderPath = nil
                 self.innerBorderPath = nil
                 
-                NotificationCenter.default.post(name: Notification.Name( boundsDidChange),  object:self)
+                NotificationCenter.default.post(name: .CPTLayerBoundsDidChangeNotification , object:self)
             }
         }
-        
     }
     
     func applyMaskToContext(context : CGContext)
     {
-        let *mySuperlayer = self.superlayer
+        let mySuperlayer = self.superlayer
 
-        if ( [mySuperlayer isKindOfClass:[CPTLayer class]] ) {
+        if (mySuperlayer is CPTLayer ) {
             [mySuperlayer applySublayerMaskToContext:context forSublayer:self withOffset:CGPoint())
         }
 
