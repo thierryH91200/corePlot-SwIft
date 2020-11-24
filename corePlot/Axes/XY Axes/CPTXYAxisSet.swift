@@ -13,19 +13,19 @@ class CPTXYAxisSet: CPTAxisSet {
     
     // MARK: - Init/Dealloc
 
-    init(frame : CGRect)
+    override init(frame : CGRect)
     {
         super.init(frame:frame)
-            CPTXYAxis *xAxis = [[CPTXYAxis alloc] initWithFrame:newFrame];
-            xAxis.coordinate    = CPTCoordinateX;
-            xAxis.tickDirection = CPTSignNegative;
-
-            let yAxis = CPTXYAxis( newFrame : newFrame)
-            yAxis.coordinate    = CPTCoordinateY
-            yAxis.tickDirection = CPTSignNegative
-
-            self.axes = [xAxis, yAxis]
-        }
+        let xAxis = CPTXYAxis(frame:frame)
+        xAxis.coordinate    = CPTCoordinate.x;
+        xAxis.tickDirection = CPTSign.negative
+        
+        let yAxis = CPTXYAxis( frame : frame)
+        yAxis.coordinate    = CPTCoordinate.Y
+        yAxis.tickDirection = CPTSign.negative
+        
+        self.axes = [xAxis, yAxis]
+    }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -35,9 +35,8 @@ class CPTXYAxisSet: CPTAxisSet {
 
     override func renderAsVectorInContext(context: CGContext)
     {
-        if ( self.isHidden ) {
-            return;
-        }
+        guard  self.isHidden == false  else {return}
+        
         let theLineStyle = self.borderLineStyle;
 
         if (( theLineStyle ) != nil) {
@@ -58,7 +57,7 @@ class CPTXYAxisSet: CPTAxisSet {
                 
             }
             else {
-                theLineStyle.strokeRect(borderRect: , inContext:context)
+                theLineStyle.strokeRect(borderRect:  rect, :context)
             }
         }
     }

@@ -54,6 +54,7 @@
 		03525995256C185500FEA155 /* CPTLayer accessors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03525994256C185500FEA155 /* CPTLayer accessors.swift */; };
 		03525999256C18EB00FEA155 /* CPTLayer Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03525998256C18EB00FEA155 /* CPTLayer Layout.swift */; };
 		0352599D256C19A500FEA155 /* CPTLayer masking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0352599C256C19A500FEA155 /* CPTLayer masking.swift */; };
+		035C8A71256D305400954017 /* CPTUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035C8A70256D305400954017 /* CPTUtilities.swift */; };
 		037244412545FE4600B59C97 /* corePlot.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 037244372545FE4600B59C97 /* corePlot.framework */; };
 		037244462545FE4600B59C97 /* corePlotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037244452545FE4600B59C97 /* corePlotTests.swift */; };
 		037244482545FE4600B59C97 /* corePlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 0372443A2545FE4600B59C97 /* corePlot.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -151,6 +152,7 @@
 		03525994256C185500FEA155 /* CPTLayer accessors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTLayer accessors.swift"; sourceTree = "<group>"; };
 		03525998256C18EB00FEA155 /* CPTLayer Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTLayer Layout.swift"; sourceTree = "<group>"; };
 		0352599C256C19A500FEA155 /* CPTLayer masking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTLayer masking.swift"; sourceTree = "<group>"; };
+		035C8A70256D305400954017 /* CPTUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTUtilities.swift; sourceTree = "<group>"; };
 		037244372545FE4600B59C97 /* corePlot.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = corePlot.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0372443A2545FE4600B59C97 /* corePlot.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = corePlot.h; sourceTree = "<group>"; };
 		0372443B2545FE4600B59C97 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -300,6 +302,7 @@
 			children = (
 				033667062557DFBD00B109CE /* CPTDefinitions.swift */,
 				0320AFFF255C75DE00D32BF9 /* CPTPlotRange.swift */,
+				035C8A70256D305400954017 /* CPTUtilities.swift */,
 			);
 			path = "Types and Functions";
 			sourceTree = "<group>";
@@ -704,6 +707,7 @@
 				0320AFE8255C6A1800D32BF9 /* CPTAxisSet.swift in Sources */,
 				0320B010255C8C4300D32BF9 /* CPTPlotGroup.swift in Sources */,
 				03DDD45A25626DF500CAB29B /* CPTAxisTitle.swift in Sources */,
+				035C8A71256D305400954017 /* CPTUtilities.swift in Sources */,
 				03A9CCE6255956F70096853D /* CPTAnnotationHostLayer.swift in Sources */,
 				0320AFD4255C5A7000D32BF9 /* CPTXYGraph.swift in Sources */,
 				03DDD45E2562748C00CAB29B /* CPTAxisLabelGroup.swift in Sources */,
