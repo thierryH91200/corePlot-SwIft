@@ -9,7 +9,6 @@ import Cocoa
 
 class CPTAnimationCGFloatPeriod: CPTAnimationPeriod {
 
-    
     func CPTCurrentFloatValue(_ boundObject: Any, _ boundGetter: Selector) -> CGFloat {
         let invocation = NSInvocation(methodSignature: boundObject.methodSignature(for: boundGetter))
 
@@ -24,12 +23,9 @@ class CPTAnimationCGFloatPeriod: CPTAnimationPeriod {
         return value
     }
 
-
-
-
-    func setStartValueFromObject(nonnull id)boundObject propertyGetter: Selector(boundGetter)
+    func setStartValueFromObject(boundObject: Any, propertyGetter: Selector(boundGetter))
     {
-        self.startValue = @(CPTCurrentFloatValue(boundObject, boundGetter))
+        self.startValue = CPTCurrentFloatValue(boundObject, boundGetter)
     }
 
     func canStartWithValueFromObject(boundObject: Any, propertyGetter: Selector(boundGetter)) -> Bool
@@ -39,10 +35,10 @@ class CPTAnimationCGFloatPeriod: CPTAnimationPeriod {
         var end = CGFloat (0)
 
         if ( !self.startValue ) {
-            [self setStartValueFromObject:boundObject propertyGetter:boundGetter];
+            self.setStartValueFromObject(boundObject, propertyGetter:boundGetter)
         }
 
-        [self.startValue getValue:&start];
+        self.startValue.getValue(&start)
         [self.endValue getValue:&end];
 
         return ((current >= start) && (current <= end)) || ((current >= end) && (current <= start));
@@ -50,7 +46,7 @@ class CPTAnimationCGFloatPeriod: CPTAnimationPeriod {
 
     func tweenedValueForProgress(progress: CGFloat) -> CGFloat
     {
-        let start = startValue
+        var start = startValue
         var end = endValue
 
         startValue.getValue(&start)

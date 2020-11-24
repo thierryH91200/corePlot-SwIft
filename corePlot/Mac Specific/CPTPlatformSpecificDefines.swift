@@ -10,5 +10,5 @@ import AppKit
 
 typealias NSUIColor = NSColor ///< Platform-native color.
 typealias CPTNativeImage = NSImage ///< Platform-native image format.
-typealias CPTNativeEvent = NSEvent ///< Platform-native OS event.
+public typealias CPTNativeEvent = NSEvent ///< Platform-native OS event.
 typealias CPTNativeFont = NSFont ///< Platform-native font.

@@ -888,8 +888,8 @@ class CPTUtilities {
     //
     //    // Ensure that coordinates are at exactly the corner
     //    // of a device pixel.
-    //    point.x = round(point.x - CPTFloat(0.5)) + CPTFloat(0.5);
-    //    point.y = ceil(point.y) - CPTFloat(0.5);
+    //    point.x = round(point.x - CGFloat(0.5)) + CGFloat(0.5);
+    //    point.y = ceil(point.y) - CGFloat(0.5);
     //
     //    // Convert the device aligned coordinate back to user space.
     //    return CGContextConvertPointToUserSpace(context, point);
@@ -929,21 +929,21 @@ class CPTUtilities {
     // *  @param rect The rectangle in user space.
     // *  @return The device aligned rectangle in user space.
     // **/
-    //CGRect CPTAlignRectToUserSpace(__nonnull CGContextRef context, CGRect rect)
-    //{
-    //    rect = CGContextConvertRectToDeviceSpace(context, rect);
-    //
-    //    CGPoint oldOrigin = rect.origin;
-    //
-    //    rect.origin.x   = round(rect.origin.x - CPTFloat(0.5));
-    //    rect.size.width = round(oldOrigin.x + rect.size.width - CPTFloat(0.5)) - rect.origin.x;
-    //    rect.origin.x  += CPTFloat(0.5);
-    //
-    //    rect.origin.y    = ceil(CGRectGetMaxY(rect)) - CPTFloat(0.5);
-    //    rect.size.height = ceil(oldOrigin.y - CPTFloat(0.5) - rect.origin.y);
-    //
-    //    return CGContextConvertRectToUserSpace(context, rect);
-    //}
+    func CPTAlignRectToUserSpace(context: CGContext , rect : CGRect )-> CGRect
+    {
+        var rect = context.convertToDeviceSpace(rect);
+    
+        let oldOrigin = rect.origin;
+    
+        rect.origin.x   = round(rect.origin.x - CGFloat(0.5));
+        rect.size.width = round(oldOrigin.x + rect.size.width - CGFloat(0.5)) - rect.origin.x;
+        rect.origin.x  += CGFloat(0.5);
+    
+        rect.origin.y    = ceil(rect.maxY) - CGFloat(0.5);
+        rect.size.height = ceil(oldOrigin.y - CGFloat(0.5) - rect.origin.y);
+    
+        return context.convertToUserSpace(rect);
+    }
     //
     //#pragma mark -
     //#pragma mark Integral Geometry Conversions
@@ -962,7 +962,7 @@ class CPTUtilities {
     //    point = CGContextConvertPointToDeviceSpace(context, point);
     //
     //    point.x = round(point.x);
-    //    point.y = ceil(point.y - CPTFloat(0.5));
+    //    point.y = ceil(point.y - CGFloat(0.5));
     //
     //    return CGContextConvertPointToUserSpace(context, point);
     //}
@@ -977,88 +977,90 @@ class CPTUtilities {
     // *  @param rect The rectangle in user space.
     // *  @return The device aligned rectangle in user space.
     // **/
-    //CGRect CPTAlignIntegralRectToUserSpace(__nonnull CGContextRef context, CGRect rect)
-    //{
-    //    rect = CGContextConvertRectToDeviceSpace(context, rect);
+    func CPTAlignIntegralRectToUserSpace(context: CGContext , rect: CGRect )->CGRect
+    {
+        
+        var rect = rect
+        rect = context.convertToDeviceSpace(rect);
+    
+        let oldOrigin = rect.origin;
+    
+        rect.origin.x   = round(rect.origin.x);
+        rect.size.width = round(oldOrigin.x + rect.size.width) - rect.origin.x;
+    
+        rect.origin.y    = ceil(rect.maxY - CGFloat(0.5));
+        rect.size.height = ceil(oldOrigin.y - CGFloat(0.5) - rect.origin.y);
+    
+        return context.convertToUserSpace(rect);
+    }
+    
+    func CPTAlignBorderedRectToUserSpace(context: CGContext,rect:  CGRect ,  borderLineStyle: CPTLineStyle)-> CGRect
+    {
+        var borderRect = CGRect.zero
+        var contextScale = CGFloat(1.0);
+    
+        if ( rect.size.height != CGFloat(0.0)) {
+            let deviceRect = context.convertToDeviceSpace(rect);
+            contextScale = deviceRect.size.height / rect.size.height;
+        }
+    
+        if ( contextScale != CGFloat(1.0)) {
+            let borderWidth = borderLineStyle.lineWidth;
+            if ((borderWidth > CGFloat(0.0)) && (borderWidth == round(borderWidth))) {
+                borderRect = CPTAlignIntegralRectToUserSpace(context: context, rect: rect);
+            }
+            else {
+                borderRect = CPTAlignRectToUserSpace(context: context, rect: rect);
+            }
+        }
+        else {
+            borderRect = CPTAlignRectToUserSpace(context: context, rect: rect);
+        }
+    
+        return borderRect;
+    }
     //
-    //    CGPoint oldOrigin = rect.origin;
-    //
-    //    rect.origin.x   = round(rect.origin.x);
-    //    rect.size.width = round(oldOrigin.x + rect.size.width) - rect.origin.x;
-    //
-    //    rect.origin.y    = ceil(CGRectGetMaxY(rect) - CPTFloat(0.5));
-    //    rect.size.height = ceil(oldOrigin.y - CPTFloat(0.5) - rect.origin.y);
-    //
-    //    return CGContextConvertRectToUserSpace(context, rect);
-    //}
-    //
-    //CGRect CPTAlignBorderedRectToUserSpace(__nonnull CGContextRef context, CGRect rect, CPTLineStyle *__nonnull borderLineStyle)
-    //{
-    //    CGRect borderRect;
-    //    CGFloat contextScale = CPTFloat(1.0);
-    //
-    //    if ( rect.size.height != CPTFloat(0.0)) {
-    //        CGRect deviceRect = CGContextConvertRectToDeviceSpace(context, rect);
-    //        contextScale = deviceRect.size.height / rect.size.height;
-    //    }
-    //
-    //    if ( contextScale != CPTFloat(1.0)) {
-    //        CGFloat borderWidth = borderLineStyle.lineWidth;
-    //        if ((borderWidth > CPTFloat(0.0)) && (borderWidth == round(borderWidth))) {
-    //            borderRect = CPTAlignIntegralRectToUserSpace(context, rect);
-    //        }
-    //        else {
-    //            borderRect = CPTAlignRectToUserSpace(context, rect);
-    //        }
-    //    }
-    //    else {
-    //        borderRect = CPTAlignRectToUserSpace(context, rect);
-    //    }
-    //
-    //    return borderRect;
-    //}
-    //
-    //#pragma mark -
-    //#pragma mark String formatting for Core Graphics structs
+    // MARK: String formatting for Core Graphics structs
     //
     ///** @brief Creates a string representation of the given point.
     // *  @param point The point.
     // *  @return A string with the format <code> {x, y}</code>.
     // **/
-    //NSString *__nonnull CPTStringFromPoint(CGPoint point)
-    //{
-    //    return [NSString stringWithFormat:@"{%g, %g}", (double)point.x, (double)point.y];
-    //}
-    //
+//    NSString *__nonnull CPTStringFromPoint(CGPoint point)
+//    {
+//        return [NSString stringWithFormat:@"{%g, %g}", (double)point.x, (double)point.y];
+//    }
+    
     ///** @brief Creates a string representation of the given size.
     // *  @param size The size.
     // *  @return A string with the format <code> {width, height}</code>.
     // **/
-    //NSString *__nonnull CPTStringFromSize(CGSize size)
-    //{
-    //    return [NSString stringWithFormat:@"{%g, %g}", (double)size.width, (double)size.height];
-    //}
-    //
+//    NSString *__nonnull CPTStringFromSize(CGSize size)
+//    {
+//        return [NSString stringWithFormat:@"{%g, %g}", (double)size.width, (double)size.height];
+//    }
+//
     ///** @brief Creates a string representation of the given rectangle.
     // *  @param rect The rectangle.
     // *  @return A string with the format <code> {{x, y}, {width, height}}</code>.
     // **/
-    //NSString *__nonnull CPTStringFromRect(CGRect rect)
-    //{
-    //    return [NSString stringWithFormat:@"{{%g, %g}, {%g, %g}}", (double)rect.origin.x, (double)rect.origin.y, (double)rect.size.width, (double)rect.size.height];
-    //}
-    //
+    func CPTStringFromRect(rect : CGRect) ->String
+    {
+        return String( format: "{{%f, %f}, {%f, %f}}", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height)
+    }
+    
     ///** @brief Creates a string representation of the given vector.
     // *  @param vector The vector.
     // *  @return A string with the format <code> {dx, dy}</code>.
     // **/
-    //NSString *__nonnull CPTStringFromVector(CGVector vector)
-    //{
-    //    return [NSString stringWithFormat:@"{%g, %g}", (double)vector.dx, (double)vector.dy];
-    //}
-    //
-    //#pragma mark -
-    //#pragma mark CGPoint utilities
+    func CPTStringFromVector(vector:CGVector )->String
+    {
+//        return String stringWithFormat:@"{%g, %g}", Double(vector.dx), Double(vector.dy))
+       return String(format: "{%f, %f}", Double(vector.dx), Double(vector.dy))
+    }
+    
+    
+    // MARK: CGPoint utilities
     //
     ///** @brief Computes the square of the distance between two points.
     // *  @param point1 The first point.
@@ -1076,8 +1078,6 @@ class CPTUtilities {
     
     
     // MARK: Edge Inset Utilities
-    
-    //
     ///** @brief Returns a CPTEdgeInsets struct with the given insets.
     // *  @param top The top inset.
     // *  @param left The left inset.

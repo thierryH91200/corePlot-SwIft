@@ -91,9 +91,7 @@ enum CPTAlignment : Int {
 
 typealias CPTEdgeInsets = NSEdgeInsets
 
-extern const CPTEdgeInsets CPTEdgeInsetsZero; ///< Defines a set of stretchable image edge insets where all of the values are zero (@num{0}).
 
-extern const NSStringDrawingOptions CPTStringDrawingOptions; ///< String drawing options used when measuring and drawing text.
 
 /**
  *  @brief An array of numbers.
@@ -111,4 +109,3 @@ typealias CPTValueArray = Array<NSValue >
 typealias CPTMutableValueArray = Array<NSValue >;
 typealias CPTDictionary = Dictionary< String , Any>
 typealias CPTMutableDictionary = Dictionary<String , Any>
-typealias void (^CPTQuickLookImageBlock)(__nonnull CGContextRef context, CGFloat scale, CGRect bounds);
