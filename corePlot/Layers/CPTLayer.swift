@@ -115,7 +115,7 @@ public class CPTLayer : CALayer
             mySuperlayer?.applySublayerMask(to: context, forSublayer: self, withOffset: CGPoint.zero)
         }
         
-//        let maskPath = self.maskingPath
+        //        let maskPath = self.maskingPath
         
         if let maskPath = self.maskingPath {
             context.addPath(maskPath)
@@ -132,20 +132,21 @@ public class CPTLayer : CALayer
     }
     
     
-    func maskingPath() -> CGPath? {
-        if masksToBounds {
-            var path = outerBorderPath
-            if let path = path {
-                return path
-            }
-            
-            path = CPTCreateRoundedRectPath(bounds, cornerRadius)
-            outerBorderPath = path
-            return outerBorderPath
-        } else {
-            return nil
-        }
-    }
+    
+    //    func maskingPath() -> CGPath? {
+    //        if masksToBounds {
+    //            var path = outerBorderPath
+    //            if let path = path {
+    //                return path
+    //            }
+    //
+    //            path = CPTCreateRoundedRectPath(bounds, cornerRadius)
+    //            outerBorderPath = path
+    //            return outerBorderPath
+    //        } else {
+    //            return nil
+    //        }
+    //    }
     
     public override var cornerRadius: CGFloat {
         get {
@@ -202,7 +203,7 @@ public class CPTLayer : CALayer
             return actualBounds;
         }
         set {
-
+            
             var newBounds = newValue
             if ( !self.bounds.equalTo(newBounds)) {
                 if (( self.shadow ) != nil) {
@@ -226,15 +227,51 @@ public class CPTLayer : CALayer
     func applyMaskToContext(context : CGContext)
     {
         let mySuperlayer = self.superlayer
-
+        
         if (mySuperlayer is CPTLayer ) {
-            [mySuperlayer applySublayerMaskToContext:context forSublayer:self withOffset:CGPoint())
+            mySuperlayer.applySublayerMaskToContext(context,forSublayer:self withOffset:CGPoint())
+            
+//            [(CPTLayer *) superlayer applySublayerMaskToContext:context forSublayer:self withOffset:layerOffset];
         }
-
+        
         let maskPath = self.maskingPath()
         if ( maskPath != nil ) {
             context.addPath(maskPath!);
             context.clip();
         }
     }
+    
+    func applySublayerMaskToContext(context: CGContext, forSublayer sublayer: CPTLayer, withOffset offset:CGPoint)
+    {
+        let  sublayerBoundsOrigin = sublayer.bounds.origin
+        var layerOffset          = offset
+        
+        if self.renderingRecursively == false {
+            let convertedOffset = self.convert(sublayerBoundsOrigin , from:sublayer)
+            layerOffset.x += convertedOffset.x;
+            layerOffset.y += convertedOffset.y;
+        }
+        
+        let sublayerTransform = CATransform3DGetAffineTransform(sublayer.transform)
+        
+        context.concatenate(sublayerTransform.inverted());
+        
+        let superlayer = self.superlayer;
+        
+        if ( superlayer is CPTLayer ) == true {
+            superlayer.applySublayerMaskToContext(context, sublayer:self, withOffset:layerOffset)
+        }
+        
+        let maskPath = self.sublayerMaskingPath;
+        
+//        if ( maskPath != nil  ) {
+            context.translateBy(x: -layerOffset.x, y: -layerOffset.y);
+            context.addPath(maskPath());
+            context.clip();
+            context.translateBy(x: layerOffset.x, y: layerOffset.y);
+//        }
+
+        context.concatenate(sublayerTransform);
+    }
+
 }

@@ -10,34 +10,33 @@ import Foundation
 
 extension CPTLayer {
 
-#pragma mark Masking
+// MARK: Masking
 
 /// @cond
 
 // default path is the rounded rect layer bounds
--(nullable CGPathRef)maskingPath
+    func maskingPath()-> CGPath?
 {
     if ( self.masksToBounds ) {
-        CGPathRef path = self.outerBorderPath;
-        if ( path ) {
+        let path = self.outerBorderPath;
+        if (( path ) != nil) {
             return path;
         }
 
-        path                 = CPTCreateRoundedRectPath(self.bounds, self.cornerRadius);
+        path            = CPTCreateRoundedRectPath(self.bounds, self.cornerRadius);
         self.outerBorderPath = path;
-        CGPathRelease(path);
 
         return self.outerBorderPath;
     }
     else {
-        return NULL;
+        return nil;
     }
 }
 
--(nullable CGPathRef)sublayerMaskingPath
-{
-    return self.innerBorderPath;
-}
+    func sublayerMaskingPath() -> CGPath
+    {
+        return self.innerBorderPath!;
+    }
 
 /// @endcond
 
@@ -50,38 +49,38 @@ extension CPTLayer {
  *  @param sublayer The sublayer that called this method.
  *  @param offset The cumulative position offset between the receiver and the first layer in the recursive calling chain.
  **/
--(void)applySublayerMaskToContext:(nonnull CGContextRef)context forSublayer:(nonnull CPTLayer *)sublayer withOffset:(CGPoint)offset
-{
-    CGPoint sublayerBoundsOrigin = sublayer.bounds.origin;
-    CGPoint layerOffset          = offset;
-
-    if ( !self.renderingRecursively ) {
-        CGPoint convertedOffset = [self convertPoint:sublayerBoundsOrigin fromLayer:sublayer];
-        layerOffset.x += convertedOffset.x;
-        layerOffset.y += convertedOffset.y;
-    }
-
-    CGAffineTransform sublayerTransform = CATransform3DGetAffineTransform(sublayer.transform);
-
-    CGContextConcatCTM(context, CGAffineTransformInvert(sublayerTransform));
-
-    CALayer *superlayer = self.superlayer;
-
-    if ( [superlayer isKindOfClass:[CPTLayer class]] ) {
-        [(CPTLayer *) superlayer applySublayerMaskToContext:context forSublayer:self withOffset:layerOffset];
-    }
-
-    CGPathRef maskPath = self.sublayerMaskingPath;
-
-    if ( maskPath ) {
-        CGContextTranslateCTM(context, -layerOffset.x, -layerOffset.y);
-        CGContextAddPath(context, maskPath);
-        CGContextClip(context);
-        CGContextTranslateCTM(context, layerOffset.x, layerOffset.y);
-    }
-
-    CGContextConcatCTM(context, sublayerTransform);
-}
+//    func applySublayerMaskToContext(context: CGContext, forSublayer sublayer: CPTLayer, withOffset offset:CGPoint)
+//    {
+//        let  sublayerBoundsOrigin = sublayer.bounds.origin
+//        var layerOffset          = offset
+//        
+//        if self.renderingRecursively == false {
+//            let convertedOffset = self.convert(sublayerBoundsOrigin , from:sublayer)
+//            layerOffset.x += convertedOffset.x;
+//            layerOffset.y += convertedOffset.y;
+//        }
+//        
+//        let sublayerTransform = CATransform3DGetAffineTransform(sublayer.transform)
+//        
+//        context.concatenate(sublayerTransform.inverted());
+//        
+//        let superlayer = self.superlayer;
+//        
+//        if ( superlayer is CPTLayer ) == true {
+//            let superlayer.applySublayerMaskToContext:context forSublayer:self withOffset:layerOffset];
+//        }
+//        
+//        let maskPath = self.sublayerMaskingPath;
+//        
+//        if ( maskPath ) {
+//            context.translateBy(x: -layerOffset.x, y: -layerOffset.y);
+//            context.addPath(maskPath());
+//            context.clip();
+//            context.translateBy(x: layerOffset.x, y: layerOffset.y);
+//        }
+//
+//        context.concatenate(sublayerTransform);
+//    }
 
 /** @brief Sets the clipping path of the given graphics context to mask the content.
  *

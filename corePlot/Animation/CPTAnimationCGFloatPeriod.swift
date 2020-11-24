@@ -9,34 +9,34 @@ import Cocoa
 
 class CPTAnimationCGFloatPeriod: CPTAnimationPeriod {
 
+    
+    func CPTCurrentFloatValue(_ boundObject: Any, _ boundGetter: Selector) -> CGFloat {
+        let invocation = NSInvocation(methodSignature: boundObject.methodSignature(for: boundGetter))
 
+        invocation.target = boundObject
+        invocation.selector = boundGetter
 
-    func CPTCurrentFloatValue(id __nonnull boundObject, SEL __nonnull boundGetter)-> CGFloat
-    {
-        let invocation = [NSInvocation invocationWithMethodSignature:[boundObject methodSignatureForSelector:boundGetter]];
+        invocation.invoke()
 
-        invocation.target   = boundObject;
-        invocation.selector = boundGetter;
+        var value: CGFloat
+        invocation.getReturnValue(&value)
 
-        [invocation invoke];
-
-        CGFloat value;
-
-        [invocation getReturnValue:&value];
-
-        return value;
+        return value
     }
 
-    func setStartValueFromObject:(nonnull id)boundObject propertyGetter:(nonnull SEL)boundGetter
+
+
+
+    func setStartValueFromObject(nonnull id)boundObject propertyGetter: Selector(boundGetter)
     {
-        self.startValue = @(CPTCurrentFloatValue(boundObject, boundGetter));
+        self.startValue = @(CPTCurrentFloatValue(boundObject, boundGetter))
     }
 
     func canStartWithValueFromObject(boundObject: Any, propertyGetter: Selector(boundGetter)) -> Bool
     {
-        vat current = CPTCurrentFloatValue(boundObject, boundGetter);
+        var current = CPTCurrentFloatValue(boundObject, boundGetter);
         var start = CGFloat (0)
-        var end; = CGFloat (0)
+        var end = CGFloat (0)
 
         if ( !self.startValue ) {
             [self setStartValueFromObject:boundObject propertyGetter:boundGetter];
@@ -53,10 +53,13 @@ class CPTAnimationCGFloatPeriod: CPTAnimationPeriod {
         let start = startValue
         var end = endValue
 
-//        self.startValue getValue:&start];
-//        [self.endValue getValue:&end];
-
+        startValue.getValue(&start)
+        endValue.getValue(&end)
+        
+        
         let tweenedValue = start + progress * (end - start);
 
         return tweenedValue
-    }}
+    }
+    
+}

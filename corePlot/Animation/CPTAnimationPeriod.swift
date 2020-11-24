@@ -5,7 +5,7 @@
 //  Created by thierryH24 on 14/11/2020.
 //
 
-import Cocoa
+import AppKit
 
 class CPTAnimationPeriod: NSObject {
     
@@ -16,9 +16,10 @@ class CPTAnimationPeriod: NSObject {
     var delay = CGFloat(0)
     var startOffset = CGFloat(0)
     
-    func initPeriodWith ( StartValue:NSValue , endValue: NSValue , ofClass:(Class)class duration:CGFloat, aDelay:CGFloat)
+    
+    init ( startValue:CGFloat , endValue: NSValue , ofClass:(Class)class duration:CGFloat, aDelay:CGFloat)
     {
-    return [[self alloc] initWithStartValue:aStartValue endValue:anEndValue ofClass:class duration:aDuration withDelay:aDelay];
+        initWithStartValue:aStartValue endValue:anEndValue ofClass:class duration:aDuration withDelay:aDelay];
     }
     
     

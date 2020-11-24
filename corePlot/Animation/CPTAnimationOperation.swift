@@ -25,7 +25,7 @@ class CPTAnimationOperation: NSObject {
     
     override init() {
         
-        self.initWithAnimationPeriod( animationPeriod:CPTAnimationPeriod (),
+        self.initWithAnimationPeriod( animationPeriod:CPTAnimationPeriod (startValue: <#CGFloat#>, endValue: <#NSValue#>, ofClass: <#AnyClass#>, class: <#CGFloat#>, aDelay: <#CGFloat#>),
                                              animationCurve: CPTAnimationCurve.default,
                                              object: NSObject(),
                                              getter:Selector(("init:")),

@@ -14,7 +14,11 @@ import AppKit
 
 public class CPTAnnotationHostLayer: CPTLayer {
     
+    typealias CPTMutableSublayerSet = Set<CALayer>
+    
     var annotations = [CPTAnnotation] ()
+    
+    var CPTSublayerSet = Set<CALayer>()
     
     
     // MARK: - Init/Dealloc
@@ -64,31 +68,29 @@ public class CPTAnnotationHostLayer: CPTLayer {
     
     
     // MARK: -  Layout
-//    -(nullable CPTSublayerSet *)sublayersExcludedFromAutomaticLayout
-//    {
-//        CPTMutableAnnotationArray *annotations = self.mutableAnnotations;
-//
-//        if ( annotations.count > 0 ) {
-//            CPTMutableSublayerSet *excludedSublayers = [super.sublayersExcludedFromAutomaticLayout mutableCopy];
-//
-//            if ( !excludedSublayers ) {
-//                excludedSublayers = [NSMutableSet set];
-//            }
-//
-//            for ( CPTAnnotation *annotation in annotations ) {
-//                CALayer *content = annotation.contentLayer;
-//                if ( content ) {
-//                    [excludedSublayers addObject:content];
-//                }
-//            }
-//
-//            return excludedSublayers;
-//        }
-//        else {
-//            return super.sublayersExcludedFromAutomaticLayout;
-//        }
-//    }
-//
+    override func sublayersExcludedFromAutomaticLayout() -> CPTSublayerSet? {
+
+        if annotations.count > 0 {
+            var excludedSublayers = super.sublayersExcludedFromAutomaticLayout()
+
+            if excludedSublayers == nil {
+                excludedSublayers = []
+            }
+
+       
+                for annotation in annotations {
+                    guard let annotation = annotation as? CPTAnnotation else { continue }
+                    let content = annotation.contentLayer
+                    if let content = content {
+                        excludedSublayers?.add(content)
+                    }
+                }
+            return excludedSublayers
+            
+        } else {
+            return super.sublayersExcludedFromAutomaticLayout()
+        }
+    }
     public override func layoutSublayers()
     {
         super.layoutSublayers()

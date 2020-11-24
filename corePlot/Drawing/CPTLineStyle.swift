@@ -185,7 +185,7 @@ class CPTLineStyle: NSObject {
 
         if ( self.dashPattern.count <= 1 ) {
             if (( self.lineGradient ) != nil) {
-                opaqueLine = self.lineGradient.opaque;
+                opaqueLine = self.lineGradient.isoOopaque;
             }
             else if ( self.lineFill ) {
                 opaqueLine = self.lineFill.opaque;

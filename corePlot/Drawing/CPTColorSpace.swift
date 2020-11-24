@@ -16,7 +16,6 @@ class CPTColorSpace: NSObject {
     +(nonnull instancetype)genericRGBSpace
     {
         static CPTColorSpace *space      = nil;
-        static dispatch_once_t onceToken = 0;
 
         dispatch_once(&onceToken, ^{
             CGColorSpaceRef cgSpace = NULL;
@@ -57,13 +56,14 @@ class CPTColorSpace: NSObject {
 
         cgSpace = CGColorSpace(name: CGColorSpace.sRGB)
 
+        super.init()
         init(cgSpace)
 
     }
     
     init(colorSpace: CGColorSpace)
     {
-            cgColorSpace = colorSpace;
+        cgColorSpace = colorSpace;
     }
 
 

@@ -5,12 +5,13 @@
 ////  Created by thierryH24 on 07/11/2020.
 ////
 //
-//import Cocoa
-//
-//class CPTColor: NSObject {
-//    
-//    
-//    var nsColorCache : NSColor?
+import Cocoa
+
+class CPTColor: NSObject {
+    
+}
+
+    var nsColorCache : NSColor?
 //
 //}
 //

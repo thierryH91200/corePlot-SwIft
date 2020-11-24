@@ -136,15 +136,15 @@ extension CPTLayer {
             
             let  excludedSublayers = self.sublayersExcludedFromAutomaticLayout()
             
-            Class layerClass                  = [CPTLayer class];
-            for ( CALayer *subLayer in mySublayers ) {
+            let  layerClass is CPTLayer
+            for  subLayer in mySublayers {
                 if ( [subLayer isKindOfClass:layerClass] && ![excludedSublayers containsObject:subLayer] ) {
                     subLayer.frame = subLayerFrame;
                 }
             }
         }
     }
-    func sublayersExcludedFromAutomaticLayout() -> CPTSublayerSet? {
+    @objc func sublayersExcludedFromAutomaticLayout() -> CPTSublayerSet? {
         return nil
     }
     
