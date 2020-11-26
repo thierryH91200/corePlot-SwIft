@@ -5,7 +5,7 @@
 //  Created by thierryH24 on 19/11/2020.
 //
 
-import Foundation
+import AppKit
 
 
 extension CPTGraph {
@@ -13,17 +13,18 @@ extension CPTGraph {
     
     // MARK: - Drawing
 
-    func layoutAndRenderInContext(context: CGContext)
+    override func layoutAndRenderInContext(context: CGContext)
     {
         self.reloadDataIfNeeded()
         self.axisSet.axes.makeObjectsPerformSelector(@selector(relabel))
         
-        if ( [NSView instancesRespondToSelector:@selector(effectiveAppearance)] ) {
-            let  *oldAppearance = NSAppearance.currentAppearance;
-            let view                = self.hostingView;
-            NSAppearance.currentAppearance = view.effectiveAppearance
-            super.layoutAndRenderInContext(context)
-            NSAppearance.currentAppearance = oldAppearance;
+        if ( NSView.instancesRespondToSelector:#selector(effectiveAppearance) ) {
+            let  oldAppearance = NSAppearance.current
+            let view                = self.hostingView
+            
+            NSAppearance.current = view?.effectiveAppearance
+            super.layoutAndRenderInContext(context: context)
+            NSAppearance.current = oldAppearance;
         }
         else {
             super.layoutAndRenderInContext(context: context)
@@ -33,9 +34,8 @@ extension CPTGraph {
 // MARK: Animation
     func needsDisplayForKey(aKey: String )-> Bool
     {
-        var keys        = Set<String>()
-        
-        
+        var keys    = Set<String>()
+
         keys.insert("titleDisplacement")
         keys.insert("legendDisplacement")
         
@@ -48,14 +48,11 @@ extension CPTGraph {
     }
     
    // MARK: - Retrieving Plots
-
-    /**
-     *  @brief Makes all plots reload their data.
-     **/
     func reloadData()
     {
-        [self.plots makeObjectsPerformSelector:@selector(reloadData)];
-        [self.plotSpaces makeObjectsPerformSelector:@selector(removeAllCategories)];
+//        self.plots.makeObjectsPerformSelector(#selector(reloadData))
+        self.plots.makeObjectsPerformSelector(#selector(reloadData))
+        self.plotSpaces.makeObjectsPerformSelector(#selector(removeAllCategories))
     }
 
     /**
@@ -69,9 +66,9 @@ extension CPTGraph {
     /** @brief All plots associated with the graph.
      *  @return An array of all plots associated with the graph.
      **/
-    -(nonnull CPTPlotArray *)allPlots
+    func allPlots()-> [CPTPlot]
     {
-        return [NSArray arrayWithArray:self.plots];
+        return self.plots
     }
 
     /** @brief Gets the plot at the given index in the plot array.

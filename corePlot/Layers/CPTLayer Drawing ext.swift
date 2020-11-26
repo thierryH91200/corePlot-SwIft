@@ -147,7 +147,7 @@ extension CPTLayer {
     /** @brief Updates the layer layout if needed and then draws layer content and the content of all sublayers into the provided graphics context.
      *  @param context The graphics context to draw into.
      */
-    func layoutAndRenderInContext(context: CGContext)
+    @objc func layoutAndRenderInContext(context: CGContext)
     {
         self.layoutIfNeeded()
         self.recursivelyRenderInContext(context: context)

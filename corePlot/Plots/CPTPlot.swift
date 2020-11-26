@@ -30,7 +30,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
     var labelShadow : CPTShadow?
     
     var dataNeedsReloading = false
-    var cachedData = [ Dictionary<String, Any>]()
+    var cachedData :  Dictionary<String, [String]> = [:]
     
     var needsRelabel = false
     var labelIndexRange = NSRange()
@@ -47,7 +47,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
     //    var numberOfRecords = 0
     var cachePrecision = CPTPlotCachePrecision.auto
     
-    var fieldIdentifiers = [CGFloat]()
+    var fieldIdentifiers = [Int]()
     
     enum CPTPlotCachePrecision: Int {
         case auto
@@ -58,7 +58,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
     init(frame: CGRect)
     {
         super.init()
-        cachedData           = [Dictionary<String, Any>]()
+        cachedData.removeAll()
         cachedDataCount      = 0;
         cachePrecision       = .auto
         dataSource           = nil;
@@ -226,6 +226,8 @@ public class CPTPlot: CPTAnnotationHostLayer {
     }
     
     // MARK: - Data Source
+    var          _numberOfRecords = 0
+
     var numberOfRecords: Int{
         get {
             let number = self.dataSource?.numberOfRecordsForPlot(plot: self)
@@ -251,7 +253,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
     {
         self.cachedData.removeAll()
         self.cachedDataCount = 0;
-        self.reloadDataInIndexRange(NSRange(location: 0, length: self.numberOfRecords))
+        self.reloadData( indexRange: NSRange(location: 0, length: self.numberOfRecords))
     }
     
     /**
@@ -272,15 +274,14 @@ public class CPTPlot: CPTAnnotationHostLayer {
         
         dataNeedsReloading = false
         
-        reloadPlotData(inIndexRange: indexRange)
+        reloadPlotData(indexRange: indexRange)
         
         // Data labels
-        reloadDataLabels(inIndexRange: indexRange)
+        reloadDataLabels(indexRange: indexRange)
     }
     
     
 }
-
 
 @objc public protocol CPTPlotDataSource {
     

@@ -35,28 +35,28 @@ class CPTPlotSpace: NSObject {
 //     *  @param coordinate The axis coordinate.
 //     *  @return The ordered set of categories for the given coordinate.
 //     */
-//    -(nonnull CPTMutableCategorySet *)orderedSetForCoordinate:(CPTCoordinate)coordinate
-//    {
-//        NSMutableDictionary<NSNumber *, CPTMutableCategorySet *> *names = self.categoryNames;
-//
-//        if ( !names ) {
-//            names = [[NSMutableDictionary alloc] init];
-//
-//            self.categoryNames = names;
-//        }
-//
-//        NSNumber *cacheKey = @(coordinate);
-//
-//        CPTMutableCategorySet *categories = names[cacheKey];
-//
-//        if ( !categories ) {
-//            categories = [[NSMutableOrderedSet alloc] init];
-//
-//            names[cacheKey] = categories;
-//        }
-//
-//        return categories;
-//    }
+    func orderedSetForCoordinate(coordinate: CPTCoordinate) ->Set< String > //CPTMutableCategorySet
+    {
+        NSMutableDictionary<NSNumber *, CPTMutableCategorySet *> *names = self.categoryNames;
+
+        if ( !names ) {
+            names = [[NSMutableDictionary alloc] init];
+
+            self.categoryNames = names;
+        }
+
+        NSNumber *cacheKey = @(coordinate);
+
+        let *categories = names[cacheKey];
+
+        if ( !categories ) {
+            categories = Set< Any >
+
+            names[cacheKey] = categories;
+        }
+
+        return categories;
+    }
 //
 //    /// @endcond
 //
@@ -141,22 +141,22 @@ class CPTPlotSpace: NSObject {
 //    /**
 //     *  @brief Remove all categories for every coordinate.
 //     */
-//    -(void)removeAllCategories
-//    {
-//        self.categoryNames = nil;
-//    }
+    func removeAllCategories()
+    {
+        self.categoryNames = [:]
+    }
 //
 //    /**
 //     *  @brief Returns a list of all category names for the given coordinate.
 //     *  @param coordinate The axis coordinate.
 //     *  @return An array of category names.
 //     */
-//    -(nonnull CPTStringArray *)categoriesForCoordinate:(CPTCoordinate)coordinate
-//    {
-//        CPTMutableCategorySet *categories = [self orderedSetForCoordinate:coordinate];
-//
-//        return categories.array;
-//    }
+    func categoriesForCoordinate(coordinate: CPTCoordinate)->[String]
+    {
+        let categories = self.orderedSetForCoordinate(coordinate: coordinate)
+
+        return categories
+    }
 //
 //    /**
 //     *  @brief Returns the category name for the given coordinate at the given index in the list of category names.

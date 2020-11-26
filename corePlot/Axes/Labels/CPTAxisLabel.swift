@@ -46,10 +46,7 @@ class CPTAxisLabel: NSObject {
     func positionRelativeToViewPoint(point: CGPoint, coordinate: CPTCoordinate, direction : CPTSign)
     {
         let content = self.contentLayer
-
-        if ( content.identifier == nil) {
-            return
-        }
+        guard ( content.identifier != nil) else { return  }
 
         var newPosition = point
         var value      = coordinate == CPTCoordinate.x ? newPosition.x : newPosition.y
@@ -177,11 +174,11 @@ class CPTAxisLabel: NSObject {
 
         if ( abs(newAnchorX) <= abs(newAnchorY)) {
             newAnchorX /= abs(newAnchorY);
-            newAnchorY  = (signbit(newAnchorY) != 0) ? CGFloat(-1.0) : CGFloat(1.0);
+            newAnchorY  = ((newAnchorY.signbit()) != 0) ? CGFloat(-1.0) : CGFloat(1.0);
         }
         else {
             newAnchorY /= abs(newAnchorX);
-            newAnchorX  = (signbit(newAnchorX) != 0) ? CGFloat(-1.0) : CGFloat(1.0);
+            newAnchorX  = ((newAnchorX.signbit()) != 0) ? CGFloat(-1.0) : CGFloat(1.0);
         }
         let anchor = CGPoint(x: (newAnchorX + CGFloat(1.0)) / CGFloat(2.0), y: (newAnchorY + CGFloat(1.0)) / CGFloat(2.0));
 
@@ -208,10 +205,10 @@ class CPTAxisLabel: NSObject {
 //
 //    /// @cond
 //
-//    -(nullable NSString *)description
-//    {
-//        return [NSString stringWithFormat:@"<%@ {%@}>", super.description, self.contentLayer];
-//    }
+    func description() ->String
+    {
+        return String(format:"<%@ {%@}>", super.description, self.contentLayer);
+    }
 //
 //    /// @endcond
 //
@@ -270,10 +267,3 @@ class CPTAxisLabel: NSObject {
 
     
 }
-
-extension SignedNumberType {
-    var signValue: Int {
-        return (self >= -self) ? 1 : -1
-    }
-}
-

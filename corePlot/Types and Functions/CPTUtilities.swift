@@ -1119,7 +1119,7 @@ class CPTUtilities {
     // **/
     func CPTLogModulus(_ value: Double) -> Double {
         if value != 0.0 {
-            let sign = (value.sign() != 0) ? -1.0 : +1.0
+            let sign = (value.signbit() != 0) ? -1.0 : +1.0
             
             return Double(sign * Double(log10(abs(CGFloat(value)) + CGFloat(1.0))))
         } else {
@@ -1134,11 +1134,11 @@ class CPTUtilities {
     func CPTInverseLogModulus(value: Double)-> Double
     {
         if ( value != 0.0 ) {
-            let sign = (((value.sign()) != 0) ? -1.0 : +1.0);
-            return sign * (pow(10.0, fabs(value)) - 1.0);
+            let sign = (((value.signbit()) != 0) ? -1.0 : +1.0)
+            return sign * (pow(10.0, fabs(value)) - 1.0)
         }
         else {
-            return 0.0;
+            return 0.0
         }
     }
 
@@ -1150,7 +1150,7 @@ protocol Signable {
 }
 
 extension Signable {
-    func sign() -> Int {
+    func signbit() -> Int {
         return (self < Self() ? -1 : 1)
     }
 }

@@ -26,19 +26,20 @@ class CPTAnimationOperation: NSObject {
     override init() {
         
         self.initWithAnimationPeriod( animationPeriod:CPTAnimationPeriod (startValue: <#CGFloat#>, endValue: <#NSValue#>, ofClass: <#AnyClass#>, class: <#CGFloat#>, aDelay: <#CGFloat#>),
-                                             animationCurve: CPTAnimationCurve.default,
-                                             object: NSObject(),
-                                             getter:Selector(("init:")),
-                                             setter:Selector("init:)"))
+                                      animationCurve: CPTAnimationCurve.default,
+                                      object: NSObject(),
+                                      getter:Selector(("init:")),
+                                      setter:Selector("init:)"))
     }
     
-    func  initWithAnimationPeriod(animationPeriod: CPTAnimationPeriod,
-                                  animationCurve:CPTAnimationCurve,
-                                  object:Any,
-                                  getter:Selector,
-                                  setter:Selector)
+    func  initWithAnimationPeriod(
+        animationPeriod: CPTAnimationPeriod,
+        animationCurve:CPTAnimationCurve,
+        object:Any,
+        getter:#selector(init),
+        setter:#selector(init))
     {
-//        super.init()
+        //        super.init()
         self.period         = animationPeriod
         self.animationCurve = animationCurve
         self.boundObject    = object
