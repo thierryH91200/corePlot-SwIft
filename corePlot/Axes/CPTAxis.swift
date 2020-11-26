@@ -136,8 +136,6 @@ class CPTAxis : CPTLayer {
         labelAlignment              = .center
         minorTickLabelAlignment     = .center
     
-    
-
         titleOffset                 = CGFloat(30.0)
         axisLineStyle               = CPTLineStyle()
         majorTickLineStyle          = CPTLineStyle()
@@ -198,9 +196,9 @@ required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
 }
 
-}
 
-//
+
+
 //    init(layer :  CPTAxis )
 //    {
 //        super.init(layer: layer)
@@ -265,37 +263,32 @@ required init?(coder: NSCoder) {
 //        pointingDeviceDownTickLabel = theLayer.pointingDeviceDownTickLabel;
 //        inTitleUpdate               = theLayer.inTitleUpdate;
 //        labelsUpdated               = theLayer.labelsUpdated;
-//    }
-//
-//    required init?(coder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-//
-//// MARK: - Animation
-//    func needsDisplayForKey(aKey:String )-> Bool
-//    {
-//        var keys        = Set<String>()
-//
-//        keys.insert("titleOffset")
-//        keys.insert("titleRotation")
-//        keys.insert("labelOffset")
-//        keys.insert("minorTickLabelOffset")
-//        keys.insert("labelRotation")
-//        keys.insert("minorTickLabelRotation")
-//
-//        if keys.contains(aKey ) {
-//            return true
-//        }
-//        else {
-//            return CPTLayer.needsDisplay(forKey: aKey)
-//        }
-//    }
-//}
-//
-//    /// @endcond
-//
-//    #pragma mark -
-//    #pragma mark Ticks
+ //   }
+
+
+// MARK: - Animation
+    func needsDisplayForKey(aKey:String )-> Bool
+    {
+        var keys        = Set<String>()
+
+        keys.insert("titleOffset")
+        keys.insert("titleRotation")
+        keys.insert("labelOffset")
+        keys.insert("minorTickLabelOffset")
+        keys.insert("labelRotation")
+        keys.insert("minorTickLabelRotation")
+
+        if keys.contains(aKey ) {
+            return true
+        }
+        else {
+            return CPTLayer.needsDisplay(forKey: aKey)
+        }
+    }
+
+
+
+// MARK: -Ticks
 //
 //    /// @cond
 //

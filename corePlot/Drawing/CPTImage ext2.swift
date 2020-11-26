@@ -59,7 +59,9 @@ extension CPTImage{
         
         let insets = self.edgeInsets;
         //
-        if ( CPTEdgeInsetsEqualToEdgeInsets(  insets., EdgeInsets.zeto)) {
+        
+//        if insets.equal
+        if ( CPTEdgeInsetsEqualToEdgeInsets(  insets, EdgeInsets.zeto)) {
             self.drawImage(theImage: theImage, context:context, rect:rect, scaleRatio:scaleRatio)
         }
         else {

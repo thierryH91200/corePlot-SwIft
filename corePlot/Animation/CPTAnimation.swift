@@ -131,7 +131,8 @@ class CPTAnimation: NSObject {
     /** @brief Removes an animation operation from the animation queue.
      *  @param animationOperation The animation operation to remove.
      **/
-    -(void)removeAnimationOperation:(nullable CPTAnimationOperation *)animationOperation
+    
+    func removeAnimationOperation( animationOperation: CPTAnimationOperation )
     {
         if ( animationOperation ) {
             dispatch_async(self.animationQueue, ^{
@@ -142,7 +143,7 @@ class CPTAnimation: NSObject {
 
     /** @brief Removes all animation operations from the animation queue.
     **/
-    -(void)removeAllAnimationOperations
+    func removeAllAnimationOperations()
     {
         dispatch_async(self.animationQueue, ^{
             for ( CPTAnimationOperation *animationOperation in self.animationOperations ) {
@@ -151,7 +152,7 @@ class CPTAnimation: NSObject {
         });
     }
 
-    #pragma mark - Retrieving Animation Operations
+    // MARK: - Retrieving Animation Operations
 
     /** @brief Gets the animation operation with the given identifier from the animation operation array.
      *  @param identifier An animation operation identifier.

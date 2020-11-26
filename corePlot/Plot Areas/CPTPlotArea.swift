@@ -5,10 +5,9 @@
 //  Created by thierryH24 on 11/11/2020.
 //
 
-import Cocoa
+import AppKit
 
 class CPTPlotArea: CPTAnnotationHostLayer {
-    
     
     var touchedPoint = CGPoint(x: 0,y: 0)
     var bottomUpLayerOrder : CPTGraphLayerType?
@@ -82,46 +81,42 @@ class CPTPlotArea: CPTAnnotationHostLayer {
         fatalError("init(coder:) has not been implemented")
     }
     
-//    #pragma mark -
-//    #pragma mark Drawing
-//
-//    /// @cond
-//
-//    -(void)renderAsVectorInContext:(nonnull CGContextRef)context
-//    {
-//        if ( self.hidden ) {
-//            return;
-//        }
-//
-//        [super renderAsVectorInContext:context];
-//
-//        BOOL useMask = self.masksToBounds;
-//
-//        self.masksToBounds = YES;
-//        CGContextSaveGState(context);
-//
-//        CGPathRef maskPath = self.maskingPath;
-//
-//        if ( maskPath ) {
-//            CGContextBeginPath(context);
-//            CGContextAddPath(context, maskPath);
-//            CGContextClip(context);
-//        }
-//
-//        [self.fill fillRect:self.bounds inContext:context];
-//
-//        CPTAxisArray *theAxes = self.axisSet.axes;
-//
-//        for ( CPTAxis *axis in theAxes ) {
-//            [axis drawBackgroundBandsInContext:context];
-//        }
-//        for ( CPTAxis *axis in theAxes ) {
-//            [axis drawBackgroundLimitsInContext:context];
-//        }
-//
-//        CGContextRestoreGState(context);
-//        self.masksToBounds = useMask;
-//    }
+    func renderAsVectorInContext(context: CGContextRef)
+    {
+        guard self.hidden == false else {  return }
+
+        super.renderAsVectorInContext(context)
+
+        let useMask = self.masksToBounds;
+
+        self.masksToBounds = true;
+        CGContextSaveGState(context);
+
+        let maskPath = self.maskingPath;
+
+        if ( maskPath ) {
+            CGContextBeginPath(context);
+            CGContextAddPath(context, maskPath);
+            CGContextClip(context);
+        }
+
+        self.fill?.fillRect(rect: self.bounds, inContext:context)
+
+        let theAxes = self.axisSet.axes
+
+        for axis in theAxes {
+            axis.drawBackgroundBandsInContext(context)
+        }
+        for axis in theAxes {
+            axis.drawBackgroundLimitsInContext(context)
+        }
+
+        CGContextRestoreGState(context)
+        self.masksToBounds = useMask
+    }
+}
+
+
 //
 //    /// @endcond
 //
@@ -762,4 +757,4 @@ class CPTPlotArea: CPTAnnotationHostLayer {
 //
 //
 
-}
+

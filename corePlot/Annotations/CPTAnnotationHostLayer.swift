@@ -17,7 +17,6 @@ public class CPTAnnotationHostLayer: CPTLayer {
     typealias CPTMutableSublayerSet = Set<CALayer>
     
     var annotations = [CPTAnnotation] ()
-    
     var CPTSublayerSet = Set<CALayer>()
     
     
@@ -53,8 +52,6 @@ public class CPTAnnotationHostLayer: CPTLayer {
             annotations.remove(at: index)
         }
     }
-
-
     
     //     Removes all annotations from the receiver.
     func removeAllAnnotations() {
@@ -65,26 +62,24 @@ public class CPTAnnotationHostLayer: CPTLayer {
         annotations.removeAll()
     }
     
-    
-    
     // MARK: -  Layout
     override func sublayersExcludedFromAutomaticLayout() -> CPTSublayerSet? {
-
+        
         if annotations.count > 0 {
             var excludedSublayers = super.sublayersExcludedFromAutomaticLayout()
-
+            
             if excludedSublayers == nil {
                 excludedSublayers = []
             }
-
-       
-                for annotation in annotations {
-                    guard let annotation = annotation as? CPTAnnotation else { continue }
-                    let content = annotation.contentLayer
-                    if let content = content {
-                        excludedSublayers?.add(content)
-                    }
+            
+            
+            for annotation in annotations {
+                guard let annotation = annotation as? CPTAnnotation else { continue }
+                let content = annotation.contentLayer
+                if let content = content {
+                    excludedSublayers?.add(content)
                 }
+            }
             return excludedSublayers
             
         } else {
@@ -94,21 +89,19 @@ public class CPTAnnotationHostLayer: CPTLayer {
     public override func layoutSublayers()
     {
         super.layoutSublayers()
-//        self.annotations.    makeObjectsPerformSelector:@selector(positionContentLayer)
+        //        self.annotations.    makeObjectsPerformSelector:@selector(positionContentLayer)
         
         for annotation in annotations {
             annotation.positionContentLayer()
         }
-
     }
-//
-//
-//    /**
-//     *  @brief Informs the receiver that the user has
-//     *  @if MacOnly pressed the mouse button. @endif
-//     *  @if iOSOnly touched the screen. @endif
-//     *
-//     */
+
+    //    /**
+    //     *  @brief Informs the receiver that the user has
+    //     *  @if MacOnly pressed the mouse button. @endif
+    //     *  @if iOSOnly touched the screen. @endif
+    //     *
+    //     */
     override func pointingDeviceDownEvent(event: CPTNativeEvent, atPoint interactionPoint: CGPoint)-> Bool
     {
         for annotation in self.annotations  {
@@ -124,13 +117,13 @@ public class CPTAnnotationHostLayer: CPTLayer {
         }
         return super.pointingDeviceDownEvent(event: event, atPoint:interactionPoint)
     }
-
-//    /**
-//     *  @brief Informs the receiver that the user has
-//     *  @if MacOnly released the mouse button. @endif
-//     *  @if iOSOnly lifted their finger off the screen. @endif
-//     *
-//     *
+    
+    //    /**
+    //     *  @brief Informs the receiver that the user has
+    //     *  @if MacOnly released the mouse button. @endif
+    //     *  @if iOSOnly lifted their finger off the screen. @endif
+    //     *
+    //     *
     override func pointingDeviceUpEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint ) -> Bool
     {
         for annotation in self.annotations {
@@ -146,36 +139,36 @@ public class CPTAnnotationHostLayer: CPTLayer {
         }
         return super.pointingDeviceUpEvent(event: event, atPoint:interactionPoint)
     }
-//    /**
-//     *  @brief Informs the receiver that the user has moved
-//     *  @if MacOnly the mouse with the button pressed. @endif
-//     *  @if iOSOnly their finger while touching the screen. @endif
-//     *
-//     *
+    
+    //    /**
+    //     *  @brief Informs the receiver that the user has moved
+    //     *  @if MacOnly the mouse with the button pressed. @endif
+    //     *  @if iOSOnly their finger while touching the screen. @endif
+    //     *
+    //     *
     override func pointingDeviceDraggedEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint) -> Bool
-{
-    for annotation in self.annotations {
-        let content = annotation.contentLayer;
-        if (( content ) != nil) {
-            if ( content!.frame.contains(interactionPoint)) {
-                let handled = content!.pointingDeviceDraggedEvent(event: event, atPoint:interactionPoint)
-                if ( handled ) {
-                    return true;
+    {
+        for annotation in self.annotations {
+            let content = annotation.contentLayer;
+            if (( content ) != nil) {
+                if ( content!.frame.contains(interactionPoint)) {
+                    let handled = content!.pointingDeviceDraggedEvent(event: event, atPoint:interactionPoint)
+                    if ( handled ) {
+                        return true;
+                    }
                 }
             }
         }
-    }
-
         return super.pointingDeviceDraggedEvent(event: event, atPoint:interactionPoint)
-}
-
-//    /**
-//     *  @brief Informs the receiver that tracking of
-//     *  @if MacOnly mouse moves @endif
-//     *  @if iOSOnly touches @endif
-//     *  has been cancelled for any reason.
-//     *
-//     *
+    }
+    
+    //    /**
+    //     *  @brief Informs the receiver that tracking of
+    //     *  @if MacOnly mouse moves @endif
+    //     *  @if iOSOnly touches @endif
+    //     *  has been cancelled for any reason.
+    //     *
+    //     *
     func pointingDeviceCancelledEvent(_ event: CPTNativeEvent) -> Bool {
         for annotation in annotations {
             let content = annotation.contentLayer
@@ -188,6 +181,4 @@ public class CPTAnnotationHostLayer: CPTLayer {
         }
         return super.pointingDeviceCancelledEvent(event: event)
     }
-    
-    
 }

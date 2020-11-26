@@ -16,15 +16,15 @@ extension CPTGraph {
     override func layoutAndRenderInContext(context: CGContext)
     {
         self.reloadDataIfNeeded()
-        self.axisSet.axes.makeObjectsPerformSelector(@selector(relabel))
+        self.axisSet.axes.makeObjectsPerformSelector(#selector(relabel))
         
-        if ( NSView.instancesRespondToSelector:#selector(effectiveAppearance) ) {
+        if  NSView.instancesRespondToSelector(#selector(effectiveAppearance)  {
             let  oldAppearance = NSAppearance.current
             let view                = self.hostingView
             
             NSAppearance.current = view?.effectiveAppearance
             super.layoutAndRenderInContext(context: context)
-            NSAppearance.current = oldAppearance;
+            NSAppearance.current = oldAppearance
         }
         else {
             super.layoutAndRenderInContext(context: context)
@@ -60,7 +60,7 @@ extension CPTGraph {
      **/
     func reloadDataIfNeeded()
     {
-        [self.plots makeObjectsPerformSelector:@selector(reloadDataIfNeeded)];
+        self.plots.makeObjectsPerformSelector(#selector(reloadDataIfNeeded))
     }
 
     /** @brief All plots associated with the graph.
@@ -106,20 +106,20 @@ extension CPTGraph {
      **/
     func addPlot(plot : CPTPlot )
     {
-        [self addPlot:plot toPlotSpace:self.defaultPlotSpace];
+        self.addPlot(plot , space:self.defaultPlotSpace)
     }
 
     /** @brief Add a plot to the given plot space.
      *  @param plot The plot.
      *  @param space The plot space.
      **/
-    func addPlot(plot: CPTPlot, space:CPTPlotSpace )
+    func addPlot(plot: CPTPlot, space: CPTPlotSpace )
     {
         if ( plot ) {
-            [self.plots addObject:plot];
-            plot.plotSpace = space;
+            self.plots .append(plot)
+            plot.plotSpace = space
             plot.graph     = self;
-            [self.plotAreaFrame.plotGroup addPlot:plot];
+            self.plotAreaFrame.plotGroup.addPlot(plot)
         }
     }
 
@@ -134,8 +134,8 @@ extension CPTGraph {
             if self.plots.contains(plot ) {
                 thePlot.plotSpace = nil
                 thePlot.graph     = nil
-                self.plotAreaFrame.plotGroup.removePlot:thePlot
-                self.plots.removeObject:thePlot
+                self.plotAreaFrame.plotGroup.removePlot(thePlot)
+                self.plots.remove(thePlot)
             }
             else {
                 print("Tried to remove CPTPlot which did not exist.")
@@ -149,7 +149,7 @@ extension CPTGraph {
      **/
     func insertPlot(plot: CPTPlot, atIndex:Int)
     {
-        [self insertPlot:plot atIndex:idx intoPlotSpace:self.defaultPlotSpace];
+        [self.insertPlot:plot atIndex:idx intoPlotSpace:self.defaultPlotSpace];
     }
 
     /** @brief Add a plot to the given plot space at the given index in the plot array.
@@ -794,7 +794,7 @@ func setTitlePlotAreaFrameAnchor(newAnchor : CPTRectAnchor)
      *  @param interactionPoint The coordinates of the interaction.
      *  @return Whether the event was handled or not.
      **/
-func pointingDeviceDraggedEvent(event : CPTNativeEvent, atPoint:CGPoint)-> Bool
+    func pointingDeviceDraggedEvent(event : CPTNativeEvent, atPoint:CGPoint)-> Bool
     {
         // Plots
         for ( CPTPlot *plot in [self.plots reverseObjectEnumerator] ) {
@@ -802,37 +802,37 @@ func pointingDeviceDraggedEvent(event : CPTNativeEvent, atPoint:CGPoint)-> Bool
                 return true
             }
         }
-
+        
         // Axes Set
-        if ( [self.axisSet pointingDeviceDraggedEvent:event atPoint:interactionPoint] ) {
+        if self.axisSet.pointingDeviceDraggedEvent(event: event, atPoint:interactionPoint ) {
             return true
         }
-
+        
         // Plot area
-        if ( [self.plotAreaFrame pointingDeviceDraggedEvent:event atPoint:interactionPoint] ) {
+        if self.plotAreaFrame.pointingDeviceDraggedEvent(event:event, atPoint:interactionPoint) {
             return true
         }
-
+        
         // Legend
-        if ( [self.legend pointingDeviceDraggedEvent:event atPoint:interactionPoint] ) {
+        if self.legend.pointingDeviceDraggedEvent(event:event, atPoint:interactionPoint) {
             return true
         }
-
+        
         // Plot spaces
         // Plot spaces do not block events, because several spaces may need to receive
         // the same event sequence (e.g., dragging coordinate translation)
-        BOOL handledEvent = NO;
-
+        var handledEvent = false
+        
         for space in self.plotSpaces  {
-            BOOL handled = [space pointingDeviceDraggedEvent:event atPoint:interactionPoint];
+            let handled = space.pointingDeviceDraggedEvent(event, atPoint:interactionPoint)
             handledEvent |= handled;
         }
-
+        
         if ( handledEvent ) {
             return true
         }
         else {
-            return [super pointingDeviceDraggedEvent:event atPoint:interactionPoint];
+            return super.pointingDeviceDraggedEvent(event, atPoint:interactionPoint)
         }
     }
 
@@ -856,48 +856,47 @@ func pointingDeviceDraggedEvent(event : CPTNativeEvent, atPoint:CGPoint)-> Bool
      *  @param event The OS event.
      *  @return Whether the event was handled or not.
      **/
-func pointingDeviceCancelledEvent(event: CPTNativeEvent )-> Bool
+    func pointingDeviceCancelledEvent(event: CPTNativeEvent )-> Bool
     {
         // Plots
-        for ( CPTPlot *plot in [self.plots reverseObjectEnumerator] ) {
-            if ( [plot pointingDeviceCancelledEvent:event] ) {
+        let reversedCollection = plots.reversed()
+        for plot in <reversedCollection {
+            if plot.pointingDeviceCancelledEvent(event: event ) {
                 return true
             }
         }
-
+        
         // Axes Set
-    if self.axisSet.pointingDeviceCancelledEvent:(event ) {
+        if self.axisSet.pointingDeviceCancelledEvent(event ) {
             return true
         }
-
+        
         // Plot area
-        if ( [self.plotAreaFrame pointingDeviceCancelledEvent:event] ) {
+        if  self.plotAreaFrame.pointingDeviceCancelledEvent( event ) {
             return true
         }
-
+        
         // Legend
-        if ( [self.legend pointingDeviceCancelledEvent:event] ) {
+        if self.legend.pointingDeviceCancelledEvent(event) {
             return true
         }
-
+        
         // Plot spaces
         let handledEvent = false
-
-        for ( CPTPlotSpace *space in self.plotSpaces ) {
-            BOOL handled = [space pointingDeviceCancelledEvent:event];
-            handledEvent |= handled;
+        
+        for space in self.plotSpaces  {
+            let handled = space.pointingDeviceCancelledEvent(event)
+            handledEvent |= handled
         }
-
+        
         if ( handledEvent ) {
             return true
         }
         else {
-            return super.pointingDeviceCancelledEvent:event];
+            return super.pointingDeviceCancelledEvent(event)
         }
     }
 
-    #if TARGET_OS_SIMULATOR || TARGET_OS_IPHONE
-    #else
 
     /**
      *  @brief @required Informs the receiver that the user has moved the scroll wheel.

@@ -5,19 +5,20 @@
 //  Created by thierryH24 on 09/11/2020.
 //
 
-import Cocoa
+import Appkit
+
+enum CPTGraphLayerType : Int {
+    case minorGridLines ///< Minor grid lines.
+    case majorGridLines ///< Major grid lines.
+    case axisLines      ///< Axis lines.
+    case plots          ///< Plots.
+    case axisLabels     ///< Axis labels.
+    case axisTitles      ///< Axis titles.
+};
+
+
 
 class CPTGraph: CPTBorderedLayer {
-    
-    enum CPTGraphLayerType : Int {
-        case minorGridLines ///< Minor grid lines.
-        case majorGridLines ///< Major grid lines.
-        case axisLines      ///< Axis lines.
-        case plots          ///< Plots.
-        case axisLabels     ///< Axis labels.
-        case axisTitles      ///< Axis titles.
-    };
-    
     
     // MARK: Title
     

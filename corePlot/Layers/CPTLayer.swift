@@ -100,7 +100,6 @@ public class CPTLayer : CALayer
         }
     }
     
-    
     public override func draw(in context: CGContext) {
         useFastRendering = true
         renderAsVector(in: context)
