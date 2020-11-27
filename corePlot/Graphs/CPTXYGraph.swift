@@ -5,6 +5,11 @@
 //  Created by thierryH24 on 11/11/2020.
 //
 
+//==============================
+//  OK
+//==============================
+
+
 import AppKit
 
 class CPTXYGraph: CPTGraph {
@@ -20,11 +25,19 @@ class CPTXYGraph: CPTGraph {
         yScaleType = newYScaleType
     }
     
-    init( newFrame : CGRect)
+    init( frame : CGRect)
     {
         super.init(frame : frame)
         xScaleType = CPTScaleType.linear
         yScaleType = CPTScaleType.linear
+    }
+    
+    init(layer: Any) {
+        super.init(layer: layer)
+        let theLayer = layer as? CPTXYGraph
+
+        xScaleType = theLayer?.xScaleType
+        yScaleType = theLayer?.yScaleType
     }
     
     required init?(coder: NSCoder) {

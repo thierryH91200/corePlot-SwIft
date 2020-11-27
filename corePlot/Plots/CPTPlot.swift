@@ -55,6 +55,13 @@ public class CPTPlot: CPTAnnotationHostLayer {
         case decimal
     }
     
+    init()
+    {
+        super.init()
+        exposeBinding(CPTPlotBindingDataLabels)
+    }
+
+    
     init(frame: CGRect)
     {
         super.init()
@@ -88,8 +95,9 @@ public class CPTPlot: CPTAnnotationHostLayer {
     }
     
     
-    init(layer: CPTPlot) 
+    init(layer: Any)
     {
+        super.init(layer: layer)
         let theLayer = CPTPlot(layer: layer)
         
         cachedData           = theLayer.cachedData;
@@ -153,8 +161,6 @@ public class CPTPlot: CPTAnnotationHostLayer {
         }
     }
     
-    
-    
     // MARK: - Layout
     public override func layoutSublayers()
     {
@@ -188,18 +194,18 @@ public class CPTPlot: CPTAnnotationHostLayer {
      *  @param coord The coordinate for which the corresponding field identifiers are desired.
      *  @return Array of NSNumber objects for the field identifiers.
      **/
-    -(nonnull CPTNumberArray *)fieldIdentifiersForCoordinate:(CPTCoordinate __unused)coord
+    func fieldIdentifiersForCoordinate( coord: CPTCoordinate ) ->[CGFloat]
     {
-    return @[];
+    return []
     }
     
     /** @brief The coordinate value that corresponds to a particular field identifier.
      *  @param field The field identifier for which the corresponding coordinate is desired.
      *  @return The coordinate that corresponds to a particular field identifier or #CPTCoordinateNone if there is no matching coordinate.
      */
-    -(CPTCoordinate)coordinateForFieldIdentifier:(NSUInteger __unused)field
+    func coordinateForFieldIdentifier(field: Int)-> CPTCoordinate
     {
-    return CPTCoordinateNone;
+        return .none
     }
     
     // MARK: - Data Labels
@@ -222,12 +228,11 @@ public class CPTPlot: CPTAnnotationHostLayer {
      */
     func dataIndexFromInteractionPoint(point : CGPoint)->Int
     {
-    return NSNotFound;
+        return NSNotFound;
     }
     
     // MARK: - Data Source
     var          _numberOfRecords = 0
-
     var numberOfRecords: Int{
         get {
             let number = self.dataSource?.numberOfRecordsForPlot(plot: self)

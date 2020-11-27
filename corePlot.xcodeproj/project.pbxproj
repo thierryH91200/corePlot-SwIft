@@ -370,8 +370,8 @@
 			isa = PBXGroup;
 			children = (
 				03A9CCDD2559565E0096853D /* CPTGraph.swift */,
-				0320AFD3255C5A7000D32BF9 /* CPTXYGraph.swift */,
 				032EE50A2566CC4D0085F4E1 /* CPTGraph ext.swift */,
+				0320AFD3255C5A7000D32BF9 /* CPTXYGraph.swift */,
 			);
 			path = Graphs;
 			sourceTree = "<group>";

@@ -360,12 +360,14 @@ class CPTImage: NSObject {
     }
     }
     
-    -(void)setEdgeInsets:(CPTEdgeInsets)newEdgeInsets
+    func setEdgeInsets(newEdgeInsets : CPTEdgeInsets)
     {
-    if ( !CPTEdgeInsetsEqualToEdgeInsets(edgeInsets, newEdgeInsets)) {
-    edgeInsets = newEdgeInsets;
+        
+        if NSEdgeInsetsEqual(NSEdgeInsetsEqual,newEdgeInsets) == false {
+            edgeInsets = newEdgeInsets;
+        }
     
-    CPTImageSlices imageSlices = {};
+    var imageSlices = CPTImageSlices
     
     for ( NSUInteger i = 0; i < 9; i++ ) {
     imageSlices.slice[i] = NULL;
@@ -375,17 +377,17 @@ class CPTImage: NSObject {
     }
     }
     
-    -(void)setSlices:(CPTImageSlices)newSlices
-    {
-    for ( NSUInteger i = 0; i < 9; i++ ) {
-    CGImageRelease(slices.slice[i]);
-    
-    CGImageRef slice = CGImageRetain(newSlices.slice[i]);
-    if ( slice ) {
-    slices.slice[i] = slice;
+func setSlices(newSlices: CPTImageSlices)
+{
+    for ( i in 0..<9) {
+        CGImageRelease(slices.slice[i]);
+        
+        CGImageRef slice = CGImageRetain(newSlices.slice[i]);
+        if ( slice ) {
+            slices.slice[i] = slice;
+        }
     }
-    }
-    }
+}
     
     /// @endcond
     
@@ -647,3 +649,4 @@ class CPTImage: NSObject {
 //    
 //    @end
 //    
+}

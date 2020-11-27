@@ -57,7 +57,7 @@ class CPTPlotArea: CPTAnnotationHostLayer {
         self.needsDisplayOnBoundsChange = true;
     }
 
-    init(layer:layer)
+    init(layer: Any)
     {
         super.init(layer:layer)
             let theLayer = CPTPlotArea(layer)

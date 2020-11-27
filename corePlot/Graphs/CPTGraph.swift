@@ -106,7 +106,7 @@ class CPTGraph: CPTBorderedLayer {
         needsDisplayOnBoundsChange = true
     }
     
-    init(layer : CPTGraph)
+    init(layer : Any)
     {
         super.init(layer : layer)
         let theLayer = CPTGraph(layer: layer)
@@ -131,8 +131,6 @@ class CPTGraph: CPTBorderedLayer {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
     
 }
 

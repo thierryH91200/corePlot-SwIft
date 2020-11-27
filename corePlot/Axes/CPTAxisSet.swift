@@ -19,7 +19,7 @@ class CPTAxisSet: CPTLayer {
         
     }
     
-    init(layer : CPTAxisSet)
+    init(layer : Any)
     {
         super.init(layer: layer)
         axes = layer.axes
@@ -45,8 +45,8 @@ class CPTAxisSet: CPTLayer {
     {
         let theAxes = self.axes;
 
-        theAxes.makeObjectsPerformSelector(:@selector(setNeedsLayout))
-        theAxes.makeObjectsPerformSelector:@selector(setNeedsRelabel))
+        theAxes.makeObjectsPerformSelector(#selector(setNeedsLayout))
+        theAxes.makeObjectsPerformSelector(#selector(setNeedsRelabel))
     }
 
     // MARK: -  Axes

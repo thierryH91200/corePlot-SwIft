@@ -77,11 +77,8 @@ public class CPTLayer : CALayer
         super.init ( layer : CALayer())
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     
-    init(layer: CPTLayer?)
+    init(layer: Any)
     {
         if  let theLayer = layer {
             
@@ -100,6 +97,10 @@ public class CPTLayer : CALayer
         }
     }
     
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     public override func draw(in context: CGContext) {
         useFastRendering = true
         renderAsVector(in: context)

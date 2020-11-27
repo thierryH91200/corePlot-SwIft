@@ -27,11 +27,11 @@ enum CPTErrorBarType : Int {
 ///  Enumeration of axis scale types
 ///
 enum CPTScaleType : Int {
-    case linear ///< Linear axis scale
-    case log ///< Logarithmic axis scale
-    case angular ///< Angular axis scale (not implemented)
-    case dateTime ///< Date/time axis scale (not implemented)
-    case category ///< Category axis scale
+    case linear     ///< Linear axis scale
+    case log        ///< Logarithmic axis scale
+    case angular    ///< Angular axis scale (not implemented)
+    case dateTime   ///< Date/time axis scale (not implemented)
+    case category   ///< Category axis scale
     case logModulus ///< Log-modulus axis scale
 }
 
@@ -42,7 +42,7 @@ enum CPTCoordinate : Int {
     case x = 0 ///< X axis
     case y = 1 ///< Y axis
     case z = 2 ///< Z axis
-    static let none = NSInteger.max ///< Invalid coordinate value
+    case none = 3 ///< Invalid coordinate value
 }
 
 ///  RGBA color for gradients

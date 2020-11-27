@@ -24,7 +24,8 @@ class CPTGridLineGroup: CPTLayer {
         self.needsDisplayOnBoundsChange = true
     }
     
-    override init(layer: CPTLayer) {
+    override init(layer: Any) {
+        
         super.init(layer: layer)
         let theLayer = layer as? CPTGridLineGroup
         
