@@ -9,18 +9,17 @@ import AppKit
 
 
 extension CPTGraph {
-   
+    
     
     // MARK: - Drawing
-
-    override func layoutAndRenderInContext(context: CGContext)
+    func layoutAndRenderInContext(context: CGContext)
     {
         self.reloadDataIfNeeded()
         self.axisSet.axes.makeObjectsPerformSelector(#selector(relabel))
         
-        if  NSView.instancesRespondToSelector(#selector(effectiveAppearance)  {
+        if  NSView.instancesRespondToSelector(#selector(effectiveAppearance))  {
             let  oldAppearance = NSAppearance.current
-            let view                = self.hostingView
+            let view  = self.hostingView
             
             NSAppearance.current = view?.effectiveAppearance
             super.layoutAndRenderInContext(context: context)
@@ -30,12 +29,12 @@ extension CPTGraph {
             super.layoutAndRenderInContext(context: context)
         }
     }
-
-// MARK: Animation
+    
+    // MARK: Animation
     func needsDisplayForKey(aKey: String )-> Bool
     {
         var keys    = Set<String>()
-
+        
         keys.insert("titleDisplacement")
         keys.insert("legendDisplacement")
         
@@ -149,7 +148,7 @@ extension CPTGraph {
      **/
     func insertPlot(plot: CPTPlot, atIndex:Int)
     {
-        [self.insertPlot:plot atIndex:idx intoPlotSpace:self.defaultPlotSpace];
+        self.insertPlo(plot, atIndex:idx, intoPlotSpace:self.defaultPlotSpace)
     }
 
     /** @brief Add a plot to the given plot space at the given index in the plot array.
@@ -160,10 +159,10 @@ extension CPTGraph {
     func insertPlot(plot: CPTPlot, atIndex:Int, space: CPTPlotSpace)
     {
         if ( plot ) {
-            [self.plots insertObject:plot atIndex:idx];
-            plot.plotSpace = space;
-            plot.graph     = self;
-            [self.plotAreaFrame.plotGroup insertPlot:plot atIndex:idx];
+            self.plots.insert(plot, atIndex:idx)
+            plot.plotSpace = space
+            plot.graph     = self
+            self.plotAreaFrame.plotGroup.insertPlot(plot, atIndex:idx)
         }
     }
 
@@ -172,19 +171,18 @@ extension CPTGraph {
      **/
     func removePlotWithIdentifier(identifier: Any)
     {
-        CPTPlot *plotToRemove = [self plotWithIdentifier:identifier];
+        let plotToRemove = self.plotWithIdentifier(identifier)
 
         if ( plotToRemove ) {
-            plotToRemove.plotSpace = nil;
-            plotToRemove.graph     = nil;
-            [self.plotAreaFrame.plotGroup removePlot:plotToRemove];
-            [self.plots removeObjectIdenticalTo:plotToRemove];
+            plotToRemove.plotSpace = nil
+            plotToRemove.graph     = nil
+            self.plotAreaFrame.plotGroup.removePlot(plotToRemove)
+            self.plots.removeObjectIdenticalTo(plotToRemove)
         }
     }
 
     // MARK: - Retrieving Plot Spaces
-
-    -(nullable CPTPlotSpace *)defaultPlotSpace
+    func defaultPlotSpace() ->CPTPlotSpace
     {
         return self.plotSpaces.count > 0 ? (self.plotSpaces)[0] : nil;
     }
@@ -192,28 +190,28 @@ extension CPTGraph {
     /** @brief All plot spaces associated with the graph.
      *  @return An array of all plot spaces associated with the graph.
      **/
-    -(nonnull CPTPlotSpaceArray *)allPlotSpaces
+    func allPlotSpaces() -> [CPTPlotSpace]
     {
-        return [NSArray arrayWithArray:self.plotSpaces];
+        return self.plotSpaces
     }
 
     /** @brief Gets the plot space at the given index in the plot space array.
      *  @param idx An index within the bounds of the plot space array.
      *  @return The plot space at the given index.
      **/
-    -(nullable CPTPlotSpace *)plotSpaceAtIndex:(NSUInteger)idx
+    func plotSpaceAtIndex(idx : Int) -> CPTPlotSpace
     {
-        return self.plotSpaces.count > idx ? (self.plotSpaces)[idx] : nil;
+        return self.plotSpaces.count > idx ? self.plotSpaces[idx] : nil
     }
 
     /** @brief Gets the plot space with the given identifier from the plot space array.
      *  @param identifier A plot space identifier.
      *  @return The plot space with the given identifier or @nil if it was not found.
      **/
-    -(nullable CPTPlotSpace *)plotSpaceWithIdentifier:(nullable id<NSCopying>)identifier
+    func plotSpaceWithIdentifier(identifier: Any) -> CPTPlotSpace
     {
-        for ( CPTPlotSpace *plotSpace in self.plotSpaces ) {
-            if ( [plotSpace.identifier isEqual:identifier] ) {
+        for plotSpace in self.plotSpaces  {
+            if plotSpace.identifier == identifier {
                 return plotSpace;
             }
         }
@@ -221,19 +219,18 @@ extension CPTGraph {
     }
 
     // MARK: Set Plot Area
-
     func setPlotAreaFrame(newArea: CPTPlotAreaFrame)
     {
         if ( plotAreaFrame != newArea ) {
             plotAreaFrame.graph = nil;
-            [plotAreaFrame removeFromSuperlayer];
+            plotAreaFrame.removeFromSuperlayer
 
             plotAreaFrame = newArea;
 
             if ( newArea ) {
-                CPTPlotAreaFrame *theFrame = newArea;
+                let theFrame = newArea
 
-                [self addSublayer:theFrame];
+                self.addSublayer(theFrame)
                 theFrame.graph = self;
             }
 
@@ -243,306 +240,277 @@ extension CPTGraph {
         }
     }
 
-    /// @endcond
 
-    // MARK: Organizing Plot Spaces
+    // MARK: - Organizing Plot Spaces
 
     /** @brief Add a plot space to the graph.
      *  @param space The plot space.
      **/
     func addPlotSpace(space : CPTPlotSpace )
     {
-        NSParameterAssert(space);
-
-        [self.plotSpaces addObject:space];
-        space.graph = self;
-
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(plotSpaceMappingDidChange:)
-                                                     name:CPTPlotSpaceCoordinateMappingDidChangeNotification
-                                                   object:space];
-
-        [[NSNotificationCenter defaultCenter] postNotificationName:CPTGraphDidAddPlotSpaceNotification
-                                                            object:self
-                                                          userInfo:@{ CPTGraphPlotSpaceNotificationKey: space }
-        ];
+        self.plotSpaces.append(space)
+        space.graph = self
+        
+        NotificationCenter.defaultCenter.addObserver(
+            self,
+            selector:#selector(plotSpaceMappingDidChange),
+            name:.CPTPlotSpaceCoordinateMappingDidChangeNotification,
+            object:space)
+        
+        NotificationCenter.defaultCenter.post(
+            name: .CPTGraphDidAddPlotSpaceNotification,
+            object:self,
+            userInfo:@{ CPTGraphPlotSpaceNotificationKey: space )
+            }
     }
 
     /** @brief Remove a plot space from the graph.
      *  @param plotSpace The plot space.
      **/
-    func removePlotSpace(plotSpace: CPTPlotSpace )
-    {
-        if ( plotSpace ) {
-            CPTPlotSpace *thePlotSpace = plotSpace;
-
-            if ( [self.plotSpaces containsObject:thePlotSpace] ) {
-                [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                                name:CPTPlotSpaceCoordinateMappingDidChangeNotification
-                                                              object:thePlotSpace];
-
-                // Remove space
-                thePlotSpace.graph = nil;
-                [self.plotSpaces removeObject:thePlotSpace];
-
-                // Update axes that referenced space
-                for ( CPTAxis *axis in self.axisSet.axes ) {
-                    if ( axis.plotSpace == thePlotSpace ) {
-                        axis.plotSpace = nil;
+        func removePlotSpace(plotSpace: CPTPlotSpace )
+        {
+            if ( plotSpace ) {
+                let thePlotSpace = plotSpace
+                
+                if self.plotSpaces.contains(thePlotSpace ) {
+                    NotificationCenter.defaultCenter.removeObserver(
+                        self,
+                     name:CPTPlotSpaceCoordinateMappingDidChangeNotification,
+                     object:thePlotSpace)
+                    
+                    // Remove space
+                    thePlotSpace.graph = nil;
+                    self.plotSpaces.remove(hePlotSpace)
+                    
+                    // Update axes that referenced space
+                    for axis in self.axisSet.axes {
+                        if ( axis.plotSpace == thePlotSpace ) {
+                            axis.plotSpace = nil
+                        }
                     }
+                    
+                    NotificationCenter.defaultCenter.postNotificationName(
+                        CPTGraphDidRemovePlotSpaceNotification,
+                        object:self,
+                        userInfo:@{ CPTGraphPlotSpaceNotificationKey: thePlotSpace }
+                        ];
                 }
-
-                [[NSNotificationCenter defaultCenter] postNotificationName:CPTGraphDidRemovePlotSpaceNotification
-                                                                    object:self
-                                                                  userInfo:@{ CPTGraphPlotSpaceNotificationKey: thePlotSpace }
-                ];
-            }
-            else {
-                [NSException raise:CPTException format:@"Tried to remove CPTPlotSpace which did not exist."];
+                else {
+                    print("Tried to remove CPTPlotSpace which did not exist.")
+                }
             }
         }
-    }
 
-    #pragma mark -
-    #pragma mark Coordinate Changes in Plot Spaces
+        // MARK: - Coordinate Changes in Plot Spaces
 
     /// @cond
 
-    -(void)plotSpaceMappingDidChange:(nonnull NSNotification *)notif
+        func plotSpaceMappingDidChange(notif: NSNotification )
     {
-        CPTPlotSpace *plotSpace        = notif.object;
-        BOOL backgroundBandsNeedRedraw = NO;
+        let plotSpace        = notif.object;
+        let backgroundBandsNeedRedraw = false;
 
-        for ( CPTAxis *axis in self.axisSet.axes ) {
-            if ( axis.plotSpace == plotSpace ) {
-                [axis setNeedsRelabel];
-                [axis updateAxisTitle];
+        for axis in self.axisSet.axes {
+            if  axis.plotSpace == plotSpace {
+                axis.setNeedsRelabel()
+                axis.updateAxisTitle()
 
-                if ( !backgroundBandsNeedRedraw ) {
+                if backgroundBandsNeedRedraw == false {
                     backgroundBandsNeedRedraw = (axis.alternatingBandFills.count > 0) || (axis.backgroundLimitBands.count > 0);
                 }
             }
         }
-        for ( CPTPlot *plot in self.plots ) {
+        for plot in self.plots {
             if ( plot.plotSpace == plotSpace ) {
-                [plot setNeedsDisplay];
+                plot.setNeedsDisplay()
             }
         }
         if ( backgroundBandsNeedRedraw ) {
-            [self.plotAreaFrame.plotArea setNeedsDisplay];
+            self.plotAreaFrame.plotArea.setNeedsDisplay()
         }
     }
 
-    /// @endcond
-
-    #pragma mark -
-    #pragma mark Axis Set
-
-    /// @cond
-
-    -(nullable CPTAxisSet *)axisSet
+    // MARK: - Axis Set
+    func axisSet() ->CPTAxisSet
     {
-        return self.plotAreaFrame.axisSet;
+        return self.plotAreaFrame.axisSet
     }
-
-    -(void)setAxisSet:(nullable CPTAxisSet *)newSet
+    
+    func setAxisSet(newSet :CPTAxisSet )
     {
-        self.plotAreaFrame.axisSet = newSet;
+        self.plotAreaFrame.axisSet = newSet
     }
-
-    /// @endcond
-
-    #pragma mark -
-    #pragma mark Themes
-
+    
+    // MARK: - Themes
+    
     /** @brief Apply a theme to style the graph.
      *  @param theme The theme object used to style the graph.
      **/
-    -(void)applyTheme:(nullable CPTTheme *)theme
+    func applyTheme(theme: CPTTheme )
     {
-        [theme applyThemeToGraph:self];
+        theme.applyThemeToGraph(self)
     }
-
-    #pragma mark -
-    #pragma mark Legend
-
-    /// @cond
-
-    -(void)setLegend:(nullable CPTLegend *)newLegend
+    
+    // MARK: - Legend
+    func setLegend(newLegend: CPTLegend )
     {
         if ( newLegend != legend ) {
             legend = newLegend;
-            CPTLayerAnnotation *theLegendAnnotation = self.legendAnnotation;
+            lettheLegendAnnotation = self.legendAnnotation;
             if ( legend ) {
                 if ( theLegendAnnotation ) {
                     theLegendAnnotation.contentLayer = legend;
                 }
                 else {
-                    CPTLayerAnnotation *newLegendAnnotation = [[CPTLayerAnnotation alloc] initWithAnchorLayer:self];
-                    newLegendAnnotation.contentLayer       = legend;
+                    let newLegendAnnotation = CPTLayerAnnotation(self)
+                    newLegendAnnotation.contentLayer       = legend
                     newLegendAnnotation.displacement       = self.legendDisplacement;
                     newLegendAnnotation.rectAnchor         = self.legendAnchor;
-                    newLegendAnnotation.contentAnchorPoint = [self contentAnchorForRectAnchor:self.legendAnchor];
-                    [self addAnnotation:newLegendAnnotation];
+                    newLegendAnnotation.contentAnchorPoint = self.contentAnchorForRectAnchor(self.legendAnchor)
+                    self.addAnnotation(newLegendAnnotation)
                     self.legendAnnotation = newLegendAnnotation;
                 }
             }
             else {
                 if ( theLegendAnnotation ) {
-                    [self removeAnnotation:theLegendAnnotation];
+                    self.removeAnnotation(theLegendAnnotation)
                     self.legendAnnotation = nil;
                 }
             }
         }
     }
 
-    -(void)setLegendAnchor:(CPTRectAnchor)newLegendAnchor
+    func setLegendAnchor(newLegendAnchor: CPTRectAnchor)
     {
         if ( newLegendAnchor != legendAnchor ) {
             legendAnchor = newLegendAnchor;
-            CPTLayerAnnotation *theLegendAnnotation = self.legendAnnotation;
+            let theLegendAnnotation = self.legendAnnotation;
             if ( theLegendAnnotation ) {
                 theLegendAnnotation.rectAnchor         = newLegendAnchor;
-                theLegendAnnotation.contentAnchorPoint = [self contentAnchorForRectAnchor:self.legendAnchor];
+                theLegendAnnotation.contentAnchorPoint = self.contentAnchorForRectAnchor(self.legendAnchor)
             }
         }
     }
 
-    -(void)setLegendDisplacement:(CGPoint)newLegendDisplacement
+    func setLegendDisplacement(newLegendDisplacement: CGPoint)
     {
         if ( !CGPointEqualToPoint(newLegendDisplacement, legendDisplacement)) {
             legendDisplacement                 = newLegendDisplacement;
             self.legendAnnotation.displacement = newLegendDisplacement;
         }
     }
-
-    -(CGPoint)contentAnchorForRectAnchor:(CPTRectAnchor)anchor
+    
+    func contentAnchorForRectAnchor(anchor: CPTRectAnchor)->CGPoint
     {
-        CGPoint contentAnchor = CGPointZero;
-
+        let contentAnchor = CGPoint()
+        
         switch ( anchor ) {
-            case CPTRectAnchorBottomLeft:
-                contentAnchor = CGPointZero;
-                break;
-
-            case CPTRectAnchorBottom:
-                contentAnchor = CPTPointMake(0.5, 0.0);
-                break;
-
-            case CPTRectAnchorBottomRight:
-                contentAnchor = CPTPointMake(1.0, 0.0);
-                break;
-
-            case CPTRectAnchorLeft:
-                contentAnchor = CPTPointMake(0.0, 0.5);
-                break;
-
-            case CPTRectAnchorRight:
-                contentAnchor = CPTPointMake(1.0, 0.5);
-                break;
-
-            case CPTRectAnchorTopLeft:
-                contentAnchor = CPTPointMake(0.0, 1.0);
-                break;
-
-            case CPTRectAnchorTop:
-                contentAnchor = CPTPointMake(0.5, 1.0);
-                break;
-
-            case CPTRectAnchorTopRight:
-                contentAnchor = CPTPointMake(1.0, 1.0);
-                break;
-
-            case CPTRectAnchorCenter:
-                contentAnchor = CPTPointMake(0.5, 0.5);
-                break;
+        case .bottomLeft:
+            contentAnchor = CGPoint()
+            
+        case .bottom:
+            contentAnchor = CGPoint(0.5, 0.0);
+            
+        case .bottomRight:
+            contentAnchor = CGPoint(1.0, 0.0);
+            
+        case .left:
+            contentAnchor = CGPoint(0.0, 0.5);
+            
+        case .right:
+            contentAnchor = CGPoint(1.0, 0.5);
+            
+        case .topLeft:
+            contentAnchor = CGPoint(0.0, 1.0);
+            
+        case .top:
+            contentAnchor = CGPoint(0.5, 1.0);
+            
+        case .topRight:
+            contentAnchor = CGPoint(1.0, 1.0);
+            
+        case .center:
+            contentAnchor = CGPoint(0.5, 0.5);
         }
-
         return contentAnchor;
     }
 
-    /// @endcond
 
-    #pragma mark -
-    #pragma mark Accessors
-
-    /// @cond
-
-    -(void)setPaddingLeft:(CGFloat)newPadding
+// MARK: - Accessors
+    func setPaddingLeft(newPadding: CGFloat)
     {
         if ( newPadding != self.paddingLeft ) {
             super.paddingLeft = newPadding;
-            [self.axisSet.axes makeObjectsPerformSelector:@selector(setNeedsDisplay)];
+            self.axisSet.axes.makeObjectsPerformSelector( #selector(setNeedsDisplay))
         }
     }
 
-    -(void)setPaddingRight:(CGFloat)newPadding
+    func setPaddingRight(newPadding:CGFloat)
     {
         if ( newPadding != self.paddingRight ) {
             super.paddingRight = newPadding;
-            [self.axisSet.axes makeObjectsPerformSelector:@selector(setNeedsDisplay)];
+            self.axisSet.axes.makeObjectsPerformSelector(#selector(setNeedsDisplay))
         }
     }
 
-    -(void)setPaddingTop:(CGFloat)newPadding
+    func setPaddingTop(newPadding:CGFloat)
     {
         if ( newPadding != self.paddingTop ) {
-            super.paddingTop = newPadding;
-            [self.axisSet.axes makeObjectsPerformSelector:@selector(setNeedsDisplay)];
+            super.paddingTop = newPadding
+            self.axisSet.axes.makeObjectsPerformSelector(#selector(setNeedsDisplay))
         }
     }
 
-    -(void)setPaddingBottom:(CGFloat)newPadding
+    func setPaddingBottom(newPadding: CGFloat)
     {
         if ( newPadding != self.paddingBottom ) {
-            super.paddingBottom = newPadding;
-            [self.axisSet.axes makeObjectsPerformSelector:@selector(setNeedsDisplay)];
+            super.paddingBottom = newPadding
+    self.axisSet.axes.makeObjectsPerformSelector(#selector(setNeedsDisplay))
         }
     }
 
-    -(nullable CPTNumberArray *)topDownLayerOrder
-    {
-        return self.plotAreaFrame.plotArea.topDownLayerOrder;
+    func topDownLayerOrder() -> CPTNumberArray? {
+        return plotAreaFrame.plotArea.topDownLayerOrder()
     }
-
-    -(void)setTopDownLayerOrder:(nullable CPTNumberArray *)newArray
-    {
-        self.plotAreaFrame.plotArea.topDownLayerOrder = newArray;
+    
+    func setTopDownLayerOrder(_ newArray: CPTNumberArray?) {
+        plotAreaFrame.plotArea.topDownLayerOrder() = newArray
     }
-
-    -(void)setTitle:(nullable NSString *)newTitle
+    func setTitle(title : String)
     {
         if ( newTitle != title ) {
-            title = [newTitle copy];
+            title = newTitle
 
             if ( !self.inTitleUpdate ) {
                 self.inTitleUpdate   = true
                 self.attributedTitle = nil;
-                self.inTitleUpdate   = NO;
+                self.inTitleUpdate   = false
 
-                CPTLayerAnnotation *theTitleAnnotation = self.titleAnnotation;
+                let theTitleAnnotation = self.titleAnnotation;
 
                 if ( title ) {
                     if ( theTitleAnnotation ) {
-                        ((CPTTextLayer *)theTitleAnnotation.contentLayer).text = title;
+                        theTitleAnnotation.contentLayer.text = title;
                     }
                     else {
-                        CPTPlotAreaFrame *frameLayer = self.plotAreaFrame;
+                        let frameLayer = self.plotAreaFrame;
                         if ( frameLayer ) {
-                            CPTLayerAnnotation *newTitleAnnotation = [[CPTLayerAnnotation alloc] initWithAnchorLayer:frameLayer];
-                            CPTTextLayer *newTextLayer             = [[CPTTextLayer alloc] initWithText:title style:self.titleTextStyle];
-                            newTitleAnnotation.contentLayer       = newTextLayer;
-                            newTitleAnnotation.displacement       = self.titleDisplacement;
-                            newTitleAnnotation.rectAnchor         = self.titlePlotAreaFrameAnchor;
-                            newTitleAnnotation.contentAnchorPoint = [self contentAnchorForRectAnchor:self.titlePlotAreaFrameAnchor];
-                            [self addAnnotation:newTitleAnnotation];
+                            let newTitleAnnotation = CPTLayerAnnotation( frame: frameLayer)
+                                
+                            let newTextLayer             = CPTTextLayer(text: title, style: titleTextStyle)
+                                
+                            newTitleAnnotation.contentLayer       = newTextLayer
+                            newTitleAnnotation.displacement       = self.titleDisplacement
+                            newTitleAnnotation.rectAnchor         = self.titlePlotAreaFrameAnchor
+                            newTitleAnnotation.contentAnchorPoint = self.contentAnchorForRectAnchor(anchor: titlePlotAreaFrameAnchor)
+                            self.addAnnotation(newTitleAnnotation)
                             self.titleAnnotation = newTitleAnnotation;
                         }
                     }
                 }
                 else {
-                    if ( theTitleAnnotation ) {
-                        [self removeAnnotation:theTitleAnnotation];
+                    if  theTitleAnnotation  {
+                        self.removeAnnotation(theTitleAnnotation)
                         self.titleAnnotation = nil;
                     }
                 }
@@ -550,29 +518,29 @@ extension CPTGraph {
         }
     }
 
-    -(void)setAttributedTitle:(nullable NSAttributedString *)newTitle
+    func setAttributedTitle(newTitle: NSAttributedString )
     {
         if ( newTitle != attributedTitle ) {
-            attributedTitle = [newTitle copy];
+            attributedTitle = newTitle
 
-            if ( !self.inTitleUpdate ) {
+            if self.inTitleUpdate == false {
                 self.inTitleUpdate = true
 
-                CPTLayerAnnotation *theTitleAnnotation = self.titleAnnotation;
+                var theTitleAnnotation = self.titleAnnotation;
 
                 if ( attributedTitle ) {
                     self.titleTextStyle = [CPTTextStyle textStyleWithAttributes:[attributedTitle attributesAtIndex:0
                                                                                                     effectiveRange:NULL]];
-                    self.title = [attributedTitle.string copy];
+                    self.title = attributedTitle
 
                     if ( theTitleAnnotation ) {
-                        ((CPTTextLayer *)theTitleAnnotation.contentLayer).attributedText = attributedTitle;
+                         theTitleAnnotation.contentLayer.attributedText = attributedTitle;
                     }
                     else {
-                        CPTPlotAreaFrame *frameLayer = self.plotAreaFrame;
+                        let frameLayer = self.plotAreaFrame;
                         if ( frameLayer ) {
-                            CPTLayerAnnotation *newTitleAnnotation = [[CPTLayerAnnotation alloc] initWithAnchorLayer:frameLayer];
-                            CPTTextLayer *newTextLayer             = [[CPTTextLayer alloc] initWithAttributedText:attributedTitle];
+                            let newTitleAnnotation = CPTLayerAnnotation( alloc] initWithAnchorLayer:frameLayer];
+                            ley newTextLayer             = [[CPTTextLayer alloc] initWithAttributedText:attributedTitle];
                             newTitleAnnotation.contentLayer       = newTextLayer;
                             newTitleAnnotation.displacement       = self.titleDisplacement;
                             newTitleAnnotation.rectAnchor         = self.titlePlotAreaFrameAnchor;
@@ -587,11 +555,10 @@ extension CPTGraph {
                     self.title          = nil;
 
                     if ( theTitleAnnotation ) {
-                        [self removeAnnotation:theTitleAnnotation];
+                        self.removeAnnotation(theTitleAnnotation)
                         self.titleAnnotation = nil;
                     }
                 }
-
                 self.inTitleUpdate = NO;
             }
         }
@@ -602,14 +569,14 @@ func setTitleTextStyle(newStyle: CPTTextStyle )
     if ( newStyle != titleTextStyle ) {
         titleTextStyle = newStyle
         
-        if ( !self.inTitleUpdate ) {
+        if self.inTitleUpdate == false {
             self.inTitleUpdate   = true
-            self.attributedTitle = nil;
-            self.inTitleUpdate   = false;
+            self.attributedTitle = nil
+            self.inTitleUpdate   = false
             
-            CPTTextLayer *titleLayer = (CPTTextLayer *)self.titleAnnotation.contentLayer;
-            if ( [titleLayer isKindOfClass:[CPTTextLayer class]] ) {
-                titleLayer.textStyle = titleTextStyle;
+            let titleLayer = self.titleAnnotation?.contentLayer
+            if ( titleLayer is CPTTextLayer) {
+                titleLayer.textStyle = titleTextStyle
             }
         }
     }
@@ -629,10 +596,10 @@ func setTitlePlotAreaFrameAnchor(newAnchor : CPTRectAnchor)
         if ( newAnchor != titlePlotAreaFrameAnchor ) {
             titlePlotAreaFrameAnchor = newAnchor;
 
-            CPTLayerAnnotation *theTitleAnnotation = self.titleAnnotation;
+            theTitleAnnotation = self.titleAnnotation;
             if ( theTitleAnnotation ) {
                 theTitleAnnotation.rectAnchor         = titlePlotAreaFrameAnchor;
-                theTitleAnnotation.contentAnchorPoint = [self contentAnchorForRectAnchor:titlePlotAreaFrameAnchor];
+                theTitleAnnotation.contentAnchorPoint = self.contentAnchorForRectAnchor(anchor:titlePlotAreaFrameAnchor)
             }
         }
     }
@@ -666,25 +633,27 @@ func setTitlePlotAreaFrameAnchor(newAnchor : CPTRectAnchor)
      **/
     func pointingDeviceDownEvent(event :CPTNativeEvent, interactionPoint:CGPoint) ->Bool
     {
-        // Plots
-        for ( CPTPlot *plot in [self.plots reverseObjectEnumerator] ) {
-            if ( [plot pointingDeviceDownEvent:event atPoint:interactionPoint] ) {
-                return true;
+            // Plots
+            let reversedCollection = plots.reversed()
+
+        for  plot in reversedCollection {
+            if plot.pointingDeviceDownEvent(event:event, atPoint:interactionPoint) {
+                return true
             }
         }
 
         // Axes Set
-        if ( [self.axisSet pointingDeviceDownEvent:event atPoint:interactionPoint] ) {
+        if self.axisSet.pointingDeviceDownEvent(event :event, atPoint:interactionPoint ) {
             return true
         }
 
         // Plot area
-        if ( [self.plotAreaFrame pointingDeviceDownEvent:event atPoint:interactionPoint] ) {
+        if self.plotAreaFrame.ointingDeviceDownEvent(event: event, atPoint:interactionPoint ) {
             return true
         }
 
         // Legend
-        if ( [self.legend pointingDeviceDownEvent:event atPoint:interactionPoint] ) {
+        if self.legend.pointingDeviceDownEvent(event:event, atPoint:interactionPoint) {
             return true;
         }
 
@@ -695,7 +664,7 @@ func setTitlePlotAreaFrameAnchor(newAnchor : CPTRectAnchor)
         var handledEvent = false;
 
         for space in self.plotSpaces {
-            BOOL handled = [space pointingDeviceDownEvent:event atPoint:interactionPoint];
+            let handled = space.pointingDeviceDownEvent(event:event, atPoint:interactionPoint)
             handledEvent |= handled;
         }
 
@@ -703,7 +672,7 @@ func setTitlePlotAreaFrameAnchor(newAnchor : CPTRectAnchor)
             return true
         }
         else {
-            return [super pointingDeviceDownEvent:event atPoint:interactionPoint];
+            return super.pointingDeviceDownEvent(event :event, atPoint:interactionPoint)
         }
     }
 
@@ -735,33 +704,33 @@ func setTitlePlotAreaFrameAnchor(newAnchor : CPTRectAnchor)
         let reversedCollection = plots.reversed()
 
         for plot in reversedCollection {
-            if ( [plot pointingDeviceUpEvent:event, atPoint:interactionPoint] ) {
+            if plot.pointingDeviceUpEvent(event: event, atPoint:interactionPoint ) {
                 handledEvent = true
                 break;
             }
         }
 
         // Axes Set
-        if ( !handledEvent && [self.axisSet pointingDeviceUpEvent:event atPoint:interactionPoint] ) {
+        if  !handledEvent && self.axisSet.pointingDeviceUpEvent(event:event, atPoint:interactionPoint ) {
             handledEvent = true
         }
 
         // Plot area
-        if ( !handledEvent && [self.plotAreaFrame pointingDeviceUpEvent:event atPoint:interactionPoint] ) {
+        if  !handledEvent && self.plotAreaFrame.pointingDeviceUpEvent(event:event, atPoint:interactionPoint) {
             handledEvent = true
         }
 
         // Legend
-        if ( !handledEvent && [self.legend pointingDeviceUpEvent:event atPoint:interactionPoint] ) {
-            handledEvent = true;
+        if  !handledEvent == false && self.legend.pointingDeviceUpEvent(event:event, atPoint:interactionPoint ) {
+            handledEvent = true
         }
 
         // Plot spaces
         // Plot spaces do not block events, because several spaces may need to receive
         // the same event sequence (e.g., dragging coordinate translation)
-        for ( CPTPlotSpace *space in self.plotSpaces ) {
+        for space in plotSpaces  {
             if ( !handledEvent || (handledEvent && space.isDragging)) {
-                BOOL handled = [space pointingDeviceUpEvent:event atPoint:interactionPoint];
+                let handled = space.pointingDeviceUpEvent(event:event, atPoint:interactionPoint)
                 handledEvent |= handled;
             }
         }
@@ -770,7 +739,7 @@ func setTitlePlotAreaFrameAnchor(newAnchor : CPTRectAnchor)
             return true;
         }
         else {
-            return [super pointingDeviceUpEvent:event atPoint:interactionPoint];
+            return super.pointingDeviceUpEvent(event:event, atPoint:interactionPoint)
         }
     }
 
@@ -797,8 +766,9 @@ func setTitlePlotAreaFrameAnchor(newAnchor : CPTRectAnchor)
     func pointingDeviceDraggedEvent(event : CPTNativeEvent, atPoint:CGPoint)-> Bool
     {
         // Plots
-        for ( CPTPlot *plot in [self.plots reverseObjectEnumerator] ) {
-            if ( [plot pointingDeviceDraggedEvent:event atPoint:interactionPoint] ) {
+        let reversedCollection = plots.reversed()
+        for  plot in self.plots {
+            if plot.pointingDeviceDraggedEvent(event:event, atPoint:interactionPoint ) {
                 return true
             }
         }
@@ -860,7 +830,7 @@ func setTitlePlotAreaFrameAnchor(newAnchor : CPTRectAnchor)
     {
         // Plots
         let reversedCollection = plots.reversed()
-        for plot in <reversedCollection {
+        for plot in reversedCollection {
             if plot.pointingDeviceCancelledEvent(event: event ) {
                 return true
             }
@@ -897,7 +867,6 @@ func setTitlePlotAreaFrameAnchor(newAnchor : CPTRectAnchor)
         }
     }
 
-
     /**
      *  @brief @required Informs the receiver that the user has moved the scroll wheel.
      *
@@ -917,72 +886,69 @@ func setTitlePlotAreaFrameAnchor(newAnchor : CPTRectAnchor)
      *  @param toPoint The ending coordinates of the interaction.
      *  @return Whether the event was handled or not.
      **/
-    -(BOOL)scrollWheelEvent:(nonnull CPTNativeEvent *)event fromPoint:(CGPoint)fromPoint toPoint:(CGPoint)toPoint
+    func scrollWheelEvent(event: CPTNativeEvent, fromPoint:CGPoint,  toPoint: CGPoint)
     {
         // Plots
-        for ( CPTPlot *plot in [self.plots reverseObjectEnumerator] ) {
-            if ( [plot scrollWheelEvent:event fromPoint:fromPoint toPoint:toPoint] ) {
+        let reversedCollection = plots.reversed()
+        
+        for  plot in reversedCollection  {
+            if plot.scrollWheelEvent(event:event, fromPoint:fromPoint, toPoint:toPoint ) {
                 return true
             }
         }
-
+        
         // Axes Set
-        if ( [self.axisSet scrollWheelEvent:event fromPoint:fromPoint toPoint:toPoint] ) {
+        if self.axisSet.scrollWheelEvent(event: event, fromPoint: fromPoint, toPoint: toPoint)  {
             return true
         }
-
+        
         // Plot area
-        if ( [self.plotAreaFrame scrollWheelEvent:event fromPoint:fromPoint toPoint:toPoint] ) {
+        if self.plotAreaFrame.scrollWheelEvent(event: event, fromPoint:fromPoint, toPoint:toPoint ) {
             return true
         }
-
+        
         // Legend
-        if ( [self.legend scrollWheelEvent:event fromPoint:fromPoint toPoint:toPoint] ) {
+        if self.legend.scrollWheelEvent(event :event, fromPoint:fromPoint, toPoint:toPoint ) {
             return true
         }
-
+        
         // Plot spaces
-        BOOL handledEvent = NO;
-
-        for ( CPTPlotSpace *space in self.plotSpaces ) {
-            BOOL handled = [space scrollWheelEvent:event fromPoint:fromPoint toPoint:toPoint];
+        let handledEvent = false
+        
+        for space in self.plotSpaces  {
+            let handled = space.scrollWheelEvent(event :event, fromPoint:fromPoint, toPoint:toPoint)
             handledEvent |= handled;
         }
-
-        if ( handledEvent ) {
+        
+        if handledEvent == true {
             return true
         }
         else {
-            return [super scrollWheelEvent:event fromPoint:fromPoint toPoint:toPoint];
+            return super.scrollWheelEvent(event :event, fromPoint:fromPoint, toPoint:toPoint)
         }
     }
 
-    #endif
 
-    /// @}
-
-    @end
-
-    #pragma mark -
-
-    @implementation CPTGraph(AbstractFactoryMethods)
-
-    /** @brief Creates a new plot space for the graph.
-     *  @return A new plot space.
-     **/
-    -(nullable CPTPlotSpace *)newPlotSpace
-    {
-        return nil;
-    }
-
-    /** @brief Creates a new axis set for the graph.
-     *  @return A new axis set.
-     **/
-    -(nullable CPTAxisSet *)newAxisSet
-    {
-        return nil;
-    }
-
-    @end
+//    #pragma mark -
+//
+//    @implementation CPTGraph(AbstractFactoryMethods)
+//
+//    /** @brief Creates a new plot space for the graph.
+//     *  @return A new plot space.
+//     **/
+//    -(nullable CPTPlotSpace *)newPlotSpace
+//    {
+//        return nil;
+//    }
+//
+//    /** @brief Creates a new axis set for the graph.
+//     *  @return A new axis set.
+//     **/
+//    -(nullable CPTAxisSet *)newAxisSet
+//    {
+//        return nil;
+//    }
+//
+//    @end
 
 }

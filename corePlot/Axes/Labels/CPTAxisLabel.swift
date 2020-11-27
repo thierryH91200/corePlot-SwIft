@@ -9,14 +9,11 @@ import AppKit
 
 class CPTAxisLabel: NSObject {
     
-    
     var contentLayer: CPTLayer
     var offset: CGFloat = 0.0
     var rotation: CGFloat = 0.0
     var alignment: CPTAlignment?
     var tickLocation = CGFloat(0)
-    
-    
     
     typealias CPTAxisLabelSet = Set<CPTAxisLabel>
     

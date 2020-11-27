@@ -174,8 +174,8 @@ class CPTAnimation: NSObject {
     {
         self.timeOffset += kCPTAnimationFrameRate;
 
-        CPTMutableAnimationArray *theAnimationOperations = self.animationOperations;
-        CPTMutableAnimationArray *runningOperations      = self.runningAnimationOperations;
+        let theAnimationOperations = self.animationOperations;
+        let runningOperations      = self.runningAnimationOperations;
         CPTMutableAnimationArray *expiredOperations      = [[NSMutableArray alloc] init];
 
         CGFloat currentTime      = self.timeOffset;
@@ -189,8 +189,8 @@ class CPTAnimation: NSObject {
 
             CPTAnimationPeriod *period = animationOperation.period;
 
-            CGFloat duration  = period.duration;
-            CGFloat startTime = period.startOffset;
+            let  duration  = period.duration;
+            let startTime = period.startOffset;
             CGFloat delay     = period.delay;
             if ( isnan(delay)) {
                 if ( [period canStartWithValueFromObject:animationOperation.boundObject propertyGetter:animationOperation.boundGetter] ) {

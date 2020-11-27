@@ -15,6 +15,12 @@ public extension Notification.Name {
     static let CoordinateMappingDidChangeNotification  = Notification.Name( "CoordinateMappingDidChangeNotification")
     static let boundsDidChange  = Notification.Name( "boundsDidChange")
     
+    static let CPTGraphNeedsRedrawNotification  = Notification.Name( "CPTGraphNeedsRedrawNotification")
+    static let CPTGraphDidAddPlotSpaceNotification  = Notification.Name( "CPTGraphDidAddPlotSpaceNotification")
+    static let CPTGraphDidRemovePlotSpaceNotification  = Notification.Name( "CPTGraphDidRemovePlotSpaceNotification")
+    static let CPTGraphPlotSpaceNotificationKey  = Notification.Name( "CPTGraphPlotSpaceNotificationKey")
+
+    
     
     static let updateBalance             = Notification.Name( "updateBalance")
     static let updateAccount             = Notification.Name( "updateAccount")
@@ -52,5 +58,4 @@ extension NotificationCenter {
             object: nil
         )
     }
-
 }

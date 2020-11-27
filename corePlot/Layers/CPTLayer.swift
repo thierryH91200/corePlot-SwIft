@@ -43,7 +43,7 @@ public class CPTLayer : CALayer
     
     var outerBorderPath  :CGPath?    = nil
     var innerBorderPath  :CGPath?    = nil;
-    var identifier  : Any?         = nil;
+    var identifier  : UUID?         = nil;
     
     typealias CPTSublayerSet = Set<CALayer>
     
