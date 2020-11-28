@@ -78,7 +78,7 @@ public class CPTLayer : CALayer
     }
     
     
-    init(layer: Any)
+    override init(layer: Any)
     {
         if  let theLayer = layer {
             

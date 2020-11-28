@@ -9,6 +9,9 @@ import AppKit
 
 class CPTPlotArea: CPTAnnotationHostLayer {
     
+    let kCPTNumberOfLayers = 6; // number of primary layers to arrange
+
+    
     var touchedPoint = CGPoint(x: 0,y: 0)
     var bottomUpLayerOrder : CPTGraphLayerType?
     
@@ -32,9 +35,9 @@ class CPTPlotArea: CPTAnnotationHostLayer {
     var  heightDecimal = CGFloat(0)
     
     //MARK:  Init/Dealloc
-    init(frame:frame)
+    init(frame:CGRect)
     {
-        super.init(frame:frame)
+        super.init()
         
         minorGridLineGroup = nil;
         majorGridLineGroup = nil;
@@ -46,6 +49,7 @@ class CPTPlotArea: CPTAnnotationHostLayer {
         touchedPoint       = CGPoint(x:CGFloat.nan,y:  CGFloat.nan)
         topDownLayerOrder  = nil;
         bottomUpLayerOrder = calloc(kCPTNumberOfLayers, sizeof(CPTGraphLayerType));
+        
         self.updateLayerOrder()
         
         let newPlotGroup = CPTPlotGroup(frame:frame)
@@ -226,46 +230,46 @@ class CPTPlotArea: CPTAnnotationHostLayer {
 //
 //    /// @cond
 //
-//    -(void)updateLayerOrder
-//    {
-//        CPTGraphLayerType *buLayerOrder = self.bottomUpLayerOrder;
-//
-//        for ( size_t i = 0; i < kCPTNumberOfLayers; i++ ) {
-//            *(buLayerOrder++) = (CPTGraphLayerType)i;
-//        }
-//
-//        CPTNumberArray *tdLayerOrder = self.topDownLayerOrder;
-//
-//        if ( tdLayerOrder ) {
-//            buLayerOrder = self.bottomUpLayerOrder;
-//
-//            for ( NSUInteger layerIndex = 0; layerIndex < tdLayerOrder.count; layerIndex++ ) {
-//                CPTGraphLayerType layerType = (CPTGraphLayerType)tdLayerOrder[layerIndex].intValue;
-//                NSUInteger i                = kCPTNumberOfLayers - layerIndex - 1;
-//                while ( buLayerOrder[i] != layerType ) {
-//                    if ( i == 0 ) {
-//                        break;
-//                    }
-//                    i--;
-//                }
-//                while ( i < kCPTNumberOfLayers - layerIndex - 1 ) {
-//                    buLayerOrder[i] = buLayerOrder[i + 1];
-//                    i++;
-//                }
-//                buLayerOrder[kCPTNumberOfLayers - layerIndex - 1] = layerType;
-//            }
-//        }
-//
-//        // force the layer hierarchy to update
-//        self.updatingLayers     = YES;
-//        self.minorGridLineGroup = self.minorGridLineGroup;
-//        self.majorGridLineGroup = self.majorGridLineGroup;
-//        self.axisSet            = self.axisSet;
-//        self.plotGroup          = self.plotGroup;
-//        self.axisLabelGroup     = self.axisLabelGroup;
-//        self.axisTitleGroup     = self.axisTitleGroup;
-//        self.updatingLayers     = NO;
-//    }
+    func updateLayerOrder()
+    {
+        let buLayerOrder = self.bottomUpLayerOrder;
+
+        for ( size_t i = 0; i < kCPTNumberOfLayers; i++ ) {
+            *(buLayerOrder++) = (CPTGraphLayerType)i;
+        }
+
+        CPTNumberArray *tdLayerOrder = self.topDownLayerOrder;
+
+        if ( tdLayerOrder ) {
+            buLayerOrder = self.bottomUpLayerOrder;
+
+            for ( NSUInteger layerIndex = 0; layerIndex < tdLayerOrder.count; layerIndex++ ) {
+                CPTGraphLayerType layerType = (CPTGraphLayerType)tdLayerOrder[layerIndex].intValue;
+                NSUInteger i                = kCPTNumberOfLayers - layerIndex - 1;
+                while ( buLayerOrder[i] != layerType ) {
+                    if ( i == 0 ) {
+                        break;
+                    }
+                    i--;
+                }
+                while ( i < kCPTNumberOfLayers - layerIndex - 1 ) {
+                    buLayerOrder[i] = buLayerOrder[i + 1];
+                    i++;
+                }
+                buLayerOrder[kCPTNumberOfLayers - layerIndex - 1] = layerType;
+            }
+        }
+
+        // force the layer hierarchy to update
+        self.updatingLayers     = YES;
+        self.minorGridLineGroup = self.minorGridLineGroup;
+        self.majorGridLineGroup = self.majorGridLineGroup;
+        self.axisSet            = self.axisSet;
+        self.plotGroup          = self.plotGroup;
+        self.axisLabelGroup     = self.axisLabelGroup;
+        self.axisTitleGroup     = self.axisTitleGroup;
+        self.updatingLayers     = NO;
+    }
 //
 //    -(unsigned)indexForLayerType:(CPTGraphLayerType)layerType
 //    {

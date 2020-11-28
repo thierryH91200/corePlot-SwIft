@@ -76,26 +76,16 @@ class CPTPlotSpace: NSObject {
     }
 
     func addCategory(_ category: String, for coordinate: CPTCoordinate) {
-        assert(category != "", "Invalid parameter not satisfying: category != """)
 
-        let categories = orderedSet(for: coordinate)
-        categories?.add(category)
+        let categories = orderedSetForCoordinate(coordinate: coordinate)
+        categories.add(category)
     }
     
     
     
-    //
-//    /**
-//     *  @brief Removes the named category for the given coordinate.
-//     *  @param category The category name.
-//     *  @param coordinate The axis coordinate.
-//     */
     func removeCategory(category: String, forCoordinate coordinate:CPTCoordinate)
     {
-        NSParameterAssert(category);
-        
-        let categories = orderedSet(for: coordinate)
-//        CPTMutableCategorySet *categories = [self orderedSetForCoordinate:coordinate];
+        var categories = orderedSetForCoordinate(coordinate: coordinate)
         categories.remove(category)
     }
 //

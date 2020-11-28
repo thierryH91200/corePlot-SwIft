@@ -40,7 +40,7 @@ func pixelAlign()
     else if ((boundsSize.width == frameSize.height) && (boundsSize.height == frameSize.width)) { // rotated 90° or 270°
         let anchor = self.anchorPoint;
 
-        let newAnchor = CGPointMake(boundsSize.height * anchor.y,
+        let newAnchor = CGPoint(boundsSize.height * anchor.y,
                                         boundsSize.width * anchor.x);
 
         if ( scale == CGFloat(1.0)) {

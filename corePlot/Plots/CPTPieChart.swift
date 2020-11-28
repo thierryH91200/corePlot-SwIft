@@ -8,48 +8,6 @@
 import Cocoa
 
 
-//@objc
-//public protocol CPTPieChartDataSource : CPTPlotDataSource
-//{
-//ChartViewDelegate
-//@protocol CPTPieChartDataSource<CPTPlotDataSource>
-//
-//-(nullable CPTFillArray *)sliceFillsForPieChart:(nonnull CPTPieChart *)pieChart recordIndexRange:(NSRange)indexRange;
-//
-///** @brief @optional Gets a fill for the given pie chart slice.
-// *  This method will not be called if
-// *  @link CPTPieChartDataSource::sliceFillsForPieChart:recordIndexRange: -sliceFillsForPieChart:recordIndexRange: @endlink
-// *  is also implemented in the datasource.
-// *  @param pieChart The pie chart.
-// *  @param idx The data index of interest.
-// *  @return The pie slice fill for the slice with the given index. If the datasource returns @nil, the default fill is used.
-// *  If the data source returns an NSNull object, no fill is drawn.
-// **/
-//-(nullable CPTFill *)sliceFillForPieChart:(nonnull CPTPieChart *)pieChart recordIndex:(NSUInteger)idx;
-//
-///// @}
-//
-///// @name Slice Layout
-///// @{
-//
-///** @brief @optional Gets a range of slice offsets for the given pie chart.
-// *  @param pieChart The pie chart.
-// *  @param indexRange The range of the data indexes of interest.
-// *  @return An array of radial offsets.
-// **/
-//-(nullable CPTNumberArray *)radialOffsetsForPieChart:(nonnull CPTPieChart *)pieChart recordIndexRange:(NSRange)indexRange;
-//
-///** @brief @optional Offsets the slice radially from the center point. Can be used to @quote{explode} the chart.
-// *  This method will not be called if
-// *  @link CPTPieChartDataSource::radialOffsetsForPieChart:recordIndexRange: -radialOffsetsForPieChart:recordIndexRange: @endlink
-// *  is also implemented in the datasource.
-// *  @param pieChart The pie chart.
-// *  @param idx The data index of interest.
-// *  @return The radial offset in view coordinates. Zero is no offset.
-// **/
-//-(CGFloat)radialOffsetForPieChart:(nonnull CPTPieChart *)pieChart recordIndex:(NSUInteger)idx;
-
-
 
 
 
@@ -66,20 +24,26 @@ protocol CPTPieChartDataSource {
 
 class CPTPieChart: CPTPlot {
     
+    enum CPTPieDirection : Int {
+        case clockwise     ///< Pie slices are drawn in a clockwise direction.
+        case counterClockwise ///< Pie slices are drawn in a counter-clockwise direction.
+    };
+
+    
     /// @name Appearance
     /// @{
     var  pieRadius: CGFloat
     var  pieInnerRadius : CGFloat
-    var CGFloat startAngle: CGFloat
-    var CGFloat endAngle: CGFloat
-    var  sliceDirection: CPTPieDirection
+    var startAngle: CGFloat
+    var endAngle: CGFloat
+    var  sliceDirection =  CPTPieDirection.clockwise
     var  centerAnchor: CGPoint
     /// @}
 
     /// @name Drawing
     /// @{
-    @property (nonatomic, readwrite, copy, nullable) CPTLineStyle *borderLineStyle;
-    @property (nonatomic, readwrite, copy, nullable) CPTFill *overlayFill;
+    var borderLineStyle : CPTLineStyle
+    var overlayFill: CPTFill
     /// @}
 
     /// @name Data Labels

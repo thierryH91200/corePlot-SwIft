@@ -257,676 +257,672 @@ extension CPTGraph {
             name:.CPTPlotSpaceCoordinateMappingDidChangeNotification,
             object:space)
         
-        //        NotificationCenter.defaultCenter.post(
-        //            name: .CPTGraphDidAddPlotSpaceNotification,
-        //            object:self,
-        //            userInfo:@{ CPTGraphPlotSpaceNotificationKey: space )
-//    }
-}
-
-/** @brief Remove a plot space from the graph.
- *  @param plotSpace The plot space.
- **/
-func removePlotSpace(plotSpace: CPTPlotSpace )
-{
-    if ( plotSpace ) {
-        let thePlotSpace = plotSpace
-        
-        if self.plotSpaces.contains(thePlotSpace ) {
-            NotificationCenter.defaultCenter.removeObserver(
-                self,
-                name:CPTPlotSpaceCoordinateMappingDidChangeNotification,
-                object:thePlotSpace)
-            
-            // Remove space
-            thePlotSpace.graph = nil;
-            self.plotSpaces.remove(hePlotSpace)
-            
-            // Update axes that referenced space
-            for axis in self.axisSet.axes {
-                if ( axis.plotSpace == thePlotSpace ) {
-                    axis.plotSpace = nil
-                }
-            }
-            
-            //                    NotificationCenter.defaultCenter.postNotificationName(
-            //                        CPTGraphDidRemovePlotSpaceNotification,
-            //                        object:self,
-            //                        userInfo:@{ CPTGraphPlotSpaceNotificationKey: thePlotSpace }
-            
-        }
-        else {
-            print("Tried to remove CPTPlotSpace which did not exist.")
-        }
+        NotificationCenter.default.post(
+            name: .CPTGraphDidAddPlotSpaceNotification, object: self)
     }
-}
-
-// MARK: - Coordinate Changes in Plot Spaces
-
-/// @cond
-
-func plotSpaceMappingDidChange(notif: NSNotification )
-{
-    let plotSpace        = notif.object;
-    let backgroundBandsNeedRedraw = false;
     
-    for axis in self.axisSet.axes {
-        if  axis.plotSpace == plotSpace {
-            axis.setNeedsRelabel()
-            axis.updateAxisTitle()
+    /** @brief Remove a plot space from the graph.
+     *  @param plotSpace The plot space.
+     **/
+    func removePlotSpace(plotSpace: CPTPlotSpace )
+    {
+        if ( plotSpace ) {
+            let thePlotSpace = plotSpace
             
-            if backgroundBandsNeedRedraw == false {
-                backgroundBandsNeedRedraw = (axis.alternatingBandFills.count > 0) || (axis.backgroundLimitBands.count > 0);
-            }
-        }
-    }
-    for plot in self.plots {
-        if ( plot.plotSpace == plotSpace ) {
-            plot.setNeedsDisplay()
-        }
-    }
-    if ( backgroundBandsNeedRedraw ) {
-        self.plotAreaFrame.plotArea.setNeedsDisplay()
-    }
-}
-
-// MARK: - Axis Set
-func axisSet() ->CPTAxisSet
-{
-    return self.plotAreaFrame.axisSet
-}
-
-func setAxisSet(newSet :CPTAxisSet )
-{
-    self.plotAreaFrame.axisSet = newSet
-}
-
-// MARK: - Themes
-
-/** @brief Apply a theme to style the graph.
- *  @param theme The theme object used to style the graph.
- **/
-func applyTheme(theme: CPTTheme )
-{
-    theme.applyThemeToGraph(self)
-}
-
-// MARK: - Legend
-func setLegend(newLegend: CPTLegend )
-{
-    if ( newLegend != legend ) {
-        legend = newLegend;
-        lettheLegendAnnotation = self.legendAnnotation;
-        if ( legend ) {
-            if ( theLegendAnnotation ) {
-                theLegendAnnotation.contentLayer = legend;
+            if self.plotSpaces.contains(thePlotSpace ) {
+                NotificationCenter.remove(
+                    self,
+                    name:.CPTPlotSpaceCoordinateMappingDidChangeNotification,
+                    object:thePlotSpace)
+                
+                // Remove space
+                thePlotSpace.graph = nil;
+                self.plotSpaces.remove(thePlotSpace)
+                
+                // Update axes that referenced space
+                for axis in self.axisSet.axes {
+                    if ( axis.plotSpace == thePlotSpace ) {
+                        axis.plotSpace = nil
+                    }
+                }
+                
+                NotificationCenter.default.post(
+                    name: .CPTGraphDidRemovePlotSpaceNotification,
+                    object:self )
+                
             }
             else {
-                let newLegendAnnotation = CPTLayerAnnotation(self)
-                newLegendAnnotation.contentLayer       = legend
-                newLegendAnnotation.displacement       = self.legendDisplacement;
-                newLegendAnnotation.rectAnchor         = self.legendAnchor;
-                newLegendAnnotation.contentAnchorPoint = self.contentAnchorForRectAnchor(self.legendAnchor)
-                self.addAnnotation(newLegendAnnotation)
-                self.legendAnnotation = newLegendAnnotation;
-            }
-        }
-        else {
-            if ( theLegendAnnotation ) {
-                self.removeAnnotation(theLegendAnnotation)
-                self.legendAnnotation = nil;
+                print("Tried to remove CPTPlotSpace which did not exist.")
             }
         }
     }
-}
-
-func setLegendAnchor(newLegendAnchor: CPTRectAnchor)
-{
-    if ( newLegendAnchor != legendAnchor ) {
-        legendAnchor = newLegendAnchor;
-        let theLegendAnnotation = self.legendAnnotation;
-        if ( theLegendAnnotation ) {
-            theLegendAnnotation.rectAnchor         = newLegendAnchor;
-            theLegendAnnotation.contentAnchorPoint = self.contentAnchorForRectAnchor(self.legendAnchor)
-        }
-    }
-}
-
-func setLegendDisplacement(newLegendDisplacement: CGPoint)
-{
-    if ( !CGPointEqualToPoint(newLegendDisplacement, legendDisplacement)) {
-        legendDisplacement                 = newLegendDisplacement;
-        self.legendAnnotation.displacement = newLegendDisplacement;
-    }
-}
-
-func contentAnchorForRectAnchor(anchor: CPTRectAnchor)->CGPoint
-{
-    let contentAnchor = CGPoint()
     
-    switch ( anchor ) {
-    case .bottomLeft:
-        contentAnchor = CGPoint()
+    // MARK: - Coordinate Changes in Plot Spaces
+    
+    /// @cond
+    
+    func plotSpaceMappingDidChange(notif: NSNotification )
+    {
+        let plotSpace        = notif.object;
+        let backgroundBandsNeedRedraw = false;
         
-    case .bottom:
-        contentAnchor = CGPoint(0.5, 0.0);
-        
-    case .bottomRight:
-        contentAnchor = CGPoint(1.0, 0.0);
-        
-    case .left:
-        contentAnchor = CGPoint(0.0, 0.5);
-        
-    case .right:
-        contentAnchor = CGPoint(1.0, 0.5);
-        
-    case .topLeft:
-        contentAnchor = CGPoint(0.0, 1.0);
-        
-    case .top:
-        contentAnchor = CGPoint(0.5, 1.0);
-        
-    case .topRight:
-        contentAnchor = CGPoint(1.0, 1.0);
-        
-    case .center:
-        contentAnchor = CGPoint(0.5, 0.5);
+        for axis in self.axisSet.axes {
+            if  axis.plotSpace == plotSpace {
+                axis.setNeedsRelabel()
+                axis.updateAxisTitle()
+                
+                if backgroundBandsNeedRedraw == false {
+                    backgroundBandsNeedRedraw = (axis.alternatingBandFills.count > 0) || (axis.backgroundLimitBands.count > 0);
+                }
+            }
+        }
+        for plot in self.plots {
+            if ( plot.plotSpace == plotSpace ) {
+                plot.setNeedsDisplay()
+            }
+        }
+        if ( backgroundBandsNeedRedraw ) {
+            self.plotAreaFrame.plotArea.setNeedsDisplay()
+        }
     }
-    return contentAnchor;
-}
-
-
-// MARK: - Accessors
-func setPaddingLeft(newPadding: CGFloat)
-{
-    if newPadding != self.paddingLeft  {
-        super.paddingLeft = newPadding
-        self.axisSet.axes.makeObjectsPerformSelector( #selector(setNeedsDisplay))
+    
+    // MARK: - Axis Set
+    func axisSet() ->CPTAxisSet
+    {
+        return self.plotAreaFrame.axisSet!
     }
-}
-
-func setPaddingRight(newPadding:CGFloat)
-{
-    if ( newPadding != self.paddingRight ) {
-        super.paddingRight = newPadding;
-        self.axisSet.axes.makeObjectsPerformSelector(#selector(setNeedsDisplay))
+    
+    func setAxisSet(newSet :CPTAxisSet )
+    {
+        self.plotAreaFrame.axisSet = newSet
     }
-}
-
-func setPaddingTop(newPadding:CGFloat)
-{
-    if ( newPadding != self.paddingTop ) {
-        super.paddingTop = newPadding
-        self.axisSet.axes.makeObjectsPerformSelector(#selector(setNeedsDisplay))
+    
+    // MARK: - Themes
+    
+    /** @brief Apply a theme to style the graph.
+     *  @param theme The theme object used to style the graph.
+     **/
+    func applyTheme(theme: CPTTheme )
+    {
+        theme.applyThemeToGraph(graph: self)
     }
-}
-
-func setPaddingBottom(newPadding: CGFloat)
-{
-    if ( newPadding != self.paddingBottom ) {
-        super.paddingBottom = newPadding
-        self.axisSet.axes.makeObjectsPerformSelector(#selector(setNeedsDisplay))
-    }
-}
-
-func topDownLayerOrder() -> CPTNumberArray? {
-    return plotAreaFrame.plotArea.topDownLayerOrder()
-}
-
-func setTopDownLayerOrder(_ newArray: CPTNumberArray?) {
-    plotAreaFrame.plotArea.topDownLayerOrder() = newArray
-}
-func setTitle(title : String)
-{
-    if ( newTitle != title ) {
-        title = newTitle
-        
-        if ( !self.inTitleUpdate ) {
-            self.inTitleUpdate   = true
-            self.attributedTitle = nil;
-            self.inTitleUpdate   = false
-            
-            let theTitleAnnotation = self.titleAnnotation;
-            
-            if ( title ) {
-                if ( theTitleAnnotation ) {
-                    theTitleAnnotation.contentLayer.text = title;
+    
+    // MARK: - Legend
+    func setLegend(newLegend: CPTLegend )
+    {
+        if ( newLegend != legend ) {
+            legend = newLegend;
+            let theLegendAnnotation = self.legendAnnotation;
+            if (( legend ) != nil) {
+                if (( theLegendAnnotation ) != nil) {
+                    theLegendAnnotation?.contentLayer = legend;
                 }
                 else {
-                    let frameLayer = self.plotAreaFrame;
-                    if ( frameLayer ) {
-                        let newTitleAnnotation = CPTLayerAnnotation( frame: frameLayer)
-                        
-                        let newTextLayer             = CPTTextLayer(text: title, style: titleTextStyle)
-                        
-                        newTitleAnnotation.contentLayer       = newTextLayer
-                        newTitleAnnotation.displacement       = self.titleDisplacement
-                        newTitleAnnotation.rectAnchor         = self.titlePlotAreaFrameAnchor
-                        newTitleAnnotation.contentAnchorPoint = self.contentAnchorForRectAnchor(anchor: titlePlotAreaFrameAnchor)
-                        self.addAnnotation(newTitleAnnotation)
-                        self.titleAnnotation = newTitleAnnotation;
+                    let newLegendAnnotation = CPTLayerAnnotation(newAnchorLayer: self)
+                    newLegendAnnotation.contentLayer       = legend
+                    newLegendAnnotation.displacement       = self.legendDisplacement
+                    newLegendAnnotation.rectAnchor         = self.legendAnchor
+                    newLegendAnnotation.contentAnchorPoint = self.contentAnchorForRectAnchor(anchor: self.legendAnchor!)
+                    self.addAnnotation(newLegendAnnotation)
+                    self.legendAnnotation = newLegendAnnotation
+                }
+            }
+            else {
+                if (( theLegendAnnotation ) != nil) {
+                    self.removeAnnotation(theLegendAnnotation)
+                    self.legendAnnotation = nil;
+                }
+            }
+        }
+    }
+    
+    func setLegendAnchor(newLegendAnchor: CPTRectAnchor)
+    {
+        if ( newLegendAnchor != legendAnchor ) {
+            legendAnchor = newLegendAnchor;
+            let theLegendAnnotation = self.legendAnnotation;
+            if (( theLegendAnnotation ) != nil) {
+                theLegendAnnotation?.rectAnchor         = newLegendAnchor;
+                theLegendAnnotation?.contentAnchorPoint = self.contentAnchorForRectAnchor(anchor: self.legendAnchor!)
+            }
+        }
+    }
+    
+    func setLegendDisplacement(newLegendDisplacement: CGPoint)
+    {
+        if ( !newLegendDisplacement.equalTo(legendDisplacement)) {
+            legendDisplacement                 = newLegendDisplacement;
+            self.legendAnnotation?.displacement = newLegendDisplacement;
+        }
+    }
+    
+    func contentAnchorForRectAnchor(anchor: CPTRectAnchor)->CGPoint
+    {
+        let contentAnchor = CGPoint()
+        
+        switch ( anchor ) {
+        case .bottomLeft:
+            contentAnchor = CGPoint()
+            
+        case .bottom:
+            contentAnchor = CGPoint(0.5, 0.0);
+            
+        case .bottomRight:
+            contentAnchor = CGPoint(1.0, 0.0);
+            
+        case .left:
+            contentAnchor = CGPoint(0.0, 0.5);
+            
+        case .right:
+            contentAnchor = CGPoint(1.0, 0.5);
+            
+        case .topLeft:
+            contentAnchor = CGPoint(0.0, 1.0);
+            
+        case .top:
+            contentAnchor = CGPoint(0.5, 1.0);
+            
+        case .topRight:
+            contentAnchor = CGPoint(1.0, 1.0);
+            
+        case .center:
+            contentAnchor = CGPoint(0.5, 0.5);
+        }
+        return contentAnchor;
+    }
+    
+    
+    // MARK: - Accessors
+    func setPaddingLeft(newPadding: CGFloat)
+    {
+        if newPadding != self.paddingLeft  {
+            super.paddingLeft = newPadding
+            self.axisSet.axes.makeObjectsPerformSelector( #selector(setNeedsDisplay))
+        }
+    }
+    
+    func setPaddingRight(newPadding:CGFloat)
+    {
+        if ( newPadding != self.paddingRight ) {
+            super.paddingRight = newPadding;
+            self.axisSet.axes.makeObjectsPerformSelector(#selector(setNeedsDisplay))
+        }
+    }
+    
+    func setPaddingTop(newPadding:CGFloat)
+    {
+        if ( newPadding != self.paddingTop ) {
+            super.paddingTop = newPadding
+            self.axisSet.axes.makeObjectsPerformSelector(#selector(setNeedsDisplay))
+        }
+    }
+    
+    func setPaddingBottom(newPadding: CGFloat)
+    {
+        if ( newPadding != self.paddingBottom ) {
+            super.paddingBottom = newPadding
+            self.axisSet.axes.makeObjectsPerformSelector(#selector(setNeedsDisplay))
+        }
+    }
+    
+    func topDownLayerOrder() -> CPTNumberArray? {
+        return plotAreaFrame.plotArea.topDownLayerOrder()
+    }
+    
+    func setTopDownLayerOrder(_ newArray: CPTNumberArray?) {
+        plotAreaFrame.plotArea.topDownLayerOrder() = newArray
+    }
+    func setTitle(title : String)
+    {
+        if ( newTitle != title ) {
+            title = newTitle
+            
+            if ( !self.inTitleUpdate ) {
+                self.inTitleUpdate   = true
+                self.attributedTitle = nil;
+                self.inTitleUpdate   = false
+                
+                let theTitleAnnotation = self.titleAnnotation;
+                
+                if ( title ) {
+                    if ( theTitleAnnotation ) {
+                        theTitleAnnotation.contentLayer.text = title;
+                    }
+                    else {
+                        let frameLayer = self.plotAreaFrame;
+                        if ( frameLayer ) {
+                            let newTitleAnnotation = CPTLayerAnnotation( frame: frameLayer)
+                            
+                            let newTextLayer             = CPTTextLayer(text: title, style: titleTextStyle)
+                            
+                            newTitleAnnotation.contentLayer       = newTextLayer
+                            newTitleAnnotation.displacement       = self.titleDisplacement
+                            newTitleAnnotation.rectAnchor         = self.titlePlotAreaFrameAnchor
+                            newTitleAnnotation.contentAnchorPoint = self.contentAnchorForRectAnchor(anchor: titlePlotAreaFrameAnchor)
+                            self.addAnnotation(newTitleAnnotation)
+                            self.titleAnnotation = newTitleAnnotation;
+                        }
+                    }
+                }
+                else {
+                    if  theTitleAnnotation  {
+                        self.removeAnnotation(theTitleAnnotation)
+                        self.titleAnnotation = nil;
                     }
                 }
             }
-            else {
-                if  theTitleAnnotation  {
-                    self.removeAnnotation(theTitleAnnotation)
-                    self.titleAnnotation = nil;
-                }
-            }
         }
     }
-}
-
-func setAttributedTitle(newTitle: NSAttributedString )
-{
-    if ( newTitle != attributedTitle ) {
-        attributedTitle = newTitle
-        
-        if self.inTitleUpdate == false {
-            self.inTitleUpdate = true
+    
+    func setAttributedTitle(newTitle: NSAttributedString )
+    {
+        if ( newTitle != attributedTitle ) {
+            attributedTitle = newTitle
             
-            var theTitleAnnotation = self.titleAnnotation;
-            
-            if ( attributedTitle ) {
-//                self.titleTextStyle = [CPTTextStyle textStyleWithAttributes:[attributedTitle attributesAtIndex:0
-//                                       effectiveRange:NULL]];
-                self.title = attributedTitle
+            if self.inTitleUpdate == false {
+                self.inTitleUpdate = true
                 
-                if ( theTitleAnnotation ) {
-                    theTitleAnnotation.contentLayer.attributedText = attributedTitle;
-                }
-                else {
-                    let frameLayer = self.plotAreaFrame;
-                    if ( frameLayer ) {
-//                        let newTitleAnnotation = CPTLayerAnnotation( alloc] initWithAnchorLayer:frameLayer];
-//                            let newTextLayer             = [[CPTTextLayer alloc] initWithAttributedText:attributedTitle];
-//                            newTitleAnnotation.contentLayer       = newTextLayer;
-//                            newTitleAnnotation.displacement       = self.titleDisplacement;
-//                            newTitleAnnotation.rectAnchor         = self.titlePlotAreaFrameAnchor;
-//                            newTitleAnnotation.contentAnchorPoint = [self contentAnchorForRectAnchor:self.titlePlotAreaFrameAnchor];
-//                            [self addAnnotation:newTitleAnnotation];
-//                            self.titleAnnotation = newTitleAnnotation;
+                var theTitleAnnotation = self.titleAnnotation;
+                
+                if ( attributedTitle ) {
+                    //                self.titleTextStyle = [CPTTextStyle textStyleWithAttributes:[attributedTitle attributesAtIndex:0
+                    //                                       effectiveRange:NULL]];
+                    self.title = attributedTitle
+                    
+                    if ( theTitleAnnotation ) {
+                        theTitleAnnotation.contentLayer.attributedText = attributedTitle;
+                    }
+                    else {
+                        let frameLayer = self.plotAreaFrame;
+                        if ( frameLayer ) {
+                            //                        let newTitleAnnotation = CPTLayerAnnotation( alloc] initWithAnchorLayer:frameLayer];
+                            //                            let newTextLayer             = [[CPTTextLayer alloc] initWithAttributedText:attributedTitle];
+                            //                            newTitleAnnotation.contentLayer       = newTextLayer;
+                            //                            newTitleAnnotation.displacement       = self.titleDisplacement;
+                            //                            newTitleAnnotation.rectAnchor         = self.titlePlotAreaFrameAnchor;
+                            //                            newTitleAnnotation.contentAnchorPoint = [self contentAnchorForRectAnchor:self.titlePlotAreaFrameAnchor];
+                            //                            [self addAnnotation:newTitleAnnotation];
+                            //                            self.titleAnnotation = newTitleAnnotation;
+                        }
                     }
                 }
+                else {
+                    self.titleTextStyle = nil;
+                    self.title          = nil;
+                    
+                    if ( theTitleAnnotation ) {
+                        self.removeAnnotation(theTitleAnnotation)
+                        self.titleAnnotation = nil;
+                    }
+                }
+                self.inTitleUpdate = NO;
             }
-            else {
-                self.titleTextStyle = nil;
-                self.title          = nil;
+        }
+    }
+    
+    func setTitleTextStyle(newStyle: CPTTextStyle )
+    {
+        if ( newStyle != titleTextStyle ) {
+            titleTextStyle = newStyle
+            
+            if self.inTitleUpdate == false {
+                self.inTitleUpdate   = true
+                self.attributedTitle = nil
+                self.inTitleUpdate   = false
                 
-                if ( theTitleAnnotation ) {
-                    self.removeAnnotation(theTitleAnnotation)
-                    self.titleAnnotation = nil;
+                let titleLayer = self.titleAnnotation?.contentLayer
+                if ( titleLayer is CPTTextLayer) {
+                    titleLayer.textStyle = titleTextStyle
                 }
             }
-            self.inTitleUpdate = NO;
         }
     }
-}
-
-func setTitleTextStyle(newStyle: CPTTextStyle )
-{
-    if ( newStyle != titleTextStyle ) {
-        titleTextStyle = newStyle
-        
-        if self.inTitleUpdate == false {
-            self.inTitleUpdate   = true
-            self.attributedTitle = nil
-            self.inTitleUpdate   = false
+    
+    func setTitleDisplacement(newDisplace:CGPoint)
+    {
+        if ( !CGPointEqualToPoint(newDisplace, titleDisplacement)) {
+            titleDisplacement = newDisplace;
             
-            let titleLayer = self.titleAnnotation?.contentLayer
-            if ( titleLayer is CPTTextLayer) {
-                titleLayer.textStyle = titleTextStyle
+            self.titleAnnotation.displacement = newDisplace;
+        }
+    }
+    
+    func setTitlePlotAreaFrameAnchor(newAnchor : CPTRectAnchor)
+    {
+        if ( newAnchor != titlePlotAreaFrameAnchor ) {
+            titlePlotAreaFrameAnchor = newAnchor;
+            
+            theTitleAnnotation = self.titleAnnotation;
+            if ( theTitleAnnotation ) {
+                theTitleAnnotation.rectAnchor         = titlePlotAreaFrameAnchor;
+                theTitleAnnotation.contentAnchorPoint = self.contentAnchorForRectAnchor(anchor:titlePlotAreaFrameAnchor)
             }
         }
     }
-}
-
-func setTitleDisplacement(newDisplace:CGPoint)
-{
-    if ( !CGPointEqualToPoint(newDisplace, titleDisplacement)) {
-        titleDisplacement = newDisplace;
-        
-        self.titleAnnotation.displacement = newDisplace;
-    }
-}
-
-func setTitlePlotAreaFrameAnchor(newAnchor : CPTRectAnchor)
-{
-    if ( newAnchor != titlePlotAreaFrameAnchor ) {
-        titlePlotAreaFrameAnchor = newAnchor;
-        
-        theTitleAnnotation = self.titleAnnotation;
-        if ( theTitleAnnotation ) {
-            theTitleAnnotation.rectAnchor         = titlePlotAreaFrameAnchor;
-            theTitleAnnotation.contentAnchorPoint = self.contentAnchorForRectAnchor(anchor:titlePlotAreaFrameAnchor)
-        }
-    }
-}
-
-/// @endcond
-
-// MARK: - Event Handling
-
-/// @name User Interaction
-/// @{
-
-/**
- *  @brief Informs the receiver that the user has
- *  @if MacOnly pressed the mouse button. @endif
- *  @if iOSOnly touched the screen. @endif
- *
- *
- *  The event is passed in turn to the following layers:
- *  -# All plots in reverse order (i.e., from front to back in the layer order)
- *  -# The axis set
- *  -# The plot area
- *  -# The legend
- *
- *  If any layer handles the event, subsequent layers are not notified and
- *  this method immediately returns @YES. If none of the layers
- *  handle the event, it is passed to all plot spaces whether they handle it or not.
- *
- *  @param event The OS event.
- *  @param interactionPoint The coordinates of the interaction.
- *  @return Whether the event was handled or not.
- **/
-func pointingDeviceDownEvent(event :CPTNativeEvent, interactionPoint:CGPoint) ->Bool
-{
-    // Plots
-    let reversedCollection = plots.reversed()
     
-    for  plot in reversedCollection {
-        if plot.pointingDeviceDownEvent(event:event, atPoint:interactionPoint) {
+    /// @endcond
+    
+    // MARK: - Event Handling
+    
+    /// @name User Interaction
+    /// @{
+    
+    /**
+     *  @brief Informs the receiver that the user has
+     *  @if MacOnly pressed the mouse button. @endif
+     *  @if iOSOnly touched the screen. @endif
+     *
+     *
+     *  The event is passed in turn to the following layers:
+     *  -# All plots in reverse order (i.e., from front to back in the layer order)
+     *  -# The axis set
+     *  -# The plot area
+     *  -# The legend
+     *
+     *  If any layer handles the event, subsequent layers are not notified and
+     *  this method immediately returns @YES. If none of the layers
+     *  handle the event, it is passed to all plot spaces whether they handle it or not.
+     *
+     *  @param event The OS event.
+     *  @param interactionPoint The coordinates of the interaction.
+     *  @return Whether the event was handled or not.
+     **/
+    func pointingDeviceDownEvent(event :CPTNativeEvent, interactionPoint:CGPoint) ->Bool
+    {
+        // Plots
+        let reversedCollection = plots.reversed()
+        
+        for  plot in reversedCollection {
+            if plot.pointingDeviceDownEvent(event:event, atPoint:interactionPoint) {
+                return true
+            }
+        }
+        
+        // Axes Set
+        if self.axisSet.pointingDeviceDownEvent(event :event, atPoint:interactionPoint ) {
             return true
         }
-    }
-    
-    // Axes Set
-    if self.axisSet.pointingDeviceDownEvent(event :event, atPoint:interactionPoint ) {
-        return true
-    }
-    
-    // Plot area
-    if self.plotAreaFrame.ointingDeviceDownEvent(event: event, atPoint:interactionPoint ) {
-        return true
-    }
-    
-    // Legend
-    if self.legend.pointingDeviceDownEvent(event:event, atPoint:interactionPoint) {
-        return true;
-    }
-    
-    // Plot spaces
-    // Plot spaces do not block events, because several spaces may need to receive
-    // the same event sequence (e.g., dragging coordinate translation)
-    
-    var handledEvent = false;
-    
-    for space in self.plotSpaces {
-        let handled = space.pointingDeviceDownEvent(event:event, atPoint:interactionPoint)
-        handledEvent |= handled;
-    }
-    
-    if  handledEvent == true {
-        return true
-    }
-    else {
-        return super.pointingDeviceDownEvent(event :event, atPoint:interactionPoint)
-    }
-}
-
-/**
- *  @brief Informs the receiver that the user has
- *  @if MacOnly released the mouse button. @endif
- *  @if iOSOnly lifted their finger off the screen. @endif
- *
- *
- *  The event is passed in turn to the following layers:
- *  -# All plots in reverse order (i.e., from front to back in the layer order)
- *  -# The axis set
- *  -# The plot area
- *  -# The legend
- *
- *  If any layer handles the event, subsequent layers are not notified and
- *  this method immediately returns @YES. If none of the layers
- *  handle the event, it is passed to all plot spaces whether they handle it or not.
- *
- *  @param event The OS event.
- *  @param interactionPoint The coordinates of the interaction.
- *  @return Whether the event was handled or not.
- **/
-func pointingDeviceUpEvent(event : CPTNativeEvent, interactionPoint:CGPoint)-> Bool
-{
-    var handledEvent = false
-    
-    // Plots
-    let reversedCollection = plots.reversed()
-    
-    for plot in reversedCollection {
-        if plot.pointingDeviceUpEvent(event: event, atPoint:interactionPoint ) {
-            handledEvent = true
-            break;
+        
+        // Plot area
+        if self.plotAreaFrame.ointingDeviceDownEvent(event: event, atPoint:interactionPoint ) {
+            return true
         }
-    }
-    
-    // Axes Set
-    if  !handledEvent && self.axisSet.pointingDeviceUpEvent(event:event, atPoint:interactionPoint ) {
-        handledEvent = true
-    }
-    
-    // Plot area
-    if  !handledEvent && self.plotAreaFrame.pointingDeviceUpEvent(event:event, atPoint:interactionPoint) {
-        handledEvent = true
-    }
-    
-    // Legend
-    if  !handledEvent == false && self.legend.pointingDeviceUpEvent(event:event, atPoint:interactionPoint ) {
-        handledEvent = true
-    }
-    
-    // Plot spaces
-    // Plot spaces do not block events, because several spaces may need to receive
-    // the same event sequence (e.g., dragging coordinate translation)
-    for space in plotSpaces  {
-        if ( !handledEvent || (handledEvent && space.isDragging)) {
-            let handled = space.pointingDeviceUpEvent(event:event, atPoint:interactionPoint)
+        
+        // Legend
+        if self.legend.pointingDeviceDownEvent(event:event, atPoint:interactionPoint) {
+            return true;
+        }
+        
+        // Plot spaces
+        // Plot spaces do not block events, because several spaces may need to receive
+        // the same event sequence (e.g., dragging coordinate translation)
+        
+        var handledEvent = false;
+        
+        for space in self.plotSpaces {
+            let handled = space.pointingDeviceDownEvent(event:event, atPoint:interactionPoint)
             handledEvent |= handled;
         }
-    }
-    
-    if ( handledEvent ) {
-        return true;
-    }
-    else {
-        return super.pointingDeviceUpEvent(event:event, atPoint:interactionPoint)
-    }
-}
-
-/**
- *  @brief Informs the receiver that the user has moved
- *  @if MacOnly the mouse with the button pressed. @endif
- *  @if iOSOnly their finger while touching the screen. @endif
- *
- *
- *  The event is passed in turn to the following layers:
- *  -# All plots in reverse order (i.e., from front to back in the layer order)
- *  -# The axis set
- *  -# The plot area
- *  -# The legend
- *
- *  If any layer handles the event, subsequent layers are not notified and
- *  this method immediately returns @YES. If none of the layers
- *  handle the event, it is passed to all plot spaces whether they handle it or not.
- *
- *  @param event The OS event.
- *  @param interactionPoint The coordinates of the interaction.
- *  @return Whether the event was handled or not.
- **/
-func pointingDeviceDraggedEvent(event : CPTNativeEvent, atPoint:CGPoint)-> Bool
-{
-    // Plots
-    let reversedCollection = plots.reversed()
-    for  plot in self.plots {
-        if plot.pointingDeviceDraggedEvent(event:event, atPoint:interactionPoint ) {
+        
+        if  handledEvent == true {
             return true
+        }
+        else {
+            return super.pointingDeviceDownEvent(event :event, atPoint:interactionPoint)
         }
     }
     
-    // Axes Set
-    if self.axisSet.pointingDeviceDraggedEvent(event: event, atPoint:interactionPoint ) {
-        return true
-    }
-    
-    // Plot area
-    if self.plotAreaFrame.pointingDeviceDraggedEvent(event:event, atPoint:interactionPoint) {
-        return true
-    }
-    
-    // Legend
-    if self.legend.pointingDeviceDraggedEvent(event:event, atPoint:interactionPoint) {
-        return true
-    }
-    
-    // Plot spaces
-    // Plot spaces do not block events, because several spaces may need to receive
-    // the same event sequence (e.g., dragging coordinate translation)
-    var handledEvent = false
-    
-    for space in self.plotSpaces  {
-        let handled = space.pointingDeviceDraggedEvent(event, atPoint:interactionPoint)
-        handledEvent |= handled;
-    }
-    
-    if ( handledEvent ) {
-        return true
-    }
-    else {
-        return super.pointingDeviceDraggedEvent(event, atPoint:interactionPoint)
-    }
-}
-
-/**
- *  @brief Informs the receiver that tracking of
- *  @if MacOnly mouse moves @endif
- *  @if iOSOnly touches @endif
- *  has been cancelled for any reason.
- *
- *
- *  The event is passed in turn to the following layers:
- *  -# All plots in reverse order (i.e., from front to back in the layer order)
- *  -# The axis set
- *  -# The plot area
- *  -# The legend
- *
- *  If any layer handles the event, subsequent layers are not notified and
- *  this method immediately returns @YES. If none of the layers
- *  handle the event, it is passed to all plot spaces whether they handle it or not.
- *
- *  @param event The OS event.
- *  @return Whether the event was handled or not.
- **/
-func pointingDeviceCancelledEvent(event: CPTNativeEvent )-> Bool
-{
-    // Plots
-    let reversedCollection = plots.reversed()
-    for plot in reversedCollection {
-        if plot.pointingDeviceCancelledEvent(event: event ) {
-            return true
+    /**
+     *  @brief Informs the receiver that the user has
+     *  @if MacOnly released the mouse button. @endif
+     *  @if iOSOnly lifted their finger off the screen. @endif
+     *
+     *
+     *  The event is passed in turn to the following layers:
+     *  -# All plots in reverse order (i.e., from front to back in the layer order)
+     *  -# The axis set
+     *  -# The plot area
+     *  -# The legend
+     *
+     *  If any layer handles the event, subsequent layers are not notified and
+     *  this method immediately returns @YES. If none of the layers
+     *  handle the event, it is passed to all plot spaces whether they handle it or not.
+     *
+     *  @param event The OS event.
+     *  @param interactionPoint The coordinates of the interaction.
+     *  @return Whether the event was handled or not.
+     **/
+    func pointingDeviceUpEvent(event : CPTNativeEvent, interactionPoint:CGPoint)-> Bool
+    {
+        var handledEvent = false
+        
+        // Plots
+        let reversedCollection = plots.reversed()
+        
+        for plot in reversedCollection {
+            if plot.pointingDeviceUpEvent(event: event, atPoint:interactionPoint ) {
+                handledEvent = true
+                break;
+            }
+        }
+        
+        // Axes Set
+        if  !handledEvent && self.axisSet.pointingDeviceUpEvent(event:event, atPoint:interactionPoint ) {
+            handledEvent = true
+        }
+        
+        // Plot area
+        if  !handledEvent && self.plotAreaFrame.pointingDeviceUpEvent(event:event, atPoint:interactionPoint) {
+            handledEvent = true
+        }
+        
+        // Legend
+        if  !handledEvent == false && self.legend.pointingDeviceUpEvent(event:event, atPoint:interactionPoint ) {
+            handledEvent = true
+        }
+        
+        // Plot spaces
+        // Plot spaces do not block events, because several spaces may need to receive
+        // the same event sequence (e.g., dragging coordinate translation)
+        for space in plotSpaces  {
+            if ( !handledEvent || (handledEvent && space.isDragging)) {
+                let handled = space.pointingDeviceUpEvent(event:event, atPoint:interactionPoint)
+                handledEvent |= handled;
+            }
+        }
+        
+        if ( handledEvent ) {
+            return true;
+        }
+        else {
+            return super.pointingDeviceUpEvent(event:event, atPoint:interactionPoint)
         }
     }
     
-    // Axes Set
-    if self.axisSet.pointingDeviceCancelledEvent(event ) {
-        return true
-    }
-    
-    // Plot area
-    if  self.plotAreaFrame.pointingDeviceCancelledEvent( event ) {
-        return true
-    }
-    
-    // Legend
-    if self.legend.pointingDeviceCancelledEvent(event) {
-        return true
-    }
-    
-    // Plot spaces
-    let handledEvent = false
-    
-    for space in self.plotSpaces  {
-        let handled = space.pointingDeviceCancelledEvent(event)
-        handledEvent |= handled
-    }
-    
-    if ( handledEvent ) {
-        return true
-    }
-    else {
-        return super.pointingDeviceCancelledEvent(event)
-    }
-}
-
-/**
- *  @brief @required Informs the receiver that the user has moved the scroll wheel.
- *
- *
- *  The event is passed in turn to the following layers:
- *  -# All plots in reverse order (i.e., from front to back in the layer order)
- *  -# The axis set
- *  -# The plot area
- *  -# The legend
- *
- *  If any layer handles the event, subsequent layers are not notified and
- *  this method immediately returns @YES. If none of the layers
- *  handle the event, it is passed to all plot spaces whether they handle it or not.
- *
- *  @param event The OS event.
- *  @param fromPoint The starting coordinates of the interaction.
- *  @param toPoint The ending coordinates of the interaction.
- *  @return Whether the event was handled or not.
- **/
-func scrollWheelEvent(event: CPTNativeEvent, fromPoint:CGPoint,  toPoint: CGPoint)
-{
-    // Plots
-    let reversedCollection = plots.reversed()
-    
-    for  plot in reversedCollection  {
-        if plot.scrollWheelEvent(event:event, fromPoint:fromPoint, toPoint:toPoint ) {
+    /**
+     *  @brief Informs the receiver that the user has moved
+     *  @if MacOnly the mouse with the button pressed. @endif
+     *  @if iOSOnly their finger while touching the screen. @endif
+     *
+     *
+     *  The event is passed in turn to the following layers:
+     *  -# All plots in reverse order (i.e., from front to back in the layer order)
+     *  -# The axis set
+     *  -# The plot area
+     *  -# The legend
+     *
+     *  If any layer handles the event, subsequent layers are not notified and
+     *  this method immediately returns @YES. If none of the layers
+     *  handle the event, it is passed to all plot spaces whether they handle it or not.
+     *
+     *  @param event The OS event.
+     *  @param interactionPoint The coordinates of the interaction.
+     *  @return Whether the event was handled or not.
+     **/
+    func pointingDeviceDraggedEvent(event : CPTNativeEvent, atPoint:CGPoint)-> Bool
+    {
+        // Plots
+        let reversedCollection = plots.reversed()
+        for  plot in self.plots {
+            if plot.pointingDeviceDraggedEvent(event:event, atPoint:interactionPoint ) {
+                return true
+            }
+        }
+        
+        // Axes Set
+        if self.axisSet.pointingDeviceDraggedEvent(event: event, atPoint:interactionPoint ) {
             return true
+        }
+        
+        // Plot area
+        if self.plotAreaFrame.pointingDeviceDraggedEvent(event:event, atPoint:interactionPoint) {
+            return true
+        }
+        
+        // Legend
+        if self.legend.pointingDeviceDraggedEvent(event:event, atPoint:interactionPoint) {
+            return true
+        }
+        
+        // Plot spaces
+        // Plot spaces do not block events, because several spaces may need to receive
+        // the same event sequence (e.g., dragging coordinate translation)
+        var handledEvent = false
+        
+        for space in self.plotSpaces  {
+            let handled = space.pointingDeviceDraggedEvent(event, atPoint:interactionPoint)
+            handledEvent |= handled;
+        }
+        
+        if ( handledEvent ) {
+            return true
+        }
+        else {
+            return super.pointingDeviceDraggedEvent(event, atPoint:interactionPoint)
         }
     }
     
-    // Axes Set
-    if self.axisSet.scrollWheelEvent(event: event, fromPoint: fromPoint, toPoint: toPoint)  {
-        return true
+    /**
+     *  @brief Informs the receiver that tracking of
+     *  @if MacOnly mouse moves @endif
+     *  @if iOSOnly touches @endif
+     *  has been cancelled for any reason.
+     *
+     *
+     *  The event is passed in turn to the following layers:
+     *  -# All plots in reverse order (i.e., from front to back in the layer order)
+     *  -# The axis set
+     *  -# The plot area
+     *  -# The legend
+     *
+     *  If any layer handles the event, subsequent layers are not notified and
+     *  this method immediately returns @YES. If none of the layers
+     *  handle the event, it is passed to all plot spaces whether they handle it or not.
+     *
+     *  @param event The OS event.
+     *  @return Whether the event was handled or not.
+     **/
+    func pointingDeviceCancelledEvent(event: CPTNativeEvent )-> Bool
+    {
+        // Plots
+        let reversedCollection = plots.reversed()
+        for plot in reversedCollection {
+            if plot.pointingDeviceCancelledEvent(event: event ) {
+                return true
+            }
+        }
+        
+        // Axes Set
+        if self.axisSet.pointingDeviceCancelledEvent(event ) {
+            return true
+        }
+        
+        // Plot area
+        if  self.plotAreaFrame.pointingDeviceCancelledEvent( event ) {
+            return true
+        }
+        
+        // Legend
+        if self.legend.pointingDeviceCancelledEvent(event) {
+            return true
+        }
+        
+        // Plot spaces
+        let handledEvent = false
+        
+        for space in self.plotSpaces  {
+            let handled = space.pointingDeviceCancelledEvent(event)
+            handledEvent |= handled
+        }
+        
+        if ( handledEvent ) {
+            return true
+        }
+        else {
+            return super.pointingDeviceCancelledEvent(event)
+        }
     }
     
-    // Plot area
-    if self.plotAreaFrame.scrollWheelEvent(event: event, fromPoint:fromPoint, toPoint:toPoint ) {
-        return true
+    /**
+     *  @brief @required Informs the receiver that the user has moved the scroll wheel.
+     *
+     *
+     *  The event is passed in turn to the following layers:
+     *  -# All plots in reverse order (i.e., from front to back in the layer order)
+     *  -# The axis set
+     *  -# The plot area
+     *  -# The legend
+     *
+     *  If any layer handles the event, subsequent layers are not notified and
+     *  this method immediately returns @YES. If none of the layers
+     *  handle the event, it is passed to all plot spaces whether they handle it or not.
+     *
+     *  @param event The OS event.
+     *  @param fromPoint The starting coordinates of the interaction.
+     *  @param toPoint The ending coordinates of the interaction.
+     *  @return Whether the event was handled or not.
+     **/
+    @objc func scrollWheelEvent(event: CPTNativeEvent, fromPoint:CGPoint,  toPoint: CGPoint) -> Bool
+    {
+        // Plots
+        let reversedCollection = plots.reversed()
+        
+        for  plot in reversedCollection  {
+            if plot.scrollWheelEvent(event:event, fromPoint:fromPoint, toPoint:toPoint ) {
+                return true
+            }
+        }
+        
+        // Axes Set
+        if self.axisSet.scrollWheelEvent(event: event, fromPoint: fromPoint, toPoint: toPoint)  {
+            return true
+        }
+        
+        // Plot area
+        if self.plotAreaFrame.scrollWheelEvent(event: event, fromPoint:fromPoint, toPoint:toPoint ) {
+            return true
+        }
+        
+        // Legend
+        if ((self.legend?.scrollWheelEvent(event :event, fromPoint:fromPoint, toPoint:toPoint )) != nil) {
+            return true
+        }
+        
+        // Plot spaces
+        let handledEvent = false
+        
+        for space in self.plotSpaces  {
+            let handled = space.scrollWheelEvent(event :event, fromPoint:fromPoint, toPoint:toPoint)
+            handledEvent |= handled;
+        }
+        
+        if handledEvent == true {
+            return true
+        }
+        else {
+            return super.scrollWheelEvent(event :event, fromPoint:fromPoint, toPoint:toPoint)
+        }
     }
-    
-    // Legend
-    if self.legend.scrollWheelEvent(event :event, fromPoint:fromPoint, toPoint:toPoint ) {
-        return true
-    }
-    
-    // Plot spaces
-    let handledEvent = false
-    
-    for space in self.plotSpaces  {
-        let handled = space.scrollWheelEvent(event :event, fromPoint:fromPoint, toPoint:toPoint)
-        handledEvent |= handled;
-    }
-    
-    if handledEvent == true {
-        return true
-    }
-    else {
-        return super.scrollWheelEvent(event :event, fromPoint:fromPoint, toPoint:toPoint)
-    }
-}
 
 
 //    #pragma mark -

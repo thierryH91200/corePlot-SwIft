@@ -60,7 +60,7 @@ class CPTLegendEntry: NSObject {
             let theTextStyle = self.textStyle
 
             if ( theTitle && theTextStyle ) {
-                theTitleSize = [theTitle sizeWithTextStyle:theTextStyle];
+                theTitleSize = theTitle sizeWithTextStyle:theTextStyle];
             }
         }
 

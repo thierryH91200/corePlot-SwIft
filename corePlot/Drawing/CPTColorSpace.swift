@@ -5,7 +5,7 @@
 //  Created by thierryH24 on 13/11/2020.
 //
 
-import Cocoa
+import AppKit
 
 class CPTColorSpace: NSObject {
     
@@ -52,12 +52,12 @@ class CPTColorSpace: NSObject {
     
     override init()
     {
-        var cgSpace :  CGColorSpace?
+        let cgSpace :  CGColorSpace?
 
         cgSpace = CGColorSpace(name: CGColorSpace.sRGB)
 
         super.init()
-        init(cgSpace)
+        init(colorSpace: cgSpace)
 
     }
     

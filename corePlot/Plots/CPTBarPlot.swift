@@ -54,49 +54,45 @@ class CPTBarPlot: CPTPlot {
     var  fill : CPTFill
 //
     
-    override init() {
-        
-    }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-     func tubularBarPlot(with color: NSColor, horizontalBars horizontal: Bool) -> Self {
+     func tubularBarPlot(with color: NSUIColor, horizontalBars horizontal: Bool) -> Self {
 
         let barPlot = CPTBarPlot()
         let barLineStyle = CPTMutableLineStyle()
 
-        barLineStyle.lineWidth = CPTFloat(1.0)
+        barLineStyle.lineWidth = CGFloat(1.0)
         barLineStyle.lineColor = CPTColor.black()
 
         barPlot?.lineStyle = barLineStyle
-        barPlot?.barsAreHorizontal = horizontal
-        barPlot?.barWidth = NSNumber(value: 0.8)
-        barPlot?.barCornerRadius = CPTFloat(2.0)
+        barPlot.barsAreHorizontal = horizontal
+        barPlot.barWidth = CGFloat( 0.8)
+        barPlot.barCornerRadius = CGFloat(2.0)
 
-        let fillGradient = CPTGradient(beginningColor: color, endingColor: CPTColor.black())
+        let fillGradient = CPTGradient(beginningColor: color, endingColor: NSUIColor.black)
 
-        fillGradient.angle = CPTFloat(horizontal ? -90.0 : 0.0)
+        fillGradient.angle = CGFloat(horizontal ? -90.0 : 0.0)
         barPlot?.fill = CPTFill(gradient: fillGradient)
 
-        barPlot?.barWidthsAreInViewCoordinates = false
+        barPlot.barWidthsAreInViewCoordinates = false
 
         return barPlot
     }
 
-    init() {
-        if self == CPTBarPlot.self {
-            self.exposeBinding(CPTBarPlotBindingBarLocations)
-            self.exposeBinding(CPTBarPlotBindingBarTips)
-            self.exposeBinding(CPTBarPlotBindingBarBases)
-            self.exposeBinding(CPTBarPlotBindingBarFills)
-            self.exposeBinding(CPTBarPlotBindingBarLineStyles)
-            self.exposeBinding(CPTBarPlotBindingBarWidths)
-        }
+    override init() {
+            CPTBarPlot.exposeBinding(NSBindingName(rawValue: CPTBarPlotBindingBarLocations))
+            CPTBarPlot.exposeBinding(NSBindingName(rawValue: CPTBarPlotBindingBarTips))
+            CPTBarPlot.exposeBinding(NSBindingName(rawValue: CPTBarPlotBindingBarBases))
+            CPTBarPlot.exposeBinding(NSBindingName(rawValue: CPTBarPlotBindingBarFills))
+            CPTBarPlot.exposeBinding(NSBindingName(rawValue: CPTBarPlotBindingBarLineStyles))
+            CPTBarPlot.exposeBinding(NSBindingName(rawValue: CPTBarPlotBindingBarWidths))
+        
     }
     
-    func reloadData(indexRange: NSRange)
+    override func reloadData(indexRange: NSRange)
     {
         super.reloadData(indexRange: indexRange)
 
@@ -113,7 +109,7 @@ class CPTBarPlot: CPTPlot {
         let theDataSource = self.dataSource;
 
         if theDataSource.respondsToSelector(#selector(legendTitleForBarPlot(recordIndex:) )) {
-            NotificationCenter.default.send( .CPTLegendNeedsLayoutForPlotNotification)
+            NotificationCenter.default.send( .CPTLegendNeedsLayindexRange: outForPlotNotification)
         }
     }
 
@@ -125,7 +121,7 @@ class CPTBarPlot: CPTPlot {
             let  theDataSource = self.dataSource
 
             // Bar lengths
-            if ( theDataSource ) {
+        if ( theDataSource ) != nil {
                 let newBarLengths = self.numbersFromDataSourceForField(.barTip, recordIndexRange:indexRange)
                 [self.cacheNumbers:newBarLengths forField:.barTip atRecordIndex:indexRange.location];
                     
@@ -144,7 +140,7 @@ class CPTBarPlot: CPTPlot {
             }
 
             // Locations of bars
-            if ( self.plotRange ) {
+            if self.plotRange {
                 // Spread bars evenly over the plot range
                 CPTMutableNumericData *locationData = nil;
                 if ( self.doublePrecisionCache ) {
@@ -1388,21 +1384,21 @@ class CPTBarPlot: CPTPlot {
 //        [self setNeedsDisplay];
 //    }
 //
-//    -(void)setLineStyle:(nullable CPTLineStyle *)newLineStyle
-//    {
-//        if ( lineStyle != newLineStyle ) {
-//            lineStyle = [newLineStyle copy];
-//            [self setNeedsDisplay];
-//            [[NSNotificationCenter defaultCenter] postNotificationName:CPTLegendNeedsRedrawForPlotNotification object:self];
-//        }
-//    }
+    func setLineStyle(newLineStyle: CPTLineStyle )
+    {
+        if ( lineStyle != newLineStyle ) {
+            lineStyle = newLineStyle
+            self.setNeedsDisplay()
+    NotificationCenter.default.post( name:.CPTLegendNeedsRedrawForPlotNotification, object:self)
+        }
+    }
 //
 //    -(void)setFill:(nullable CPTFill *)newFill
 //    {
 //        if ( fill != newFill ) {
 //            fill = [newFill copy];
 //            [self setNeedsDisplay];
-//            [[NSNotificationCenter defaultCenter] postNotificationName:CPTLegendNeedsRedrawForPlotNotification object:self];
+    NotificationCenter.default.post( name:.CPTLegendNeedsRedrawForPlotNotification, object:self)
 //        }
 //    }
 //
@@ -1423,14 +1419,14 @@ class CPTBarPlot: CPTPlot {
 //        }
 //    }
 //
-//    -(void)setBarCornerRadius:(CGFloat)newCornerRadius
-//    {
-//        if ( barCornerRadius != newCornerRadius ) {
-//            barCornerRadius = ABS(newCornerRadius);
-//            [self setNeedsDisplay];
-//            [[NSNotificationCenter defaultCenter] postNotificationName:CPTLegendNeedsRedrawForPlotNotification object:self];
-//        }
-//    }
+    func setBarCornerRadius(newCornerRadius : CGFloat)
+    {
+        if ( barCornerRadius != newCornerRadius ) {
+            barCornerRadius = abs(newCornerRadius);
+            self.setNeedsDisplay()
+            NotificationCenter.default.post( name:.CPTLegendNeedsRedrawForPlotNotification, object:self)
+        }
+    }
 //
 //    -(void)setBarBaseCornerRadius:(CGFloat)newCornerRadius
 //    {

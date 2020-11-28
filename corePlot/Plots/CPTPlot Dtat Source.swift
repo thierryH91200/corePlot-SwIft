@@ -100,7 +100,7 @@ extension CPTPlot {
         self reloadDataInIndexRange(NSRange(idx, numberOfRecords)];
     }
     //
-    ///** @brief Delete records in the given index range from the plot data cache.
+        ///** @brief Delete records in the given index rang@objc e from the plot data cache.
     // *  @param indexRange The index range of the data records to remove.
     // **/
     func deleteDataInIndexRange(indexRange: NSRange)

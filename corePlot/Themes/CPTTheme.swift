@@ -28,7 +28,7 @@ class CPTTheme: NSObject {
         return [themes.sortedArrayUsingDescriptors:@[nameSort]];
     }
     
-    +(nullable instancetype)themeNamed:(nullable CPTThemeName)themeName
+    init instancetype)themeNamed:(nullable CPTThemeName)themeName
     {
         CPTTheme *newTheme = nil;
 

@@ -85,19 +85,18 @@ extension CPTLayer {
         }
     }
     
-    func setNeedsLayout() {
+    public override func setNeedsLayout() {
         super.setNeedsLayout()
         
         let theGraph = graph
-        
         if let theGraph = theGraph {
             NotificationCenter.default.post(
-                name: CPTGraphNeedsRedrawNotification,
+                name: .CPTGraphNeedsRedrawNotification,
                 object: theGraph)
         }
     }
     
-    func setNeedsDisplay() {
+    public override func setNeedsDisplay() {
         super.setNeedsDisplay()
         
         let theGraph = graph

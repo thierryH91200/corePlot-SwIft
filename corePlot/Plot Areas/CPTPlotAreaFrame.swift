@@ -46,7 +46,11 @@ class CPTPlotAreaFrame: CPTBorderedLayer {
         
         plotArea = theLayer.plotArea
     }
-
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // MARK: - Event Handling
 
     func pointingDeviceDownEvent(event: CPTNativeEvent, interactionPoint:CGPoint) -> Bool

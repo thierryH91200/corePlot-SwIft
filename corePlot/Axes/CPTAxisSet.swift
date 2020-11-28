@@ -19,7 +19,7 @@ class CPTAxisSet: CPTLayer {
         
     }
     
-    init(layer : Any)
+    override init(layer : Any)
     {
         super.init(layer: layer)
         axes = layer.axes
@@ -136,9 +136,6 @@ class CPTAxisSet: CPTLayer {
         return super.pointingDeviceUpEvent(event:event, atPoint:interactionPoint)
     }
 
-
-
-    
     var _axes =  [CPTAxis]()
     var axes: [CPTAxis]
     {
@@ -146,7 +143,6 @@ class CPTAxisSet: CPTLayer {
             return _axes
         }
         set {
-            
             if _axes != newValue  {
                 for axis in axes {
                     axis.removeFromSuperlayer

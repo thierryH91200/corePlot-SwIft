@@ -295,34 +295,30 @@ extension CPTLayer {
 
     /// @cond
 
-    -(void)setNeedsLayout
+    fun setNeedsLayout()
     {
-        [super setNeedsLayout];
+    super.setNeedsLayout;
 
-        CPTGraph *theGraph = self.graph;
+        let theGraph = self.graph
 
         if ( theGraph ) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:CPTGraphNeedsRedrawNotification
-                                                                object:theGraph];
+    NotificationCenter.defaultCenter.post(NotificationName:CPTGraphNeedsRedrawNotification,  object:theGraph)
         }
     }
 
-    -(void)setNeedsDisplay
-    {
-        [super setNeedsDisplay];
+//    func setNeedsDisplay()
+//    {
+//        super.setNeedsDisplay()
+//
+//        let theGraph = self.graph;
+//
+//        if (( theGraph ) != nil) {
+//            NotificationCenter .default.post(name:.CPTGraphNeedsRedrawNotification,
+//                                                  object:theGraph)
+//        }
+//    }
 
-        CPTGraph *theGraph = self.graph;
-
-        if ( theGraph ) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:CPTGraphNeedsRedrawNotification
-                                                                object:theGraph];
-        }
-    }
-
-    /// @endcond
-
-    #pragma mark -
-    #pragma mark Accessors
+    // MARK: -Accessors
 
     /// @cond
 

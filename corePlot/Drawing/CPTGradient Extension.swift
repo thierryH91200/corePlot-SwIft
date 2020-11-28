@@ -15,23 +15,29 @@ extension CPTGradient {
     {
         let newInstance = CPTGradient()
         
-        let color1 : CPTGradientElement
+        let color1 = CPTGradientElement(value: 0)
         
-        color1.color.red   = color1.color.green = color1.color.blue = CGFloat(0.80);
+        color1.color.red   =  CGFloat(0.80)
+        color1.color.green   =  CGFloat(0.80)
+        color1.color.blue   =  CGFloat(0.80)
         color1.color.alpha = CGFloat(1.00);
         color1.position    = CGFloat(0.0);
         
-        let color2 : CPTGradientElement
-        color2.color.red   = color2.color.green = color2.color.blue = CGFloat(0.64);
+        let color2 = CPTGradientElement(value: 0)
+        color2.color.red   =  CGFloat(0.64)
+        color2.color.green   =  CGFloat(0.64)
+        color2.color.blue   =  CGFloat(0.64)
         color2.color.alpha = CGFloat(1.00);
         color2.position    = CGFloat(0.5);
         
-        let color3 : CPTGradientElement
-        color3.color.red   = color3.color.green = color3.color.blue = CGFloat(0.80);
+        let color3 = CPTGradientElement(value: 0)
+        color3.color.red   =  CGFloat(0.80)
+        color3.color.green   =  CGFloat(0.80)
+        color3.color.blue   =  CGFloat(0.80)
         color3.color.alpha = CGFloat(1.00);
         color3.position    = CGFloat(0.5);
         
-        let color4 : CPTGradientElement
+        let color4 = CPTGradientElement(value: 0)
         color4.color.red   = color4.color.green = color4.color.blue = CGFloat(0.77);
         color4.color.alpha = CGFloat(1.00);
         color4.position    = CGFloat(1.0);
@@ -48,13 +54,13 @@ extension CPTGradient {
     {
         let newInstance = CPTGradient()
         
-        let color1 : CPTGradientElement
-        color1.color.red   = color1.color.green = color1.color.blue = CGFloat(0.95);
+        let color1 = CPTGradientElement(value: 0)
+        color1.color.red   = color1.color.green = color1.color.blue = 0.95
         color1.color.alpha = CGFloat(1.00);
         color1.position    = CGFloat(0.0);
         
         let color2 : CPTGradientElement
-        color2.color.red   = color2.color.green = color2.color.blue = CGFloat(0.83);
+        color2.color.red   = color2.color.green = color2.color.blue = CGFloat(0.83)
         color2.color.alpha = CGFloat(1.00);
         color2.position    = CGFloat(0.5);
         
@@ -80,14 +86,14 @@ extension CPTGradient {
     {
         let newInstance = CPTGradient()
 
-        let color1 : CPTGradientElement
+        let color1 = CPTGradientElement(value: 0)
         color1.color.red   = CGFloat(1.00);
         color1.color.green = CGFloat(0.00);
         color1.color.blue  = CGFloat(0.00);
         color1.color.alpha = CGFloat(1.00);
         color1.position    = CGFloat(0.0);
 
-        let color2 : CPTGradientElement
+        let color2 = CPTGradientElement(value: 0)
         color2.color.red   = CGFloat(0.54);
         color2.color.green = CGFloat(0.00);
         color2.color.blue  = CGFloat(1.00);
