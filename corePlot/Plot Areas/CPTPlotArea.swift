@@ -34,7 +34,8 @@ class CPTPlotArea: CPTAnnotationHostLayer {
     //MARK:  Init/Dealloc
     init(frame:frame)
     {
-        super.init(frame:newFrame)
+        super.init(frame:frame)
+        
         minorGridLineGroup = nil;
         majorGridLineGroup = nil;
         axisSet            = nil;
@@ -60,7 +61,7 @@ class CPTPlotArea: CPTAnnotationHostLayer {
     init(layer: Any)
     {
         super.init(layer:layer)
-            let theLayer = CPTPlotArea(layer)
+        let theLayer = CPTPlotArea(layer: layer)
 
             minorGridLineGroup = theLayer.minorGridLineGroup;
             majorGridLineGroup = theLayer.majorGridLineGroup;
@@ -81,28 +82,28 @@ class CPTPlotArea: CPTAnnotationHostLayer {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func renderAsVectorInContext(context: CGContextRef)
+    override func renderAsVectorInContext(context: CGContext)
     {
-        guard self.hidden == false else {  return }
+        guard self.isHidden == false else {  return }
 
-        super.renderAsVectorInContext(context)
+        super.renderAsVectorInContext(context: context)
 
         let useMask = self.masksToBounds;
 
         self.masksToBounds = true;
-        CGContextSaveGState(context);
+        context.saveGState();
 
         let maskPath = self.maskingPath;
 
         if ( maskPath ) {
-            CGContextBeginPath(context);
+            context.beginPath();
             CGContextAddPath(context, maskPath);
-            CGContextClip(context);
+            context.clip();
         }
 
         self.fill?.fillRect(rect: self.bounds, inContext:context)
 
-        let theAxes = self.axisSet.axes
+        let theAxes = self.axisSet?.axes
 
         for axis in theAxes {
             axis.drawBackgroundBandsInContext(context)
@@ -111,7 +112,7 @@ class CPTPlotArea: CPTAnnotationHostLayer {
             axis.drawBackgroundLimitsInContext(context)
         }
 
-        CGContextRestoreGState(context)
+        context.restoreGState()
         self.masksToBounds = useMask
     }
 }

@@ -5,11 +5,20 @@
 //  Created by thierryH24 on 11/11/2020.
 //
 
-import Cocoa
+import AppKit
+
+
 
 class CPTBarPlot: CPTPlot {
     
-    typedef NSString *CPTBarPlotBinding cpt_swift_struct;
+    enum  CPTBarPlotField  :Int {
+       case location ///< Bar location on independent coordinate axis.
+        case barTip      ///< Bar tip value.
+        case barBase      ///< Bar base (used only if @link CPTBarPlot::barBasesVary barBasesVary @endlink is YES).
+    };
+
+    
+//    typedef NSString *CPTBarPlotBinding cpt_swift_struct;
     
     let CPTBarPlotBindingBarLocations  = "barLocations"  ///< Bar locations.
     let CPTBarPlotBindingBarTips       = "barTips"       ///< Bar tips.
@@ -18,6 +27,14 @@ class CPTBarPlot: CPTPlot {
     let CPTBarPlotBindingBarLineStyles = "barLineStyles" ///< Bar line styles.
     let CPTBarPlotBindingBarWidths     = "barWidths"     ///< Bar widths.
 
+   var  barLocations = [CGFloat]()
+   var barTips  = [CGFloat]()
+   var barBases  = [CGFloat]()
+   var barFills = [CPTFill]()
+   var barLineStyles  = [CPTLineStyle]()
+   var barWidths  = [CPTLineStyle]()
+   var pointingDeviceDownIndex = 0
+
 
     
     
@@ -25,9 +42,9 @@ class CPTBarPlot: CPTPlot {
     var barWidthsAreInViewCoordinates = true
     var barWidth = CGFloat(0.0)
     var barOffset : CGFloat
-    var  barCornerRadius : CGFloat
-    var  barBaseCornerRadius : CGFloat
-    var   barsAreHorizontal : Bool
+    var barCornerRadius : CGFloat
+    var barBaseCornerRadius : CGFloat
+    var barsAreHorizontal : Bool
     var baseValue : CGFloat
     var barBasesVary : Bool
     var plotRange : CPTPlotRange
@@ -95,121 +112,123 @@ class CPTBarPlot: CPTPlot {
         // Legend
         let theDataSource = self.dataSource;
 
-        if ( [theDataSource respondsToSelector:@selector(legendTitleForBarPlot:recordIndex:)] ) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:CPTLegendNeedsRedrawForPlotNotification object:self];
+        if theDataSource.respondsToSelector(#selector(legendTitleForBarPlot(recordIndex:) )) {
+            NotificationCenter.default.send( .CPTLegendNeedsLayoutForPlotNotification)
         }
     }
 
-//    -(void)reloadPlotDataInIndexRange:(NSRange)indexRange
-//    {
-//        [super reloadPlotDataInIndexRange:indexRange];
-//
-//        if ( ![self loadNumbersForAllFieldsFromDataSourceInRecordIndexRange:indexRange] ) {
-//            id<CPTBarPlotDataSource> theDataSource = (id<CPTBarPlotDataSource>)self.dataSource;
-//
-//            // Bar lengths
-//            if ( theDataSource ) {
-//                id newBarLengths = [self numbersFromDataSourceForField:CPTBarPlotFieldBarTip recordIndexRange:indexRange];
-//                [self cacheNumbers:newBarLengths forField:CPTBarPlotFieldBarTip atRecordIndex:indexRange.location];
-//                if ( self.barBasesVary ) {
-//                    id newBarBases = [self numbersFromDataSourceForField:CPTBarPlotFieldBarBase recordIndexRange:indexRange];
-//                    [self cacheNumbers:newBarBases forField:CPTBarPlotFieldBarBase atRecordIndex:indexRange.location];
-//                }
-//                else {
-//                    self.barBases = nil;
-//                }
-//            }
-//            else {
-//                self.barTips  = nil;
-//                self.barBases = nil;
-//            }
-//
-//            // Locations of bars
-//            if ( self.plotRange ) {
-//                // Spread bars evenly over the plot range
-//                CPTMutableNumericData *locationData = nil;
-//                if ( self.doublePrecisionCache ) {
-//                    locationData = [[CPTMutableNumericData alloc] initWithData:[NSData data]
-//                                                                      dataType:CPTDataType(CPTFloatingPointDataType, sizeof(double), CFByteOrderGetCurrent())
-//                                                                         shape:nil];
-//                    locationData.shape = @[@(indexRange.length)];
-//
-//                    double doublePrecisionDelta = 1.0;
-//                    if ( indexRange.length > 1 ) {
-//                        doublePrecisionDelta = self.plotRange.lengthDouble / (double)(indexRange.length - 1);
-//                    }
-//
-//                    double locationDouble = self.plotRange.locationDouble;
-//                    double *dataBytes     = (double *)locationData.mutableBytes;
-//                    double *dataEnd       = dataBytes + indexRange.length;
-//                    while ( dataBytes < dataEnd ) {
-//                        *dataBytes++    = locationDouble;
-//                        locationDouble += doublePrecisionDelta;
-//                    }
-//                }
-//                else {
-//                    locationData = [[CPTMutableNumericData alloc] initWithData:[NSData data]
-//                                                                      dataType:CPTDataType(CPTDecimalDataType, sizeof(NSDecimal), CFByteOrderGetCurrent())
-//                                                                         shape:nil];
-//                    locationData.shape = @[@(indexRange.length)];
-//
-//                    NSDecimal delta = CPTDecimalFromInteger(1);
-//                    if ( indexRange.length > 1 ) {
-//                        delta = CPTDecimalDivide(self.plotRange.lengthDecimal, CPTDecimalFromUnsignedInteger(indexRange.length - 1));
-//                    }
-//
-//                    NSDecimal locationDecimal = self.plotRange.locationDecimal;
-//                    NSDecimal *dataBytes      = (NSDecimal *)locationData.mutableBytes;
-//                    NSDecimal *dataEnd        = dataBytes + indexRange.length;
-//                    while ( dataBytes < dataEnd ) {
-//                        *dataBytes++    = locationDecimal;
-//                        locationDecimal = CPTDecimalAdd(locationDecimal, delta);
-//                    }
-//                }
-//                [self cacheNumbers:locationData forField:CPTBarPlotFieldBarLocation atRecordIndex:indexRange.location];
-//            }
-//            else if ( theDataSource ) {
-//                // Get locations from the datasource
-//                id newBarLocations = [self numbersFromDataSourceForField:CPTBarPlotFieldBarLocation recordIndexRange:indexRange];
-//                [self cacheNumbers:newBarLocations forField:CPTBarPlotFieldBarLocation atRecordIndex:indexRange.location];
-//            }
-//            else {
-//                // Make evenly spaced locations starting at zero
-//                CPTMutableNumericData *locationData = nil;
-//                if ( self.doublePrecisionCache ) {
-//                    locationData = [[CPTMutableNumericData alloc] initWithData:[NSData data]
-//                                                                      dataType:CPTDataType(CPTFloatingPointDataType, sizeof(double), CFByteOrderGetCurrent())
-//                                                                         shape:nil];
-//                    locationData.shape = @[@(indexRange.length)];
-//
-//                    double locationDouble = 0.0;
-//                    double *dataBytes     = (double *)locationData.mutableBytes;
-//                    double *dataEnd       = dataBytes + indexRange.length;
-//                    while ( dataBytes < dataEnd ) {
-//                        *dataBytes++    = locationDouble;
-//                        locationDouble += 1.0;
-//                    }
-//                }
-//                else {
-//                    locationData = [[CPTMutableNumericData alloc] initWithData:[NSData data]
-//                                                                      dataType:CPTDataType(CPTDecimalDataType, sizeof(NSDecimal), CFByteOrderGetCurrent())
-//                                                                         shape:nil];
-//                    locationData.shape = @[@(indexRange.length)];
-//
-//                    NSDecimal locationDecimal = CPTDecimalFromInteger(0);
-//                    NSDecimal *dataBytes      = (NSDecimal *)locationData.mutableBytes;
-//                    NSDecimal *dataEnd        = dataBytes + indexRange.length;
-//                    NSDecimal one             = CPTDecimalFromInteger(1);
-//                    while ( dataBytes < dataEnd ) {
-//                        *dataBytes++    = locationDecimal;
-//                        locationDecimal = CPTDecimalAdd(locationDecimal, one);
-//                    }
-//                }
-//                [self cacheNumbers:locationData forField:CPTBarPlotFieldBarLocation atRecordIndex:indexRange.location];
-//            }
-//        }
-//    }
-//
+    func reloadPlotData(indexRange: NSRange)
+    {
+    super.reloadPlotData(indexRange)
+
+    if  self.loadNumbersForAllFieldsFromDataSourceInRecordIndexRange(indexRange)  == false {
+            let  theDataSource = self.dataSource
+
+            // Bar lengths
+            if ( theDataSource ) {
+                let newBarLengths = self.numbersFromDataSourceForField(.barTip, recordIndexRange:indexRange)
+                [self.cacheNumbers:newBarLengths forField:.barTip atRecordIndex:indexRange.location];
+                    
+                    
+                if  self.barBasesVary  {
+                    let newBarBases = self.numbersFromDataSourceForField( .barBase recordIndexRange:indexRange)
+                    [self.cacheNumbers(newBarBases, forField:.barBase, atRecordIndex:indexRange.location)
+                }
+                else {
+                    self.barBases = nil;
+                }
+            }
+            else {
+                self.barTips  = nil
+                self.barBases = nil
+            }
+
+            // Locations of bars
+            if ( self.plotRange ) {
+                // Spread bars evenly over the plot range
+                CPTMutableNumericData *locationData = nil;
+                if ( self.doublePrecisionCache ) {
+                    locationData = [[CPTMutableNumericData alloc] initWithData:[NSData data]
+                                                                      dataType:CPTDataType(CPTFloatingPointDataType, sizeof(double), CFByteOrderGetCurrent())
+                                                                         shape:nil];
+                    locationData.shape = @[@(indexRange.length)];
+
+                    let doublePrecisionDelta = 1.0;
+                    if ( indexRange.length > 1 ) {
+                        doublePrecisionDelta = self.plotRange.lengthDouble / (double)(indexRange.length - 1);
+                    }
+
+                    let locationDouble = self.plotRange.locationDouble;
+                    let dataBytes     = locationData.mutableBytes;
+                    let dataEnd       = dataBytes + indexRange.length;
+                    while ( dataBytes < dataEnd ) {
+                        *dataBytes++    = locationDouble;
+                        locationDouble += doublePrecisionDelta;
+                    }
+                }
+                else {
+                    locationData = [[CPTMutableNumericData alloc] initWithData:[NSData data]
+                                                                      dataType:CPTDataType(CPTDecimalDataType, sizeof(NSDecimal), CFByteOrderGetCurrent())
+                                                                         shape:nil];
+                    locationData.shape = @[@(indexRange.length)];
+
+                    NSDecimal delta = CPTDecimalFromInteger(1);
+                    if ( indexRange.length > 1 ) {
+                        delta = CPTDecimalDivide(self.plotRange.lengthDecimal, CPTDecimalFromUnsignedInteger(indexRange.length - 1));
+                    }
+
+                    let locationDecimal = self.plotRange.locationDecimal;
+                    NSDecimal *dataBytes      = (NSDecimal *)locationData.mutableBytes;
+                    NSDecimal *dataEnd        = dataBytes + indexRange.length;
+                    while ( dataBytes < dataEnd ) {
+                        *dataBytes++    = locationDecimal;
+                        locationDecimal = CPTDecimalAdd(locationDecimal, delta);
+                    }
+                }
+                self cacheNumbers:locationData forField:CPTBarPlotFieldBarLocation atRecordIndex:indexRange.location];
+            }
+            else if ( theDataSource ) {
+                // Get locations from the datasource
+                id newBarLocations = [self numbersFromDataSourceForField:CPTBarPlotFieldBarLocation recordIndexRange:indexRange];
+                [self cacheNumbers:newBarLocations forField:CPTBarPlotFieldBarLocation atRecordIndex:indexRange.location];
+            }
+            else {
+                // Make evenly spaced locations starting at zero
+                CPTMutableNumericData *locationData = nil;
+                if ( self.doublePrecisionCache ) {
+                    locationData = [[CPTMutableNumericData alloc] initWithData:[NSData data]
+                                                                      dataType:CPTDataType(CPTFloatingPointDataType, sizeof(double), CFByteOrderGetCurrent())
+                                                                         shape:nil];
+                    locationData.shape = @[@(indexRange.length)];
+
+                    double locationDouble = 0.0;
+                    double *dataBytes     = (double *)locationData.mutableBytes;
+                    double *dataEnd       = dataBytes + indexRange.length;
+                    while ( dataBytes < dataEnd ) {
+                        *dataBytes++    = locationDouble;
+                        locationDouble += 1.0;
+                    }
+                }
+                else {
+                    locationData = [[CPTMutableNumericData alloc] initWithData:[NSData data]
+                                                                      dataType:CPTDataType(CPTDecimalDataType, sizeof(NSDecimal), CFByteOrderGetCurrent())
+                                                                         shape:nil];
+                    locationData.shape = @[@(indexRange.length)];
+
+                    NSDecimal locationDecimal = CPTDecimalFromInteger(0);
+                    NSDecimal *dataBytes      = (NSDecimal *)locationData.mutableBytes;
+                    NSDecimal *dataEnd        = dataBytes + indexRange.length;
+                    NSDecimal one             = CPTDecimalFromInteger(1);
+                    while ( dataBytes < dataEnd ) {
+                        *dataBytes++    = locationDecimal;
+                        locationDecimal = CPTDecimalAdd(locationDecimal, one);
+                    }
+                }
+                [self cacheNumbers:locationData forField:CPTBarPlotFieldBarLocation atRecordIndex:indexRange.location];
+            }
+        }
+    }
+
 //    /// @endcond
 //
 //    /**

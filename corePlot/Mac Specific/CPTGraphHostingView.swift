@@ -72,7 +72,7 @@ class CPTGraphHostingView: NSView {
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
 
-        if ( self.hostedGraph ) {
+        if (( self.hostedGraph ) != nil) {
             if ( ![NSGraphicsContext currentContextDrawingToScreen] ) {
                 self.viewDidChangeBackingProperties
 
@@ -89,24 +89,24 @@ class CPTGraphHostingView: NSView {
                 // scale the view isotropically so that it fits on the printed page
                 let widthScale  = (sourceRect.size.width != CGFloat(0.0)) ? destinationRect.size.width / sourceRect.size.width : CGFloat(1.0);
                 let heightScale = (sourceRect.size.height != CGFloat(0.0)) ? destinationRect.size.height / sourceRect.size.height : CGFloat(1.0);
-                let scale       = MIN(widthScale, heightScale);
+                let scale       = min(widthScale, heightScale);
 
                 // position the view so that its centered on the printed page
-                let offset = destinationRect.origin;
+                var offset = destinationRect.origin;
                 offset.x += ((destinationRect.size.width - (sourceRect.size.width * scale)) / CGFloat(2.0));
                 offset.y += ((destinationRect.size.height - (sourceRect.size.height * scale)) / CGFloat(2.0));
 
-                NSAffineTransform transform = [NSAffineTransform transform];
+                NSAffineTransform transform = NSAffineTransform transform
                 transform.translateXBy:offset.x yBy:offset.y
                 transform (scaleBy:scale)
                 transform (concat)
 
                 // render CPTLayers recursively into the graphics context used for printing
                 // (thanks to Brad for the tip: https://stackoverflow.com/a/2791305/132867 )
-                let context = graphicsContext.graphicsPort;
-                [self.hostedGraph recursivelyRenderInContext:context];
+                let context = graphicsContext?.cgContext
+                self.hostedGraph?.recursivelyRenderInContext(context:context!)
 
-                graphicsContext.restoreGraphicsState
+                graphicsContext?.restoreGraphicsState
             }
         }
     }

@@ -87,7 +87,7 @@ class CPTTextLayer: CPTBorderedLayer {
                 textSize = [styledText sizeAsDrawn];
             }
             else {
-                textSize = [myText sizeWithTextStyle:self.textStyle];
+                textSize = myText (sizeWithTextStyle:self.textStyle)
             }
 
             // Add small margin
@@ -104,17 +104,17 @@ class CPTTextLayer: CPTBorderedLayer {
     /**
      *  @brief Resizes the layer to fit its contents leaving a narrow margin on all four sides.
      **/
-    -(void)sizeToFit
+    func sizeToFit()
     {
         if ( self.text.length > 0 ) {
-            CGSize sizeThatFits = [self sizeThatFits];
-            CGRect newBounds    = self.bounds;
+            let sizeThatFits = self.sizeThatFits()
+            let newBounds    = self.bounds;
             newBounds.size         = sizeThatFits;
             newBounds.size.width  += self.paddingLeft + self.paddingRight;
             newBounds.size.height += self.paddingTop + self.paddingBottom;
 
-            CGSize myMaxSize = self.maximumSize;
-            if ( myMaxSize.width > CPTFloat(0.0)) {
+            let myMaxSize = self.maximumSize;
+            if  myMaxSize.width > CGFloat(0.0) {
                 newBounds.size.width = MIN(newBounds.size.width, myMaxSize.width);
             }
             if ( myMaxSize.height > CPTFloat(0.0)) {
@@ -125,10 +125,9 @@ class CPTTextLayer: CPTBorderedLayer {
             newBounds.size.height = ceil(newBounds.size.height);
 
             self.bounds = newBounds;
-            [self setNeedsLayout];
-            [self setNeedsDisplay];
+            self.setNeedsLayout()
+            self.setNeedsDisplay()
         }
     }
-
 
 }

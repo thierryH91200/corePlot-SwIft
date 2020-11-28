@@ -295,10 +295,13 @@ class CPTLineCap: NSObject {
                 let dx1      = lineCapSize.width / (oldBounds?.size.width)!;
                 let dy1      = lineCapSize.height / (oldBounds?.size.height)!;
                 
-//                let scaleTransform = CGAffineTransform.identity.scaledBy(x: dx1, y: dy1);
-//                scaleTransform = CGAffineTransformConcat(scaleTransform,
-//                                                         CGAffineTransformMakeTranslation(-halfSize.width, -halfSize.height));
-//                CGPathAddPath(lineCapPath, &scaleTransform, customPath);
+                var scaleTransform = CGAffineTransform.identity.scaledBy(x: dx1, y: dy1);
+                scaleTransform = scaleTransform.concatenating(CGAffineTransform(translationX: -halfSize.width, y: -halfSize.height))
+                
+                
+                
+                
+                CGPathAddPath(lineCapPath, &scaleTransform, customPath);
             }
             break
         }
@@ -310,11 +313,11 @@ class CPTLineCap: NSObject {
     func renderAsVectorInContext(context:  CGContext, center:CGPoint, direction:CGPoint)
     {
         let theLineCapPath = self.cachedLineCapPath
-
+        
         if (( theLineCapPath ) != nil) {
             var theLineStyle : CPTLineStyle? = nil;
             var theFill  :CPTFill?  = nil;
-
+            
             switch ( self.lineCapType ) {
             case .solidArrow: break
             case .sweptArrow: break
@@ -324,31 +327,31 @@ class CPTLineCap: NSObject {
             case .pentagon: break
             case .hexagon: break
             case .custom:
-                    theLineStyle = self.lineStyle;
-                    theFill      = self.fill;
-                    break;
-
+                theLineStyle = self.lineStyle;
+                theFill      = self.fill;
+                break;
+                
             case .openArrow: break
             case .bar: break
             case .cross: break
             case .snow:
-                    theLineStyle = self.lineStyle;
-                    break;
-                default:
-                    break;
+                theLineStyle = self.lineStyle;
+                break;
+            default:
+                break;
             }
-
+            
             if ( (theLineStyle != nil) || (theFill != nil) ) {
                 context.saveGState();
                 context.translateBy(x: center.x, y: center.y);
                 context.rotate(by: atan2(direction.y, direction.x) - CGFloat(Double.pi/2)); // standard symbol points up
-
+                
                 if (( theFill ) != nil) {
                     // use fillRect instead of fillPath so that images and gradients are properly centered in the symbol
                     let symbolSize = self.size;
                     let halfSize   = CGSize(width: symbolSize.width / CGFloat(2.0), height: symbolSize.height / CGFloat(2.0));
                     let bounds     = CGRect(x: -halfSize.width, y: -halfSize.height, width: symbolSize.width, height: symbolSize.height);
-
+                    
                     context.saveGState();
                     if ( !theLineCapPath!.isEmpty) {
                         context.beginPath();
@@ -363,19 +366,16 @@ class CPTLineCap: NSObject {
                     theFill?.fillRect(rect: bounds, inContext: context)
                     context.restoreGState();
                 }
-
+                
                 if (( theLineStyle ) != nil) {
-                    theLineStyle. setLineStyleInContext:context
-                    CGContextBeginPath(context);
-                    CGContextAddPath(context, theLineCapPath);
-                    [theLineStyle strokePathInContext:context];
+                    theLineStyle?.setLineStyleInContext(context: context)
+                    context.beginPath()
+                    context.addPath(theLineCapPath!);
+                    theLineStyle?.strokePathInContext(context: context)
                 }
-
-                CGContextRestoreGState(context);
+                context.restoreGState();
             }
         }
     }
-
-    
     
 }

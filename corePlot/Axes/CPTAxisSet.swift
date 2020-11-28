@@ -71,13 +71,12 @@ class CPTAxisSet: CPTLayer {
     
     func pointingDeviceDownEvent(event: CPTNativeEvent, interactionPoint:CGPoint)-> Bool
     {
-        for ( CPTAxis *axis in self.axes ) {
-            if ( [axis pointingDeviceDownEvent:event atPoint:interactionPoint] ) {
-                return YES;
+        for axis in self.axes  {
+            if axis.pointingDeviceDownEvent(event:event, atPoint:interactionPoint ) {
+                return true;
             }
         }
-
-        return [super pointingDeviceDownEvent:event atPoint:interactionPoint];
+        return super.pointingDeviceDownEvent(event:event, atPoint:interactionPoint)
     }
 
     /**
@@ -93,25 +92,25 @@ class CPTAxisSet: CPTLayer {
      *  @param interactionPoint The coordinates of the interaction.
      *  @return Whether the event was handled or not.
      **/
-    -(BOOL)pointingDeviceUpEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
+    
+    func pointingDeviceUpEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint)-> Bool
     {
-        for ( CPTAxis *axis in self.axes ) {
-            if ( [axis pointingDeviceUpEvent:event atPoint:interactionPoint] ) {
-                return YES;
+        for  axis in self.axes {
+            if  axis.pointingDeviceUpEvent(event:event, atPoint:interactionPoint) {
+                return true
             }
         }
-
-        return [super pointingDeviceUpEvent:event atPoint:interactionPoint];
+        return super.pointingDeviceUpEvent(event:event, atPoint:interactionPoint)
     }
-    -(BOOL)pointingDeviceDownEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
+    
+    func pointingDeviceDownEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint) -> Bool
     {
-        for ( CPTAxis *axis in self.axes ) {
-            if ( [axis pointingDeviceDownEvent:event atPoint:interactionPoint] ) {
-                return YES;
+        for  axis in self.axes {
+            if axis.pointingDeviceDownEvent(event:event, atPoint:interactionPoint ) {
+                return true
             }
         }
-
-        return [super pointingDeviceDownEvent:event atPoint:interactionPoint];
+        return super.pointingDeviceDownEvent(event:event, atPoint:interactionPoint)
     }
 
     /**
@@ -127,15 +126,14 @@ class CPTAxisSet: CPTLayer {
      *  @param interactionPoint The coordinates of the interaction.
      *  @return Whether the event was handled or not.
      **/
-    -(BOOL)pointingDeviceUpEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
+    func pointingDeviceUpEvent (event: CPTNativeEvent, atPoint interactionPoint:CGPoint)-> Bool
     {
-        for ( CPTAxis *axis in self.axes ) {
-            if ( [axis pointingDeviceUpEvent:event atPoint:interactionPoint] ) {
-                return YES;
+        for axis in self.axes {
+            if axis.pointingDeviceUpEven(event: event, atPoint:interactionPoint ) {
+                return true
             }
         }
-
-        return [super pointingDeviceUpEvent:event atPoint:interactionPoint];
+        return super.pointingDeviceUpEvent(event:event, atPoint:interactionPoint)
     }
 
 

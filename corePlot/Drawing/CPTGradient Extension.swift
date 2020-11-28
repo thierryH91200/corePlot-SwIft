@@ -257,24 +257,24 @@ extension CPTGradient {
      **/
     func unifiedDarkGradient() -> CPTGradient
     {
-    let newInstance = CPTGradient()
-
+        let newInstance = CPTGradient()
+        
         let color1 : CPTGradientElement
-        color1.color.red   = color1.color.green = color1.color.blue = CGFloat(0.68);
+        color1.color.red   = color1.color.green = color1.color.blue = CGFloat(0.68)
         color1.color.alpha = CGFloat(1.00);
         color1.position    = CGFloat(0.0);
-
+        
         let color2 : CPTGradientElement
-        color2.color.red   = color2.color.green = color2.color.blue = CGFloat(0.83);
+        color2.color.red   = color2.color.green = color2.color.blue = CGFloat(0.83)
         color2.color.alpha = CGFloat(1.00);
         color2.position    = CGFloat(1.0);
-
+        
         newInstance.addElement(newElement: color1)
         newInstance.addElement(newElement: color2)
-
+        
         return newInstance;
     }
-
+    
     /** @brief Creates and returns a new CPTGradient instance initialized with the source list selected gradient.
      *  @return A new CPTGradient instance initialized with the source list selected gradient.
      **/

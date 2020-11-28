@@ -133,7 +133,7 @@ class CPTGradient: NSObject {
     {
         let curElement = self.elementList
         
-        if curElement == nil || (newElement.position < curElement->position)) {
+        if curElement == nil || (newElement.position < curElement.position)) {
             CPTGradientElement tmpNext        = curElement;
             CPTGradientElement newElementList = calloc(1, sizeof(CPTGradientElement));
             if ( newElementList ) {
@@ -149,10 +149,10 @@ class CPTGradient: NSObject {
                 curElement = curElement->nextElement;
             }
             
-            CPTGradientElement tmpNext = curElement->nextElement;
+            let tmpNext = curElement?.nextElement;
             curElement->nextElement              = calloc(1, sizeof(CPTGradientElement));
-            *(curElement->nextElement)           = newElement
-            curElement->nextElement->nextElement = tmpNext;
+            *(curElement.nextElement)           = newElement
+            curElement.nextElement->nextElement = tmpNext;
         }
     }
     

@@ -5,7 +5,7 @@
 //  Created by thierryH24 on 09/11/2020.
 //
 
-import Appkit
+import AppKit
 
 enum CPTGraphLayerType : Int {
     case minorGridLines ///< Minor grid lines.

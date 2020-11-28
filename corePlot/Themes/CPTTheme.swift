@@ -23,9 +23,9 @@ class CPTTheme: NSObject {
 //    +(nullable NSArray<Class> *)themeClasses
     func themeClasses() -> Array<Any>
     {
-        NSSortDescriptor *nameSort = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES selector:@selector(caseInsensitiveCompare:)];
+        let  nameSort = NSSortDescriptor( key: : "name",ascending:true, selector:#selector(caseInsensitiveCompare:))
 
-        return [themes sortedArrayUsingDescriptors:@[nameSort]];
+        return [themes.sortedArrayUsingDescriptors:@[nameSort]];
     }
     
     +(nullable instancetype)themeNamed:(nullable CPTThemeName)themeName
@@ -71,10 +71,7 @@ class CPTTheme: NSObject {
         return NSStringFromClass(self);
     }
 
-    #pragma mark -
-    #pragma mark Accessors
-
-    /// @cond
+   // MARK : Accessors
 
     -(void)setGraphClass:(nullable Class)newGraphClass
     {
@@ -91,9 +88,6 @@ class CPTTheme: NSObject {
         }
     }
 
-    /// @endcond
-
-    #pragma mark -
     // MARK: apply the theme
 
     /** @brief Applies the theme to the provided graph.
@@ -101,24 +95,23 @@ class CPTTheme: NSObject {
      **/
     func applyThemeToGraph(graph: CPTGraph)    {
         
-        self.applyThemeToBackground(graph)
+        self.applyThemeToBackground(graph: graph)
         let plotAreaFrame = graph.plotAreaFrame;
 
         if ( plotAreaFrame ) {
-            [self applyThemeToPlotArea:plotAreaFrame];
+            self.applyThemeToPlotArea(plotAreaFrame: plotAreaFrame)
         }
 
         let axisSet = graph.axisSet
-
         if  axisSet != nil  {
-            self.applyThemeToAxisSet(axisSet)
+            self.applyThemeToAxisSet(axisSet: axisSet)
         }
     }
 
 
 // MARK: -
 
-    @implementation CPTTheme(AbstractMethods)
+ //   @implementation CPTTheme(AbstractMethods)
 
     /** @brief Creates a new graph styled with the theme.
      *  @return The new graph.
