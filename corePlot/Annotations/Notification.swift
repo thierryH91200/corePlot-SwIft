@@ -15,7 +15,10 @@ public extension Notification.Name {
     // MARK: Legend
     static let CPTLegendNeedsRedrawForPlotNotification  =  Notification.Name( "CPTLegendNeedsRedrawForPlotNotification")
     static let CPTLegendNeedsLayoutForPlotNotification  =  Notification.Name( "CPTLegendNeedsLayoutForPlotNotification")
-    static let CPTLegendNeedsReloadEntriesForPlotNotification =  Notification.Name( "CPTLegendNeedsReloadEntriesForPlotNotification")
+    static let CPTLegendNeedsReloadEntriesForPlotNotification =  Notification.Name( "CPTPlotSpaceCoordinateMappingDidChangeNotification")
+    static let CPTPlotSpaceCoordinateMapping =  Notification.Name( "CPTLegendNeedsReloadEntriesForPlotNotification")
+
+
 
     
     static let CPTLayerBoundsDidChangeNotification           = Notification.Name( "CPTLayerBoundsDidChangeNotification")

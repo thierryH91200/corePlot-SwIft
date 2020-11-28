@@ -208,7 +208,7 @@ extension CPTGraph {
      *  @param identifier A plot space identifier.
      *  @return The plot space with the given identifier or @nil if it was not found.
      **/
-    func plotSpaceWithIdentifier(identifier: Any) -> CPTPlotSpace
+    func plotSpaceWithIdentifier(identifier: UUID) -> CPTPlotSpace?
     {
         for plotSpace in self.plotSpaces  {
             if plotSpace.identifier == identifier {
@@ -223,7 +223,7 @@ extension CPTGraph {
     {
         if ( plotAreaFrame != newArea ) {
             plotAreaFrame.graph = nil;
-            plotAreaFrame.removeFromSuperlayer
+            plotAreaFrame.removeFromSuperlayer()
             
             plotAreaFrame = newArea;
             
@@ -251,11 +251,11 @@ extension CPTGraph {
         self.plotSpaces.append(space)
         space.graph = self
         
-        NotificationCenter.defaultCenter.addObserver(
-            self,
-            selector:#selector(plotSpaceMappingDidChange),
-            name:.CPTPlotSpaceCoordinateMappingDidChangeNotification,
-            object:space)
+        NotificationCenter.receive(
+            instance: self,
+            name:.CPTPlotSpaceCoordinateMapping,
+
+            selector:#selector(plotSpaceMappingDidChange))
         
         NotificationCenter.default.post(
             name: .CPTGraphDidAddPlotSpaceNotification, object: self)
@@ -271,12 +271,11 @@ extension CPTGraph {
             
             if self.plotSpaces.contains(thePlotSpace ) {
                 NotificationCenter.remove(
-                    self,
-                    name:.CPTPlotSpaceCoordinateMappingDidChangeNotification,
-                    object:thePlotSpace)
+                    instance: self,
+                    name: .CPTPlotSpaceCoordinateMapping)
                 
                 // Remove space
-                thePlotSpace.graph = nil;
+                thePlotSpace.graph = nil
                 self.plotSpaces.remove(thePlotSpace)
                 
                 // Update axes that referenced space
@@ -286,9 +285,8 @@ extension CPTGraph {
                     }
                 }
                 
-                NotificationCenter.default.post(
-                    name: .CPTGraphDidRemovePlotSpaceNotification,
-                    object:self )
+                NotificationCenter.send(
+                    .CPTGraphDidRemovePlotSpaceNotification)
                 
             }
             else {
@@ -301,9 +299,9 @@ extension CPTGraph {
     
     /// @cond
     
-    func plotSpaceMappingDidChange(notif: NSNotification )
+    @objc func plotSpaceMappingDidChange(notif: NSNotification )
     {
-        let plotSpace        = notif.object;
+        let plotSpace        = notif.object as! CPTPlotSpace
         let backgroundBandsNeedRedraw = false;
         
         for axis in self.axisSet.axes {

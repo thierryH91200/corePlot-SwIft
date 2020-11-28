@@ -21,12 +21,13 @@ func pixelAlign()
     let boundsSize = self.bounds.size;
     let frameSize  = self.frame.size;
 
-    let newPosition;
+    var newPosition = CGPoint()
 
-    if ( CGSizeEqualToSize(boundsSize, frameSize)) { // rotated 0° or 180°
+    if ( boundsSize.equalTo(frameSize)) { // rotated 0° or 180°
         let anchor = self.anchorPoint;
 
-        let newAnchor = CGPoint(boundsSize.width * anchor.x, boundsSize.height * anchor.y);
+        let newAnchor = CGPoint(x: boundsSize.width * anchor.x,
+                                y: boundsSize.height * anchor.y);
 
         if ( scale == CGFloat(1.0)) {
             newPosition.x = ceil(currentPosition.x - newAnchor.x - CGFloat(0.5)) + newAnchor.x;
@@ -40,8 +41,8 @@ func pixelAlign()
     else if ((boundsSize.width == frameSize.height) && (boundsSize.height == frameSize.width)) { // rotated 90° or 270°
         let anchor = self.anchorPoint;
 
-        let newAnchor = CGPoint(boundsSize.height * anchor.y,
-                                        boundsSize.width * anchor.x);
+        let newAnchor = CGPoint(x: boundsSize.height * anchor.y,
+                                y: boundsSize.width * anchor.x);
 
         if ( scale == CGFloat(1.0)) {
             newPosition.x = ceil(currentPosition.x - newAnchor.x - CGFloat(0.5)) + newAnchor.x;

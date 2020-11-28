@@ -145,7 +145,7 @@ class CPTAxisSet: CPTLayer {
         set {
             if _axes != newValue  {
                 for axis in axes {
-                    axis.removeFromSuperlayer
+                    axis.removeFromSuperlayer()
                     axis.plotArea = nil
                     axis.graph    = nil
                 }
