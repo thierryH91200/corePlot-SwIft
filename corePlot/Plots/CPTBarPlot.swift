@@ -62,10 +62,10 @@ class CPTBarPlot: CPTPlot {
      func tubularBarPlot(with color: NSUIColor, horizontalBars horizontal: Bool) -> Self {
 
         let barPlot = CPTBarPlot()
-        let barLineStyle = CPTMutableLineStyle()
+        let barLineStyle = [CPTLineStyle]()
 
         barLineStyle.lineWidth = CGFloat(1.0)
-        barLineStyle.lineColor = CPTColor.black()
+        barLineStyle.lineColor = NSUIColor.black
 
         barPlot?.lineStyle = barLineStyle
         barPlot.barsAreHorizontal = horizontal
@@ -915,52 +915,52 @@ class CPTBarPlot: CPTPlot {
 //
 //        return theBarWidth;
 //    }
-//
-//    -(void)drawBarInContext:(nonnull CGContextRef)context recordIndex:(NSUInteger)idx
-//    {
-//        // Get base and tip points
-//        CGPoint basePoint, tipPoint;
-//        BOOL barExists = [self barAtRecordIndex:idx basePoint:&basePoint tipPoint:&tipPoint];
-//
-//        if ( !barExists ) {
-//            return;
-//        }
-//
-//        NSNumber *width = [self barWidthForIndex:idx];
-//
-//        // Return if bar is off screen
-//        if ( ![self barIsVisibleWithBasePoint:basePoint width:width] ) {
-//            return;
-//        }
-//
-//        CGMutablePathRef path = [self newBarPathWithContext:context
-//                                                  basePoint:basePoint
-//                                                   tipPoint:tipPoint
-//                                                      width:width];
-//
-//        if ( path ) {
-//            CGContextSaveGState(context);
-//
-//            CPTFill *theBarFill = [self barFillForIndex:idx];
-//            if ( [theBarFill isKindOfClass:[CPTFill class]] ) {
-//                CGContextBeginPath(context);
-//                CGContextAddPath(context, path);
-//                [theBarFill fillPathInContext:context];
-//            }
-//
-//            CPTLineStyle *theLineStyle = [self barLineStyleForIndex:idx];
-//            if ( [theLineStyle isKindOfClass:[CPTLineStyle class]] ) {
-//                CGContextBeginPath(context);
-//                CGContextAddPath(context, path);
-//                [theLineStyle setLineStyleInContext:context];
-//                [theLineStyle strokePathInContext:context];
-//            }
-//
-//            CGContextRestoreGState(context);
-//
-//            CGPathRelease(path);
-//        }
-//    }
+
+    fun drawBarInContext(context: CGContextRef, recordIndex: Int)
+    {
+        // Get base and tip points
+        var basePoint = CGPOint()
+        var tipPoint = CGPoint()
+        
+        let barExists = [self barAtRecordIndex:idx basePoint:&basePoint tipPoint:&tipPoint];
+
+        guard barExists == true else { return }
+
+        let width = [self barWidthForIndex:recordIndex];
+
+        // Return if bar is off screen
+        if ( ![self barIsVisibleWithBasePoint:basePoint width:width] ) {
+            return;
+        }
+
+        let path = self.newBarPathWithContext(context,
+                                                  basePoint:basePoint,
+                                                   tipPoint:tipPoint,
+                                                      width:width)
+
+        if ( path ) {
+            CGContextSaveGState(context);
+
+            CPTFill *theBarFill = [self barFillForIndex:idx];
+            if ( [theBarFill isKindOfClass:[CPTFill class]] ) {
+                CGContextBeginPath(context);
+                CGContextAddPath(context, path);
+                [theBarFill fillPathInContext:context];
+            }
+
+            CPTLineStyle *theLineStyle = [self barLineStyleForIndex:idx];
+            if ( [theLineStyle isKindOfClass:[CPTLineStyle class]] ) {
+                CGContextBeginPath(context);
+                CGContextAddPath(context, path);
+                [theLineStyle setLineStyleInContext:context];
+                [theLineStyle strokePathInContext:context];
+            }
+
+            CGContextRestoreGState(context);
+
+            CGPathRelease(path);
+        }
+    }
 //
 //    -(void)drawSwatchForLegend:(nonnull CPTLegend *)legend atIndex:(NSUInteger)idx inRect:(CGRect)rect inContext:(nonnull CGContextRef)context
 //    {
@@ -991,31 +991,25 @@ class CPTBarPlot: CPTPlot {
 //
 //    /// @endcond
 //
-//    #pragma mark -
-//    #pragma mark Animation
-//
-//    /// @cond
-//
-//    +(BOOL)needsDisplayForKey:(nonnull NSString *)aKey
-//    {
-//        static NSSet<NSString *> *keys   = nil;
-//        static dispatch_once_t onceToken = 0;
-//
-//        dispatch_once(&onceToken, ^{
-//            keys = [NSSet setWithArray:@[@"barCornerRadius",
-//                                         @"barBaseCornerRadius",
-//                                         @"barOffset",
-//                                         @"barWidth",
-//                                         @"baseValue"]];
-//        });
-//
-//        if ( [keys containsObject:aKey] ) {
-//            return YES;
-//        }
-//        else {
-//            return [super needsDisplayForKey:aKey];
-//        }
-//    }
+// MARK: - Animation
+
+    override func needsDisplayForKey(aKey: String) -> Bool
+    {
+        var keys        = Set<String>()
+
+        keys .insert("barCornerRadius")
+        keys .insert("barBaseCornerRadius")
+        keys .insert("barOffset")
+        keys .insert("barWidth")
+        keys .insert("baseValue")
+
+        if keys.contains(aKey ) {
+            return true
+        }
+        else {
+            return CPTPlot.needsDisplay(forKey: aKey)
+        }
+    }
 //
 //    /// @endcond
 //
@@ -1389,36 +1383,36 @@ class CPTBarPlot: CPTPlot {
         if ( lineStyle != newLineStyle ) {
             lineStyle = newLineStyle
             self.setNeedsDisplay()
-    NotificationCenter.default.post( name:.CPTLegendNeedsRedrawForPlotNotification, object:self)
+            NotificationCenter.default.post( name:.CPTLegendNeedsRedrawForPlotNotification, object:self)
         }
     }
-//
-//    -(void)setFill:(nullable CPTFill *)newFill
-//    {
-//        if ( fill != newFill ) {
-//            fill = [newFill copy];
-//            [self setNeedsDisplay];
-    NotificationCenter.default.post( name:.CPTLegendNeedsRedrawForPlotNotification, object:self)
-//        }
-//    }
-//
-//    -(void)setBarWidth:(nonnull NSNumber *)newBarWidth
-//    {
-//        if ( ![barWidth isEqualToNumber:newBarWidth] ) {
-//            barWidth = newBarWidth;
-//            [self setNeedsDisplay];
-//        }
-//    }
-//
-//    -(void)setBarOffset:(nonnull NSNumber *)newBarOffset
-//    {
-//        if ( ![barOffset isEqualToNumber:newBarOffset] ) {
-//            barOffset = newBarOffset;
-//            [self setNeedsDisplay];
-//            [self repositionAllLabelAnnotations];
-//        }
-//    }
-//
+    
+    func setFill(newFill: CPTFill )
+    {
+        if ( fill != newFill ) {
+            fill = newFill;
+            self.setNeedsDisplay()
+            NotificationCenter.default.post( name:.CPTLegendNeedsRedrawForPlotNotification, object:self)
+        }
+    }
+
+    func setBarWidth(newBarWidth: CGFloat)
+    {
+        if barWidth != newBarWidth {
+            barWidth = newBarWidth
+            self.setNeedsDisplay()
+        }
+    }
+    
+    func setBarOffset(newBarOffset: CGFloat)
+    {
+        if  barOffset != newBarOffset {
+            barOffset = newBarOffset
+            self.setNeedsDisplay()
+            self.repositionAllLabelAnnotations()
+        }
+    }
+
     func setBarCornerRadius(newCornerRadius : CGFloat)
     {
         if ( barCornerRadius != newCornerRadius ) {
@@ -1427,25 +1421,25 @@ class CPTBarPlot: CPTPlot {
             NotificationCenter.default.post( name:.CPTLegendNeedsRedrawForPlotNotification, object:self)
         }
     }
-//
-//    -(void)setBarBaseCornerRadius:(CGFloat)newCornerRadius
-//    {
-//        if ( barBaseCornerRadius != newCornerRadius ) {
-//            barBaseCornerRadius = ABS(newCornerRadius);
-//            [self setNeedsDisplay];
-//            [[NSNotificationCenter defaultCenter] postNotificationName:CPTLegendNeedsRedrawForPlotNotification object:self];
-//        }
-//    }
-//
-//    -(void)setBaseValue:(nonnull NSNumber *)newBaseValue
-//    {
-//        if ( ![baseValue isEqualToNumber:newBaseValue] ) {
-//            baseValue = newBaseValue;
-//            [self setNeedsDisplay];
-//            [self setNeedsLayout];
-//        }
-//    }
-//
+
+    func setBarBaseCornerRadius(newCornerRadius: CGFloat)
+    {
+        if ( barBaseCornerRadius != newCornerRadius ) {
+            barBaseCornerRadius = abs(newCornerRadius)
+            self.setNeedsDisplay()
+            NotificationCenter.defaultCenter.postNotificationName(.CPTLegendNeedsRedrawForPlotNotification, object:self);
+        }
+    }
+
+    -(void)setBaseValue:(nonnull NSNumber *)newBaseValue
+    {
+        if ( ![baseValue isEqualToNumber:newBaseValue] ) {
+            baseValue = newBaseValue;
+            [self setNeedsDisplay];
+            [self setNeedsLayout];
+        }
+    }
+
 //    -(void)setBarBasesVary:(BOOL)newBasesVary
 //    {
 //        if ( newBasesVary != barBasesVary ) {

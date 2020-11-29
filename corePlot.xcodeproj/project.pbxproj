@@ -44,6 +44,12 @@
 		032EE50325665BC70085F4E1 /* CPTMaskLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032EE50225665BC70085F4E1 /* CPTMaskLayer.swift */; };
 		032EE507256674B30085F4E1 /* CPTPathExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032EE506256674B30085F4E1 /* CPTPathExtensions.swift */; };
 		032EE50B2566CC4D0085F4E1 /* CPTGraph ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032EE50A2566CC4D0085F4E1 /* CPTGraph ext.swift */; };
+		0332627125738ACE00224856 /* CPTAnimationCGPointPeriod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0332627025738ACE00224856 /* CPTAnimationCGPointPeriod.swift */; };
+		0332627525738B1D00224856 /* CPTAnimationCGSizePeriod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0332627425738B1D00224856 /* CPTAnimationCGSizePeriod.swift */; };
+		0332627925738B5400224856 /* CPTAnimationCGRectPeriod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0332627825738B5400224856 /* CPTAnimationCGRectPeriod.swift */; };
+		0332627D25738BAD00224856 /* CPTAnimationNSDecimalPeriod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0332627C25738BAD00224856 /* CPTAnimationNSDecimalPeriod.swift */; };
+		0332628125738BE100224856 /* CPTAnimationNSNumberPeriod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0332628025738BE100224856 /* CPTAnimationNSNumberPeriod.swift */; };
+		0332628525738C0E00224856 /* CPTAnimationPlotRangePeriod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0332628425738C0E00224856 /* CPTAnimationPlotRangePeriod.swift */; };
 		0333908C2565658900C231D9 /* CPTImage ext2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0333908B2565658900C231D9 /* CPTImage ext2.swift */; };
 		033390902565675F00C231D9 /* CPTImage ext3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0333908F2565675E00C231D9 /* CPTImage ext3.swift */; };
 		033390982565850F00C231D9 /* CPTImagePlatformSpecific.swift in Sources */ = {isa = PBXBuildFile; fileRef = 033390972565850F00C231D9 /* CPTImagePlatformSpecific.swift */; };
@@ -148,6 +154,12 @@
 		032EE50225665BC70085F4E1 /* CPTMaskLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTMaskLayer.swift; sourceTree = "<group>"; };
 		032EE506256674B30085F4E1 /* CPTPathExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTPathExtensions.swift; sourceTree = "<group>"; };
 		032EE50A2566CC4D0085F4E1 /* CPTGraph ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTGraph ext.swift"; sourceTree = "<group>"; };
+		0332627025738ACE00224856 /* CPTAnimationCGPointPeriod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTAnimationCGPointPeriod.swift; sourceTree = "<group>"; };
+		0332627425738B1D00224856 /* CPTAnimationCGSizePeriod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTAnimationCGSizePeriod.swift; sourceTree = "<group>"; };
+		0332627825738B5400224856 /* CPTAnimationCGRectPeriod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTAnimationCGRectPeriod.swift; sourceTree = "<group>"; };
+		0332627C25738BAD00224856 /* CPTAnimationNSDecimalPeriod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTAnimationNSDecimalPeriod.swift; sourceTree = "<group>"; };
+		0332628025738BE100224856 /* CPTAnimationNSNumberPeriod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTAnimationNSNumberPeriod.swift; sourceTree = "<group>"; };
+		0332628425738C0E00224856 /* CPTAnimationPlotRangePeriod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTAnimationPlotRangePeriod.swift; sourceTree = "<group>"; };
 		0333908B2565658900C231D9 /* CPTImage ext2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTImage ext2.swift"; sourceTree = "<group>"; };
 		0333908F2565675E00C231D9 /* CPTImage ext3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTImage ext3.swift"; sourceTree = "<group>"; };
 		033390972565850F00C231D9 /* CPTImagePlatformSpecific.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTImagePlatformSpecific.swift; sourceTree = "<group>"; };
@@ -339,9 +351,15 @@
 			isa = PBXGroup;
 			children = (
 				030A6505255FBB44002B3D13 /* CPTAnimation.swift */,
+				030A6511255FC5DF002B3D13 /* CPTAnimationCGFloatPeriod.swift */,
+				0332627025738ACE00224856 /* CPTAnimationCGPointPeriod.swift */,
+				0332627825738B5400224856 /* CPTAnimationCGRectPeriod.swift */,
+				0332627425738B1D00224856 /* CPTAnimationCGSizePeriod.swift */,
+				0332627C25738BAD00224856 /* CPTAnimationNSDecimalPeriod.swift */,
+				0332628025738BE100224856 /* CPTAnimationNSNumberPeriod.swift */,
 				030A6509255FBB8F002B3D13 /* CPTAnimationOperation.swift */,
 				030A650D255FC04B002B3D13 /* CPTAnimationPeriod.swift */,
-				030A6511255FC5DF002B3D13 /* CPTAnimationCGFloatPeriod.swift */,
+				0332628425738C0E00224856 /* CPTAnimationPlotRangePeriod.swift */,
 				033BF56A2572D1DF003ECB08 /* CPTAnimationTimingFunction.swift */,
 			);
 			path = Animation;
@@ -712,6 +730,7 @@
 				03A9CD1B2559B4AC0096853D /* CPTTextStyle.swift in Sources */,
 				0333908C2565658900C231D9 /* CPTImage ext2.swift in Sources */,
 				035C8AA2256D85ED00954017 /* CPTPlot Responder.swift in Sources */,
+				0332628125738BE100224856 /* CPTAnimationNSNumberPeriod.swift in Sources */,
 				0397469F2557281B008CF3E6 /* CPTColor.swift in Sources */,
 				0320AFD0255C518900D32BF9 /* CPTPlainBlackTheme.swift in Sources */,
 				033BF56B2572D1DF003ECB08 /* CPTAnimationTimingFunction.swift in Sources */,
@@ -719,12 +738,16 @@
 				030A650E255FC04B002B3D13 /* CPTAnimationPeriod.swift in Sources */,
 				032EE50B2566CC4D0085F4E1 /* CPTGraph ext.swift in Sources */,
 				030A6517255FCE9A002B3D13 /* PieChartController.swift in Sources */,
+				0332627D25738BAD00224856 /* CPTAnimationNSDecimalPeriod.swift in Sources */,
 				030A6506255FBB44002B3D13 /* CPTAnimation.swift in Sources */,
 				0397469B2557269E008CF3E6 /* CPTShadow.swift in Sources */,
+				0332628525738C0E00224856 /* CPTAnimationPlotRangePeriod.swift in Sources */,
 				0320B014255C8CA400D32BF9 /* CPTPlot.swift in Sources */,
 				03A9CCEA255957510096853D /* CPTLayerAnnotation.swift in Sources */,
 				0320B008255C8A2800D32BF9 /* CPTLimitBand.swift in Sources */,
 				03A9CD032559AA410096853D /* CPTFillImage.swift in Sources */,
+				0332627525738B1D00224856 /* CPTAnimationCGSizePeriod.swift in Sources */,
+				0332627925738B5400224856 /* CPTAnimationCGRectPeriod.swift in Sources */,
 				03A9CCE22559569E0096853D /* CPTBorderedLayer.swift in Sources */,
 				03073485256815B6008B7413 /* Notification.swift in Sources */,
 				0320AFE8255C6A1800D32BF9 /* CPTAxisSet.swift in Sources */,
@@ -735,6 +758,7 @@
 				0320AFD4255C5A7000D32BF9 /* CPTXYGraph.swift in Sources */,
 				03DDD45E2562748C00CAB29B /* CPTAxisLabelGroup.swift in Sources */,
 				039746A325572B55008CF3E6 /* CPTImage.swift in Sources */,
+				0332627125738ACE00224856 /* CPTAnimationCGPointPeriod.swift in Sources */,
 				03A9CCDE2559565E0096853D /* CPTGraph.swift in Sources */,
 				034C436625679565003FAD33 /* CPTLayer ext1.swift in Sources */,
 				035C8A9A256D83EE00954017 /* CPTPlot Data Range.swift in Sources */,

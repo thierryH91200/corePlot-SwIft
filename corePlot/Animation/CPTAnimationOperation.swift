@@ -23,13 +23,28 @@ class CPTAnimationOperation: NSObject {
     var identifier: NSObject?
     var userInfo: Dictionary<String, Any>?
     
-    override init() {
-        
-//        self.initWithAnimationPeriod( animationPeriod:CPTAnimationPeriod (startValue: <#CGFloat#>, endValue: <#NSValue#>, ofClass: <#AnyClass#>, class: <#CGFloat#>, aDelay: <#CGFloat#>),
-//                                      animationCurve: CPTAnimationCurve.default,
-//                                      object: NSObject(),
-//                                      getter:Selector(("init:")),
-//                                      setter:Selector("init:)"))
+    init(animationPeriod: CPTAnimationPeriod, animationCurve curve: CPTAnimationCurve, object: Any, getter: Selector, setter: Selector) {
+        super.init()
+            period = animationPeriod
+            animationCurve = curve
+            boundObject = object
+            boundGetter = getter
+            boundSetter = setter
+            delegate = nil
+        isCanceled = false
+            identifier = nil
+            userInfo = nil
+    }
+
+    @objc convenience override init() {
+        assert(false, "Must call -initWithAnimationPeriod:animationCurve:object:getter:setter: to initialize a CPTAnimationOperation.")
+
+        self.init(
+            animationPeriod: CPTAnimationPeriod(),
+            animationCurve: CPTAnimationCurve.default,
+            object: NSObject(),
+            getter: #selector(init),
+            setter: #selector(init))
     }
     
 //    func  initWithAnimationPeriod(
@@ -51,7 +66,5 @@ class CPTAnimationOperation: NSObject {
 //        self.userInfo       = nil
 //        
 //    }
-//    
-    
-    
+//
 }

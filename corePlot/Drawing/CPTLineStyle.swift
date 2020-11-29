@@ -17,7 +17,7 @@ class CPTLineStyle: NSObject {
     var lineWidth : CGFloat
     var dashPattern : [Double]
     var patternPhase: CGFloat 
-    var lineColor: NSColor
+    var lineColor: NSUIColor
     var lineFill : CPTFill?
     var lineGradient: CPTGradient?
     var isOpaque = true

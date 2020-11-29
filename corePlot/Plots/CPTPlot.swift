@@ -146,18 +146,18 @@ public class CPTPlot: CPTAnnotationHostLayer {
     }
     
     // MARK: - Animation
-    func needsDisplayForKey(aKey: String )-> Bool
+    func needsDisplayForKey(forKey key: String )-> Bool
     {
         var keys        = Set<String>()
         
         keys.insert("labelOffset")
         keys.insert("labelRotation")
         
-        if keys.contains(aKey ) {
+        if keys.contains(key ) {
             return true;
         }
         else {
-            return CPTBorderedLayer.needsDisplay(forKey: aKey)
+            return CPTBorderedLayer.needsDisplay(forKey: key)
         }
     }
     
@@ -258,7 +258,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
     {
         self.cachedData.removeAll()
         self.cachedDataCount = 0;
-        self.reloadData( indexRange: NSRange(location: 0, length: self.numberOfRecords))
+        self.reloadData( indexRange: NSRange(location: 0, length: self.numberOfRecords()))
     }
     
     /**

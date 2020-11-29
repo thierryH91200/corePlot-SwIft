@@ -32,4 +32,4 @@ corePlot/Source/Animation/CPTAnimationCGFloatPeriod
 
 ### class CPTColor
 
-### signbit
+

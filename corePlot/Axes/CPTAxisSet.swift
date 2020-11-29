@@ -45,7 +45,7 @@ class CPTAxisSet: CPTLayer {
     {
         let theAxes = self.axes;
 
-        theAxes.makeObjectsPerformSelector(#selector(setNeedsLayout))
+        theAxes.makeObjectsPerformSelector(at: #selector(setNeedsLayout))
         theAxes.makeObjectsPerformSelector(#selector(setNeedsRelabel))
     }
 
@@ -93,7 +93,7 @@ class CPTAxisSet: CPTLayer {
      *  @return Whether the event was handled or not.
      **/
     
-    func pointingDeviceUpEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint)-> Bool
+    override func pointingDeviceUpEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint)-> Bool
     {
         for  axis in self.axes {
             if  axis.pointingDeviceUpEvent(event:event, atPoint:interactionPoint) {
@@ -103,7 +103,7 @@ class CPTAxisSet: CPTLayer {
         return super.pointingDeviceUpEvent(event:event, atPoint:interactionPoint)
     }
     
-    func pointingDeviceDownEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint) -> Bool
+    override func pointingDeviceDownEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint) -> Bool
     {
         for  axis in self.axes {
             if axis.pointingDeviceDownEvent(event:event, atPoint:interactionPoint ) {
@@ -111,29 +111,6 @@ class CPTAxisSet: CPTLayer {
             }
         }
         return super.pointingDeviceDownEvent(event:event, atPoint:interactionPoint)
-    }
-
-    /**
-     *  @brief Informs the receiver that the user has
-     *  @if MacOnly released the mouse button. @endif
-     *  @if iOSOnly ended touching the screen. @endif
-     *
-     *
-     *  The event will be passed to each axis belonging to the receiver in turn. This method
-     *  returns @YES if any of its axes handle the event.
-     *
-     *  @param event The OS event.
-     *  @param interactionPoint The coordinates of the interaction.
-     *  @return Whether the event was handled or not.
-     **/
-    func pointingDeviceUpEvent (event: CPTNativeEvent, atPoint interactionPoint:CGPoint)-> Bool
-    {
-        for axis in self.axes {
-            if axis.pointingDeviceUpEven(event: event, atPoint:interactionPoint ) {
-                return true
-            }
-        }
-        return super.pointingDeviceUpEvent(event:event, atPoint:interactionPoint)
     }
 
     var _axes =  [CPTAxis]()

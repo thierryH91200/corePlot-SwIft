@@ -302,48 +302,50 @@ extension CPTPlot {
 //
 ///// @cond
 //
-//-(void)updateContentAnchorForLabel:(nonnull CPTPlotSpaceAnnotation *)label
-//{
-//    if ( label && self.adjustLabelAnchors ) {
-//        CGPoint displacement = label.displacement;
-//        if ( CGPointEqualToPoint(displacement, CGPointZero)) {
-//            displacement.y = CPTFloat(1.0); // put the label above the data point if zero displacement
-//        }
-//        CGFloat angle      = CPTFloat(M_PI) + atan2(displacement.y, displacement.x) - label.rotation;
-//        CGFloat newAnchorX = cos(angle);
-//        CGFloat newAnchorY = sin(angle);
-//
-//        if ( ABS(newAnchorX) <= ABS(newAnchorY)) {
-//            newAnchorX /= ABS(newAnchorY);
-//            newAnchorY  = signbit(newAnchorY) ? CPTFloat(-1.0) : CPTFloat(1.0);
-//        }
-//        else {
-//            newAnchorY /= ABS(newAnchorX);
-//            newAnchorX  = signbit(newAnchorX) ? CPTFloat(-1.0) : CPTFloat(1.0);
-//        }
-//
-//        label.contentAnchorPoint = CPTPointMake((newAnchorX + CPTFloat(1.0)) / CPTFloat(2.0), (newAnchorY + CPTFloat(1.0)) / CPTFloat(2.0));
-//    }
-//}
-//
-///// @endcond
-//
-///**
-// *  @brief Repositions all existing label annotations.
-// **/
-//-(void)repositionAllLabelAnnotations
-//{
-//    CPTAnnotationArray *annotations = self.labelAnnotations;
-//    NSUInteger labelCount           = annotations.count;
-//    Class annotationClass           = [CPTAnnotation class];
-//
-//    for ( NSUInteger i = 0; i < labelCount; i++ ) {
-//        CPTPlotSpaceAnnotation *annotation = annotations[i];
-//        if ( [annotation isKindOfClass:annotationClass] ) {
-//            [self positionLabelAnnotation:annotation forIndex:i];
-//            [self updateContentAnchorForLabel:annotation];
-//        }
-//    }
-//}
-
+    func updateContentAnchorForLabel(label: CPTPlotSpaceAnnotation )
+    {
+        if ( label && self.adjustLabelAnchors == true ) {
+            var displacement = label.displacement
+            
+            if ( displacement!.equalTo(CGPoint())) {
+                displacement?.y = CGFloat(1.0); // put the label above the data point if zero displacement
+            }
+            var angle      = CGFloat(M_PI) + atan2(displacement?.y, displacement?.x) - label.rotation
+            var newAnchorX = cos(angle);
+            var newAnchorY = sin(angle);
+            
+            if ( abs(newAnchorX) <= abs(newAnchorY)) {
+                newAnchorX /= abs(newAnchorY);
+                newAnchorY  = signbit(newAnchorY) ? CGFloat(-1.0) : CGFloat(1.0);
+            }
+            else {
+                newAnchorY /= abs(newAnchorX);
+                newAnchorX  = signbit(newAnchorX) ? CGFloat(-1.0) : CGFloat(1.0);
+            }
+            
+            label.contentAnchorPoint = CGPoint((newAnchorX + CGFloat(1.0)) / CGFloat(2.0), (newAnchorY + CGFloat(1.0)) / CGFloat(2.0));
+        }
+    }
+    
+    ///// @endcond
+    //
+    ///**
+    // *  @brief Repositions all existing label annotations.
+    // **/
+    
+    func repositionAllLabelAnnotations()
+    {
+        let annotations = self.labelAnnotations;
+        let labelCount           = annotations.count;
+        _           = CPTAnnotation()
+        
+        for  i in 0..<labelCount {
+            let annotation = annotations[i]
+            if annotation is CPTPlotSpaceAnnotation {
+                self.positionLabelAnnotation(label:annotation as! CPTPlotSpaceAnnotation, forIndex:i)
+                self.updateContentAnchorForLabel(label:annotation as! CPTPlotSpaceAnnotation)
+            }
+        }
+    }
+    
 }

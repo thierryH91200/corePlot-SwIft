@@ -13,9 +13,9 @@ extension CPTLayer {
     override func display()
     {
         guard self.isHidden == false else {return}
-        if NSView.instancesRespondToSelector:@selector(effectiveAppearance)] ) {
+        if NSView.instancesRespond(to: #selector(effectiveAppearance)) {
             let oldAppearance = NSAppearance.current;
-            NSAppearance.currentAppearance = NSView self.graph.hostingView.effectiveAppearance
+            NSAppearance.current = self.graph?.hostingView?.effectiveAppearance
             
             super.display()
             NSAppearance.current = oldAppearance;
@@ -27,16 +27,10 @@ extension CPTLayer {
     
     @objc func drawInContext(context: CGContext)
     {
-        if ( context ) {
             self.useFastRendering = true
             self.renderAsVectorInContext(context: context)
             self.useFastRendering = false
-        }
-        else {
-            print("%@: Tried to draw into a NULL context");
-        }
     }
-    
     
     /**
      * @brief Recurs@objc ively marks this layer and all sublayers as needing to be redrawn.

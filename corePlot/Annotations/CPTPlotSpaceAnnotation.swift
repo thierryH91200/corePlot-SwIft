@@ -80,7 +80,7 @@ class CPTPlotSpaceAnnotation: CPTAnnotation {
                     
                     content?.anchorPoint = self.contentAnchorPoint!
                     content?.position    = newPosition
-                    content?.transform   = CATransform3DMakeRotation(self.rotation, CGFloat(0.0), CGFloat(0.0), CGFloat(1.0));
+                    content?.transform   = CATransform3DMakeRotation(self.rotation!, CGFloat(0.0), CGFloat(0.0), CGFloat(1.0));
                     content?.pixelAlign()
                 }
             }
@@ -96,7 +96,7 @@ class CPTPlotSpaceAnnotation: CPTAnnotation {
             
             self.anchorCount = anchorPlotPoint.count
             
-            let decimalPoint = calloc(self.anchorCount, sizeof(NSDecimal));
+            let decimalPoint = calloc(self.anchorCount, MemoryLayout<CGFloat>.size);
             for i in 0..<self.anchorCount {
                 decimalPoint[i] = anchorPlotPoint[i]
             }

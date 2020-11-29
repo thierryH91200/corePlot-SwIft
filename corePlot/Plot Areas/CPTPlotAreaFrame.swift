@@ -9,7 +9,7 @@ import Cocoa
 
 class CPTPlotAreaFrame: CPTBorderedLayer {
     
-    var lotArea: CPTPlotArea?
+    var plotArea: CPTPlotArea?
     var axisSet: CPTAxisSet?
     var plotGroup: CPTPlotGroup?
 
@@ -41,7 +41,7 @@ class CPTPlotAreaFrame: CPTBorderedLayer {
 
     init(layer: Any)
     {
-        super.init(layer: layer)
+        super.init(layer: layer as! CPTLayer)
         let theLayer = CPTPlotAreaFrame(layer: layer)
         
         plotArea = theLayer.plotArea
@@ -55,11 +55,11 @@ class CPTPlotAreaFrame: CPTBorderedLayer {
 
     func pointingDeviceDownEvent(event: CPTNativeEvent, interactionPoint:CGPoint) -> Bool
     {
-        if self.plotArea.pointingDeviceDownEvent(event, interactionPoint:interactionPoint) {
+        if ((self.plotArea?.pointingDeviceDownEvent(event: event, atPoint:interactionPoint)) != nil) {
             return true
         }
         else {
-            return super.pointingDeviceDownEvent(event: event, interactionPoint:interactionPoint)
+            return super.pointingDeviceDownEvent(event: event, atPoint:interactionPoint)
         }
     }
 
@@ -72,13 +72,13 @@ class CPTPlotAreaFrame: CPTBorderedLayer {
      *  @param interactionPoint The coordinates of the interaction.
      *  @return Whether the event was handled or not.
      **/
-    -(BOOL)pointingDeviceUpEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
+    override func pointingDeviceUpEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint) -> Bool
     {
-        if ( [self.plotArea pointingDeviceUpEvent:event atPoint:interactionPoint] ) {
-            return YES;
+        if ((self.plotArea?.pointingDeviceUpEvent(event: event, atPoint:interactionPoint )) != nil) {
+            return true
         }
         else {
-            return [super pointingDeviceUpEvent:event atPoint:interactionPoint];
+            return super.pointingDeviceUpEvent(event: event, atPoint:interactionPoint)
         }
     }
 
@@ -91,13 +91,13 @@ class CPTPlotAreaFrame: CPTBorderedLayer {
      *  @param interactionPoint The coordinates of the interaction.
      *  @return Whether the event was handled or not.
      **/
-    -(BOOL)pointingDeviceDraggedEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
+    override func pointingDeviceDraggedEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint)-> Bool
     {
-        if ( [self.plotArea pointingDeviceDraggedEvent:event atPoint:interactionPoint] ) {
-            return YES;
+        if ((self.plotArea?.pointingDeviceDraggedEvent(event: event, atPoint:interactionPoint)) != nil) {
+            return true
         }
         else {
-            return [super pointingDeviceDraggedEvent:event atPoint:interactionPoint];
+            return super.pointingDeviceDraggedEvent(event: event ,atPoint:interactionPoint)
         }
     }
 
@@ -119,8 +119,6 @@ class CPTPlotAreaFrame: CPTBorderedLayer {
             return [super pointingDeviceCancelledEvent:event];
         }
     }
-
-    /// @}
 
 
     // MARK: - Accessors
