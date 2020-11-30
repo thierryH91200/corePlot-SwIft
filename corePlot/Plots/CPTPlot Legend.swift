@@ -61,10 +61,10 @@ extension CPTPlot {
 {
     let theDelegate = self.delegate;
 
-     var   theFill : CPTFill?;
+     var theFill : CPTFill?;
 
-    if ( [theDelegate respondsToSelector:@selector(legend:fillForSwatchAtIndex:forPlot:)] ) {
-        theFill = [theDelegate legend:legend fillForSwatchAtIndex:idx forPlot:self];
+        if ( theDelegate.respondsToSelector(to: :#selector(legend:fillForSwatchAtIndex:forPlot:)] ) {
+            theFill = theDelegate.legend:legend.fillForSwatchAtIndex(:idx forPlot:self)
     }
         if ( (theFill == nil) ) {
         theFill = legend.swatchFill;
@@ -72,7 +72,7 @@ extension CPTPlot {
 
         var theLineStyle : CPTLineStyle?
 
-    if ( [theDelegate respondsToSelector:@selector(legend:lineStyleForSwatchAtIndex:forPlot:)] ) {
+        if ( [theDelegate respondsToSelector( to:#selector(legend:lineStyleForSwatchAtIndex:forPlot:)] ) {
         theLineStyle = theDelegate.legend(legend:legend ,lineStyleForSwatchAtIndex(idx, forPlot:self)
     }
     if ( !theLineStyle ) {

@@ -32,62 +32,61 @@ class CPTPlotRange: NSObject {
     var  isInfinite: Bool = true
     var  lengthSign: CPTSign = .positive
 
-//   // MARK:Init/Dealloc
-//    +(nonnull instancetype)plotRangeWithLocation:(nonnull NSNumber *)loc length:(nonnull NSNumber *)len
-//    {
-//        return [[self alloc] initWithLocation:loc length:len];
-//    }
-//
-//    /** @brief Creates and returns a new CPTPlotRange instance initialized with the provided location and length.
-//     *  @param loc The starting location of the range.
-//     *  @param len The length of the range.
-//     *  @return A new CPTPlotRange instance initialized with the provided location and length.
-//     **/
-//    +(nonnull instancetype)plotRangeWithLocationDecimal:(NSDecimal)loc lengthDecimal:(NSDecimal)len
-//    {
-//        return [[self alloc] initWithLocationDecimal:loc lengthDecimal:len];
-//    }
-//
-//    /** @brief Initializes a newly allocated CPTPlotRange object with the provided location and length.
-//     *  @param loc The starting location of the range.
-//     *  @param len The length of the range.
-//     *  @return The initialized CPTPlotRange object.
-//     **/
-//    -(nonnull instancetype)initWithLocation:(nonnull NSNumber *)loc length:(nonnull NSNumber *)len
-//    {
-//        NSParameterAssert(loc);
-//        NSParameterAssert(len);
-//
-//        if ((self = [super init])) {
-//            locationDecimal = loc.decimalValue;
-//            locationDouble  = loc.doubleValue;
-//
-//            lengthDecimal = len.decimalValue;
-//            lengthDouble  = len.doubleValue;
-//
-//            if ( isnan(lengthDouble)) {
-//                isInfinite = NO;
-//                lengthSign = CPTSignNone;
-//            }
-//            else {
-//                isInfinite = (BOOL)isinf(lengthDouble);
-//                lengthSign = signbit(lengthDouble) ? CPTSignNegative : CPTSignPositive;
-//            }
-//        }
-//
-//        return self;
-//    }
+   // MARK: Init/Dealloc
+    +(nonnull instancetype)plotRangeWithLocation:(nonnull NSNumber *)loc length:(nonnull NSNumber *)len
+    {
+        return [[self alloc] initWithLocation:loc length:len];
+    }
+
+    /** @brief Creates and returns a new CPTPlotRange instance initialized with the provided location and length.
+     *  @param loc The starting location of the range.
+     *  @param len The length of the range.
+     *  @return A new CPTPlotRange instance initialized with the provided location and length.
+     **/
+    +(nonnull instancetype)plotRangeWithLocationDecimal:(NSDecimal)loc lengthDecimal:(NSDecimal)len
+    {
+        return [[self alloc] initWithLocationDecimal:loc lengthDecimal:len];
+    }
 //
 //    /** @brief Initializes a newly allocated CPTPlotRange object with the provided location and length.
 //     *  @param loc The starting location of the range.
 //     *  @param len The length of the range.
 //     *  @return The initialized CPTPlotRange object.
 //     **/
-//    -(nonnull instancetype)initWithLocationDecimal:(NSDecimal)loc lengthDecimal:(NSDecimal)len
-//    {
-//        return [self initWithLocation:[NSDecimalNumber decimalNumberWithDecimal:loc]
-//                               length:[NSDecimalNumber decimalNumberWithDecimal:len]];
-//    }
+    
+    
+    init(location: CGFloat, length:CGFloat)
+    {
+
+        super.init()
+            locationDecimal = location.decimalValue;
+            locationDouble  = location.doubleValue;
+
+            lengthDecimal = location.decimalValue;
+            lengthDouble  = location.doubleValue;
+
+            if ( isnan(lengthDouble)) {
+                isInfinite = false
+                lengthSign = CPTSignNone;
+            }
+            else {
+                isInfinite = (BOOL)isinf(lengthDouble);
+                lengthSign = lengthDouble.signbit() ? CPTSign.negative : CPTSign.positive
+            }
+        }
+
+    }
+//
+//    /** @brief Initializes a newly allocated CPTPlotRange object with the provided location and length.
+//     *  @param loc The starting location of the range.
+//     *  @param len The length of the range.
+//     *  @return The initialized CPTPlotRange object.
+//     **/
+    -(nonnull instancetype)initWithLocationDecimal:(NSDecimal)loc lengthDecimal:(NSDecimal)len
+    {
+        return [self initWithLocation:[NSDecimalNumber decimalNumberWithDecimal:loc]
+                               length:[NSDecimalNumber decimalNumberWithDecimal:len]];
+    }
 //
 //    /// @name Initialization
 //    /// @{
@@ -100,10 +99,10 @@ class CPTPlotRange: NSObject {
 //     *
 //     *  @return The initialized object.
 //     **/
-//    -(nonnull instancetype)init
-//    {
-//        return [self initWithLocation:@0.0 length:@0.0];
-//    }
+    -(nonnull instancetype)init
+    {
+        return [self initWithLocation:@0.0 length:@0.0];
+    }
 //
 //    /// @}
 //

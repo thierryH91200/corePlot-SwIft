@@ -89,24 +89,24 @@ func imageOfLayer() -> CPTNativeImage
  *  @param rect The bounding rectangle in which to draw the text.
  *  @param context The graphics context to draw into.
  **/
--(void)drawInRect:(CGRect)rect inContext:(nonnull CGContextRef)context
-{
-    CPTPushCGContext(context);
+        func drawInRect(rect: CGRect, inContext: CGContext)
+    {
+        CPTPushCGContext(context);
 
-        self.drawWithRect:NSRectFromCGRect(rect)
-               options:CPTStringDrawingOptions];
+            self.draw( rect :NSRectFromCGRect, 
+                   options:CPTStringDrawingOptions];
 
-    CPTPopCGContext();
-}
+        CPTPopCGContext();
+    }
 
 /**
  *  @brief Computes the size of the styled text when drawn rounded up to the nearest whole number in each dimension.
  **/
         func sizeAsDrawn() -> CGSize
         {
-            let rect = CGRect()
+            var rect = CGRect()
             
-            if (self.respondsToSelector(#@selector(boundingRectWithSize:options:context:)) {
+            if (self.respondsToSelector(to: #@selector(boundingRectWithSize:options:context:)) {
                 rect = self.boundingRectWithSize:CGSize(10000.0, 10000.0)
                 options:CPTStringDrawingOptions
                 context:nil)

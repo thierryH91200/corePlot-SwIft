@@ -24,12 +24,14 @@ Core Plot is a 2D plotting framework for macOS, iOS, and tvOS. It is highly cust
 
 # problem encountered
 
-### NSInvocation                                   
+## NSInvocation                                   
 corePlot/Source/Animation/CPTAnimationCGFloatPeriod
 
-### NSValue
+## NSValue
+
+## CPTPlotRange
 
 
-### class CPTColor
+## class CPTColor
 
 

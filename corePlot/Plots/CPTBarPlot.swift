@@ -35,8 +35,7 @@ class CPTBarPlot: CPTPlot {
     var barWidths  = [CPTLineStyle]()
     var pointingDeviceDownIndex = 0
     
-    
-    
+
     
     // MARK: Appearance
     var barWidthsAreInViewCoordinates = true
@@ -328,7 +327,7 @@ class CPTBarPlot: CPTPlot {
             let maxIndex             = NSMaxRange(indexRange)
             
             for  idx in indexRange.location..<maxIndex {
-                let dataSourceLineStyle = [theDataSource barLineStyleForBarPlot:self recordIndex:idx];
+                let dataSourceLineStyle = theDataSource.barLineStyleForBarPlot(self, recordIndex:idx)
                 if ( dataSourceLineStyle ) {
                     array.append(dataSourceLineStyle)
                 }
@@ -337,7 +336,7 @@ class CPTBarPlot: CPTPlot {
                 }
             }
             
-            self.cacheArray(array,
+            self.cacheArray(array: array,
             forKey:CPTBarPlotBindingBarLineStyles,
             atRecordIndex:indexRange.location)
         }
@@ -362,31 +361,29 @@ class CPTBarPlot: CPTPlot {
     //     **/
     func reloadBarWidths(indexRange: NSRange)
     {
-        let theDataSource = self.dataSource
+        let dataSource = self.dataSource
         
-        if theDataSource.respondsToSelector(to:#selector(barWidthsForBarPlot:recordIndexRange:) ) {
-            [self cacheArray:[theDataSource barWidthsForBarPlot:self recordIndexRange:indexRange]
-             forKey:CPTBarPlotBindingBarWidths
-             atRecordIndex:indexRange.location];
+        if dataSource.respondsToSelector(to:#selector(barWidthsForBarPlot:recordIndexRange:) ) {
+            self.cacheArray:[theDataSource barWidthsForBarPlot:self recordIndexRange:indexRange]
+             forKey:CPTBarPlotBindingBarWidths,
+             atRecordIndex:indexRange.location)
         }
-        else if ( [theDataSource respondsToSelector:@selector(barWidthForBarPlot:recordIndex:)] ) {
-            id nilObject                 = [CPTPlot nilData];
+        else if dataSource.respondsToSelector(to:#selector(barWidthForBarPlot:recordIndex:)) {
+            let nilObject                 = [CPTPlot nilData];
             CPTMutableNumberArray *array = [[NSMutableArray alloc] initWithCapacity:indexRange.length];
-            NSUInteger maxIndex          = NSMaxRange(indexRange);
+            let maxIndex          = NSMaxRange(indexRange);
             
-            for ( NSUInteger idx = indexRange.location; idx < maxIndex; idx++ ) {
-                NSNumber *width = [theDataSource barWidthForBarPlot:self recordIndex:idx];
+            for idx in indexRange.location..<maxIndex {
+                let width = dataSource.barWidthForBarPlot(self, recordIndex:idx)
                 if ( width ) {
-                    [array addObject:width];
+                    array.addObject(width)
                 }
                 else {
-                    [array addObject:nilObject];
+                    array.addObject(nilObject)
                 }
             }
             
-            [self.cacheArray(array,
-            forKey:CPTBarPlotBindingBarWidths,
-            atRecordIndex:indexRange.location)
+            self.cacheArray(array,   forKey:CPTBarPlotBindingBarWidths,  atRecordIndex:indexRange.location)
         }
         
         self.setNeedsDisplay()

@@ -21,7 +21,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
     var adjustLabelAnchors = false
     
     var showLabels = false
-    var  labelOffset = CGFloat (0)
+    var labelOffset = CGFloat (0)
     
     var labelRotation = CGFloat(0)
     var labelField : CPTTextStyle?
@@ -44,7 +44,6 @@ public class CPTPlot: CPTAnnotationHostLayer {
     var cachedDataCount = 0
     var inTitleUpdate = false ;
     
-    //    var numberOfRecords = 0
     var cachePrecision = CPTPlotCachePrecision.auto
     
     var fieldIdentifiers = [Int]()

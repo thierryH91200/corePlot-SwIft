@@ -7,7 +7,7 @@
 
 import Cocoa
 
-class CPTFill: NSObject  {
+public class CPTFill: NSObject  {
     
     
     class func fill(with aColor: CPTColor) -> Self {

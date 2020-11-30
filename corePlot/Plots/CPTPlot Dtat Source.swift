@@ -12,11 +12,11 @@ extension CPTPlot {
     
     // MARK: Data Source
     
-    func numberOfRecords() -> Int {
-        var theDataSource = dataSource as? CPTPlotDataSource
-        
-        return theDataSource?.numberOfRecords(forPlot: self) ?? 0
-    }
+//    func numberOfRecords() -> Int {
+//        var theDataSource = dataSource as? CPTPlotDataSource
+//        
+//        return theDataSource?.numberOfRecords(forPlot: self) ?? 0
+//    }
     func reloadDataInIndexRange(indexRange :NSRange)
     {
         self.dataNeedsReloading = false;

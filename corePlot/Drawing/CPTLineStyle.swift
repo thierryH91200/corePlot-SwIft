@@ -8,7 +8,7 @@
 import AppKit
 
 
-class CPTLineStyle: NSObject {
+public class CPTLineStyle: NSObject {
     
     var lineCap = CGLineCap.butt
     var lineJoin : CGLineJoin

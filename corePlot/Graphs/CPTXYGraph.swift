@@ -25,14 +25,14 @@ class CPTXYGraph: CPTGraph {
         yScaleType = newYScaleType
     }
     
-    init( frame : CGRect)
+    override init( frame : CGRect)
     {
         super.init(frame : frame)
         xScaleType = CPTScaleType.linear
         yScaleType = CPTScaleType.linear
     }
     
-    init(layer: Any) {
+    override init(layer: Any) {
         super.init(layer: layer)
         let theLayer = layer as? CPTXYGraph
 

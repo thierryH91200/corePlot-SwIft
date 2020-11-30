@@ -7,7 +7,7 @@
 
 import AppKit
 
-class CPTBorderedLayer: CPTAnnotationHostLayer {
+public class CPTBorderedLayer: CPTAnnotationHostLayer {
     
     var text = ""
     var textStyle = CPTTextStyle()
