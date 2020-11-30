@@ -49,17 +49,20 @@ extension CPTGraph {
     // MARK: - Retrieving Plots
     func reloadData()
     {
-        //        self.plots.makeObjectsPerformSelector(#selector(reloadData))
-        self.plots.makeObjectsPerformSelector(#selector(reloadData))
-        self.plotSpaces.makeObjectsPerformSelector(#selector(removeAllCategories))
+        for plot in plots {
+            plot.reloadData()
+        }
+        for plotSpace in plotSpaces {
+            plotSpace.removeAllCategories()
+        }
     }
     
-    /**
-     *  @brief Makes all plots reload their data if their data cache is out of date.
-     **/
+    //   @brief Makes all plots reload their data if their data cache is out of date.
     func reloadDataIfNeeded()
     {
-        self.plots.makeObjectsPerformSelector(#selector(reloadDataIfNeeded))
+        for plot in plots {
+            plot.reloadDataIfNeeded()
+        }
     }
     
     /** @brief All plots associated with the graph.
@@ -105,7 +108,7 @@ extension CPTGraph {
      **/
     func addPlot(plot : CPTPlot )
     {
-        self.addPlot(plot , space:self.defaultPlotSpace)
+        self.addPlot(plot: plot , space:self.defaultPlotSpace)
     }
     
     /** @brief Add a plot to the given plot space.
@@ -128,7 +131,7 @@ extension CPTGraph {
     func removePlot(plot: CPTPlot )
     {
         if ( plot ) {
-            let thePlot = plot;
+            let thePlot = plot
             
             if self.plots.contains(plot ) {
                 thePlot.plotSpace = nil
@@ -156,13 +159,13 @@ extension CPTGraph {
      *  @param idx An index within the bounds of the plot array.
      *  @param space The plot space.
      **/
-    func insertPlot(plot: CPTPlot, atIndex:Int, space: CPTPlotSpace)
+    func insertPlot(plot: CPTPlot, index:Int, space: CPTPlotSpace)
     {
         if ( plot ) {
-            self.plots.insert(plot, atIndex:idx)
+            self.plots.insert(plot, at: index)
             plot.plotSpace = space
             plot.graph     = self
-            self.plotAreaFrame.plotGroup.insertPlot(plot, atIndex:idx)
+            self.plotAreaFrame.plotGroup.insertPlot(plot, at: index)
         }
     }
     

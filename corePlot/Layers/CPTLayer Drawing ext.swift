@@ -195,7 +195,7 @@ extension CPTLayer {
         return false;
     }
     
-    func pointingDeviceCancelledEvent(event: CPTNativeEvent ) -> Bool
+    @objc func pointingDeviceCancelledEvent(event: CPTNativeEvent ) -> Bool
     {
         return false;
     }

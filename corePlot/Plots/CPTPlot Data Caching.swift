@@ -27,19 +27,24 @@ extension CPTPlot {
     {
         var cacheKey = fieldEnum
         
-        let coordinate   = self.coordinateForFieldIdentifier(fieldEnum)
+        let coordinate   = self.coordinateForFieldIdentifier(field: fieldEnum)
         var thePlotSpace = self.plotSpace;
         
         if ( numbers ) {
+            
+            
             switch ( thePlotSpace.scaleTypeForCoordinate(coordinate: coordinate ) {
             case CPTScaleType.linear:
+            fallthrough
+            
             case CPTScaleTypeLog:
+            fallthrough
             case CPTScaleTypeLogModulus:
             {
             id theNumbers                         = numbers;
             CPTMutableNumericData *mutableNumbers = [self numericDataForNumbers:theNumbers];
             
-            NSUInteger sampleCount = mutableNumbers.numberOfSamples;
+            let  sampleCount = mutableNumbers.numberOfSamples;
             if ( sampleCount > 0 ) {
             (self.cachedData)[cacheKey] = mutableNumbers;
             }
@@ -50,7 +55,7 @@ extension CPTPlot {
             self.cachedDataCount = sampleCount;
             
             switch ( self.cachePrecision ) {
-            case CPTPlotCachePrecisionAuto:
+            case CPTPlotCachePrecision.Auto:
             [self setCachedDataType:mutableNumbers.dataType];
             break;
             
@@ -58,20 +63,20 @@ extension CPTPlot {
             [self setCachedDataType:self.doubleDataType];
             break;
             
-            case CPTPlotCachePrecisionDecimal:
+            case CPTPlotCachePrecision..Decimal:
             [self setCachedDataType:self.decimalDataType];
             break;
             }
             }
             break;
             
-            case CPTScaleTypeCategory:
+            case CPTScaleType.Category:
             {
             CPTStringArray *samples = (CPTStringArray *)numbers;
             if ( [samples isKindOfClass:[NSArray class]] ) {
             [thePlotSpace setCategories:samples forCoordinate:coordinate];
             
-            NSUInteger sampleCount = samples.count;
+            let sampleCount = samples.count;
             if ( sampleCount > 0 ) {
             CPTMutableNumberArray *indices = [[NSMutableArray alloc] initWithCapacity:sampleCount];
             
@@ -465,30 +470,34 @@ extension CPTPlot {
 // *  @param key The key identifying the field.
 // *  @param idx The index of the first data point to replace.
 // **/
-//-(void)cacheArray:(nullable NSArray *)array forKey:(nonnull NSString *)key atRecordIndex:(NSUInteger)idx
-//{
-//    NSUInteger sampleCount = array.count;
-//
-//    if ( sampleCount > 0 ) {
-//        // Ensure the data cache exists and is the right size
-//        id<CPTPlotDataSource> theDataSource = self.dataSource;
-//        NSUInteger numberOfRecords          = [theDataSource numberOfRecordsForPlot:self];
-//        NSMutableArray *cachedValues        = (self.cachedData)[key];
-//        if ( !cachedValues ) {
-//            cachedValues = [NSMutableArray arrayWithCapacity:numberOfRecords];
-//            NSNull *nullObject = [NSNull null];
-//            for ( NSUInteger i = 0; i < numberOfRecords; i++ ) {
-//                [cachedValues addObject:nullObject];
-//            }
-//            (self.cachedData)[key] = cachedValues;
-//        }
-//
-//        // Update the cache
-//        self.cachedDataCount = numberOfRecords;
-//
-//        NSArray *dataArray = array;
-//        [cachedValues replaceObjectsInRange:NSMakeRange(idx, sampleCount) withObjectsFromArray:dataArray];
-//    }
+    func cacheArray(array: Array<Any>, forKey key: String, atRecordIndex:Int)
+    {
+        let  sampleCount = array.count;
+        
+        if ( sampleCount > 0 ) {
+            // Ensure the data cache exists and is the right size
+            let theDataSource = self.dataSource
+            let numberOfRecords = theDataSource?.numberOfRecordsForPlot(plot: self)
+            
+            var cachedValues  = self.cachedData[key]
+            if ( cachedValues?.isEmpty == false ) {
+                cachedValues = [String]()
+                let nullObject : String?
+                
+                for i in 0..<numberOfRecords! {
+                    cachedValues.apppend(nullObject)
+                }
+                self.cachedData[key] = cachedValues;
+            }
+            
+            // Update the cache
+            self.cachedDataCount = numberOfRecords!;
+            
+            let dataArray = array
+            
+            [cachedValues.replaceObjectsInRange:NSMakeRange(idx, sampleCount) withObjectsFromArray:dataArray];
+        }
+    }
 }
 
 

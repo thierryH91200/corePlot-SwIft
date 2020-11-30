@@ -5,8 +5,7 @@
 //  Created by thierryH24 on 11/11/2020.
 //
 
-import Cocoa
-import Foundation
+import AppKit
 
 
 class CPTLineStyle: NSObject {

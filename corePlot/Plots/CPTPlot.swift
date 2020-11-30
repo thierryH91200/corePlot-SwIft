@@ -9,7 +9,7 @@ import AppKit
 
 public class CPTPlot: CPTAnnotationHostLayer {
     
-    let CPTPlotBindingDataLabels = "dataLabels"
+//    let CPTPlotBindingDataLabels = "dataLabels"
     
     
     public var dataSource : CPTPlotDataSource?
@@ -55,13 +55,12 @@ public class CPTPlot: CPTAnnotationHostLayer {
         case decimal
     }
     
-    init()
+    override init()
     {
         super.init()
-        exposeBinding(CPTPlotBindingDataLabels)
+        CPTPlot.exposeBinding(.CPTPlotBindingDataLabels)
     }
 
-    
     init(frame: CGRect)
     {
         super.init()

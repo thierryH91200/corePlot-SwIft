@@ -13,7 +13,7 @@ extension CPTPlot {
     // MARK: Data Source
     
     func numberOfRecords() -> Int {
-        weak var theDataSource = dataSource as? CPTPlotDataSource
+        var theDataSource = dataSource as? CPTPlotDataSource
         
         return theDataSource?.numberOfRecords(forPlot: self) ?? 0
     }
@@ -37,43 +37,44 @@ extension CPTPlot {
         let values = cachedData.map { $0.value }
         
         for  data in values {
-             
-             if ( [data isKindOfClass:numericClass] ) {
-             CPTMutableNumericData *numericData = (CPTMutableNumericData *)data;
-             let sampleSize                  = numericData.sampleBytes;
-             let length                      = sampleSize * numberOfRecords;
-             
-             [(NSMutableData *) numericData.data increaseLengthBy:length];
-             
-             int8_t *start      = [numericData mutableSamplePointer:idx];
-             size_t bytesToMove = numericData.data.length - (idx + numberOfRecords) * sampleSize;
-             if ( bytesToMove > 0 ) {
-             memmove(start + length, start, bytesToMove);
-             }
-             }
-             else {
-             var array = data];
-             NSNull *nullObject    = [NSNull null];
-             NSUInteger lastIndex  = idx + numberOfRecords - 1;
-             for i in idx..<=lastIndex {
-             array.insertObject:nullObject atIndex:i];
-             }
-             }
-             }
-             
-             CPTMutableAnnotationArray *labelArray = self.labelAnnotations;
-             
-             if ( labelArray ) {
-             id nullObject        = [NSNull null];
-             NSUInteger lastIndex = idx + numberOfRecords - 1;
-             for ( NSUInteger i = idx; i <= lastIndex; i++ ) {
-             [labelArray insertObject:nullObject atIndex:i];
-             }
-             }
-             
-             self.cachedDataCount += numberOfRecords;
-             self reloadDataInIndexRange(NSRange(idx, numberOfRecords)];
-             }
+            
+            if ( [data isKindOfClass:numericClass] ) {
+                CPTMutableNumericData *numericData = (CPTMutableNumericData *)data;
+                let sampleSize                  = numericData.sampleBytes;
+                let length                      = sampleSize * numberOfRecords;
+                
+                [(NSMutableData *) numericData.data increaseLengthBy:length];
+                
+                int8_t *start      = [numericData mutableSamplePointer:idx];
+                size_t bytesToMove = numericData.data.length - (idx + numberOfRecords) * sampleSize;
+                if ( bytesToMove > 0 ) {
+                    memmove(start + length, start, bytesToMove);
+                }
+            }
+            else {
+                var array = data];
+                NSNull *nullObject    = [NSNull null];
+                NSUInteger lastIndex  = idx + numberOfRecords - 1;
+                for i in idx..<=lastIndex {
+                    array.insertObject:nullObject atIndex:i];
+                }
+            }
+        }
+        
+        CPTMutableAnnotationArray *labelArray = self.labelAnnotations;
+        
+        if ( labelArray ) {
+            id nullObject        = [NSNull null];
+            NSUInteger lastIndex = idx + numberOfRecords - 1;
+            for ( NSUInteger i = idx; i <= lastIndex; i++ ) {
+                [labelArray insertObject:nullObject atIndex:i];
+            }
+        }
+        
+        self.cachedDataCount += numberOfRecords;
+        self reloadDataInIndexRange(NSRange(idx, numberOfRecords)];
+        }
+        
              //
              ///** @brief Delete records in the given index rang@objc e from the plot data cache.
              // *  @param indexRange The index range of the data records to remove.
@@ -119,66 +120,66 @@ extension CPTPlot {
              }
              
              // *  @brief Reload all plot data from the data source immediately.
-             func reloadPlotData()
-             {
-             var dataCache = cachedData
-             for fieldID in fieldIdentifiers {
-             dataCache.removeValue(forKey: String(fieldID))
-             }
-             reloadPlotData(indexRange: NSRange(location: 0, length: cachedDataCount))
-             }
-             //
-             ///** @brief Reload plot data in the given index range from the data source immediately.
-             // *  @param indexRange The index range to load.
-             // **/
-             func reloadPlotData(indexRange: NSRange )
-             {
-             // do nothing--implementation provided by subclasses
-             }
-             //
-             // *  @brief Reload all data labels from the data source immediately.
-             func reloadDataLabels()
-             {
-             self.cachedData.removeValue (forKey: CPTPlotBindingDataLabels)
-             self.reloadDataLabels( indexRange: NSRange(location: 0, length: self.cachedDataCount))
-             }
+        func reloadPlotData()
+        {
+        var dataCache = cachedData
+        for fieldID in fieldIdentifiers {
+        dataCache.removeValue(forKey: String(fieldID))
+        }
+        reloadPlotData(indexRange: NSRange(location: 0, length: cachedDataCount))
+        }
+        //
+        ///** @brief Reload plot data in the given index range from the data source immediately.
+        // *  @param indexRange The index range to load.
+        // **/
+        func reloadPlotData(indexRange: NSRange )
+        {
+        // do nothing--implementation provided by subclasses
+        }
+        //
+        // *  @brief Reload all data labels from the data source immediately.
+        func reloadDataLabels()
+        {
+        self.cachedData.removeValue (forKey: CPTPlotBindingDataLabels)
+        self.reloadDataLabels( indexRange: NSRange(location: 0, length: self.cachedDataCount))
+        }
              
              
              //
              ///** @brief Reload data labels in the given index range from the data source immediately.
              // *  @param indexRange The index range to load.
              // **/
-             func reloadDataLabels( indexRange: NSRange) {
-             weak var theDataSource = dataSource as? CPTPlotDataSource?
-             
-             if theDataSource?.responds(to: #selector(CPTPlotDataSource.dataLabels(forPlot:recordIndexRange:))) ?? false {
-             cacheArray(
-             theDataSource?.dataLabels(forPlot: self, recordIndexRange: indexRange),
-             forKey: CPTPlotBindingDataLabels,
-             atRecord: indexRange.location)
-             } else if theDataSource?.responds(to: #selector(CPTPlotDataSource.dataLabel(forPlot:recordIndex:))) ?? false {
-             let nilObject = CPTPlot.nilData()
-             let array = [AnyHashable](repeating: 0, count: indexRange.length) as? CPTMutableLayerArray
-             
-             
-             let maxIndex = NSMaxRange(indexRange)
-             
-             for idx in indexRange.location..<maxIndex {
-             let labelLayer = theDataSource?.dataLabel(forPlot: self, record: idx)
-             if let labelLayer = labelLayer {
-             array?.add(labelLayer)
-             } else {
-             if let nilObject = nilObject as? MDLObject {
-             array?.add(nilObject)
-             }
-             }
-             }
-             
-             cacheArray( array, forKey: CPTPlotBindingDataLabels, atRecord: indexRange.location)
-             }
-             
-             relabel(indexRange)
+        func reloadDataLabels( indexRange: NSRange) {
+        weak var theDataSource = dataSource as? CPTPlotDataSource?
+        
+        if theDataSource?.responds(to: #selector(CPTPlotDataSource.dataLabels(forPlot:recordIndexRange:))) ?? false {
+        cacheArray(
+        theDataSource?.dataLabels(forPlot: self, recordIndexRange: indexRange),
+        forKey: CPTPlotBindingDataLabels,
+        atRecord: indexRange.location)
+        } else if theDataSource?.responds(to: #selector(CPTPlotDataSource.dataLabel(forPlot:recordIndex:))) ?? false {
+        let nilObject = CPTPlot.nilData()
+        let array = [AnyHashable](repeating: 0, count: indexRange.length) as? CPTMutableLayerArray
+        
+        
+        let maxIndex = NSMaxRange(indexRange)
+        
+        for idx in indexRange.location..<maxIndex {
+        let labelLayer = theDataSource?.dataLabel(forPlot: self, record: idx)
+        if let labelLayer = labelLayer {
+        array?.add(labelLayer)
+        } else {
+        if let nilObject = nilObject as? MDLObject {
+        array?.add(nilObject)
         }
+        }
+        }
+        
+        cacheArray( array, forKey: CPTPlotBindingDataLabels, atRecord: indexRange.location)
+        }
+        
+        relabel(indexRange)
+    }
 
 
 ///**

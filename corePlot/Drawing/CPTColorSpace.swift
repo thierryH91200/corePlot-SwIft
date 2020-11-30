@@ -57,7 +57,7 @@ return space;
         cgSpace = CGColorSpace(name: CGColorSpace.sRGB)
 
         super.init()
-        init(colorSpace: cgSpace)
+        super.init(colorSpace: cgSpace)
 
     }
     

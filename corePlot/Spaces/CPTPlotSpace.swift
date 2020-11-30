@@ -53,28 +53,29 @@ class CPTPlotSpace: NSObject {
 //     *  @param coordinate The axis coordinate.
 //     *  @return The ordered set of categories for the given coordinate.
 //     */
-    func orderedSetForCoordinate(coordinate: CPTCoordinate) ->Set< String > //CPTMutableCategorySet
-    {
-        NSMutableDictionary<NSNumber *, CPTMutableCategorySet *> *names = self.categoryNames;
+    func orderedSet(for coordinate: CPTCoordinate) -> CPTMutableCategorySet {
+        var names = categoryNames
 
-        if ( !names ) {
-            names = [[NSMutableDictionary alloc] init];
+        if names == nil {
+            names = [:]
 
-            self.categoryNames = names;
+            categoryNames = names
         }
 
-        let  cacheKey = coordinate
+        let cacheKey = NSNumber(value: coordinate)
 
-        let categories = names[cacheKey];
+        var categories = names[cacheKey]
 
-        if ( !categories ) {
-            categories = Set< Any >
+        if categories == nil {
+            categories = NSMutableOrderedSet()
 
-            names[cacheKey] = categories;
+            names[cacheKey] = categories
         }
-        return categories;
+
+        return categories
     }
-
+    
+    
     func addCategory(_ category: String, for coordinate: CPTCoordinate) {
 
         let categories = orderedSetForCoordinate(coordinate: coordinate)
@@ -170,18 +171,14 @@ class CPTPlotSpace: NSObject {
     
     
     
-    //
-    //    /**
-    //     *  @brief Returns the index of the given category name in the list of category names for the given coordinate.
-    //     *  @param category The category name.
-    //     *  @param coordinate The axis coordinate.
-    //     *  @return The category index.
-    //     */
     func indexOfCategory(_ category: String, for coordinate: CPTCoordinate) -> Int {
         guard category != "" else {
-            print( "Invalid parameter not satisfying: category != ","")
-            return
             
+            
+            CPTMutableCategorySet *categories = [self orderedSetForCoordinate:coordinate];
+
+            return [categories indexOfObject:category];
+
         }
         
         let categories = orderedSet(for: coordinate)

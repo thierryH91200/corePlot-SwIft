@@ -18,9 +18,6 @@ public extension Notification.Name {
     static let CPTLegendNeedsReloadEntriesForPlotNotification =  Notification.Name( "CPTPlotSpaceCoordinateMappingDidChangeNotification")
     static let CPTPlotSpaceCoordinateMapping =  Notification.Name( "CPTLegendNeedsReloadEntriesForPlotNotification")
 
-
-
-    
     static let CPTLayerBoundsDidChangeNotification           = Notification.Name( "CPTLayerBoundsDidChangeNotification")
     static let CoordinateMappingDidChangeNotification  = Notification.Name( "CoordinateMappingDidChangeNotification")
     static let boundsDidChange  = Notification.Name( "boundsDidChange")
@@ -29,8 +26,6 @@ public extension Notification.Name {
     static let CPTGraphDidAddPlotSpaceNotification  = Notification.Name( "CPTGraphDidAddPlotSpaceNotification")
     static let CPTGraphDidRemovePlotSpaceNotification  = Notification.Name( "CPTGraphDidRemovePlotSpaceNotification")
     static let CPTGraphPlotSpaceNotificationKey  = Notification.Name( "CPTGraphPlotSpaceNotificationKey")
-
-
     static let updateBalance             = Notification.Name( "updateBalance")
     static let updateAccount             = Notification.Name( "updateAccount")
 
@@ -67,4 +62,21 @@ extension NotificationCenter {
             object: nil
         )
     }
+}
+
+
+public extension NSBindingName {
+    
+    // MARK: CPTPlot
+
+    static let CPTPlotBindingDataLabels  =  NSBindingName( "dataLabels")
+    
+    // MARK: CPTBar
+    static let CPTBarPlotBindingBarLocations  = NSBindingName("barLocations" ) ///< Bar locations.
+    static let CPTBarPlotBindingBarTips       = NSBindingName("barTips"  )     ///< Bar tips.
+    static let CPTBarPlotBindingBarBases      = NSBindingName("barBases")      ///< Bar bases.
+    static let CPTBarPlotBindingBarFills      = NSBindingName("barFills" )    ///< Bar fills.
+    static let CPTBarPlotBindingBarLineStyles = NSBindingName("barLineStyles") ///< Bar line styles.
+    static let CPTBarPlotBindingBarWidths     = NSBindingName("barWidths" )    ///< Bar widths.
+    
 }

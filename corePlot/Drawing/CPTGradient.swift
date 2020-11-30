@@ -11,6 +11,17 @@ import Cocoa
 // https://stackoverflow.com/questions/49399089/binary-tree-with-struct-in-swift
 
 class CPTGradientElement {
+    
+    
+    enum CPThi :Int {
+        case unowned
+        case two
+        case three
+        case four
+        case five
+        case six
+        
+    }
     var color : CPTRGBAColor    ///< Color
     var position: CGFloat      ///< Gradient position (0 ≤ @par{position} ≤ 1)
     
@@ -71,7 +82,7 @@ class CPTGradient: NSObject {
     func CPTTransformHSV_RGB(components :[CGFloat] ) // H,S,B -> R,G,B
     {
         
-        let R = CGFloat(0.0), G = CGFloat(0.0), B = CGFloat(0.0);
+        var R = CGFloat(0.0), G = CGFloat(0.0), B = CGFloat(0.0);
         
         let H = fmod(components[0], CGFloat(360.0)); // map to [0,360)
         let S = components[1];
@@ -131,30 +142,62 @@ class CPTGradient: NSObject {
     
     func addElement( newElement: CPTGradientElement )
     {
-        let curElement = self.elementList
+        var curElement = self.elementList
         
         if curElement == nil || (newElement.position < curElement.position)) {
-            CPTGradientElement tmpNext        = curElement;
+            let tmpNext        = curElement;
             CPTGradientElement newElementList = calloc(1, sizeof(CPTGradientElement));
             if ( newElementList ) {
                 *newElementList             = *newElement;
-                newElementList->nextElement = tmpNext;
+                newElementList.nextElement = tmpNext;
                 self.elementList            = newElementList;
             }
         }
         else {
-            while ( curElement->nextElement != NULL &&
-                        !((curElement->position <= newElement->position) &&
-                            (newElement->position < curElement->nextElement->position))) {
-                curElement = curElement->nextElement;
+            while ( curElement.nextElement != NULL &&
+                        !((curElement.position <= newElement.position) &&
+                            (newElement.position < curElement.nextElement.position))) {
+                curElement = curElement?.nextElement;
             }
             
             let tmpNext = curElement?.nextElement;
-            curElement->nextElement              = calloc(1, sizeof(CPTGradientElement));
+            curElement.nextElement              = calloc(1, sizeof(CPTGradientElement));
             *(curElement.nextElement)           = newElement
-            curElement.nextElement->nextElement = tmpNext;
+            curElement.nextElement.nextElement = tmpNext;
         }
     }
     
+//    (nonnull instancetype)gradientWithBeginningColor:(nonnull CPTColor *)begin endingColor:(nonnull CPTColor *)end
+//    {
+//        return [self gradientWithBeginningColor:begin endingColor:end beginningPosition:CPTFloat(0.0) endingPosition:CPTFloat(1.0)];
+//    }
+
+//    /** @brief Creates and returns a new CPTGradient instance initialized with an axial linear gradient between two given colors, at two given normalized positions.
+//     *  @param begin The beginning color.
+//     *  @param end The ending color.
+//     *  @param beginningPosition The beginning position (@num{0} ≤ @par{beginningPosition} ≤ @num{1}).
+//     *  @param endingPosition The ending position (@num{0} ≤ @par{endingPosition} ≤ @num{1}).
+//     *  @return A new CPTGradient instance initialized with an axial linear gradient between the two given colors, at two given normalized positions.
+//     **/
+//    +(nonnull instancetype)gradientWithBeginningColor:(nonnull CPTColor *)begin endingColor:(nonnull CPTColor *)end beginningPosition:(CGFloat)beginningPosition endingPosition:(CGFloat)endingPosition
+//    {
+//        CPTGradient *newInstance = [[self alloc] init];
+//
+//        CPTGradientElement color1;
+//        CPTGradientElement color2;
+//
+//        color1.color = CPTRGBAColorFromCGColor(begin.cgColor);
+//        color2.color = CPTRGBAColorFromCGColor(end.cgColor);
+//
+//        color1.position = beginningPosition;
+//        color2.position = endingPosition;
+//
+//        [newInstance addElement:&color1];
+//        [newInstance addElement:&color2];
+//
+//        return newInstance;
+//    }
+    
+
     
 }

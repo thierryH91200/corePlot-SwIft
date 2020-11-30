@@ -147,7 +147,7 @@ extension CPTGradient {
             color[1] = CGFloat(1.0);
             color[2] = CGFloat(0.001);
             color[3] = CGFloat(1.0);
-            CPTTransformHSV_RGB(color);
+            CPTTransformHSV_RGB(components: color);
             
             let fadeIn : CPTGradientElement
             fadeIn.color.red   = color[0];
@@ -160,7 +160,7 @@ extension CPTGradient {
             color[1] = CGFloat(1.0);
             color[2] = CGFloat(1.0);
             color[3] = CGFloat(1.0);
-            CPTTransformHSV_RGB(color);
+            CPTTransformHSV_RGB(components: color);
             
             let band : CPTGradientElement
             band.color.red   = color[0];
@@ -173,7 +173,7 @@ extension CPTGradient {
             color[1] = CGFloat(1.0);
             color[2] = CGFloat(0.001);
             color[3] = CGFloat(1.0);
-            CPTTransformHSV_RGB(color);
+            CPTTransformHSV_RGB(components: color);
             
             let fadeOut : CPTGradientElement
             fadeOut.color.red   = color[0];

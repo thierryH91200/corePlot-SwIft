@@ -110,13 +110,12 @@ class CPTPlotAreaFrame: CPTBorderedLayer {
      *  @param event The OS event.
      *  @return Whether the event was handled or not.
      **/
-    -(BOOL)pointingDeviceCancelledEvent:(nonnull CPTNativeEvent *)event
-    {
-        if ( [self.plotArea pointingDeviceCancelledEvent:event] ) {
-            return YES;
+    override func pointingDeviceCancelledEvent(event:CPTNativeEvent )-> Bool    {
+        if  ((self.plotArea?.pointingDeviceCancelledEvent(event )) != nil) {
+            return true
         }
         else {
-            return [super pointingDeviceCancelledEvent:event];
+            return super.pointingDeviceCancelledEvent(event)
         }
     }
 
@@ -125,50 +124,50 @@ class CPTPlotAreaFrame: CPTBorderedLayer {
 
     /// @cond
 
-    -(void)setPlotArea:(nullable CPTPlotArea *)newPlotArea
+    func setPlotArea(newPlotArea: CPTPlotArea )
     {
-        if ( newPlotArea != plotArea ) {
-            [plotArea removeFromSuperlayer];
+        if newPlotArea != plotArea  {
+            plotArea?.removeFromSuperlayer()
             plotArea = newPlotArea;
-
+            
             if ( newPlotArea ) {
-                CPTPlotArea *theArea = newPlotArea;
-
-                [self insertSublayer:theArea atIndex:0];
-                theArea.graph = self.graph;
+                let theArea = newPlotArea
+                
+                self.insertSublayer(theArea, atIndex:0)
+                theArea.graph = self.graph
             }
-
-    self.setNeedsLayout()
+            
+            self.setNeedsLayout()
         }
     }
-
+    
     -(nullable CPTAxisSet *)axisSet
     {
-        return self.plotArea.axisSet;
+    return self.plotArea.axisSet;
     }
-
-    -(void)setAxisSet:(nullable CPTAxisSet *)newAxisSet
+    
+    func setAxisSet(newAxisSet: CPTAxisSet)
     {
-        self.plotArea.axisSet = newAxisSet;
+        self.plotArea?.axisSet = newAxisSet;
     }
-
+    
     -(nullable CPTPlotGroup *)plotGroup
     {
-        return self.plotArea.plotGroup;
+    return self.plotArea.plotGroup;
     }
-
-    -(void)setPlotGroup:(nullable CPTPlotGroup *)newPlotGroup
+    
+    func setPlotGroup:(nullable CPTPlotGroup *)newPlotGroup
     {
-        self.plotArea.plotGroup = newPlotGroup;
+    self.plotArea.plotGroup = newPlotGroup;
     }
-
-    -(void)setGraph:(nullable CPTGraph *)newGraph
+    
+    func setGraph(newGraph: CPTGraph )
     {
         if ( newGraph != self.graph ) {
             super.graph = newGraph;
-
-            self.plotArea.graph = newGraph;
+            
+            self.plotArea?.graph = newGraph
         }
     }
-
+    
 }
