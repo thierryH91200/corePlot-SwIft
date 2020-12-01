@@ -78,9 +78,9 @@ public class CPTLayer : CALayer
     }
     
     
-    override init(layer: Any)
+    override init(layer: Any?)
     {
-        if  let theLayer = layer {
+        if  let theLayer = layer as? CPTLayer {
             
             paddingLeft          = theLayer.paddingLeft
             paddingTop           = theLayer.paddingTop
@@ -112,7 +112,9 @@ public class CPTLayer : CALayer
         let mySuperlayer = self.superlayer
         
         if (mySuperlayer is CPTLayer) == true {
-            mySuperlayer?.applySublayerMask(to: context, forSublayer: self, withOffset: CGPoint.zero)
+            let sup = superlayer as! CPTLayer
+
+            sup.applySublayerMaskToContext(context: context, forSublayer: self, withOffset: CGPoint.zero)
         }
         
         //        let maskPath = self.maskingPath
@@ -203,7 +205,6 @@ public class CPTLayer : CALayer
             return actualBounds;
         }
         set {
-            
             var newBounds = newValue
             if ( !self.bounds.equalTo(newBounds)) {
                 if (( self.shadow ) != nil) {
@@ -228,10 +229,10 @@ public class CPTLayer : CALayer
     {
         let mySuperlayer = self.superlayer
         
-        if (mySuperlayer is CPTLayer ) {
-            mySuperlayer.applySublayerMaskToContext(context,forSublayer:self withOffset:CGPoint())
+        if (mySuperlayer is CPTLayer ) == true {
             
-//            [(CPTLayer *) superlayer applySublayerMaskToContext:context forSublayer:self withOffset:layerOffset];
+            let sup = superlayer as! CPTLayer
+            sup.applySublayerMaskToContext(context: context,forSublayer:self, withOffset:CGPoint())
         }
         
         let maskPath = self.maskingPath()
@@ -253,13 +254,13 @@ public class CPTLayer : CALayer
         }
         
         let sublayerTransform = CATransform3DGetAffineTransform(sublayer.transform)
+        context.concatenate(sublayerTransform.inverted())
         
-        context.concatenate(sublayerTransform.inverted());
-        
-        let superlayer = self.superlayer;
-        
+        let superlayer = self.superlayer
         if ( superlayer is CPTLayer ) == true {
-            superlayer.applySublayerMaskToContext(context, sublayer:self, withOffset:layerOffset)
+            
+            let sup = superlayer as! CPTLayer
+            sup.applySublayerMaskToContext(context: context, forSublayer:self, withOffset:layerOffset)
         }
         
         let maskPath = self.sublayerMaskingPath;
@@ -270,7 +271,6 @@ public class CPTLayer : CALayer
             context.clip();
             context.translateBy(x: layerOffset.x, y: layerOffset.y);
 //        }
-
         context.concatenate(sublayerTransform);
     }
 

@@ -38,47 +38,16 @@ extension CPTLayer {
         return self.innerBorderPath!;
     }
     
-    func applySublayerMaskToContext(context: CGContext, forSublayer sublayer: CPTLayer, withOffset offset:CGPoint)
+    func applyyMaskToContext(context: CGContext)
     {
-        let  sublayerBoundsOrigin = sublayer.bounds.origin
-        var layerOffset          = offset
-        
-        if self.renderingRecursively == false {
-            let convertedOffset = self.convert(sublayerBoundsOrigin , from:sublayer)
-            layerOffset.x += convertedOffset.x;
-            layerOffset.y += convertedOffset.y;
-        }
-        
-        let sublayerTransform = CATransform3DGetAffineTransform(sublayer.transform)
-        
-        context.concatenate(sublayerTransform.inverted());
-        
-        let superlayer = self.superlayer;
-        
-        if ( superlayer is CPTLayer ) == true {
-            superlayer.applySublayerMaskToContext(context, forSublayer:self, withOffset:layerOffset)
-        }
-        
-        let maskPath = self.sublayerMaskingPath;
-        
-        if ( maskPath ) {
-            context.translateBy(x: -layerOffset.x, y: -layerOffset.y);
-            context.addPath(maskPath());
-            context.clip();
-            context.translateBy(x: layerOffset.x, y: layerOffset.y);
-        }
-        context.concatenate(sublayerTransform);
-    }
-    
-    func applyyMaskToContext(context: CGContextRef)
-    {
-        let mySuperlayer = superlayer as? CPTLayer
-        if mySuperlayer is CPTLayer {
-            mySuperlayer?.applySublayerMask(toContext: context, forSublayer: self, withOffset: CGPoint.zero)
+        let mySuperlayer = self.superlayer as? CPTLayer
+        if mySuperlayer != nil {
+            let sup = mySuperlayer!
+
+            sup.applySublayerMaskToContext(context: context, forSublayer: self, withOffset: CGPoint.zero)
         }
         
         let maskPath = maskingPath
-        
         if let maskPath = maskPath {
             context.addPath(maskPath)
             context.clip()

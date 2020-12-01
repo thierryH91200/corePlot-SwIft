@@ -237,38 +237,38 @@ extension CPTLayer {
      *  @param sublayer The sublayer that called this method.
      *  @param offset The cumulative position offset between the receiver and the first layer in the recursive calling chain.
      **/
-    -(void)applySublayerMaskToContext:(nonnull CGContextRef)context forSublayer:(nonnull CPTLayer *)sublayer withOffset:(CGPoint)offset
-    {
-        CGPoint sublayerBoundsOrigin = sublayer.bounds.origin;
-        CGPoint layerOffset          = offset;
-
-        if ( !self.renderingRecursively ) {
-            CGPoint convertedOffset = [self convertPoint:sublayerBoundsOrigin fromLayer:sublayer];
-            layerOffset.x += convertedOffset.x;
-            layerOffset.y += convertedOffset.y;
-        }
-
-        CGAffineTransform sublayerTransform = CATransform3DGetAffineTransform(sublayer.transform);
-
-        CGContextConcatCTM(context, CGAffineTransformInvert(sublayerTransform));
-
-        CALayer *superlayer = self.superlayer;
-
-        if ( [superlayer isKindOfClass:[CPTLayer class]] ) {
-            [(CPTLayer *) superlayer applySublayerMaskToContext:context forSublayer:self withOffset:layerOffset];
-        }
-
-        CGPathRef maskPath = self.sublayerMaskingPath;
-
-        if ( maskPath ) {
-            CGContextTranslateCTM(context, -layerOffset.x, -layerOffset.y);
-            CGContextAddPath(context, maskPath);
-            CGContextClip(context);
-            CGContextTranslateCTM(context, layerOffset.x, layerOffset.y);
-        }
-
-        CGContextConcatCTM(context, sublayerTransform);
-    }
+//    -(void)applySublayerMaskToContext:(nonnull CGContextRef)context forSublayer:(nonnull CPTLayer *)sublayer withOffset:(CGPoint)offset
+//    {
+//        CGPoint sublayerBoundsOrigin = sublayer.bounds.origin;
+//        CGPoint layerOffset          = offset;
+//
+//        if ( !self.renderingRecursively ) {
+//            CGPoint convertedOffset = [self convertPoint:sublayerBoundsOrigin fromLayer:sublayer];
+//            layerOffset.x += convertedOffset.x;
+//            layerOffset.y += convertedOffset.y;
+//        }
+//
+//        CGAffineTransform sublayerTransform = CATransform3DGetAffineTransform(sublayer.transform);
+//
+//        CGContextConcatCTM(context, CGAffineTransformInvert(sublayerTransform));
+//
+//        CALayer *superlayer = self.superlayer;
+//
+//        if ( [superlayer isKindOfClass:[CPTLayer class]] ) {
+//            [(CPTLayer *) superlayer applySublayerMaskToContext:context forSublayer:self withOffset:layerOffset];
+//        }
+//
+//        CGPathRef maskPath = self.sublayerMaskingPath;
+//
+//        if ( maskPath ) {
+//            CGContextTranslateCTM(context, -layerOffset.x, -layerOffset.y);
+//            CGContextAddPath(context, maskPath);
+//            CGContextClip(context);
+//            CGContextTranslateCTM(context, layerOffset.x, layerOffset.y);
+//        }
+//
+//        CGContextConcatCTM(context, sublayerTransform);
+//    }
 
     /** @brief Sets the clipping path of the given graphics context to mask the content.
      *
