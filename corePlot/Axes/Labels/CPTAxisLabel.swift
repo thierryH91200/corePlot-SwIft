@@ -36,138 +36,138 @@ class CPTAxisLabel: NSObject {
     override init()
     {
         super.init()
-//        super.init( newText: nil, newStyle: nil)
+        //        super.init( newText: nil, newStyle: nil)
     }
     
     func positionRelativeToViewPoint(point: CGPoint, coordinate: CPTCoordinate, direction : CPTSign)
     {
         let content = self.contentLayer
         guard ( content.identifier != nil) else { return  }
-
+        
         var newPosition = point
         var value      = coordinate == CPTCoordinate.x ? newPosition.x : newPosition.y
         var angle       = CGFloat(0.0);
-
+        
         var labelRotation = self.rotation;
-
+        
         if labelRotation.isNaN == true {
             labelRotation = coordinate == CPTCoordinate.x ? CGFloat(Double.pi/2) : CGFloat(0.0)
         }
         content.transform = CATransform3DMakeRotation(labelRotation, CGFloat(0.0), CGFloat(0.0), CGFloat(1.0))
         let contentFrame = content.frame;
-
+        
         // Position the anchor point along the closest edge.
         var validDirection = false;
-
+        
         switch ( direction ) {
         case .none:
             fallthrough
         case .negative:
-                validDirection = true
-
-                value -= self.offset;
-
-                switch ( coordinate ) {
-                case .x:
-                    angle = CGFloat.pi
+            validDirection = true
+            
+            value -= self.offset;
+            
+            switch ( coordinate ) {
+            case .x:
+                angle = CGFloat.pi
+                
+                switch ( self.alignment ) {
+                case .bottom:
+                    newPosition.y += contentFrame.size.height / CGFloat(2.0);
+                    break;
                     
-                        switch ( self.alignment ) {
-                        case .bottom:
-                                newPosition.y += contentFrame.size.height / CGFloat(2.0);
-                                break;
-
-                        case .top:
-                                newPosition.y -= contentFrame.size.height / CGFloat(2.0);
-                                break;
-
-                            default: // middle
-                                     // no adjustment
-                                break;
-                        }
-                        break;
-
-                case .y:
-                    angle = -CGFloat.pi/2
-
-                        switch ( self.alignment ) {
-                        case .left:
-                                newPosition.x += contentFrame.size.width / CGFloat(2.0);
-                                break;
-
-                        case .right:
-                                newPosition.x -= contentFrame.size.width / CGFloat(2.0);
-                                break;
-
-                            default: // center
-                                     // no adjustment
-                                break;
-                        }
-                        break;
-
-                    default:
-                        print("Invalid coordinate in positionRelativeToViewPoint:forCoordinate:inDirection:")
-                        break;
+                case .top:
+                    newPosition.y -= contentFrame.size.height / CGFloat(2.0);
+                    break;
+                    
+                default: // middle
+                    // no adjustment
+                    break;
                 }
                 break;
-
+                
+            case .y:
+                angle = -CGFloat.pi/2
+                
+                switch ( self.alignment ) {
+                case .left:
+                    newPosition.x += contentFrame.size.width / CGFloat(2.0);
+                    break;
+                    
+                case .right:
+                    newPosition.x -= contentFrame.size.width / CGFloat(2.0);
+                    break;
+                    
+                default: // center
+                    // no adjustment
+                    break;
+                }
+                break;
+                
+            default:
+                print("Invalid coordinate in positionRelativeToViewPoint:forCoordinate:inDirection:")
+                break;
+            }
+            break;
+            
         case .positive:
-                validDirection = true
-
-                value += self.offset;
-
-                switch ( coordinate ) {
-                case .x:
-                        // angle = 0.0;
-
-                        switch ( self.alignment ) {
-                        case .bottom:
-                                newPosition.y += contentFrame.size.height / CGFloat(2.0);
-                                break;
-
-                        case .top:
-                                newPosition.y -= contentFrame.size.height / CGFloat(2.0);
-                                break;
-
-                            default: // middle
-                                     // no adjustment
-                                break;
-                        }
-                        break;
-
-                case .y:
-                    angle = CGFloat.pi/2
-
-                        switch ( self.alignment ) {
-                        case .left:
-                                newPosition.x += contentFrame.size.width / CGFloat(2.0);
-                                break;
-
-                        case .right:
-                                newPosition.x -= contentFrame.size.width / CGFloat(2.0);
-                                break;
-
-                            default: // center
-                                     // no adjustment
-                                break;
-                        }
-                        break;
-
-                    default:
-                        print("Invalid coordinate in positionRelativeToViewPoint:forCoordinate:inDirection:")
-                        break;
+            validDirection = true
+            
+            value += self.offset;
+            
+            switch ( coordinate ) {
+            case .x:
+                // angle = 0.0;
+                
+                switch ( self.alignment ) {
+                case .bottom:
+                    newPosition.y += contentFrame.size.height / CGFloat(2.0);
+                    break;
+                    
+                case .top:
+                    newPosition.y -= contentFrame.size.height / CGFloat(2.0);
+                    break;
+                    
+                default: // middle
+                    // no adjustment
+                    break;
                 }
                 break;
+                
+            case .y:
+                angle = CGFloat.pi/2
+                
+                switch ( self.alignment ) {
+                case .left:
+                    newPosition.x += contentFrame.size.width / CGFloat(2.0);
+                    break;
+                    
+                case .right:
+                    newPosition.x -= contentFrame.size.width / CGFloat(2.0);
+                    break;
+                    
+                default: // center
+                    // no adjustment
+                    break;
+                }
+                break;
+                
+            default:
+                print("Invalid coordinate in positionRelativeToViewPoint:forCoordinate:inDirection:")
+                break;
+            }
+            break;
         }
-
+        
         if validDirection == false {
             print("Invalid direction in positionRelativeToViewPoint:forCoordinate:inDirection:")
         }
-
+        
         angle += CGFloat.pi
         angle -= labelRotation;
         var newAnchorX = cos(angle);
         var newAnchorY = sin(angle);
-
+        
         if ( abs(newAnchorX) <= abs(newAnchorY)) {
             newAnchorX /= abs(newAnchorY);
             newAnchorY  = ((newAnchorY.signbit()) != 0) ? CGFloat(-1.0) : CGFloat(1.0);
@@ -177,12 +177,12 @@ class CPTAxisLabel: NSObject {
             newAnchorX  = ((newAnchorX.signbit()) != 0) ? CGFloat(-1.0) : CGFloat(1.0);
         }
         let anchor = CGPoint(x: (newAnchorX + CGFloat(1.0)) / CGFloat(2.0), y: (newAnchorY + CGFloat(1.0)) / CGFloat(2.0));
-
+        
         content.anchorPoint = anchor;
         content.position    = newPosition;
         content.pixelAlign()
     }
-
+    
     /** @brief Positions the axis label between two given points.
      *  @param firstPoint The first view point.
      *  @param secondPoint The second view point.
@@ -192,7 +192,7 @@ class CPTAxisLabel: NSObject {
     func positionBetweenViewPoint(firstPoint: CGPoint, secondPoint:CGPoint, coordinate:CPTCoordinate, direction: CPTSign)
     {
         self.positionRelativeToViewPoint ( point: CGPoint(x: (firstPoint.x + secondPoint.x) / CGFloat(2.0), y: (firstPoint.y + secondPoint.y) / CGFloat(2.0)),
-                                            coordinate:coordinate,
-                                            direction:direction)
+                                           coordinate:coordinate,
+                                           direction:direction)
     }    
 }

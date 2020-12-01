@@ -16,10 +16,6 @@ extension CPTAxis {
     
     // MARK: Accessors
     
-    func drawGridLinesInContext(context: CGContext, isMajor:Bool)
-        {
-            // do nothing--subclasses must override to do their drawing
-        }
 
 
 

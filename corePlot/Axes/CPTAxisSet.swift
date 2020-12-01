@@ -43,10 +43,17 @@ class CPTAxisSet: CPTLayer {
     // MARK: - Labeling
     func relabelAxes()
     {
-        let theAxes = self.axes;
+//        let theAxes = self.axes;
+        
+        for theAxes in self.axes{
+            theAxes.setNeedsLayout()
+        }
+        for theAxes in self.axes{
+            theAxes.setNeedsRelabel()
+        }
 
-        theAxes.makeObjectsPerformSelector(at: #selector(setNeedsLayout))
-        theAxes.makeObjectsPerformSelector(#selector(setNeedsRelabel))
+//        theAxes.makeObjectsPerformSelector(at: #selector(setNeedsLayout))
+//        theAxes.makeObjectsPerformSelector(#selector(setNeedsRelabel))
     }
 
     // MARK: -  Axes
@@ -127,7 +134,7 @@ class CPTAxisSet: CPTLayer {
                     axis.graph    = nil
                 }
                 _axes = newValue;
-                let plotArea = self.superlayer;
+                let plotArea = self.superlayer as! CPTPlotArea
                 let theGraph    = plotArea.graph;
                 for  axis in axes  {
                     self.addSublayer( axis)
