@@ -319,7 +319,7 @@ class CPTBarPlot: CPTPlot {
              forKey:CPTBarPlotBindingBarLineStyles
              atRecordIndex:indexRange.location];
         }
-        else if ( [theDataSource respondsToSelector:@selector(barLineStyleForBarPlot:recordIndex:)] ) {
+        else if ( [theDataSource respondsToSelector(to: #selector(barLineStyleForBarPlot:recordIndex:)] ) {
             needsLegendUpdate = true
             
             let  nilObject                    = [CPTPlot nilData];
@@ -364,19 +364,20 @@ class CPTBarPlot: CPTPlot {
         let dataSource = self.dataSource
         
         if dataSource.respondsToSelector(to:#selector(barWidthsForBarPlot:recordIndexRange:) ) {
-            self.cacheArray:[theDataSource barWidthsForBarPlot:self recordIndexRange:indexRange]
+            self.cacheArray:[theDataSource.barWidthsForBarPlot:self recordIndexRange:indexRange]
              forKey:CPTBarPlotBindingBarWidths,
              atRecordIndex:indexRange.location)
         }
         else if dataSource.respondsToSelector(to:#selector(barWidthForBarPlot:recordIndex:)) {
             let nilObject                 = [CPTPlot nilData];
-            CPTMutableNumberArray *array = [[NSMutableArray alloc] initWithCapacity:indexRange.length];
+            var array = Array[CGFloat]()
+            
             let maxIndex          = NSMaxRange(indexRange);
             
             for idx in indexRange.location..<maxIndex {
                 let width = dataSource.barWidthForBarPlot(self, recordIndex:idx)
-                if ( width ) {
-                    array.addObject(width)
+                if width != 0  {
+                    array.append(width)
                 }
                 else {
                     array.addObject(nilObject)

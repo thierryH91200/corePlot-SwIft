@@ -27,22 +27,20 @@ func imageOfLayer() -> CPTNativeImage
     var scale = CGFloat(0.0)
 
     if ( self.respondsToSelector(#selector(hostingView) ) {
-        
-        
         scale = (self as? CPTGraph)?.hostingView.window.backingScaleFactor
-        
     }
+    
     if ((scale == 0.0) && CALayer.instancesRespondToSelector(#selector(contentsScale) ) {
         scale = self.contentsScale
     }
     if ( scale == 0.0 ) {
-        let myWindow = self.graph?.hostingView.window;
+        let myWindow = self.graph?.hostingView?.window;
 
         if ( myWindow ) {
-            scale = myWindow.backingScaleFactor;
+            scale = myWindow!.backingScaleFactor;
         }
         else {
-            scale = NSScreen.mainScreen!.backingScaleFactor;
+            scale = NSScreen.main!.backingScaleFactor;
         }
     }
     scale = max(scale, CGFloat(1.0));
@@ -63,23 +61,22 @@ func imageOfLayer() -> CPTNativeImage
     // Setting the size communicates the dpi; enables proper scaling for Retina screens
     layerImage?.size = NSSizeFromCGSize(boundsSize);
 
-    let bitmapContext = [NSGraphicsContext graphicsContextWithBitmapImageRep:layerImage];
-    let context             = (CGContextRef)bitmapContext.graphicsPort;
+    let bitmapContext = NSGraphicsContext(bitmapImageRep: layerImage!)
+    let context             = bitmapContext?.cgContext
 
-    CGContextClearRect(context, CPTRectMake(0.0, 0.0, boundsSize.width, boundsSize.height));
-    CGContextSetAllowsAntialiasing(context, true);
-    CGContextSetShouldSmoothFonts(context, false);
-    [self layoutAndRenderInContext:context];
-    CGContextFlush(context);
+    context!.clear(CGRect(x: 0.0, y: 0.0, width: boundsSize.width, height: boundsSize.height))
+    context!.setAllowsAntialiasing(true);
+    context!.setShouldSmoothFonts(false);
+    self.layoutAndRenderInContext(context: context!)
+    context!.flush();
 
-    NSImage *image = [[NSImage alloc] initWithSize:NSSizeFromCGSize(boundsSize)];
+    let image = NSImage( ) initWithSize:NSSizeFromCGSize(boundsSize)];
 
-    [image addRepresentation:layerImage];
+    image.addRepresentation:layerImage
 
     return image;
 }
 
-@
 
 // MARK:- NSAttributedString
 
@@ -107,22 +104,17 @@ func imageOfLayer() -> CPTNativeImage
             var rect = CGRect()
             
             if (self.respondsToSelector(to: #@selector(boundingRectWithSize:options:context:)) {
-                rect = self.boundingRectWithSize:CGSize(10000.0, 10000.0)
-                options:CPTStringDrawingOptions
-                context:nil)
+                rect = self.boundingRectWithSize(CGSize(10000.0, 10000.0), options:CPTStringDrawingOptions, context:nil)
             }
             else {
             rect = self.boundingRectWithSize(CGSize(10000.0, 10000.0)
             options:CPTStringDrawingOptions)
             }
             
-            var textSize = rect.size;
-            
+            var textSize = rect.size
             textSize.width  = ceil(textSize.width)
             textSize.height = ceil(textSize.height)
-            
             return textSize
-            
         }
     }
 }

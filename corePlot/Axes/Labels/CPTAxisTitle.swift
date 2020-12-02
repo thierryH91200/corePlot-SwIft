@@ -11,8 +11,8 @@ class CPTAxisTitle: CPTAxisLabel {
     
     override init(layer: CPTLayer)
     {
-        super.init(layer)
-        self.rotation = CPTNAN;
+        super.init(layer: layer)
+        self.rotation = CGFloat.nan
     }
     
     
@@ -28,17 +28,17 @@ class CPTAxisTitle: CPTAxisLabel {
         if ( self == object ) {
             return true
         }
-        else if (object is self) == true {
+        else if (object is CPTAxisTitle) == true {
             var otherTitle = object as! CPTAxisTitle
             
             if ((self.rotation != otherTitle.rotation) || (self.offset != otherTitle.offset)) {
                 return false;
             }
-            if ( ![self.contentLayer isEqual:otherTitle] ) {
+            if self.contentLayer.isEqual(otherTitle ) == false {
                 return false;
             }
             
-            let location = ((CPTAxisLabel *)object).tickLocation;
+            let location = (object as! CPTAxisLabel).tickLocation;
             
             if ( location ) {
                 return [self.tickLocation isEqualToNumber:location];

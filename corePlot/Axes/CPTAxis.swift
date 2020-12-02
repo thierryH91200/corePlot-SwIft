@@ -22,7 +22,7 @@ class CPTAxis : CPTLayer {
     
     // MARK: Title
     var titleTextStyle = CPTTextStyle()
-    var axisTitle: CPTAxisTitle
+    var axisTitle: CPTAxisTitle?
     var titleOffset =  CGFloat(0)
     var title = "title"
     var attributedTitle =  NSAttributedString(string: "")
@@ -31,52 +31,58 @@ class CPTAxis : CPTLayer {
     var titleLocation = 0
     var defaultTitleLocation = 0
     
-    
     // MARK: -
     var axisLineStyle = CPTLineStyle()
     
     // MARK: Axis.m
     var needsRelabel = false
-    var pointingDeviceDownLabel: CPTAxisLabel
-    var pointingDeviceDownTickLabel:CPTAxisLabel
+    var pointingDeviceDownLabel: CPTAxisLabel?
+    var pointingDeviceDownTickLabel:CPTAxisLabel?
     var labelFormatterChanged = false
     var minorLabelFormatterChanged = false
     //    var  mutableBackgroundLimitBands: CPTMutableLimitBandArray
-    var  tickOffset = CGFloat(0)
-    var   inTitleUpdate = false
-    var   labelsUpdated = false
+    var tickOffset = CGFloat(0)
+    var inTitleUpdate = false
+    var labelsUpdated = false
     
     // MARK: Axis
     var coordinate : CPTCoordinate
     var labelingOrigin : NSNumber
     var tickDirection : CPTSign
-    var visibleRange : CPTPlotRange
-    var visibleAxisRange : CPTPlotRange
+    var visibleRange : CPTPlotRange?
+    var visibleAxisRange : CPTPlotRange?
     var axisLineCapMin : CPTLineCap
     var axisLineCapMax : CPTLineCap
     
     
     // MARK: Labels
-    var  labelingPolicy =  CPTAxisLabelingPolicy.automatic
-    var  labelOffset = CGFloat(0.0)
-    var  minorTickLabelOffset: CGFloat
-    var  labelRotation: CGFloat
-    var  minorTickLabelRotation: CGFloat
+    var labelingPolicy =  CPTAxisLabelingPolicy.automatic
+    var labelOffset = CGFloat(0.0)
+    var minorTickLabelOffset: CGFloat
+    var labelRotation: CGFloat
+    var minorTickLabelRotation: CGFloat
     var labelAlignment: CPTAlignment
-    var  minorTickLabelAlignment: CPTAlignment
-    var  labelTextStyle :CPTTextStyle
-    var  minorTickLabelTextStyle: CPTTextStyle
-    var  tickLabelDirection = CPTSign.none
-    var  minorTickLabelDirection = CPTSign.none
+    var minorTickLabelAlignment: CPTAlignment
+    var labelTextStyle :CPTTextStyle
+    var minorTickLabelTextStyle: CPTTextStyle
+    var tickLabelDirection = CPTSign.none
+    var minorTickLabelDirection = CPTSign.none
     var labelFormatter: Formatter?
     var minorTickLabelFormatter: Formatter?
     
+//    var axisLabels: CPTAxisLabelSet
+//    var minorTickAxisLabels : CPTAxisLabelSet
+//    var needsRelabel = false
+//    var labelExclusionRanges = [CPTPlotRange]()
+//    var labelShadow: CPTShadow
+//    var minorTickLabelShadow: CPTShadow
+    
     // MARK:  Major Ticks
     var majorIntervalLength = 0
-    var  majorTickLength = CGFloat(0)
-    var  majorTickLineStyle: CPTLineStyle
+    var majorTickLength = CGFloat(0)
+    var majorTickLineStyle: CPTLineStyle
     var majorTickLocations: CPTNumberSet
-    var  preferredNumberOfMajorTicks = 0
+    var preferredNumberOfMajorTicks = 0
     
     // MARK:  Minor Ticks
     var minorTicksPerInterval = 0
@@ -87,29 +93,31 @@ class CPTAxis : CPTLayer {
     // MARK:  Grid Lines
     var  majorGridLineStyle: CPTLineStyle
     var  minorGridLineStyle: CPTLineStyle
-    var  gridLinesRange : CPTPlotRange
+    var  gridLinesRange : CPTPlotRange?
     
     // MARK:  Background Bands
     //    var majorGridLineStyle : CPTFillArray
+    var alternatingBandFills = [CPTFill]()
+
     var alternatingBandAnchor = 0.0
-    //    var backgroundLimitBands : CPTLimitBandArray
+    var backgroundLimitBands = [CPTLimitBand]()
     
     // MARK:  Plot Space
-    var  plotSpace : CPTPlotSpace
+    var  plotSpace : CPTPlotSpace?
     
     // MARK:  Layers
     var separateLayers = false
     var plotArea: CPTPlotArea?
-    var minorGridLines : CPTGridLines
-    var majorGridLines: CPTGridLines
+    var minorGridLines : CPTGridLines?
+    var majorGridLines: CPTGridLines?
     var axisSet: CPTAxisSet
     
     var axisLabels: Set<CPTAxisLabel>
     var minorTickAxisLabels : Set<Double>
     
     var labelExclusionRanges = [CPTPlot]()
-    var labelShadow: CPTShadow
-    var minorTickLabelShadow: CPTShadow
+    var labelShadow: CPTShadow?
+    var minorTickLabelShadow: CPTShadow?
     
     var mutableBackgroundLimitBands = [CPTLimitBand]()
     
@@ -165,12 +173,12 @@ class CPTAxis : CPTLayer {
         axisLabels.removeAll()
         minorTickAxisLabels.removeAll()
         tickDirection               = CPTSign.none
-        axisTitle                  = ""
+        axisTitle                  = nil
         titleTextStyle              = CPTTextStyle()
         titleRotation               = nil
-        titleLocation               = @(NAN);
+        titleLocation               = 0
         needsRelabel                = true;
-        labelExclusionRanges        = nil;
+        labelExclusionRanges.removeAll()
         plotArea                    = nil;
         separateLayers              = false
         labelShadow                 = nil;
@@ -178,9 +186,9 @@ class CPTAxis : CPTLayer {
         visibleRange                = nil;
         visibleAxisRange            = nil;
         gridLinesRange              = nil;
-        alternatingBandFills        = nil;
-        alternatingBandAnchor       = nil;
-        BackgroundLimitBands.remove = nil;
+        alternatingBandFills.removeAll()
+        alternatingBandAnchor       = 0
+        backgroundLimitBands.removeAll()
         minorGridLines              = nil;
         majorGridLines              = nil;
         pointingDeviceDownLabel     = nil;
@@ -297,80 +305,82 @@ class CPTAxis : CPTLayer {
     //     *  @param newMajorLocations A new NSSet containing the major tick locations.
     //     *  @param newMinorLocations A new NSSet containing the minor tick locations.
     //     */
-    //   func generateFixedIntervalMajorTickLocations:(CPTNumberSet *__autoreleasing *)newMajorLocations minorTickLocations:(CPTNumberSet *__autoreleasing *)newMinorLocations
-    //    {
-    //        CPTMutableNumberSet *majorLocations = [NSMutableSet set];
-    //        CPTMutableNumberSet *minorLocations = [NSMutableSet set];
-    //
-    //        NSDecimal zero          = CPTDecimalFromInteger(0);
-    //        NSDecimal majorInterval = self.majorIntervalLength.decimalValue;
-    //
-    //        if ( CPTDecimalGreaterThan(majorInterval, zero)) {
-    //            CPTMutablePlotRange *range = [[self.plotSpace plotRangeForCoordinate:self.coordinate] mutableCopy];
-    //            if ( range ) {
-    //                CPTPlotRange *theVisibleRange = self.visibleRange;
-    //                if ( theVisibleRange ) {
-    //                    [range intersectionPlotRange:theVisibleRange];
-    //                }
-    //
-    //                NSDecimal rangeMin = range.minLimitDecimal;
-    //                NSDecimal rangeMax = range.maxLimitDecimal;
-    //
-    //                NSDecimal minorInterval;
-    //                NSUInteger minorTickCount = self.minorTicksPerInterval;
-    //                if ( minorTickCount > 0 ) {
-    //                    minorInterval = CPTDecimalDivide(majorInterval, CPTDecimalFromUnsignedInteger(minorTickCount + 1));
-    //                }
-    //                else {
-    //                    minorInterval = zero;
-    //                }
-    //
-    //                // Set starting coord--should be the smallest value >= rangeMin that is a whole multiple of majorInterval away from the labelingOrigin
-    //                NSDecimal origin = self.labelingOrigin.decimalValue;
-    //                NSDecimal coord  = CPTDecimalDivide(CPTDecimalSubtract(rangeMin, origin), majorInterval);
-    //                NSDecimalRound(&coord, &coord, 0, NSRoundUp);
-    //                coord = CPTDecimalAdd(CPTDecimalMultiply(coord, majorInterval), origin);
-    //
-    //                // Set minor ticks between the starting point and rangeMin
-    //                if ( minorTickCount > 0 ) {
-    //                    NSDecimal minorCoord = CPTDecimalSubtract(coord, minorInterval);
-    //
-    //                    for ( NSUInteger minorTickIndex = 0; minorTickIndex < minorTickCount; minorTickIndex++ ) {
-    //                        if ( CPTDecimalLessThan(minorCoord, rangeMin)) {
-    //                            break;
-    //                        }
-    //                        [minorLocations addObject:[NSDecimalNumber decimalNumberWithDecimal:minorCoord]];
-    //                        minorCoord = CPTDecimalSubtract(minorCoord, minorInterval);
-    //                    }
-    //                }
-    //
-    //                // Set tick locations
-    //                while ( CPTDecimalLessThanOrEqualTo(coord, rangeMax)) {
-    //                    // Major tick
-    //                    [majorLocations addObject:[NSDecimalNumber decimalNumberWithDecimal:coord]];
-    //
-    //                    // Minor ticks
-    //                    if ( minorTickCount > 0 ) {
-    //                        NSDecimal minorCoord = CPTDecimalAdd(coord, minorInterval);
-    //
-    //                        for ( NSUInteger minorTickIndex = 0; minorTickIndex < minorTickCount; minorTickIndex++ ) {
-    //                            if ( CPTDecimalGreaterThan(minorCoord, rangeMax)) {
-    //                                break;
-    //                            }
-    //                            [minorLocations addObject:[NSDecimalNumber decimalNumberWithDecimal:minorCoord]];
-    //                            minorCoord = CPTDecimalAdd(minorCoord, minorInterval);
-    //                        }
-    //                    }
-    //
-    //                    coord = CPTDecimalAdd(coord, majorInterval);
-    //                }
-    //            }
-    //        }
-    //
-    //        *newMajorLocations = majorLocations;
-    //        *newMinorLocations = minorLocations;
-    //    }
-    //
+    func generateFixedIntervalMajorTickLocations(newMajorLocations: inout CGFloat, newMinorLocations: inout CGFloat)
+    {
+        var majorLocations = Set<CGFloat>()
+        var minorLocations =  Set<CGFloat>()
+        
+        let zero          = 0
+        var majorInterval = self.majorIntervalLength
+        
+        if (majorInterval > zero) {
+            let range = self.plotSpace.plotRangeForCoordinate(self.coordinate)
+            
+            
+            if ( range ) {
+                CPTPlotRange *theVisibleRange = self.visibleRange;
+                if theVisibleRange  {
+                    [range intersectionPlotRange:theVisibleRange];
+                }
+                
+                let rangeMin = range.minLimitDecimal;
+                let rangeMax = range.maxLimitDecimal;
+                
+                NSDecimal minorInterval;
+                NSUInteger minorTickCount = self.minorTicksPerInterval;
+                if ( minorTickCount > 0 ) {
+                    minorInterval = CPTDecimalDivide(majorInterval, CPTDecimalFromUnsignedInteger(minorTickCount + 1));
+                }
+                else {
+                    minorInterval = zero;
+                }
+                
+                // Set starting coord--should be the smallest value >= rangeMin that is a whole multiple of majorInterval away from the labelingOrigin
+                let origin = self.labelingOrigin.decimalValue;
+                let  coord  = CPTDecimalDivide(CPTDecimalSubtract(rangeMin, origin), majorInterval);
+                NSDecimalRound(&coord, &coord, 0, NSRoundUp);
+                coord = CPTDecimalAdd(CPTDecimalMultiply(coord, majorInterval), origin);
+                
+                // Set minor ticks between the starting point and rangeMin
+                if ( minorTickCount > 0 ) {
+                    NSDecimal minorCoord = CPTDecimalSubtract(coord, minorInterval);
+                    
+                    for ( NSUInteger minorTickIndex = 0; minorTickIndex < minorTickCount; minorTickIndex++ ) {
+                        if ( CPTDecimalLessThan(minorCoord, rangeMin)) {
+                            break;
+                        }
+                        [minorLocations addObject:[NSDecimalNumber decimalNumberWithDecimal:minorCoord]];
+                        minorCoord = CPTDecimalSubtract(minorCoord, minorInterval);
+                    }
+                }
+                
+                // Set tick locations
+                while ( CPTDecimalLessThanOrEqualTo(coord, rangeMax)) {
+                    // Major tick
+                    [majorLocations addObject:[NSDecimalNumber decimalNumberWithDecimal:coord]];
+                    
+                    // Minor ticks
+                    if ( minorTickCount > 0 ) {
+                        NSDecimal minorCoord = CPTDecimalAdd(coord, minorInterval);
+                        
+                        for ( NSUInteger minorTickIndex = 0; minorTickIndex < minorTickCount; minorTickIndex++ ) {
+                            if ( CPTDecimalGreaterThan(minorCoord, rangeMax)) {
+                                break;
+                            }
+                            [minorLocations addObject:[NSDecimalNumber decimalNumberWithDecimal:minorCoord]];
+                            minorCoord = CPTDecimalAdd(minorCoord, minorInterval);
+                        }
+                    }
+                    
+                    coord = CPTDecimalAdd(coord, majorInterval);
+                }
+            }
+        }
+        
+        newMajorLocations = majorLocations;
+        newMinorLocations = minorLocations;
+    }
+    
     //    /**
     //     *  @internal
     //     *  @brief Generate major and minor tick locations using the automatic labeling policy.
@@ -1120,18 +1130,18 @@ class CPTAxis : CPTLayer {
             if ( !self.needsRelabel ) {
                 return;
             }
-            if ( !self.plotSpace ) {
+            if ( !self.plotSpace != nil) {
                 return;
             }
-            id<CPTAxisDelegate> theDelegate = (id<CPTAxisDelegate>)self.delegate;
+            let theDelegate = self.delegate;
             
             if ( [theDelegate respondsToSelector:@selector(axisShouldRelabel:)] && ![theDelegate axisShouldRelabel:self] ) {
                 self.needsRelabel = false
                 return;
             }
             
-            CPTNumberSet *newMajorLocations = nil;
-            CPTNumberSet *newMinorLocations = nil;
+            var newMajorLocations = 0
+            var newMinorLocations = 0
             
             switch ( self.labelingPolicy ) {
             case CPTAxisLabelingPolicyNone:

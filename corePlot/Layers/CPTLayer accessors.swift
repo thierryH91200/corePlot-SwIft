@@ -541,15 +541,7 @@ extension CPTLayer {
     {
         return [self imageOfLayer];
     }
-
-    /// @endcond
-
-    @end
-
     
 }
 
 
-
-    
-}

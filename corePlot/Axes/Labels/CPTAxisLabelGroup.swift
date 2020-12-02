@@ -11,14 +11,12 @@ class CPTAxisLabelGroup: CPTLayer {
 
     // MARK: - Drawing
 
-    /// @cond
-
     func dissplay()
     {
         // nothing to draw
     }
 
-    @objc func renderAsVectorInContext(context:  CGContext)
+    @objc override func renderAsVectorInContext(context:  CGContext)
     {
     }
 

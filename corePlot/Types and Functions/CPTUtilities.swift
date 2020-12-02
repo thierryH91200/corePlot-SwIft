@@ -59,6 +59,7 @@ class CPTUtilities {
     // *  @param decimalNumber The @ref NSDecimal value.
     // *  @return The converted value.
     // **/
+    
     //int64_t CPTDecimalLongLongValue(NSDecimal decimalNumber)
     //{
     //    NSDecimalNumber *d = [NSDecimalNumber decimalNumberWithDecimal:decimalNumber];
@@ -1147,11 +1148,13 @@ class CPTUtilities {
 protocol Signable {
     init()
     static func <(lhs:Self, rhs:Self) -> Bool
+    static func >(lhs:Self, rhs:Self) -> Bool
+    static func >=(lhs:Self, rhs:Self) -> Bool
 }
 
 extension Signable {
     func signbit() -> Int {
-        return (self < Self() ? -1 : 1)
+        return (self >= Self() ? 1 : -1)
     }
 }
 

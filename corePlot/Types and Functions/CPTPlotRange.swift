@@ -12,11 +12,11 @@ class CPTPlotRange: NSObject {
     var location : NSNumber = 0.0
     var length: NSNumber = 0.0
     var  end: NSNumber = 0.0
-    var locationDecimal:  Decimal = 0.0
-    var lengthDecimal: Decimal = 0.0
+    var locationDecimal:  CGFloat = 0.0
+    var lengthDecimal: CGFloat = 0.0
     var  endDecimal: Decimal = 0.0
-    var  locationDouble : Double = 0.0
-    var  lengthDouble: Double = 0.0
+    var  locationDouble : CGFloat = 0.0
+    var  lengthDouble: CGFloat = 0.0
     var  endDouble: Double = 0.0
 
     var minLimit: NSNumber = 0.0
@@ -31,7 +31,7 @@ class CPTPlotRange: NSObject {
 
     var  isInfinite = true
     var  lengthSign: CPTSign = .positive
-}
+
 
 //   // MARK: Init/Dealloc
 //    +(nonnull instancetype)plotRangeWithLocation:(nonnull NSNumber *)loc length:(nonnull NSNumber *)len
@@ -56,27 +56,27 @@ class CPTPlotRange: NSObject {
 ////     **/
 //
 //
-//    init(location: CGFloat, length:CGFloat)
-//    {
-//
-//        super.init()
-//            locationDecimal = location.decimalValue;
-//            locationDouble  = location.doubleValue;
-//
-//            lengthDecimal = location.decimalValue;
-//            lengthDouble  = location.doubleValue;
-//
-//            if ( isnan(lengthDouble)) {
-//                isInfinite = false
-//                lengthSign = CPTSignNone;
-//            }
-//            else {
-//                isInfinite = (BOOL)isinf(lengthDouble);
-//                lengthSign = lengthDouble.signbit() ? CPTSign.negative : CPTSign.positive
-//            }
-//        }
-//
-//    }
+    init(location: CGFloat, length:CGFloat)
+    {
+        
+        super.init()
+        locationDecimal = location
+        locationDouble  = location
+        
+        lengthDecimal = length
+        lengthDouble  = length
+        
+        if lengthDouble.isNaN {
+            isInfinite = false
+            lengthSign = CPTSign.none
+        }
+        else {
+            isInfinite = lengthDouble.isInfinite
+            lengthSign = lengthDouble.signbit() ? CPTSign.negative : CPTSign.positive
+        }
+    }
+
+
 ////
 ////    /** @brief Initializes a newly allocated CPTPlotRange object with the provided location and length.
 ////     *  @param loc The starting location of the range.
@@ -550,4 +550,4 @@ class CPTPlotRange: NSObject {
 ////    /// @endcond
 ////
 //
-//}
+}
