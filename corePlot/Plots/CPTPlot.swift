@@ -7,12 +7,40 @@
 
 import AppKit
 
+
+@objc public protocol CPTPlotDataSource: NSObjectProtocol {
+    
+    func numberOfRecordsForPlot(plot:  CPTPlot) -> Int
+    func numbersForPlot( plot : CPTPlot, fieldEnum :Int, indexRange : NSRange) -> [Int]
+    func numberForPlot(plot: CPTPlot, field:Int, recordIndex:Int) -> Double
+    func doubleForPlot(plot: CPTPlot, fieldEnum:Int,  idx: Int) ->Double
+    func dataForPlot(plot: CPTPlot,  fieldEnum: Int, indexRange:NSRange ) -> CPTNumericData
+    
+    @objc optional func dataForPlot(plot : CPTPlot , indexRange:NSRange)-> [CPTNumericData]
+    @objc optional func dataLabelForPlot(plot: CPTPlot, recordIndex:Int )-> CPTLayer
+}
+
+
+@objc public protocol CPTPlotDelegate: CPTLayerDelegate {
+    
+    func plot(plot: CPTPlot, dataLabelWasSelectedAtRecordIndex:Int)
+    func plot(plot: CPTPlot, dataLabelWasSelectedAtRecordIndex:Int,  event: CPTNativeEvent )
+    func plot(plot: CPTPlot, dataLabelTouchDownAtRecordIndex:Int)
+    func plot(plot: CPTPlot, dataLabelTouchDownAtRecordIndex:Int, event: CPTNativeEvent )
+    func plot(plot: CPTPlot, dataLabelTouchUpAtRecordIndex: Int)
+    func plot(plot: CPTPlot, dataLabelTouchUpAtRecordIndex: Int,  event: CPTNativeEvent )
+    
+    func didFinishDrawing(plot: CPTPlot )
+}
+
+
+
 public class CPTPlot: CPTAnnotationHostLayer {
     
 //    let CPTPlotBindingDataLabels = "dataLabels"
     
     
-    public var dataSource : CPTPlotDataSource?
+    public weak var dataSource : CPTPlotDataSource?
     public var delegatePlot: CPTPlotDelegate?
     
     var title : String?
@@ -183,10 +211,10 @@ public class CPTPlot: CPTAnnotationHostLayer {
     /** @brief Identifiers (enum values) identifying the fields.
      *  @return Array of NSNumber objects for the various field identifiers.
      **/
-    func fieldIdentifiers()-> CPTNumberArray
-    {
-    return [];
-    }
+//    func fieldIdentifiers()-> [NSNumber]
+//    {
+//    return [];
+//    }
     
     /** @brief The field identifiers that correspond to a particular coordinate.
      *  @param coord The coordinate for which the corresponding field identifiers are desired.
@@ -285,31 +313,3 @@ public class CPTPlot: CPTAnnotationHostLayer {
     
     
 }
-
-@objc public protocol CPTPlotDataSource {
-    
-    func numberOfRecordsForPlot(plot:  CPTPlot) -> Int
-    func numbersForPlot( plot : CPTPlot, fieldEnum :Int, indexRange : NSRange) -> [Int]
-    func numberForPlot(plot: CPTPlot, field:Int, recordIndex:Int) -> Double
-    func doubleForPlot(plot: CPTPlot, fieldEnum:Int,  idx: Int) ->Double
-    func dataForPlot(plot: CPTPlot,  fieldEnum: Int, indexRange:NSRange ) -> CPTNumericData
-    
-    @objc optional func dataForPlot(plot : CPTPlot , indexRange:NSRange)-> [CPTNumericData]
-    @objc optional func dataLabelForPlot(plot: CPTPlot, recordIndex:Int )-> CPTLayer
-}
-
-
-@objc public protocol CPTPlotDelegate: CPTLayerDelegate {
-    
-    func plot(plot: CPTPlot, dataLabelWasSelectedAtRecordIndex:Int)
-    func plot(plot: CPTPlot, dataLabelWasSelectedAtRecordIndex:Int,  event: CPTNativeEvent )
-    func plot(plot: CPTPlot, dataLabelTouchDownAtRecordIndex:Int)
-    func plot(plot: CPTPlot, dataLabelTouchDownAtRecordIndex:Int, event: CPTNativeEvent )
-    func plot(plot: CPTPlot, dataLabelTouchUpAtRecordIndex: Int)
-    func plot(plot: CPTPlot, dataLabelTouchUpAtRecordIndex: Int,  event: CPTNativeEvent )
-    
-    func didFinishDrawing(plot: CPTPlot )
-    
-    
-}
-

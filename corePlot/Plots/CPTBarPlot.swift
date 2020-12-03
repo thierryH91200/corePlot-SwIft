@@ -8,8 +8,32 @@
 import AppKit
 
 
+// MARK: bar plot data source.
+@objc public protocol CPTBarPlotDataSource:   CPTPlotDataSource  {
+    
+    func barFillsForBarPlot(barPlot: CPTBarPlot, recordIndexRange indexRange:NSRange)-> [CPTFill]
+    func barFillForBarPlot(barPlot: CPTBarPlot, recordIndex idx:Int) -> [CPTFill]
+    @objc optional func barLineStylesForBarPlot(barPlot: CPTBarPlot, recordIndexRange:NSRange)-> [CPTLineStyle]
+    func barLineStyleForBarPlot(barPlot: CPTBarPlot, recordIndex idx :Int) -> CPTLineStyle
+    func barWidthsForBarPlot(barPlot: CPTBarPlot, recordIndexRange indexRange :NSRange)-> [CGFloat]
+    func barWidthForBarPlot(barPlot : CPTBarPlot, recordIndex idx: Int)-> CGFloat
+    @objc optional func legendTitleForBarPlot(barPlot: CPTBarPlot, recordIndex idx:Int) -> String
+    func attributedLegendTitleForBarPlot(barPlot: CPTBarPlot, recordIndex idx:Int )-> NSAttributedString
+}
 
-class CPTBarPlot: CPTPlot {
+
+// MARK:  Bar plot delegate
+protocol CPTBarPlotDelegate: CPTPlotDelegate {
+    
+    func barPlot(plot: CPTBarPlot, barWasSelectedAtRecordIndex idx: Int)
+    func barPlot( plot: CPTBarPlot, barWasSelectedAtRecordIndex idx: Int, withEvent event: CPTNativeEvent)
+    func barPlot( plot: CPTBarPlot, barTouchDownAtRecordIndex idx: Int)
+    func barPlot( plot: CPTBarPlot, barTouchDownAtRecordIndex idx: Int, withEvent event: CPTNativeEvent)
+    func barPlot( plot: CPTBarPlot, barTouchUpAtRecordIndex idx: Int)
+    func barPlot( plot: CPTBarPlot, barTouchUpAtRecordIndex idx: Int, withEvent event: CPTNativeEvent )
+}
+
+public class CPTBarPlot: CPTPlot {
     
     enum  CPTBarPlotField  :Int {
         case location ///< Bar location on independent coordinate axis.
@@ -17,6 +41,7 @@ class CPTBarPlot: CPTPlot {
         case barBase      ///< Bar base (used only if @link CPTBarPlot::barBasesVary barBasesVary @endlink is YES).
     };
     
+    //    public weak var dataSource : CPTBarPlotDataSource?
     
     //    typedef NSString *CPTBarPlotBinding cpt_swift_struct;
     
@@ -27,7 +52,7 @@ class CPTBarPlot: CPTPlot {
     let CPTBarPlotBindingBarLineStyles = "barLineStyles" ///< Bar line styles.
     let CPTBarPlotBindingBarWidths     = "barWidths"     ///< Bar widths.
     
-    var  barLocations = [CGFloat]()
+    var barLocations = [CGFloat]()
     var barTips  = [CGFloat]()
     var barBases  = [CGFloat]()
     var barFills = [CPTFill]()
@@ -35,7 +60,7 @@ class CPTBarPlot: CPTPlot {
     var barWidths  = [CPTLineStyle]()
     var pointingDeviceDownIndex = 0
     
-
+    
     
     // MARK: Appearance
     var barWidthsAreInViewCoordinates = true
@@ -50,9 +75,7 @@ class CPTBarPlot: CPTPlot {
     
     // MARK: Drawing
     var  lineStyle : CPTLineStyle
-    var  fill : CPTFill
-    //
-    
+    var  fill : CPTFill    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -93,7 +116,7 @@ class CPTBarPlot: CPTPlot {
         barPlot.barWidth = CGFloat( 0.8)
         barPlot.barCornerRadius = CGFloat(2.0)
         
-        let fillGradient = CPTGradient(beginningColor: color, endingColor: NSUIColor.black)
+        //        let fillGradient = CPTGradient(beginningColor: color, endingColor: NSUIColor.black)
         
         fillGradient.angle = CGFloat(horizontal ? -90.0 : 0.0)
         barPlot?.fill = CPTFill(gradient: fillGradient)
@@ -114,6 +137,11 @@ class CPTBarPlot: CPTPlot {
         
     }
     
+    //    func legendTitleForBarPlot(barPlot: CPTBarPlot, recordIndex idx:Int) -> String
+    
+    
+    // https://ask.xiaolee.net/questions/1044854
+    
     override func reloadData(indexRange: NSRange)
     {
         super.reloadData(indexRange: indexRange)
@@ -122,16 +150,17 @@ class CPTBarPlot: CPTPlot {
         self.reloadBarFills(indexRange: indexRange)
         
         // Bar line styles
-        self.reloadBarLineStyles(indexRange)
+        self.reloadBarLineStyles(indexRange: indexRange)
         
         // Bar widths
-        self.reloadBarWidths(indexRange)
+        self.reloadBarWidths(indexRange: indexRange)
         
         // Legend
-        let theDataSource = self.dataSource;
+        let theDataSource = self.dataSource as? CPTBarPlotDataSource
         
-        if theDataSource.respondsToSelector(#selector(legendTitleForBarPlot(recordIndex:) )) {
-            NotificationCenter.send( .CPTLegendNeedsLayindexRange)
+        if let legendTitleForBarPlot = theDataSource?.legendTitleForBarPlot {
+            _ = legendTitleForBarPlot(self, indexRange.length)
+            NotificationCenter.send( .CPTLegendNeedsRedrawForPlotNotification)
         }
     }
     
@@ -140,7 +169,8 @@ class CPTBarPlot: CPTPlot {
         super.reloadPlotData(indexRange: indexRange)
         
         if  self.loadNumbersForAllFieldsFromDataSourceInRecordIndexRange(indexRange)  == false {
-            let  theDataSource = self.dataSource
+            
+            let  theDataSource = self.dataSource as! CPTBarPlotDataSource
             
             // Bar lengths
             if ( theDataSource ) != nil {
@@ -149,16 +179,16 @@ class CPTBarPlot: CPTPlot {
                 
                 
                 if  self.barBasesVary  {
-                    let newBarBases = self.numbersFromDataSourceForField( .barBase recordIndexRange:indexRange)
-                    [self.cacheNumbers(newBarBases, forField:.barBase, atRecordIndex:indexRange.location)
-                    }
+                    let newBarBases = self.numbersFromDataSourceForField( .barBase, recordIndexRange:indexRange)
+                    self.cacheNumbers(newBarBases, forField:.barBase, atRecordIndex:indexRange.location)
+                }
                 else {
                     self.barBases = nil;
                 }
             }
             else {
-                self.barTips  = nil
-                self.barBases = nil
+                self.barTips.removeAll()
+                self.barBases.removeAll()
             }
             
             // Locations of bars
@@ -212,7 +242,7 @@ class CPTBarPlot: CPTPlot {
             }
             else {
                 // Make evenly spaced locations starting at zero
-                CPTMutableNumericData *locationData = nil;
+                let locationData = nil;
                 if ( self.doublePrecisionCache ) {
                     locationData = [[CPTMutableNumericData alloc] initWithData:[NSData data]
                                     dataType:CPTDataType(CPTFloatingPointDataType, sizeof(double), CFByteOrderGetCurrent())
@@ -257,18 +287,19 @@ class CPTBarPlot: CPTPlot {
     //     **/
     func reloadBarFills(indexRange: NSRange)
     {
-        let theDataSource = self.dataSource
+        let theDataSource = self.dataSource as? CPTBarPlotDataSource
         
-        var needsLegendUpdate = false;
+        var needsLegendUpdate = false
         
-        if ( theDataSource.respondsToSelector(to:#selector(barFillsForBarPlot:recordIndexRange:) ) {
+        if let barFillsForBarPlot = theDataSource?.barFillsForBarPlot {
             needsLegendUpdate = true
             
-            self.cacheArray[theDataSource.barFillsForBarPlot(self, recordIndexRange:indexRange)
+            self.cacheArray(theDataSource.barFillsForBarPlot(self, recordIndexRange:indexRange)
                             forKey:CPTBarPlotBindingBarFills,
                             atRecordIndex:indexRange.location)
         }
-        else if ( theDataSource.respondsToSelector(to: #selector(barFillForBarPlot:recordIndex:)] ) {
+        else
+        if let barFillsForBarPlot = theDataSource?.barFillsForBarPlot {
             needsLegendUpdate = true
             
             let nilObject               : CPTFill?
@@ -277,7 +308,7 @@ class CPTBarPlot: CPTPlot {
             let location = indexRange.location
             
             for  idx in location..<maxIndex {
-                let dataSourceFill = theDataSource.barFillForBarPlot:self recordIndex:idx)
+                let dataSourceFill = theDataSource?.barFillForBarPlot:self recordIndex:idx)
                 if ( dataSourceFill ) {
                     array.apppend(dataSourceFill)
                 }
@@ -309,27 +340,29 @@ class CPTBarPlot: CPTPlot {
      **/
     func reloadBarLineStyles(indexRange: NSRange)
     {
-        let theDataSource = self.dataSource
-        var needsLegendUpdate = false;
+        let theDataSource = self.dataSource as? CPTBarPlotDataSource
+        var needsLegendUpdate = false
         
-        if theDataSource.respondsToSelector(to: #selector(barLineStylesForBarPlot:recordIndexRange:)) {
+        if let barLineStylesForBarPlot = theDataSource?.barLineStylesForBarPlot {
+        
             needsLegendUpdate = true
             
             self.cacheArray(theDataSource barLineStylesForBarPlot:self recordIndexRange:indexRange]
-             forKey:CPTBarPlotBindingBarLineStyles
-             atRecordIndex:indexRange.location];
+                forKey:CPTBarPlotBindingBarLineStyles
+                atRecordIndex:indexRange.location];
         }
-        else if ( [theDataSource respondsToSelector(to: #selector(barLineStyleForBarPlot:recordIndex:)] ) {
+        else if         if let barLineStylesForBarPlot = theDataSource?.barLineStylesForBarPlot {
+ 
             needsLegendUpdate = true
             
             let  nilObject                    = [CPTPlot nilData];
-            let array = [CPTLineStyle]()
+            var array = [CPTLineStyle]()
             let maxIndex             = NSMaxRange(indexRange)
             
             for  idx in indexRange.location..<maxIndex {
-                let dataSourceLineStyle = theDataSource.barLineStyleForBarPlot(self, recordIndex:idx)
-                if ( dataSourceLineStyle ) {
-                    array.append(dataSourceLineStyle)
+                let dataSourceLineStyle = theDataSource?.barLineStyleForBarPlot(barPlot: self, recordIndex:idx)
+                if (( dataSourceLineStyle ) != nil) {
+                    array.append(dataSourceLineStyle!)
                 }
                 else {
                     array.addObject(nilObject)
@@ -337,8 +370,8 @@ class CPTBarPlot: CPTPlot {
             }
             
             self.cacheArray(array: array,
-            forKey:CPTBarPlotBindingBarLineStyles,
-            atRecordIndex:indexRange.location)
+                            forKey:CPTBarPlotBindingBarLineStyles,
+                            atRecordIndex:indexRange.location)
         }
         
         // Legend
@@ -361,15 +394,15 @@ class CPTBarPlot: CPTPlot {
     //     **/
     func reloadBarWidths(indexRange: NSRange)
     {
-        let dataSource = self.dataSource
-        
+        let theDataSource = self.dataSource as? CPTBarPlotDataSource
+
         if dataSource.respondsToSelector(to:#selector(barWidthsForBarPlot:recordIndexRange:) ) {
-            self.cacheArray:[theDataSource.barWidthsForBarPlot:self recordIndexRange:indexRange]
-             forKey:CPTBarPlotBindingBarWidths,
-             atRecordIndex:indexRange.location)
+            self.cacheArray(theDataSource.barWidthsForBarPlot(self ,recordIndexRange:indexRange)
+            forKey:CPTBarPlotBindingBarWidths,
+            atRecordIndex:indexRange.location)
         }
         else if dataSource.respondsToSelector(to:#selector(barWidthForBarPlot:recordIndex:)) {
-            let nilObject                 = [CPTPlot nilData];
+            let nilObject                 = [CPTPlot nilData]
             var array = Array[CGFloat]()
             
             let maxIndex          = NSMaxRange(indexRange);
@@ -391,8 +424,7 @@ class CPTBarPlot: CPTPlot {
     }
     
     // MARK:Length Conversions for Independent Coordinate (e.g., widths, offsets)
-    //
-    //
+    
     //    -(CGFloat)lengthInView:(NSDecimal)decimalLength
     //    {
     //        CGFloat length;
@@ -611,7 +643,7 @@ class CPTBarPlot: CPTPlot {
     //
     //    /// @cond
     //
-    //    -(void)renderAsVectorInContext:(nonnull CGContextRef)context
+    //    func renderAsVectorInContext:(nonnull CGContextRef)context
     //    {
     //        if ( self.hidden ) {
     //            return;
@@ -972,7 +1004,7 @@ class CPTBarPlot: CPTPlot {
         }
     }
     //
-    //    -(void)drawSwatchForLegend:(nonnull CPTLegend *)legend atIndex:(NSUInteger)idx inRect:(CGRect)rect inContext:(nonnull CGContextRef)context
+    //    func drawSwatchForLegend:(nonnull CPTLegend *)legend atIndex:(NSUInteger)idx inRect:(CGRect)rect inContext:(nonnull CGContextRef)context
     //    {
     //        [super drawSwatchForLegend:legend atIndex:idx inRect:rect inContext:context];
     //
@@ -1003,7 +1035,7 @@ class CPTBarPlot: CPTPlot {
     //
     // MARK: - Animation
     
-    override func needsDisplayForKey(aKey: String) -> Bool
+    override func needsDisplayForKey(forKey aKey: String) -> Bool
     {
         var keys        = Set<String>()
         
@@ -1028,7 +1060,7 @@ class CPTBarPlot: CPTPlot {
     //
     //    /// @cond
     //
-    //    -(void)positionLabelAnnotation:(nonnull CPTPlotSpaceAnnotation *)label forIndex:(NSUInteger)idx
+    //    func positionLabelAnnotation:(nonnull CPTPlotSpaceAnnotation *)label forIndex:(NSUInteger)idx
     //    {
     //        NSDecimal theBaseDecimalValue;
     //
@@ -1341,7 +1373,7 @@ class CPTBarPlot: CPTPlot {
     //        return [[self cachedNumbersForField:CPTBarPlotFieldBarTip] sampleArray];
     //    }
     //
-    //    -(void)setBarTips:(nullable CPTNumberArray *)newTips
+    //    func setBarTips:(nullable CPTNumberArray *)newTips
     //    {
     //        [self cacheNumbers:newTips forField:CPTBarPlotFieldBarTip];
     //    }
@@ -1351,7 +1383,7 @@ class CPTBarPlot: CPTPlot {
     //        return [[self cachedNumbersForField:CPTBarPlotFieldBarBase] sampleArray];
     //    }
     //
-    //    -(void)setBarBases:(nullable CPTNumberArray *)newBases
+    //    func setBarBases:(nullable CPTNumberArray *)newBases
     //    {
     //        [self cacheNumbers:newBases forField:CPTBarPlotFieldBarBase];
     //    }
@@ -1361,7 +1393,7 @@ class CPTBarPlot: CPTPlot {
     //        return [[self cachedNumbersForField:CPTBarPlotFieldBarLocation] sampleArray];
     //    }
     //
-    //    -(void)setBarLocations:(nullable CPTNumberArray *)newLocations
+    //    func setBarLocations:(nullable CPTNumberArray *)newLocations
     //    {
     //        [self cacheNumbers:newLocations forField:CPTBarPlotFieldBarLocation];
     //    }
@@ -1371,7 +1403,7 @@ class CPTBarPlot: CPTPlot {
     //        return [self cachedArrayForKey:CPTBarPlotBindingBarFills];
     //    }
     //
-    //    -(void)setBarFills:(nullable CPTFillArray *)newBarFills
+    //    func setBarFills:(nullable CPTFillArray *)newBarFills
     //    {
     //        [self cacheArray:newBarFills forKey:CPTBarPlotBindingBarFills];
     //        [self setNeedsDisplay];
@@ -1382,7 +1414,7 @@ class CPTBarPlot: CPTPlot {
     //        return [self cachedArrayForKey:CPTBarPlotBindingBarLineStyles];
     //    }
     //
-    //    -(void)setBarLineStyles:(nullable CPTLineStyleArray *)newBarLineStyles
+    //    func setBarLineStyles:(nullable CPTLineStyleArray *)newBarLineStyles
     //    {
     //        [self cacheArray:newBarLineStyles forKey:CPTBarPlotBindingBarLineStyles];
     //        [self setNeedsDisplay];
@@ -1441,16 +1473,16 @@ class CPTBarPlot: CPTPlot {
         }
     }
     
-    -(void)setBaseValue:(nonnull NSNumber *)newBaseValue
+    func setBaseValue(newBaseValue NSNumber )
     {
-    if ( ![baseValue isEqualToNumber:newBaseValue] ) {
-    baseValue = newBaseValue;
-    [self setNeedsDisplay];
-    [self setNeedsLayout];
-    }
+        if ( ![baseValue isEqualToNumber:newBaseValue] ) {
+            baseValue = newBaseValue;
+            [self setNeedsDisplay];
+            [self setNeedsLayout];
+        }
     }
     
-    //    -(void)setBarBasesVary:(BOOL)newBasesVary
+    //    func setBarBasesVary:(BOOL)newBasesVary
     //    {
     //        if ( newBasesVary != barBasesVary ) {
     //            barBasesVary = newBasesVary;
@@ -1460,7 +1492,7 @@ class CPTBarPlot: CPTPlot {
     //        }
     //    }
     //
-    //    -(void)setBarsAreHorizontal:(BOOL)newBarsAreHorizontal
+    //    func setBarsAreHorizontal:(BOOL)newBarsAreHorizontal
     //    {
     //        if ( barsAreHorizontal != newBarsAreHorizontal ) {
     //            barsAreHorizontal = newBarsAreHorizontal;
@@ -1554,3 +1586,4 @@ class CPTBarPlot: CPTPlot {
     //    @end
     
 }
+
