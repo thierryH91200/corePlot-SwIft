@@ -31,7 +31,13 @@ corePlot/Source/Animation/CPTAnimationCGFloatPeriod
 
 ## CPTPlotRange
 
-
 ## class CPTColor
 
+## class CPTMutablePlotRange
 
+
+
+
+change 
+
+com 201204 : CPTXYPlotSpace

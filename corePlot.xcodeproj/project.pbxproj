@@ -61,6 +61,8 @@
 		03525995256C185500FEA155 /* CPTLayer accessors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03525994256C185500FEA155 /* CPTLayer accessors.swift */; };
 		03525999256C18EB00FEA155 /* CPTLayer Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03525998256C18EB00FEA155 /* CPTLayer Layout.swift */; };
 		0352599D256C19A500FEA155 /* CPTLayer masking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0352599C256C19A500FEA155 /* CPTLayer masking.swift */; };
+		03595088257A8B4A00B12614 /* CPTMutablePlotRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03595087257A8B4A00B12614 /* CPTMutablePlotRange.swift */; };
+		0359508C257A8C3500B12614 /* CPTFunctionDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0359508B257A8C3500B12614 /* CPTFunctionDataSource.swift */; };
 		035C8A71256D305400954017 /* CPTUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035C8A70256D305400954017 /* CPTUtilities.swift */; };
 		035C8A90256D82C700954017 /* CPTPlot Dtat Source.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035C8A8F256D82C700954017 /* CPTPlot Dtat Source.swift */; };
 		035C8A96256D836E00954017 /* CPTPlot Data Caching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035C8A95256D836E00954017 /* CPTPlot Data Caching.swift */; };
@@ -171,6 +173,8 @@
 		03525994256C185500FEA155 /* CPTLayer accessors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTLayer accessors.swift"; sourceTree = "<group>"; };
 		03525998256C18EB00FEA155 /* CPTLayer Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTLayer Layout.swift"; sourceTree = "<group>"; };
 		0352599C256C19A500FEA155 /* CPTLayer masking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTLayer masking.swift"; sourceTree = "<group>"; };
+		03595087257A8B4A00B12614 /* CPTMutablePlotRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTMutablePlotRange.swift; sourceTree = "<group>"; };
+		0359508B257A8C3500B12614 /* CPTFunctionDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTFunctionDataSource.swift; sourceTree = "<group>"; };
 		035C8A70256D305400954017 /* CPTUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTUtilities.swift; sourceTree = "<group>"; };
 		035C8A8F256D82C700954017 /* CPTPlot Dtat Source.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTPlot Dtat Source.swift"; sourceTree = "<group>"; };
 		035C8A95256D836E00954017 /* CPTPlot Data Caching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTPlot Data Caching.swift"; sourceTree = "<group>"; };
@@ -327,6 +331,8 @@
 				033667062557DFBD00B109CE /* CPTDefinitions.swift */,
 				0320AFFF255C75DE00D32BF9 /* CPTPlotRange.swift */,
 				035C8A70256D305400954017 /* CPTUtilities.swift */,
+				03595087257A8B4A00B12614 /* CPTMutablePlotRange.swift */,
+				0359508B257A8C3500B12614 /* CPTFunctionDataSource.swift */,
 			);
 			path = "Types and Functions";
 			sourceTree = "<group>";
@@ -721,6 +727,7 @@
 				03C433C7255ED3AA00F00A24 /* CPTLegend.swift in Sources */,
 				0320AFCC255C515800D32BF9 /* CPTSlateTheme.swift in Sources */,
 				03411EC725646EA300CE639F /* CPTImage ext.swift in Sources */,
+				03595088257A8B4A00B12614 /* CPTMutablePlotRange.swift in Sources */,
 				03DDD45625626DC200CAB29B /* CPTAxisLabel.swift in Sources */,
 				030A6512255FC5E0002B3D13 /* CPTAnimationCGFloatPeriod.swift in Sources */,
 				0320AFB9255C0EE100D32BF9 /* CPTConstraintsFixed.swift in Sources */,
@@ -770,6 +777,7 @@
 				030A652525600740002B3D13 /* CPTXYPlotSpace.swift in Sources */,
 				03A9CCFF2559A78C0096853D /* CPTFill.swift in Sources */,
 				0320AFF4255C6AB200D32BF9 /* CPTGridLineGroup.swift in Sources */,
+				0359508C257A8C3500B12614 /* CPTFunctionDataSource.swift in Sources */,
 				03A7D46C25616F5A00D3FED1 /* CPTGradient Extension.swift in Sources */,
 				032EE50325665BC70085F4E1 /* CPTMaskLayer.swift in Sources */,
 				03A9CD072559AAE70096853D /* CPTFillGradient.swift in Sources */,

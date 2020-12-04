@@ -9,20 +9,19 @@ import AppKit
 
 class CPTXYPlotSpace: CPTPlotSpace {
     
-    
     var xRange: CPTPlotRange;
     var yRange: CPTPlotRange;
     var globalXRange: CPTPlotRange?
     var globalYRange: CPTPlotRange?
-    var  xScaleType : CPTScaleType
-    var  yScaleType : CPTScaleType
+    var xScaleType : CPTScaleType
+    var yScaleType : CPTScaleType
     
-    var  allowsMomentum: Bool
-    var  allowsMomentumX: Bool
-    var  allowsMomentumY: Bool
+    var allowsMomentum: Bool
+    var allowsMomentumX: Bool
+    var allowsMomentumY: Bool
     var momentumAnimationCurve: CPTAnimationCurve
     var bounceAnimationCurve: CPTAnimationCurve;
-    var  momentumAcceleration = CGFloat(0)
+    var momentumAcceleration = CGFloat(0)
     var bounceAcceleration = CGFloat(0)
     var minimumDisplacementToDrag = CGFloat(0)
     
@@ -117,68 +116,67 @@ class CPTXYPlotSpace: CPTPlotSpace {
     }
     
     
-    -(void)setXRange:(nonnull CPTPlotRange *)range
+    func setXRange(range: CPTPlotRange )
     {
-    NSParameterAssert(range);
-    
-    if ( ![range isEqualToRange:xRange] ) {
-    CPTPlotRange *constrainedRange;
-    
-    if ( self.allowsMomentumX ) {
-    constrainedRange = range;
-    }
-    else {
-    constrainedRange = [self constrainRange:range toGlobalRange:self.globalXRange];
-    }
-    
-    id<CPTPlotSpaceDelegate> theDelegate = self.delegate;
-    if ( [theDelegate respondsToSelector:@selector(plotSpace:willChangePlotRangeTo:forCoordinate:)] ) {
-    constrainedRange = [theDelegate plotSpace:self willChangePlotRangeTo:constrainedRange forCoordinate:CPTCoordinateX];
-    }
-    
-    if ( ![constrainedRange isEqualToRange:xRange] ) {
-    CGFloat displacement = self.lastDisplacement.x;
-    BOOL isScrolling     = NO;
-    
-    if ( xRange && constrainedRange ) {
-    isScrolling = !CPTDecimalEquals(constrainedRange.locationDecimal, xRange.locationDecimal) && CPTDecimalEquals(constrainedRange.lengthDecimal, xRange.lengthDecimal);
-    
-    if ( isScrolling && (displacement == CPTFloat(0.0))) {
-    CPTGraph *theGraph    = self.graph;
-    CPTPlotArea *plotArea = theGraph.plotAreaFrame.plotArea;
-    
-    if ( plotArea ) {
-    NSDecimal rangeLength = constrainedRange.lengthDecimal;
-    
-    if ( !CPTDecimalEquals(rangeLength, CPTDecimalFromInteger(0))) {
-    NSDecimal diff = CPTDecimalDivide(CPTDecimalSubtract(constrainedRange.locationDecimal, xRange.locationDecimal), rangeLength);
-    
-    displacement = plotArea.bounds.size.width * CPTDecimalCGFloatValue(diff);
-    }
-    }
-    }
-    }
-    
-    xRange = [constrainedRange copy];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:CPTPlotSpaceCoordinateMappingDidChangeNotification
-    object:self
-    userInfo:@{ CPTPlotSpaceCoordinateKey: @(CPTCoordinateX),
-    CPTPlotSpaceScrollingKey: @(isScrolling),
-    CPTPlotSpaceDisplacementKey: @(displacement) }
-    ];
-    
-    if ( [theDelegate respondsToSelector:@selector(plotSpace:didChangePlotRangeForCoordinate:)] ) {
-    [theDelegate plotSpace:self didChangePlotRangeForCoordinate:CPTCoordinateX];
-    }
-    
-    CPTGraph *theGraph = self.graph;
-    if ( theGraph ) {
-    [[NSNotificationCenter defaultCenter] postNotificationName:CPTGraphNeedsRedrawNotification
-    object:theGraph];
-    }
-    }
-    }
+        
+        if  range.isEqual(to: xRange)  == false {
+            var constrainedRange = CPTPlotRange(location: 0, length: 0)
+            
+            if self.allowsMomentumX == true {
+                constrainedRange = range
+            }
+            else {
+                constrainedRange = self.constrainRange(range ,toGlobalRange:self.globalXRange)
+            }
+            
+            let theDelegate = self.delegate;
+            
+            if ( [theDelegate respondsToSelector:@selector(plotSpace:willChangePlotRangeTo:forCoordinate:)] ) {
+                constrainedRange = theDelegate.plotSpace(self, willChangePlotRangeTo:constrainedRange, forCoordinate:CPTCoordinateX)
+            }
+            
+            if ( ![constrainedRange isEqualToRange:xRange] ) {
+                var displacement = self.lastDisplacement.x;
+                var isScrolling     = false
+                
+                if ( xRange && constrainedRange ) {
+                    isScrolling = !CPTDecimalEquals(constrainedRange.locationDecimal, xRange.locationDecimal) && CPTDecimalEquals(constrainedRange.lengthDecimal, xRange.lengthDecimal);
+                    
+                    if ( isScrolling && (displacement == CPTFloat(0.0))) {
+                        CPTGraph *theGraph    = self.graph;
+                        CPTPlotArea *plotArea = theGraph.plotAreaFrame.plotArea;
+                        
+                        if ( plotArea ) {
+                            NSDecimal rangeLength = constrainedRange.lengthDecimal;
+                            
+                            if ( !CPTDecimalEquals(rangeLength, CPTDecimalFromInteger(0))) {
+                                NSDecimal diff = CPTDecimalDivide(CPTDecimalSubtract(constrainedRange.locationDecimal, xRange.locationDecimal), rangeLength);
+                                
+                                displacement = plotArea.bounds.size.width * CPTDecimalCGFloatValue(diff);
+                            }
+                        }
+                    }
+                }
+                
+                xRange = [constrainedRange copy];
+                
+                [[NSNotificationCenter defaultCenter] postNotificationName:CPTPlotSpaceCoordinateMappingDidChangeNotification
+                object:self
+                userInfo:@{ CPTPlotSpaceCoordinateKey: @(CPTCoordinateX),
+                CPTPlotSpaceScrollingKey: @(isScrolling),
+                CPTPlotSpaceDisplacementKey: @(displacement) }
+                ];
+                
+                if ( [theDelegate respondsToSelector:@selector(plotSpace:didChangePlotRangeForCoordinate:)] ) {
+                    [theDelegate plotSpace:self didChangePlotRangeForCoordinate:CPTCoordinateX];
+                }
+                
+                CPTGraph *theGraph = self.graph;
+                if ( theGraph ) {
+                    NotificationCenter.defaultCenter.post(.CPTGraphNeedsRedrawNotification,  object:theGraph)
+                }
+            }
+        }
     }
     //
     //    -(void)setYRange:(nonnull CPTPlotRange *)range
@@ -245,27 +243,27 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //        }
     //    }
     //
-    //    -(nonnull CPTPlotRange *)constrainRange:(nonnull CPTPlotRange *)existingRange toGlobalRange:(nullable CPTPlotRange *)globalRange
-    //    {
-    //        if ( !globalRange ) {
-    //            return existingRange;
-    //        }
-    //        if ( !existingRange ) {
-    //            return nil;
-    //        }
-    //
-    //        CPTPlotRange *theGlobalRange = globalRange;
-    //
-    //        if ( CPTDecimalGreaterThanOrEqualTo(existingRange.lengthDecimal, theGlobalRange.lengthDecimal)) {
-    //            return [theGlobalRange copy];
-    //        }
-    //        else {
-    //            CPTMutablePlotRange *newRange = [existingRange mutableCopy];
-    //            [newRange shiftEndToFitInRange:theGlobalRange];
-    //            [newRange shiftLocationToFitInRange:theGlobalRange];
-    //            return newRange;
-    //        }
-    //    }
+    func constrainRange(existingRange: CPTPlotRange, toGlobalRange globalRange: CPTPlotRange)-> CPTPlotRange
+        {
+            if ( !globalRange ) {
+                return existingRange;
+            }
+            if ( !existingRange ) {
+                return nil;
+            }
+    
+            let theGlobalRange = globalRange;
+    
+            if ( CPTDecimalGreaterThanOrEqualTo(existingRange.lengthDecimal, theGlobalRange.lengthDecimal)) {
+                return theGlobalRange
+            }
+            else {
+                let newRange = existingRange
+                [newRange shiftEndToFitInRange:theGlobalRange];
+                [newRange shiftLocationToFitInRange:theGlobalRange];
+                return newRange;
+            }
+        }
     //
     //    -(void)animateRangeForCoordinate:(CPTCoordinate)coordinate shift:(NSDecimal)shift momentumTime:(CGFloat)momentumTime speed:(CGFloat)speed acceleration:(CGFloat)acceleration
     //    {

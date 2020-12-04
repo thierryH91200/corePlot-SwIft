@@ -58,7 +58,6 @@ class CPTPlotRange: NSObject {
 //
     init(location: CGFloat, length:CGFloat)
     {
-        
         super.init()
         locationDecimal = location
         locationDouble  = location

@@ -68,7 +68,6 @@ class CPTPlotSpace: NSObject {
 
         if categories == nil {
             categories = NSMutableOrderedSet()
-
             names[cacheKey] = categories
         }
 
@@ -78,7 +77,7 @@ class CPTPlotSpace: NSObject {
     
     func addCategory(_ category: String, for coordinate: CPTCoordinate) {
 
-        let categories = orderedSetForCoordinate(coordinate: coordinate)
+        let categories = orderedSet(coordinate: coordinate)
         categories.add(category)
     }
     
@@ -86,56 +85,39 @@ class CPTPlotSpace: NSObject {
     
     func removeCategory(category: String, forCoordinate coordinate:CPTCoordinate)
     {
-        var categories = orderedSetForCoordinate(coordinate: coordinate)
+        var categories = orderedSet(coordinate: coordinate)
         categories.remove(category)
     }
 //
-//    /**
-//     *  @brief Add a new category name for the given coordinate at the given index in the list of category names.
-//     *
-//     *  Category names must be unique for each coordinate. Adding the same name more than once has no effect.
-//     *
-//     *  @param category The category name.
-//     *  @param coordinate The axis coordinate.
-//     *  @param idx The index in the list of category names.
-//     */
-//    -(void)insertCategory:(nonnull NSString *)category forCoordinate:(CPTCoordinate)coordinate atIndex:(NSUInteger)idx
-//    {
-//        NSParameterAssert(category);
-//
-//        CPTMutableCategorySet *categories = [self orderedSetForCoordinate:coordinate];
-//
-//        NSParameterAssert(idx <= categories.count);
-//
-//        [categories insertObject:category atIndex:idx];
-//    }
-//
-//    /**
-//     *  @brief Replace all category names for the given coordinate with the names in the supplied array.
-//     *  @param newCategories An array of category names.
-//     *  @param coordinate The axis coordinate.
-//     */
-//    -(void)setCategories:(nullable CPTStringArray *)newCategories forCoordinate:(CPTCoordinate)coordinate
-//    {
-//        NSMutableDictionary<NSNumber *, CPTMutableCategorySet *> *names = self.categoryNames;
-//
-//        if ( !names ) {
-//            names = [[NSMutableDictionary alloc] init];
-//
-//            self.categoryNames = names;
-//        }
-//
-//        NSNumber *cacheKey = @(coordinate);
-//
-//        if ( [newCategories isKindOfClass:[NSArray class]] ) {
-//            CPTStringArray *categories = newCategories;
-//
-//            names[cacheKey] = [NSMutableOrderedSet orderedSetWithArray:categories];
-//        }
-//        else {
-//            [names removeObjectForKey:cacheKey];
-//        }
-//    }
+    
+    
+    func insertCategory(category: String, forCoordinate coordinate :CPTCoordinate, atIndex idx:Int)
+    {
+        let categories = self.orderedSet(coordinate:coordinate)
+        categories.insertObject(category, atIndex:idx)
+    }
+
+    func setCategories:(nullable CPTStringArray *)newCategories forCoordinate:(CPTCoordinate)coordinate
+    {
+        NSMutableDictionary<NSNumber *, CPTMutableCategorySet *> *names = self.categoryNames;
+
+        if ( !names ) {
+            names = [[NSMutableDictionary alloc] init];
+
+            self.categoryNames = names;
+        }
+
+        NSNumber *cacheKey = @(coordinate);
+
+        if ( [newCategories isKindOfClass:[NSArray class]] ) {
+            CPTStringArray *categories = newCategories;
+
+            names[cacheKey] = [NSMutableOrderedSet orderedSetWithArray:categories];
+        }
+        else {
+            [names removeObjectForKey:cacheKey];
+        }
+    }
 //
 //    /**
 //     *  @brief Remove all categories for every coordinate.
@@ -145,45 +127,30 @@ class CPTPlotSpace: NSObject {
         self.categoryNames = [:]
     }
 //
-//    /**
-//     *  @brief Returns a list of all category names for the given coordinate.
-//     *  @param coordinate The axis coordinate.
-//     *  @return An array of category names.
-//     */
     func categoriesForCoordinate(coordinate: CPTCoordinate)->[String]
     {
-        let categories = self.orderedSetForCoordinate(coordinate: coordinate)
+        let categories = self.orderedSet(coordinate: coordinate)
         return categories
     }
-//
-//    /**
-//     *  @brief Returns the category name for the given coordinate at the given index in the list of category names.
-//     *  @param coordinate The axis coordinate.
-//     *  @param idx The index in the list of category names.
-//     *  @return The category name.
-//     */
+
     func category(for coordinate: CPTCoordinate, at idx: Int) -> String? {
         
         let categories = orderedSet(for: coordinate)
-        assert(idx < (categories?.count ?? 0), "Invalid parameter not satisfying: idx < (categories?.count ?? 0)")
         return categories?[idx] as? String
     }
-    
-    
     
     func indexOfCategory(_ category: String, for coordinate: CPTCoordinate) -> Int {
         guard category != "" else {
             
-            
-            CPTMutableCategorySet *categories = [self orderedSetForCoordinate:coordinate];
-
-            return [categories indexOfObject:category];
-
+            let categories = self.orderedSet(coordinate:coordinate)
+            return categories.indexOfObject(category)
         }
         
         let categories = orderedSet(for: coordinate)
         return categories?.indexOfObject(category) ?? 0
     }
+    
+    
 //    pragma mark -
 //    #pragma mark Responder Chain and User interaction
 //
@@ -191,32 +158,17 @@ class CPTPlotSpace: NSObject {
 //    /// @{
 //
 //    /**
-//     *  @brief Informs the receiver that the user has
-//     *  @if MacOnly pressed the mouse button. @endif
-//     *  @if iOSOnly touched the screen. @endif
-//     *
-//     *
-//     *  If the receiver does not have a @ref delegate,
-//     *  this method always returns @NO. Otherwise, the
-//     *  @link CPTPlotSpaceDelegate::plotSpace:shouldHandlePointingDeviceDownEvent:atPoint: -plotSpace:shouldHandlePointingDeviceDownEvent:atPoint: @endlink
-//     *  delegate method is called. If it returns @NO, this method returns @YES
-//     *  to indicate that the event has been handled and no further processing should occur.
-//     *
-//     *  @param event The OS event.
-//     *  @param interactionPoint The coordinates of the interaction.
-//     *  @return Whether the event was handled or not.
-//     **/
-//    -(BOOL)pointingDeviceDownEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
-//    {
-//        BOOL handledByDelegate = NO;
-//
-//        id<CPTPlotSpaceDelegate> theDelegate = self.delegate;
-//
-//        if ( [theDelegate respondsToSelector:@selector(plotSpace:shouldHandlePointingDeviceDownEvent:atPoint:)] ) {
-//            handledByDelegate = ![theDelegate plotSpace:self shouldHandlePointingDeviceDownEvent:event atPoint:interactionPoint];
-//        }
-//        return handledByDelegate;
-//    }
+    func pointingDeviceDownEven(event: CPTNativeEvent, atPoint interactionPoint:CGPoint)-> Bool
+    {
+        var handledByDelegate = false
+
+        let theDelegate = self.delegate;
+
+        if  theDelegate.respondsToSelector(to:#selector(plotSpace, shouldHandlePointingDeviceDownEvent:atPoint) ) {
+            handledByDelegate = ![theDelegate plotSpace:self shouldHandlePointingDeviceDownEvent:event atPoint:interactionPoint];
+        }
+        return handledByDelegate;
+    }
 //
 //    /**
 //     *  @brief Informs the receiver that the user has
