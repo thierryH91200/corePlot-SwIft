@@ -75,7 +75,7 @@ class CPTGraph: CPTBorderedLayer {
         paddingBottom = CGFloat(20.0)
         
         // Plot area
-        let newArea = CPTPlotAreaFrame(frame: bounds)
+        let newArea = CPTPlotAreaFrame(newFrame: bounds)
         plotAreaFrame = newArea
         
         // Plot spaces
@@ -106,7 +106,7 @@ class CPTGraph: CPTBorderedLayer {
         needsDisplayOnBoundsChange = true
     }
     
-    init(layer : Any)
+    override init(layer : CPTLayer)
     {
         super.init(layer : layer)
         let theLayer = CPTGraph(layer: layer)

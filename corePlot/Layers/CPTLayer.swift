@@ -37,6 +37,7 @@ public class CPTLayer : CALayer
         }
     }
     
+
     var renderingRecursively = false
     var useFastRendering     = false
     var graph   : CPTGraph?     = nil
@@ -120,7 +121,7 @@ public class CPTLayer : CALayer
         //        let maskPath = self.maskingPath
         
         if let maskPath = self.maskingPath {
-            context.addPath(maskPath)
+            context.addPath(maskPath!)
             context.clip()
         }
     }

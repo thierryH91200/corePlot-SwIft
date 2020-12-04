@@ -2672,4 +2672,4 @@ class CPTAxis : CPTLayer {
             // do nothing--subclasses must override to do their drawing
         }
     }
-
+}

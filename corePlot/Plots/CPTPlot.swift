@@ -284,7 +284,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
     {
         self.cachedData.removeAll()
         self.cachedDataCount = 0;
-        self.reloadData( indexRange: NSRange(location: 0, length: self.numberOfRecords()))
+        self.reloadData( indexRange: NSRange(location: 0, length: self.numberOfRecords))
     }
     
     /**

@@ -86,15 +86,15 @@ func imageOfLayer() -> CPTNativeImage
  *  @param rect The bounding rectangle in which to draw the text.
  *  @param context The graphics context to draw into.
  **/
-        func drawInRect(rect: CGRect, inContext: CGContext)
-    {
-        CPTPushCGContext(context);
-
+        func drawInRect(rect: CGRect, context: CGContext)
+        {
+            NSGraphicsPushContext(context);
+            
             self.draw( rect :NSRectFromCGRect, 
-                   options:CPTStringDrawingOptions];
-
-        CPTPopCGContext();
-    }
+                       options:CPTStringDrawingOptions];
+                
+                NSGraphicsPopContext();
+        }
 
 /**
  *  @brief Computes the size of the styled text when drawn rounded up to the nearest whole number in each dimension.

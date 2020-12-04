@@ -9,6 +9,9 @@ import Cocoa
 
 class CPTFillImage: CPTFill {
     
+    override init() {
+        
+    }
     
     var fillColor : NSColor
     
@@ -29,7 +32,7 @@ class CPTFillImage: CPTFill {
     /** @brief Draws the color into the given graphics context clipped to the current drawing path.
      *  @param context The graphics context to draw into.
      **/
-    func fillPathInContext(context: CGContext)
+    override func fillPathInContext(context: CGContext)
     {
         context.saveGState();
         context.setFillColor(self.fillColor.cgColor);
@@ -41,11 +44,10 @@ class CPTFillImage: CPTFill {
 
     func isOpaque () -> Bool
     {
-        return self.fillColor.opaque;
+        return self.fillColor.isOpaque;
     }
 
     // MARK: Color
-
     func cgColor() -> CGColor
     {
         return self.fillColor.cgColor;

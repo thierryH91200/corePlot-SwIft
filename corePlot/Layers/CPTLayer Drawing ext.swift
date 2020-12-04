@@ -10,11 +10,12 @@ import AppKit
 extension CPTLayer {
     
     // MARK: - Drawing
-    override func display()
+    public override func display()
     {
         guard self.isHidden == false else {return}
-        if NSView.instancesRespond(to: #selector(effectiveAppearance)) {
-            let oldAppearance = NSAppearance.current;
+        
+        if let effectiveAppearance = NSView.effectiveAppearance() {
+            let oldAppearance = NSAppearance.current
             NSAppearance.current = self.graph?.hostingView?.effectiveAppearance
             
             super.display()
@@ -27,22 +28,21 @@ extension CPTLayer {
     
     @objc func drawInContext(context: CGContext)
     {
-            self.useFastRendering = true
-            self.renderAsVectorInContext(context: context)
-            self.useFastRendering = false
+        self.useFastRendering = true
+        self.renderAsVectorInContext(context: context)
+        self.useFastRendering = false
     }
     
     /**
      * @brief Recurs@objc ively marks this layer and all sublayers as needing to be redrawn.
      **/
     @objc func setNeedsDisplayAllLayers() {
-        
         self.setNeedsDisplay()
         
         for subLayer in self.sublayers!  {
-            
-            if subLayer.responds(to: #selector(setNeedsDisplayAllLayers)) {
-                subLayer.setNeedsDisplayAllLayers()
+            let sub = subLayer as! CPTLayer
+            if let setNeedsDisplayAllLayers = sub.setNeedsDisplayAllLayers() {
+                sub.setNeedsDisplayAllLayers()
             }
             else {
                 subLayer.setNeedsDisplay()
@@ -82,7 +82,7 @@ extension CPTLayer {
         
         self.renderingRecursively = true;
         if ( !self.masksToBounds ) {
-            context.saveGS@objc @objc tate();
+            context.restoreGState()
         }
         self.renderAsVectorInContext(context: context)
         if ( !self.masksToBounds ) {
@@ -173,8 +173,6 @@ extension CPTLayer {
         
         CPTPopCGContext()
         
-        CGContextRelease(pdfContext!)
-        CGDataConsumerRelease(dataConsumer!)
         
         return pdfData;
     }
@@ -205,6 +203,5 @@ extension CPTLayer {
         return false
     }
     
-
+    
 }
-@objc 

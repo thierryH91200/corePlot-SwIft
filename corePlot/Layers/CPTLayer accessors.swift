@@ -5,7 +5,7 @@
 //  Created by thierryH24 on 23/11/2020.
 //
 
-import Foundation
+import AppKit
 
 
 extension CPTLayer {
@@ -13,108 +13,33 @@ extension CPTLayer {
     
     /// @cond
 
-    -(void)setPaddingLeft:(CGFloat)newPadding
-    {
-        if ( newPadding != paddingLeft ) {
-            paddingLeft = newPadding;
-            [self setNeedsLayout];
-        }
+    func setPaddingLeft(_ newPadding: CGFloat) {
+    if newPadding != paddingLeft {
+        paddingLeft = newPadding
+        setNeedsLayout()
     }
+}
 
-    -(void)setPaddingRight:(CGFloat)newPadding
-    {
-        if ( newPadding != paddingRight ) {
-            paddingRight = newPadding;
-            [self setNeedsLayout];
-        }
+func setPaddingRight(_ newPadding: CGFloat) {
+    if newPadding != paddingRight {
+        paddingRight = newPadding
+        setNeedsLayout()
     }
+}
 
-    -(void)setPaddingTop:(CGFloat)newPadding
-    {
-        if ( newPadding != paddingTop ) {
-            paddingTop = newPadding;
-            [self setNeedsLayout];
-        }
+func setPaddingTop(_ newPadding: CGFloat) {
+    if newPadding != paddingTop {
+        paddingTop = newPadding
+        setNeedsLayout()
     }
+}
 
-    -(void)setPaddingBottom:(CGFloat)newPadding
-    {
-        if ( newPadding != paddingBottom ) {
-            paddingBottom = newPadding;
-            [self setNeedsLayout];
-        }
+func setPaddingBottom(_ newPadding: CGFloat) {
+    if newPadding != paddingBottom {
+        paddingBottom = newPadding
+        setNeedsLayout()
     }
-
-    -(CGSize)shadowMargin
-    {
-        CGSize margin = CGSizeZero;
-
-        CPTShadow *myShadow = self.shadow;
-
-        if ( myShadow ) {
-            CGSize shadowOffset  = myShadow.shadowOffset;
-            CGFloat shadowRadius = myShadow.shadowBlurRadius;
-
-            margin = CGSizeMake(ceil(ABS(shadowOffset.width) + ABS(shadowRadius)), ceil(ABS(shadowOffset.height) + ABS(shadowRadius)));
-        }
-
-        return margin;
-    }
-
-    /// @endcond
-
-    /// @name Layout
-    /// @{
-
-    /**
-     *  @brief Updates the layout of all sublayers. Sublayers fill the super layer&rsquo;s bounds minus any padding.
-     *
-     *  This is where we do our custom replacement for the Mac-only layout manager and autoresizing mask.
-     *  Subclasses should override this method to provide a different layout of their own sublayers.
-     **/
-    -(void)layoutSublayers
-    {
-        CGRect selfBounds = self.bounds;
-
-        CPTSublayerArray *mySublayers = self.sublayers;
-
-        if ( mySublayers.count > 0 ) {
-            CGFloat leftPadding, topPadding, rightPadding, bottomPadding;
-
-            [self sublayerMarginLeft:&leftPadding top:&topPadding right:&rightPadding bottom:&bottomPadding];
-
-            CGSize subLayerSize = selfBounds.size;
-            subLayerSize.width  -= leftPadding + rightPadding;
-            subLayerSize.width   = MAX(subLayerSize.width, CPTFloat(0.0));
-            subLayerSize.width   = round(subLayerSize.width);
-            subLayerSize.height -= topPadding + bottomPadding;
-            subLayerSize.height  = MAX(subLayerSize.height, CPTFloat(0.0));
-            subLayerSize.height  = round(subLayerSize.height);
-
-            CGRect subLayerFrame;
-            subLayerFrame.origin = CGPointMake(round(leftPadding), round(bottomPadding));
-            subLayerFrame.size   = subLayerSize;
-
-            CPTSublayerSet *excludedSublayers = self.sublayersExcludedFromAutomaticLayout;
-            Class layerClass                  = [CPTLayer class];
-            for ( CALayer *subLayer in mySublayers ) {
-                if ( [subLayer isKindOfClass:layerClass] && ![excludedSublayers containsObject:subLayer] ) {
-                    subLayer.frame = subLayerFrame;
-                }
-            }
-        }
-    }
-
-    /// @}
-
-    /// @cond
-
-    -(nullable CPTSublayerSet *)sublayersExcludedFromAutomaticLayout
-    {
-        return nil;
-    }
-
-    /// @endcond
+}
 
     /** @brief Returns the margins that should be left between the bounds of the receiver and all sublayers.
      *  @param left The left margin.
@@ -122,16 +47,15 @@ extension CPTLayer {
      *  @param right The right margin.
      *  @param bottom The bottom margin.
      **/
-    -(void)sublayerMarginLeft:(nonnull CGFloat *)left top:(nonnull CGFloat *)top right:(nonnull CGFloat *)right bottom:(nonnull CGFloat *)bottom
+    func sublayerMargin(left: inout CGFloat, top: inout CGFloat, right: inout CGFloat , bottom: inout CGFloat)
     {
-        *left   = self.paddingLeft;
-        *top    = self.paddingTop;
-        *right  = self.paddingRight;
-        *bottom = self.paddingBottom;
+        left   = self.paddingLeft;
+        top    = self.paddingTop
+        right  = self.paddingRight
+        bottom = self.paddingBottom
     }
 
-    #pragma mark -
-    #pragma mark Sublayers
+    // MARK: Sublayers
 
     /// @cond
 
@@ -149,21 +73,21 @@ extension CPTLayer {
         }
     }
 
-    -(void)addSublayer:(nonnull CALayer *)layer
+    func addSublayer(layer: CALayer )
     {
-        [super addSublayer:layer];
+        super.addSublayer(layer)
 
-        if ( [layer isKindOfClass:[CPTLayer class]] ) {
-            ((CPTLayer *)layer).contentsScale = self.contentsScale;
+        if layer is CPTLayer  {
+            layer.contentsScale = self.contentsScale;
         }
     }
 
-    -(void)insertSublayer:(nonnull CALayer *)layer atIndex:(unsigned)idx
+    func insertSublayer(layer: CALayer, atIndex idx:Int)
     {
-        [super insertSublayer:layer atIndex:idx];
+        super.insertSublayer(layer , atIndex:idx)
 
-        if ( [layer isKindOfClass:[CPTLayer class]] ) {
-            ((CPTLayer *)layer).contentsScale = self.contentsScale;
+        if layer is CPTLayer {
+            layer.contentsScale = self.contentsScale
         }
     }
 
@@ -194,10 +118,7 @@ extension CPTLayer {
         }
     }
 
-    /// @endcond
-
-    #pragma mark -
-    #pragma mark Masking
+    // MARK: Masking
 
     /// @cond
 

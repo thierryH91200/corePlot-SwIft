@@ -31,7 +31,7 @@ class CPTPlotSpace: NSObject {
     var delegate : CPTPlotSpaceDelegate?
     var identifier : UUID?
     var allowsUserInteraction : Bool?
-    var isDragging : Bool?
+    var isDragging : Bool
     var graph : CPTGraph?
     
     override init()
