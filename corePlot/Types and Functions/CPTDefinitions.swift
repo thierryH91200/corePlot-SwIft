@@ -91,8 +91,6 @@ enum CPTAlignment : Int {
 
 typealias CPTEdgeInsets = NSEdgeInsets
 
-
-
 /**
  *  @brief An array of numbers.
  **/

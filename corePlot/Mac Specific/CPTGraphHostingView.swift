@@ -50,30 +50,22 @@ class CPTGraphHostingView: NSView {
             commonInit()
     }
     
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     
     override func makeBackingLayer() ->CALayer
     {
-        return CPTLayer (alloc] initWithFrame:NSRectToCGRect(self.bounds)];
+        return CPTLayer(frame: self.bounds)
     }
-
-//    -(void)encodeWithCoder:(nonnull NSCoder *)coder
-//    {
-//        [super encodeWithCoder:coder];
-//
-//        [coder encodeObject:self.hostedGraph forKey:@"CPTLayerHostingView.hostedGraph"];
-//        [coder encodeRect:self.printRect forKey:@"CPTLayerHostingView.printRect"];
-//        [coder encodeObject:self.closedHandCursor forKey:@"CPTLayerHostingView.closedHandCursor"];
-//        [coder encodeObject:self.openHandCursor forKey:@"CPTLayerHostingView.openHandCursor"];
-//        [coder encodeBool:self.allowPinchScaling forKey:@"CPTLayerHostingView.allowPinchScaling"];
-//
-//    }
 
 
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
 
         if (( self.hostedGraph ) != nil) {
-            if ( ![NSGraphicsContext currentContextDrawingToScreen] ) {
+            if ( ![NSGraphicsContext.currentContextDrawingToScreen] ) {
                 self.viewDidChangeBackingProperties
 
                 let graphicsContext = NSGraphicsContext.current;

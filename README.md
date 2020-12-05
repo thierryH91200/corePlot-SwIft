@@ -38,6 +38,23 @@ corePlot/Source/Animation/CPTAnimationCGFloatPeriod
 
 
 
-change 
+# Add change 
 
 com 201204 : CPTXYPlotSpace
+
+com201204 : CPTAxisTitle / CPTAxisLabel
+
+com201205 : 
+CPTXYAxis
+CPTGridLineGroup   ok
+
+CPTTextLayer ok
+
+##CPTPlotSpace ligne 154
+
+### I’ve googled but not been able to find out what the swift equivalent to respondsToSelector: is.
+
+This is the only thing I could find (Swift alternative to respondsToSelector:) but isn’t too relevant in my case as its checking the existence of the delegate, I don’t have a delegate I just want to check if a new API exists or not when running on the device and if not fall back to a previous version of the api.
+
+
+// https://izziswift.com/what-is-the-swift-equivalent-of-respondstoselector/

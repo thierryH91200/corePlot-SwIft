@@ -5,9 +5,14 @@
 //  Created by thierryH24 on 16/11/2020.
 //
 
+//==============================
+//  OK
+//==============================
+
+
 import AppKit
 
-class CPTAxisLabel: NSObject {
+public class CPTAxisLabel: NSObject {
     
     var contentLayer: CPTLayer
     var offset: CGFloat = 0.0
@@ -36,7 +41,6 @@ class CPTAxisLabel: NSObject {
     override init()
     {
         super.init()
-        //        super.init( newText: nil, newStyle: nil)
     }
     
     func positionRelativeToViewPoint(point: CGPoint, coordinate: CPTCoordinate, direction : CPTSign)

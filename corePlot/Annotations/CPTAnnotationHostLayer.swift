@@ -72,7 +72,6 @@ public class CPTAnnotationHostLayer: CPTLayer {
                 excludedSublayers = []
             }
             
-            
             for annotation in annotations {
                 guard let annotation = annotation as? CPTAnnotation else { continue }
                 let content = annotation.contentLayer

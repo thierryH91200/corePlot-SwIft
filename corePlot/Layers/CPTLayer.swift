@@ -37,7 +37,6 @@ public class CPTLayer : CALayer
         }
     }
     
-
     var renderingRecursively = false
     var useFastRendering     = false
     var graph   : CPTGraph?     = nil
@@ -66,7 +65,7 @@ public class CPTLayer : CALayer
         
         self.frame                      = frame;
         self.needsDisplayOnBoundsChange = false
-        self.isOpaque                     = false
+        self.isOpaque                   = false
         self.masksToBounds              = false
     }
     

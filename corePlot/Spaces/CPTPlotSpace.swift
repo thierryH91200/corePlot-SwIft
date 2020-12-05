@@ -13,8 +13,8 @@ protocol CPTPlotSpaceDelegate: NSObject {
 //@optional
 
     func plotSpace(space: CPTPlotSpace, interactionScale:CGFloat,  interactionPoint:CGPoint) -> Bool
-    func plotSpace(space:  CPTPlotSpace , proposedDisplacementVector:CGPoint)-> CGPoint
-    func plotSpace(space: CPTPlotSpace,  newRange: CPTPlotRange , coordinate:CPTCoordinate) -> CPTPlotRange
+    func plotSpace(space: CPTPlotSpace, proposedDisplacementVector:CGPoint)-> CGPoint
+    func plotSpace(space: CPTPlotSpace, newRange: CPTPlotRange , coordinate:CPTCoordinate) -> CPTPlotRange
     
     func plotSpace(space: CPTPlotSpace, didChangePlotRangeForCoordinate coordinate: CPTCoordinate)
     func plotSpace(space: CPTPlotSpace, shouldHandlePointingDeviceDownEvent event : CPTNativeEvent,atPoint:CGPoint)-> Bool
@@ -28,7 +28,7 @@ protocol CPTPlotSpaceDelegate: NSObject {
 class CPTPlotSpace: NSObject {
     
     var categoryNames : Dictionary<Int, String >? = [:]
-    var delegate : CPTPlotSpaceDelegate?
+    weak var delegate : CPTPlotSpaceDelegate?
     var identifier : UUID?
     var allowsUserInteraction : Bool?
     var isDragging : Bool
@@ -53,7 +53,7 @@ class CPTPlotSpace: NSObject {
 //     *  @param coordinate The axis coordinate.
 //     *  @return The ordered set of categories for the given coordinate.
 //     */
-    func orderedSet(for coordinate: CPTCoordinate) -> CPTMutableCategorySet {
+    func orderedSet(for coordinate: CPTCoordinate) -> [String] {
         var names = categoryNames
 
         if names == nil {
@@ -77,45 +77,41 @@ class CPTPlotSpace: NSObject {
     
     func addCategory(_ category: String, for coordinate: CPTCoordinate) {
 
-        let categories = orderedSet(coordinate: coordinate)
-        categories.add(category)
+        var categories = orderedSet(for: coordinate)
+        categories.append(category)
     }
-    
-    
     
     func removeCategory(category: String, forCoordinate coordinate:CPTCoordinate)
     {
-        var categories = orderedSet(coordinate: coordinate)
-        categories.remove(category)
+        var categories = orderedSet(for: coordinate)
+        categories.remove(at: category)
     }
-//
-    
     
     func insertCategory(category: String, forCoordinate coordinate :CPTCoordinate, atIndex idx:Int)
     {
-        let categories = self.orderedSet(coordinate:coordinate)
+        let categories = self.orderedSet(for:coordinate)
         categories.insertObject(category, atIndex:idx)
     }
 
-    func setCategories:(nullable CPTStringArray *)newCategories forCoordinate:(CPTCoordinate)coordinate
+    func setCategories(newCategories: [String],  forCoordinate coordinate:CPTCoordinate)
     {
-        NSMutableDictionary<NSNumber *, CPTMutableCategorySet *> *names = self.categoryNames;
+        let names = self.categoryNames;
 
         if ( !names ) {
-            names = [[NSMutableDictionary alloc] init];
+            names = [String]()
 
             self.categoryNames = names;
         }
 
-        NSNumber *cacheKey = @(coordinate);
+        let cacheKey = coordinate
 
-        if ( [newCategories isKindOfClass:[NSArray class]] ) {
-            CPTStringArray *categories = newCategories;
+        if newCategories is Array<Any> {
+            let categories = newCategories;
 
             names[cacheKey] = [NSMutableOrderedSet orderedSetWithArray:categories];
         }
         else {
-            [names removeObjectForKey:cacheKey];
+            names.removeObjectForKey(cacheKey)
         }
     }
 //
@@ -129,44 +125,38 @@ class CPTPlotSpace: NSObject {
 //
     func categoriesForCoordinate(coordinate: CPTCoordinate)->[String]
     {
-        let categories = self.orderedSet(coordinate: coordinate)
+        let categories = self.orderedSet(for: coordinate)
         return categories
     }
 
     func category(for coordinate: CPTCoordinate, at idx: Int) -> String? {
         
         let categories = orderedSet(for: coordinate)
-        return categories?[idx] as? String
+        return categories[idx]
     }
     
     func indexOfCategory(_ category: String, for coordinate: CPTCoordinate) -> Int {
         guard category != "" else {
             
-            let categories = self.orderedSet(coordinate:coordinate)
+            let categories = self.orderedSet(for:coordinate)
             return categories.indexOfObject(category)
         }
         
         let categories = orderedSet(for: coordinate)
-        return categories?.indexOfObject(category) ?? 0
+        return categories.indexOfObject(category) ?? 0
     }
     
     
 //    pragma mark -
 //    #pragma mark Responder Chain and User interaction
-//
-//    /// @name User Interaction
-//    /// @{
-//
-//    /**
+    
+    // https://izziswift.com/what-is-the-swift-equivalent-of-respondstoselector/
     func pointingDeviceDownEven(event: CPTNativeEvent, atPoint interactionPoint:CGPoint)-> Bool
     {
-        var handledByDelegate = false
-
-        let theDelegate = self.delegate;
-
-        if  theDelegate.respondsToSelector(to:#selector(plotSpace, shouldHandlePointingDeviceDownEvent:atPoint) ) {
-            handledByDelegate = ![theDelegate plotSpace:self shouldHandlePointingDeviceDownEvent:event atPoint:interactionPoint];
-        }
+        let theDelegate = self.delegate
+        
+        guard let handledByDelegate = theDelegate?.plotSpace(space: self, shouldHandlePointingDeviceDownEvent: event, atPoint: interactionPoint)
+            else { return false}
         return handledByDelegate;
     }
 //
@@ -186,18 +176,15 @@ class CPTPlotSpace: NSObject {
 //     *  @param interactionPoint The coordinates of the interaction.
 //     *  @return Whether the event was handled or not.
 //     **/
-//    -(BOOL)pointingDeviceUpEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
-//    {
-//        BOOL handledByDelegate = NO;
-//
-//        id<CPTPlotSpaceDelegate> theDelegate = self.delegate;
-//
-//        if ( [theDelegate respondsToSelector:@selector(plotSpace:shouldHandlePointingDeviceUpEvent:atPoint:)] ) {
-//            handledByDelegate = ![theDelegate plotSpace:self shouldHandlePointingDeviceUpEvent:event atPoint:interactionPoint];
-//        }
-//        return handledByDelegate;
-//    }
-//
+    func pointingDeviceUpEvent(event:CPTNativeEvent,atPoint interactionPoint:CGPoint)-> Bool
+    {
+        let theDelegate = self.delegate
+        
+        guard let handledByDelegate = theDelegate?.plotSpace(space: self, shouldHandlePointingDeviceUpEvent: event, atPoint: interactionPoint)
+        else { return false}
+        return handledByDelegate;
+    }
+
 //    /**
 //     *  @brief Informs the receiver that the user has moved
 //     *  @if MacOnly the mouse with the button pressed. @endif
@@ -214,17 +201,15 @@ class CPTPlotSpace: NSObject {
 //     *  @param interactionPoint The coordinates of the interaction.
 //     *  @return Whether the event was handled or not.
 //     **/
-//    -(BOOL)pointingDeviceDraggedEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
-//    {
-//        BOOL handledByDelegate = NO;
-//
-//        id<CPTPlotSpaceDelegate> theDelegate = self.delegate;
-//
-//        if ( [theDelegate respondsToSelector:@selector(plotSpace:shouldHandlePointingDeviceDraggedEvent:atPoint:)] ) {
-//            handledByDelegate = ![theDelegate plotSpace:self shouldHandlePointingDeviceDraggedEvent:event atPoint:interactionPoint];
-//        }
-//        return handledByDelegate;
-//    }
+    func pointingDeviceDraggedEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint) -> Bool
+    {
+        let theDelegate = self.delegate
+        
+        guard let handledByDelegate = theDelegate?.plotSpace(space: self, shouldHandlePointingDeviceDraggedEvent: event, atPoint: interactionPoint)
+        else { return false}
+        return handledByDelegate;
+        
+    }
 //
 //    /**
 //     *  @brief Informs the receiver that tracking of
@@ -242,20 +227,17 @@ class CPTPlotSpace: NSObject {
 //     *  @param event The OS event.
 //     *  @return Whether the event was handled or not.
 //     **/
-//    -(BOOL)pointingDeviceCancelledEvent:(nonnull CPTNativeEvent *)event
-//    {
-//        BOOL handledByDelegate = NO;
+    func pointingDeviceCancelledEvent(event : CPTNativeEvent )->Bool
+    {
+        let theDelegate = self.delegate
+        
+        guard let handledByDelegate = theDelegate?.plotSpace(space: self, shouldHandlePointingDeviceCancelledEvent: event)
+        else { return false}
+        return handledByDelegate;
+    }
 //
-//        id<CPTPlotSpaceDelegate> theDelegate = self.delegate;
-//
-//        if ( [theDelegate respondsToSelector:@selector(plotSpace:shouldHandlePointingDeviceCancelledEvent:)] ) {
-//            handledByDelegate = ![theDelegate plotSpace:self shouldHandlePointingDeviceCancelledEvent:event];
-//        }
-//        return handledByDelegate;
-//    }
-//
-//    #if TARGET_OS_SIMULATOR || TARGET_OS_IPHONE
-//    #else
+    #if TARGET_OS_SIMULATOR || TARGET_OS_IPHONE
+    #else
 //
 //    /**
 //     *  @brief Informs the receiver that the user has moved the scroll wheel.
@@ -272,28 +254,24 @@ class CPTPlotSpace: NSObject {
 //     *  @param toPoint The ending coordinates of the interaction.
 //     *  @return Whether the event was handled or not.
 //     **/
-//    -(BOOL)scrollWheelEvent:(nonnull CPTNativeEvent *)event fromPoint:(CGPoint)fromPoint toPoint:(CGPoint)toPoint
-//    {
-//        BOOL handledByDelegate = NO;
-//
-//        id<CPTPlotSpaceDelegate> theDelegate = self.delegate;
-//
-//        if ( [theDelegate respondsToSelector:@selector(plotSpace:shouldHandleScrollWheelEvent:fromPoint:toPoint:)] ) {
-//            handledByDelegate = ![theDelegate plotSpace:self shouldHandleScrollWheelEvent:event fromPoint:fromPoint toPoint:toPoint];
-//        }
-//        return handledByDelegate;
-//    }
-//
-//    #endif
+    func scrollWheelEvent(event: CPTNativeEvent, fromPoint:CGPoint, toPoint:CGPoint)-> Bool
+    {
+        let theDelegate = self.delegate
+
+        guard let handledByDelegate = theDelegate?.plotSpace(space: self, shouldHandleScrollWheelEvent: event, fromPoint:fromPoint, toPoint:toPoint )
+        else { return false}
+        return handledByDelegate;
+    }
+
+    #endif
 //
 //    /// @}
 //
 //    @end
 //
-//    #pragma mark -
-//
-//    @implementation CPTPlotSpace(AbstractMethods)
-//
+// MARK: - AbstractMethods
+
+    //
 //    /// @cond
 //
 //    -(NSUInteger)numberOfCoordinates
@@ -521,21 +499,6 @@ class CPTPlotSpace: NSObject {
 //    {
 //    }
 //
-//    #pragma mark -
-//    #pragma mark Debugging
-//
-//    /// @cond
-//
-//    -(nullable id)debugQuickLookObject
-//    {
-//        return [NSString stringWithFormat:@"Identifier: %@\nallowsUserInteraction: %@",
-//                self.identifier,
-//                self.allowsUserInteraction ? @"YES" : @"NO"];
-//    }
-//
-//    /// @endcond
-//
-//    @end
 
 }
 

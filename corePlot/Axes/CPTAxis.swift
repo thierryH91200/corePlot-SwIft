@@ -363,7 +363,7 @@ class CPTAxis : CPTLayer {
                     if ( minorTickCount > 0 ) {
                         NSDecimal minorCoord = CPTDecimalAdd(coord, minorInterval);
                         
-                        for ( NSUInteger minorTickIndex = 0; minorTickIndex < minorTickCount; minorTickIndex++ ) {
+                        for (minorTickIndex in  0..<minorTickCount {
                             if ( CPTDecimalGreaterThan(minorCoord, rangeMax)) {
                                 break;
                             }
@@ -388,36 +388,40 @@ class CPTAxis : CPTLayer {
     //     *  @param newMinorLocations A new NSSet containing the minor tick locations.
     //     */
     func autoGenerateMajorTickLocations(newMajorLocations :CPTNumberSet, newMinorLocations:CPTNumberSet)
+     
     {
+        var newMajorLocations = newMajorLocations
+        var newMinorLocations = newMinorLocations
+        
         // Create sets for locations
-        var majorLocations = [NSMutableSet set];
-        var minorLocations = [NSMutableSet set];
+        var majorLocations = [NSMutableSet ]
+        var minorLocations = [NSMutableSet ]
         
         // Get plot range
         var range    = self.plotSpace.plotRangeForCoordinate(coordinate)
         var theVisibleRange = self.visibleRange;
         
-        if theVisibleRange  {
+        if (theVisibleRange != nil)  {
             range.intersectionPlotRange(theVisibleRange)
         }
         
         // Validate scale type
         var valid             = true;
-        CPTScaleType scaleType = self.plotSpace.scaleTypeForCoordinate(self.coordinate)
+        let scaleType = self.plotSpace.scaleTypeForCoordinate(self.coordinate)
         
         switch ( scaleType ) {
-        case CPTScaleTypeLinear:
+        case .linear:
             // supported scale type
             break;
             
-        case CPTScaleTypeLog:
+        case .log:
             // supported scale type--check range
             if ((range.minLimitDouble <= 0.0) || (range.maxLimitDouble <= 0.0)) {
                 valid = false
             }
             break;
             
-        case CPTScaleTypeLogModulus:
+        case .logModulus:
             // supported scale type
             break;
             
@@ -428,20 +432,20 @@ class CPTAxis : CPTLayer {
         }
         
         if ( !valid ) {
-            *newMajorLocations = majorLocations;
-            *newMinorLocations = minorLocations;
+            newMajorLocations = majorLocations;
+            newMinorLocations = minorLocations;
             return;
         }
         
         // Cache some values
-        NSUInteger numTicks   = self.preferredNumberOfMajorTicks;
-        NSUInteger minorTicks = self.minorTicksPerInterval + 1;
-        double length         = fabs(range.lengthDouble);
+        let numTicks   = self.preferredNumberOfMajorTicks;
+        let minorTicks = self.minorTicksPerInterval + 1;
+        let length         = fabs(range.lengthDouble);
         
         // Filter troublesome values and return empty sets
         if ((length != 0.0) && !isinf(length)) {
             switch ( scaleType ) {
-            case CPTScaleTypeLinear:
+            case .linear:
                 {
                     // Determine interval value
                     switch ( numTicks ) {
@@ -458,10 +462,10 @@ class CPTAxis : CPTLayer {
                         break;
                     }
                     
-                    NSDecimal zero = CPTDecimalFromInteger(0);
-                    NSDecimal one  = CPTDecimalFromInteger(1);
+                    let zero = CPTDecimalFromInteger(0);
+                    let one  = CPTDecimalFromInteger(1);
                     
-                    NSDecimal majorInterval;
+                    var majorInterval = 0
                     if ( numTicks == 2 ) {
                         majorInterval = CPTNiceLength(range.lengthDecimal);
                     }
@@ -494,10 +498,11 @@ class CPTAxis : CPTLayer {
                     
                     // Iterate through the indexes with visible ticks and build the locations sets
                     for ( NSDecimal i = initialIndex; CPTDecimalLessThanOrEqualTo(i, finalIndex); i = CPTDecimalAdd(i, one)) {
-                        NSDecimal pointLocation      = CPTDecimalMultiply(majorInterval, i);
-                        NSDecimal minorPointLocation = pointLocation;
                         
-                        for ( NSUInteger j = 1; j < minorTicks; j++ ) {
+                        NSDecimal pointLocation      = CPTDecimalMultiply(majorInterval, i);
+                        let minorPointLocation = pointLocation;
+                        
+                        for  j in 1..<minorTicks {
                             minorPointLocation = CPTDecimalAdd(minorPointLocation, minorInterval);
                             
                             if ( CPTDecimalLessThan(minorPointLocation, minLimit)) {
@@ -515,12 +520,12 @@ class CPTAxis : CPTLayer {
                         if ( CPTDecimalGreaterThan(pointLocation, maxLimit)) {
                             continue;
                         }
-                        [majorLocations addObject:[NSDecimalNumber decimalNumberWithDecimal:pointLocation]];
+                        [majorLocations.addObject:[NSDecimalNumber decimalNumberWithDecimal:pointLocation]];
                     }
                 }
                 break;
                 
-            case CPTScaleTypeLog:
+            case CPTScaleType.log:
                 {
                     double minLimit = range.minLimitDouble;
                     double maxLimit = range.maxLimitDouble;
@@ -566,10 +571,10 @@ class CPTAxis : CPTLayer {
                 }
                 break;
                 
-            case CPTScaleTypeLogModulus:
+            case CPTScaleType.logModulus:
                 {
-                    double minLimit = range.minLimitDouble;
-                    double maxLimit = range.maxLimitDouble;
+                    let minLimit = range.minLimitDouble;
+                    let maxLimit = range.maxLimitDouble;
                     
                     // Determine interval value
                     double modMinLimit = CPTLogModulus(minLimit);
@@ -626,7 +631,7 @@ class CPTAxis : CPTLayer {
                     
                     if ( finalIndex >= 0 ) {
                         // Determine minor interval
-                        double minorInterval = intervalStep * 0.9 * multiplier / minorTicks;
+                        let minorInterval = intervalStep * 0.9 * multiplier / minorTicks;
                         
                         for ( NSInteger i = MAX(0, initialIndex); i <= finalIndex; i++ ) {
                             double pointLocation;
@@ -639,8 +644,8 @@ class CPTAxis : CPTLayer {
                                 pointLocation = sign * pow(10.0, fabs((double)i));
                             }
                             
-                            for ( NSUInteger j = 1; j < minorTicks; j++ ) {
-                                double minorPointLocation = pointLocation + sign * minorInterval * j;
+                            for   j in 1..<minorTicks {
+                                var minorPointLocation = pointLocation + sign * minorInterval * j;
                                 if ( minorPointLocation < minLimit ) {
                                     continue;
                                 }
@@ -649,7 +654,7 @@ class CPTAxis : CPTLayer {
                                 }
                                 [minorLocations addObject:@(minorPointLocation)];
                             }
-                            minorInterval *= intervalStep;
+                            minorInterval *= intervalStep
                             
                             if ( i == 0 ) {
                                 pointLocation = 0.0;
@@ -660,7 +665,7 @@ class CPTAxis : CPTLayer {
                             if ( pointLocation > maxLimit ) {
                                 continue;
                             }
-                            [majorLocations addObject:@(pointLocation)];
+                            majorLocations.addObject(pointLocation)
                         }
                     }
                 }
@@ -670,6 +675,7 @@ class CPTAxis : CPTLayer {
                 break;
             }
         }
+        
         //
         //        // Return tick locations sets
         //        *newMajorLocations = majorLocations;
@@ -682,23 +688,23 @@ class CPTAxis : CPTLayer {
         //     *  @param newMajorLocations A new NSSet containing the major tick locations.
         //     *  @param newMinorLocations A new NSSet containing the minor tick locations.
         //     */
-        func generateEqualMajorTickLocations(newMajorLocations: inout Set<CGFloat>,  newMinorLocations: inout Set<CGFloat)
+        func generateEqualMajorTickLocations(newMajorLocations: inout Set<CGFloat>,  newMinorLocations: inout Set<CGFloat>)
         {
-        var majorLocations = Set<CGFloat>
-        var minorLocations = Set<CGFloat>
+        var majorLocations = Set<CGFloat>()
+        var minorLocations = Set<CGFloat>()
         
         var range = self.plotSpace.plotRangeForCoordinate(self.coordinate)
         
         if ( range ) {
         var theVisibleRange = self.visibleRange;
-        if ( theVisibleRange ) {
+            if (( theVisibleRange ) != nil) {
         range.intersectionPlotRange(theVisibleRange)
         }
         
         if ( range.lengthDouble != 0.0 ) {
         var zero     = CPTDecimalFromInteger(0);
-        NSDecimal rangeMin = range.minLimitDecimal;
-        NSDecimal rangeMax = range.maxLimitDecimal;
+            let rangeMin = range.minLimitDecimal;
+        let rangeMax = range.maxLimitDecimal;
         
         NSUInteger majorTickCount = self.preferredNumberOfMajorTicks;
         
@@ -1177,7 +1183,7 @@ class CPTAxis : CPTLayer {
             // Label ticks
             switch ( self.labelingPolicy ) {
             case .none:
-                [self updateCustomTickLabels];
+                self.updateCustomTickLabels()
                 break;
                 
             case .provided:
@@ -1357,18 +1363,19 @@ class CPTAxis : CPTLayer {
         //    /**
         //     *  @brief Update the axis title position.
         //     **/
-        //   func updateAxisTitle
-        //    {
-        //        CPTSign direction = self.titleDirection;
-        //
-        //        if ( direction == CPTSignNone ) {
-        //            direction = self.tickDirection;
-        //        }
-        //
-        //        [self.axisTitle positionRelativeToViewPoint:[self viewPointForCoordinateValue:self.titleLocation]
-        //                                      forCoordinate:CPTOrthogonalCoordinate(self.coordinate)
-        //                                        inDirection:direction];
-        //    }
+        func updateAxisTitle()
+        {
+            var direction = self.titleDirection;
+            
+            if direction == .none {
+                direction = self.tickDirection;
+            }
+            
+            self.axisTitle.positionRelativeToViewPoint( self, viewPointForCoordinateValue:self.titleLocation
+                                                         forCoordinate:CPTOrthogonalCoordinate(self.coordinate)
+                                                         inDirection:direction)
+            }
+    }
         //
         //    #pragma mark -
         //    #pragma mark Layout

@@ -143,7 +143,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
                     isScrolling = !CPTDecimalEquals(constrainedRange.locationDecimal, xRange.locationDecimal) && CPTDecimalEquals(constrainedRange.lengthDecimal, xRange.lengthDecimal);
                     
                     if ( isScrolling && (displacement == CPTFloat(0.0))) {
-                        CPTGraph *theGraph    = self.graph;
+                        let heGraph    = self.graph;
                         CPTPlotArea *plotArea = theGraph.plotAreaFrame.plotArea;
                         
                         if ( plotArea ) {
@@ -158,14 +158,14 @@ class CPTXYPlotSpace: CPTPlotSpace {
                     }
                 }
                 
-                xRange = [constrainedRange copy];
+                xRange = constrainedRange
                 
-                [[NSNotificationCenter defaultCenter] postNotificationName:CPTPlotSpaceCoordinateMappingDidChangeNotification
-                object:self
-                userInfo:@{ CPTPlotSpaceCoordinateKey: @(CPTCoordinateX),
-                CPTPlotSpaceScrollingKey: @(isScrolling),
-                CPTPlotSpaceDisplacementKey: @(displacement) }
-                ];
+                NotificationCenter.defaultCenter.post(name:.CPTPlotSpaceCoordinateMappingDidChangeNotification,
+                object:self,
+                userInfo: { CPTPlotSpaceCoordinateKey: CPTCoordinateX,
+                CPTPlotSpaceScrollingKey: @(isScrolling,
+                CPTPlotSpaceDisplacementKey: displacement }
+                
                 
                 if ( [theDelegate respondsToSelector:@selector(plotSpace:didChangePlotRangeForCoordinate:)] ) {
                     [theDelegate plotSpace:self didChangePlotRangeForCoordinate:CPTCoordinateX];

@@ -33,11 +33,11 @@ class CPTPlotRange: NSObject {
     var  lengthSign: CPTSign = .positive
 
 
-//   // MARK: Init/Dealloc
-//    +(nonnull instancetype)plotRangeWithLocation:(nonnull NSNumber *)loc length:(nonnull NSNumber *)len
-//    {
-//        return [[self alloc] initWithLocation:loc length:len];
-//    }
+// MARK: Init/Dealloc
+    +(nonnull instancetype)plotRangeWithLocation:(nonnull NSNumber *)loc length:(nonnull NSNumber *)len
+    {
+        return [[self alloc] initWithLocation:loc length:len];
+    }
 //
 //    /** @brief Creates and returns a new CPTPlotRange instance initialized with the provided location and length.
 //     *  @param loc The starting location of the range.

@@ -15,54 +15,51 @@ extension CPTAxis {
 
     
     // MARK: Accessors
-    
+    func setAxisLabels(newLabels : CPTAxisLabelSet )
+    {
+        if ( newLabels != axisLabels ) {
+            if ( self.labelsUpdated ) {
+                axisLabels = newLabels;
+            }
+            else {
+                for ( label as CPTAxisLabel in axisLabels ) {
+//                for ( label in axisLabels ) {
+                    label.contentLayer.removeFromSuperlayer;
+                }
 
+                axisLabels = newLabels;
 
+                let thePlotArea = self.plotArea;
+                [thePlotArea updateAxisSetLayersForType:CPTGraphLayerTypeAxisLabels];
 
-//    -(void)setAxisLabels:(nullable CPTAxisLabelSet *)newLabels
-//    {
-//        if ( newLabels != axisLabels ) {
-//            if ( self.labelsUpdated ) {
-//                axisLabels = newLabels;
-//            }
-//            else {
-//                for ( CPTAxisLabel *label in axisLabels ) {
-//                    [label.contentLayer removeFromSuperlayer];
-//                }
-//
-//                axisLabels = newLabels;
-//
-//                CPTPlotArea *thePlotArea = self.plotArea;
-//                [thePlotArea updateAxisSetLayersForType:CPTGraphLayerTypeAxisLabels];
-//
-//                if ( axisLabels ) {
-//                    CPTAxisLabelGroup *axisLabelGroup = thePlotArea.axisLabelGroup;
-//                    CALayer *lastLayer                = nil;
-//
-//                    for ( CPTAxisLabel *label in axisLabels ) {
-//                        CPTLayer *contentLayer = label.contentLayer;
-//                        if ( contentLayer ) {
-//                            if ( lastLayer ) {
-//                                [axisLabelGroup insertSublayer:contentLayer below:lastLayer];
-//                            }
-//                            else {
-//                                [axisLabelGroup insertSublayer:contentLayer atIndex:[thePlotArea sublayerIndexForAxis:self layerType:CPTGraphLayerTypeAxisLabels]];
-//                            }
-//
-//                            lastLayer = contentLayer;
-//                        }
-//                    }
-//                }
-//            }
-//
-//            if ( self.labelingPolicy == CPTAxisLabelingPolicyNone ) {
-//                [self updateCustomTickLabels];
-//            }
-//            else {
-//                [self updateMajorTickLabels];
-//            }
-//        }
-//    }
+                if ( axisLabels ) {
+                    CPTAxisLabelGroup *axisLabelGroup = thePlotArea.axisLabelGroup;
+                    CALayer *lastLayer                = nil;
+
+                    for ( CPTAxisLabel *label in axisLabels ) {
+                        CPTLayer *contentLayer = label.contentLayer;
+                        if ( contentLayer ) {
+                            if ( lastLayer ) {
+                                [axisLabelGroup insertSublayer:contentLayer below:lastLayer];
+                            }
+                            else {
+                                [axisLabelGroup insertSublayer:contentLayer atIndex:[thePlotArea sublayerIndexForAxis:self layerType:CPTGraphLayerTypeAxisLabels]];
+                            }
+
+                            lastLayer = contentLayer;
+                        }
+                    }
+                }
+            }
+
+            if ( self.labelingPolicy == CPTAxisLabelingPolicyNone ) {
+                [self updateCustomTickLabels];
+            }
+            else {
+                [self updateMajorTickLabels];
+            }
+        }
+    }
 //
 //    -(void)setMinorTickAxisLabels:(nullable CPTAxisLabelSet *)newLabels
 //    {
@@ -287,20 +284,20 @@ extension CPTAxis {
 //        }
 //    }
 //
-//    -(void)setTitleLocation:(nullable NSNumber *)newLocation
-//    {
-//        BOOL needsUpdate = YES;
-//
-//        if ( newLocation ) {
-//            NSNumber *location = newLocation;
-//            needsUpdate = ![titleLocation isEqualToNumber:location];
-//        }
-//
-//        if ( needsUpdate ) {
-//            titleLocation = newLocation;
-//            [self updateAxisTitle];
-//        }
-//    }
+    func setTitleLocation(newLocation : Int?)
+    {
+        var needsUpdate = true;
+        
+        if ( newLocation  != nil) {
+            let location = newLocation
+            needsUpdate = titleLocation.isEqualToNumber(location)
+        }
+        
+        if ( needsUpdate  == true ) {
+            titleLocation = newLocation;
+            self.updateAxisTitle
+        }
+    }
 //
 //    -(nullable NSNumber *)titleLocation
 //    {
@@ -984,4 +981,121 @@ extension CPTAxis {
 //            [self setNeedsRelabel];
 //        }
 //    }
-}
+//    -(void)updateCustomTickLabels
+//    {
+//        CPTMutablePlotRange *range = [[self.plotSpace plotRangeForCoordinate:self.coordinate] mutableCopy];
+//
+//        if ( range ) {
+//            CPTPlotRange *theVisibleRange = self.visibleRange;
+//            if ( theVisibleRange ) {
+//                [range intersectionPlotRange:theVisibleRange];
+//            }
+//
+//            if ( range.lengthDouble != 0.0 ) {
+//                CPTCoordinate orthogonalCoordinate = CPTOrthogonalCoordinate(self.coordinate);
+//
+//                CPTSign direction = self.tickLabelDirection;
+//
+//                if ( direction == CPTSignNone ) {
+//                    direction = self.tickDirection;
+//                }
+//
+//                for ( CPTAxisLabel *label in self.axisLabels ) {
+//                    BOOL visible = [range containsNumber:label.tickLocation];
+//                    label.contentLayer.hidden = !visible;
+//                    if ( visible ) {
+//                        CGPoint tickBasePoint = [self viewPointForCoordinateValue:label.tickLocation];
+//                        [label positionRelativeToViewPoint:tickBasePoint forCoordinate:orthogonalCoordinate inDirection:direction];
+//                    }
+//                }
+//
+//                for ( CPTAxisLabel *label in self.minorTickAxisLabels ) {
+//                    BOOL visible = [range containsNumber:label.tickLocation];
+//                    label.contentLayer.hidden = !visible;
+//                    if ( visible ) {
+//                        CGPoint tickBasePoint = [self viewPointForCoordinateValue:label.tickLocation];
+//                        [label positionRelativeToViewPoint:tickBasePoint forCoordinate:orthogonalCoordinate inDirection:direction];
+//                    }
+//                }
+//            }
+//        }
+//    }
+//
+//    -(void)updateMajorTickLabelOffsets
+//    {
+//        CPTSign direction      = self.tickDirection;
+//        CPTSign labelDirection = self.tickLabelDirection;
+//
+//        if ( labelDirection == CPTSignNone ) {
+//            labelDirection = direction;
+//        }
+//
+//        CGFloat majorOffset = self.labelOffset;
+//
+//        if ((direction == CPTSignNone) || (labelDirection == direction)) {
+//            majorOffset += self.tickOffset;
+//        }
+//
+//        for ( CPTAxisLabel *label in self.axisLabels ) {
+//            label.offset = majorOffset;
+//        }
+//    }
+//
+//    -(void)updateMinorTickLabelOffsets
+//    {
+//        CPTSign direction      = self.tickDirection;
+//        CPTSign labelDirection = self.minorTickLabelDirection;
+//
+//        if ( labelDirection == CPTSignNone ) {
+//            labelDirection = direction;
+//        }
+//
+//        CGFloat minorOffset = self.minorTickLabelOffset;
+//
+//        if ((direction == CPTSignNone) || (labelDirection == direction)) {
+//            minorOffset += self.tickOffset;
+//        }
+//
+//        for ( CPTAxisLabel *label in self.minorTickAxisLabels ) {
+//            label.offset = minorOffset;
+//        }
+//    }
+//
+//    /// @endcond
+//
+//    /**
+//     *  @brief Update the major tick mark labels.
+//     **/
+//    -(void)updateMajorTickLabels
+//    {
+//        CPTCoordinate orthogonalCoordinate = CPTOrthogonalCoordinate(self.coordinate);
+//
+//        CPTSign direction = self.tickLabelDirection;
+//
+//        if ( direction == CPTSignNone ) {
+//            direction = self.tickDirection;
+//        }
+//
+//        for ( CPTAxisLabel *label in self.axisLabels ) {
+//            CGPoint tickBasePoint = [self viewPointForCoordinateValue:label.tickLocation];
+//            [label positionRelativeToViewPoint:tickBasePoint forCoordinate:orthogonalCoordinate inDirection:direction];
+//        }
+//    }
+//
+//    /**
+//     *  @brief Update the minor tick mark labels.
+//     **/
+    func updateMinorTickLabels() {
+        let orthogonalCoordinate = CPTOrthogonalCoordinate(coordinate)
+
+        var direction = minorTickLabelDirection
+
+        if direction == CPTSign.none {
+            direction = tickDirection
+        }
+
+        for label in minorTickAxisLabels {
+            let tickBasePoint = viewPoint(forCoordinateValue: label.tickLocation)
+            label.positionRelative(toViewPoint: tickBasePoint, for: orthogonalCoordinate, inDirection: direction)
+        }
+    }

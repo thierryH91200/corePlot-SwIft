@@ -6,6 +6,7 @@
 
 //==============================
 //  OK
+// 05/12/20
 //==============================
 
 import Cocoa
@@ -24,7 +25,7 @@ class CPTGridLineGroup: CPTLayer {
         self.needsDisplayOnBoundsChange = true
     }
     
-    override init(layer: Any) {
+    override init(layer: Any?) {
         
         super.init(layer: layer)
         let theLayer = layer as? CPTGridLineGroup
@@ -41,11 +42,13 @@ class CPTGridLineGroup: CPTLayer {
     @objc override func renderAsVectorInContext(context : CGContext)
     {
         guard self.isHidden == false else { return }
-        
-        super.renderAsVectorInContext(context: context)
-        let  theAxis = self.axis;
-        
-        theAxis?.drawGridLinesInContext(context: context, isMajor:self.major)
+        let thePlotArea = self.plotArea
+    
+        for  axis in thePlotArea.axisSet!.axes {
+            if  axis.separateLayers == false  {
+                axis.drawGridLinesInContext(context: context, isMajor:self.major)
+            }
+        }
     }
     
     // MARK:- Accessors
@@ -58,7 +61,7 @@ class CPTGridLineGroup: CPTLayer {
             if _plotArea != newValue {
                 _plotArea = newValue;
                 
-                if (( _plotArea ) != nil) {
+                if ( _plotArea != nil) {
                     self.setNeedsDisplay()
                 }
             }

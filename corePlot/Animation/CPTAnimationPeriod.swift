@@ -18,11 +18,11 @@ class CPTAnimationPeriod: NSObject {
     
     init ( startValue:CGFloat , endValue: CGFloat , ofClass:(Class)class duration:CGFloat, aDelay:CGFloat)
     {
-        initWithStartValue:aStartValue, endValue:anEndValue ofClass:class duration:aDuration withDelay:aDelay];
+        initWithStartValue(aStartValue, endValue:anEndValue ofClass:class, duration: aDuration ,withDelay:aDelay)
     }
     
     
-    func periodWithStartNumber( aStartNumber: CGFloat,endNumber: CGFloat, duration: GFloat, aDuration :CGFloat)
+    func periodWithStartNumber( aStartNumber: CGFloat,endNumber: CGFloat, duration: CGFloat, aDuration :CGFloat)
     {
     return (CPTAnimationNSNumberPeriod(periodWithStartValue:aStartNumber
     endValue:anEndNumber

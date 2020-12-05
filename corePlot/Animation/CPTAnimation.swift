@@ -52,14 +52,10 @@ protocol CPTAnimationDelegate {
     func animationDidUpdate(operation: CPTAnimationOperation )
 }
 
-
 class CPTAnimation: NSObject {
     
     //    typedef CGFloat (*CPTAnimationTimingFunction)(CGFloat, CGFloat);
     typealias CPTAnimationTimingFunction = (CGFloat, CGFloat)-> (CGFloat)
-
-    
-    
     
     let shared = CPTAnimation()
     let CPTAnimationOperationKey  = "CPTAnimationOperationKey"
@@ -75,8 +71,8 @@ class CPTAnimation: NSObject {
     
     var timeOffset: CGFloat
     var defaultAnimationCurve = CPTAnimationCurve.default
-    var animationOperations = [CPTAnimationOperation]()
-    var runningAnimationOperations = [CPTAnimationOperation]()
+    var animationOperations = [CPTAnimationOperation]
+    var runningAnimationOperations = [CPTAnimationOperation]
     
     override init()
     {
@@ -154,14 +150,14 @@ class CPTAnimation: NSObject {
      *  @param identifier An animation operation identifier.
      *  @return The animation operation with the given identifier or @nil if it was not found.
      **/
-    -(nullable CPTAnimationOperation *)operationWithIdentifier:(nullable id<NSCopying, NSObject>)identifier
+    func operationWithIdentifier(identifier: Any?)-> CPTAnimationOperation?
     {
-    for ( CPTAnimationOperation *operation in self.animationOperations ) {
-    if ( [operation.identifier isEqual:identifier] ) {
-    return operation;
-    }
-    }
-    return nil;
+        for  operation in self.animationOperations {
+            if operation.identifier.isEqual(identifier ) {
+                return operation
+            }
+        }
+        return nil
     }
     
     // MARK: - Animation Update
@@ -187,7 +183,7 @@ class CPTAnimation: NSObject {
             
             let  duration  = period.duration;
             let startTime = period.startOffset;
-            CGFloat delay     = period.delay;
+            let delay     = period.delay;
             
             if ( isnan(delay)) {
                 if ( [period canStartWithValueFromObject:animationOperation.boundObject propertyGetter:animationOperation.boundGetter] ) {
@@ -201,7 +197,7 @@ class CPTAnimation: NSObject {
             else {
                 startTime += delay;
             }
-            CGFloat endTime = startTime + duration;
+            let endTime = startTime + duration;
             
             if ( animationOperation.isCanceled ) {
                 [expiredOperations addObject:animationOperation];
@@ -213,12 +209,12 @@ class CPTAnimation: NSObject {
                 }
             }
             else if ( currentTime >= startTime ) {
-                id boundObject = animationOperation.boundObject;
+                let boundObject = animationOperation.boundObject;
                 
                 CPTAnimationTimingFunction timingFunction = [self timingFunctionForAnimationCurve:animationOperation.animationCurve];
                 
                 if ( boundObject && timingFunction ) {
-                    BOOL started = NO;
+                    var started = false;
                     
                     if ( ![runningOperations containsObject:animationOperation] ) {
                         // Remove any running animations for the same property

@@ -10,15 +10,31 @@ import Cocoa
 class CPTTextLayer: CPTBorderedLayer {
 
     let kCPTTextLayerMarginWidth = CGFloat(2.0)
+    
     var inTextUpdate = false
-    
-    var text = ""
-    var textStyle: CPTTextStyle
     var attributedText = NSAttributedString()
-    var  maximumSize = CGSize()
-
-
     
+    private lazy var _attributedText = NSAttributedString()
+    override var attributedText: NSAttributedString {
+        get { return _attributedText }
+        set { _attributedText = newValue }
+    }
+    private lazy var _textStyle = CPTTextStyle()
+    override var textStyle: CPTTextStyle {
+        get { return _textStyle }
+        set { _textStyle = newValue }
+    }
+    private lazy var _text = ""
+    override var text: String {
+        get { return _text }
+        set { _text = newValue }
+    }
+    private lazy var _maximumSize = CGSize()
+    override var maximumSize: CGSize {
+        get { return _maximumSize }
+        set { _maximumSize = newValue }
+    }
+
     convenience init(text newText: String?, style newStyle: CPTTextStyle?) {
         self.init(frame: CGRect())
         textStyle = newStyle!
@@ -28,51 +44,52 @@ class CPTTextLayer: CPTBorderedLayer {
     }
     
     
-    -(nonnull instancetype)initWithText:(nullable NSString *)newText
+    init(newText: String)
     {
-        return [self initWithText:newText style:[CPTTextStyle textStyle]];
+        self.init(text : newText, style: textStyle)
     }
 
     /** @brief Initializes a newly allocated CPTTextLayer object with the provided styled text.
      *  @param newText The styled text to display.
      *  @return The initialized CPTTextLayer object.
      **/
-    -(nonnull instancetype)initWithAttributedText:(nullable NSAttributedString *)newText
+    init WithAttributedText:(newText: NSAttributedString )
     {
         CPTTextStyle *newStyle = [CPTTextStyle textStyleWithAttributes:[newText attributesAtIndex:0 effectiveRange:NULL]];
 
         if ((self = [self initWithText:newText.string style:newStyle])) {
-            attributedText = [newText copy];
+            attributedText = newText
 
-            [self sizeToFit];
+    self.sizeToFit()
         }
 
-        return self;
     }
 
-    -(nonnull instancetype)initWithLayer:(nonnull id)layer
+    init(layer: Any?)
     {
-        if ((self = [super initWithLayer:layer])) {
-            CPTTextLayer *theLayer = (CPTTextLayer *)layer;
-
-            textStyle      = theLayer->textStyle;
-            text           = theLayer->text;
-            attributedText = theLayer->attributedText;
-            inTextUpdate   = theLayer->inTextUpdate;
-        }
-        return self;
+        let theLayer = layer as? CPTTextLayer
+        super.init(layer: theLayer!)
+        
+        textStyle      = theLayer!.textStyle;
+        text           = theLayer!.text
+        attributedText = theLayer!.attributedText;
+        inTextUpdate   = theLayer!.inTextUpdate;
     }
 
     override init(frame:CGRect)
     {
-        super initWithFrame(frame:CGRect())
-            text           = nil;
-            textStyle      = nil;
-            attributedText = nil;
+        super.init(frame:frame)
+            text           = ""
+            textStyle      = CPTTextStyle()
+            attributedText = NSAttributedString()
             maximumSize    = CGSize()
-            inTextUpdate   = false;
+            inTextUpdate   = false
 
             self.needsDisplayOnBoundsChange = false;
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     //MARK: Layout

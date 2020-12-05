@@ -30,10 +30,13 @@ extension CPTPlot {
         let coordinate   = self.coordinateForFieldIdentifier(field: fieldEnum)
         var thePlotSpace = self.plotSpace;
         
+        
+//        let numbers = numbers as! CPTScaleType
+        
         if ( numbers ) {
             
             
-            switch ( thePlotSpace.scaleTypeForCoordinate(coordinate: coordinate ) {
+            switch ( thePlotSpace.scaleTypesForCoordinate(coordinate: coordinate ) {
             case CPTScaleType.linear:
             fallthrough
             

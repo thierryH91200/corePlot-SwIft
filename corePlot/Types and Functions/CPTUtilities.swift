@@ -853,8 +853,12 @@ class CPTUtilities {
     //    return rgbColor;
     //}
     //
-    //#pragma mark -
-    //#pragma mark Coordinates
+
+
+
+
+
+    // MARK: -  Coordinates
     //
     ///**
     // *  @brief Determines the CPTCoordinate that is orthogonal to the one provided.
@@ -864,134 +868,81 @@ class CPTUtilities {
     // *  @param coord The CPTCoordinate.
     // *  @return The orthogonal CPTCoordinate.
     // **/
-    //CPTCoordinate CPTOrthogonalCoordinate(CPTCoordinate coord)
-    //{
-    //    return coord == CPTCoordinateX ? CPTCoordinateY : CPTCoordinateX;
-    //}
-    //
-    //#pragma mark -
-    //#pragma mark Quartz pixel-alignment functions
-    //
-    ///**
-    // *  @brief Aligns a point in user space to integral coordinates in device space.
-    // *
-    // *  Ensures that the x and y coordinates are at a pixel corner in device space.
-    // *  Drawn from <i>Programming with Quartz</i> by D. Gelphman, B. Laden.
-    // *
-    // *  @param context The graphics context.
-    // *  @param point The point in user space.
-    // *  @return The device aligned point in user space.
-    // **/
-    //CGPoint CPTAlignPointToUserSpace(__nonnull CGContextRef context, CGPoint point)
-    //{
-    //    // Compute the coordinates of the point in device space.
-    //    point = CGContextConvertPointToDeviceSpace(context, point);
-    //
-    //    // Ensure that coordinates are at exactly the corner
-    //    // of a device pixel.
-    //    point.x = round(point.x - CGFloat(0.5)) + CGFloat(0.5);
-    //    point.y = ceil(point.y) - CGFloat(0.5);
-    //
-    //    // Convert the device aligned coordinate back to user space.
-    //    return CGContextConvertPointToUserSpace(context, point);
-    //}
-    //
-    ///**
-    // *  @brief Adjusts a size in user space to integral dimensions in device space.
-    // *
-    // *  Ensures that the width and height are an integer number of device pixels.
-    // *  Drawn from <i>Programming with Quartz</i> by D. Gelphman, B. Laden.
-    // *
-    // *  @param context The graphics context.
-    // *  @param size The size in user space.
-    // *  @return The device aligned size in user space.
-    // **/
-    //CGSize CPTAlignSizeToUserSpace(__nonnull CGContextRef context, CGSize size)
-    //{
-    //    // Compute the size in device space.
-    //    size = CGContextConvertSizeToDeviceSpace(context, size);
-    //
-    //    // Ensure that size is an integer multiple of device pixels.
-    //    size.width  = round(size.width);
-    //    size.height = round(size.height);
-    //
-    //    // Convert back to user space.
-    //    return CGContextConvertSizeToUserSpace(context, size);
-    //}
-    //
-    ///**
-    // *  @brief Aligns a rectangle in user space to integral coordinates in device space.
-    // *
-    // *  Ensures that the x and y coordinates are at a pixel corner in device space
-    // *  and the width and height are an integer number of device pixels.
-    // *  Drawn from <i>Programming with Quartz</i> by D. Gelphman, B. Laden.
-    // *
-    // *  @param context The graphics context.
-    // *  @param rect The rectangle in user space.
-    // *  @return The device aligned rectangle in user space.
-    // **/
-    func CPTAlignRectToUserSpace(context: CGContext , rect : CGRect )-> CGRect
-    {
-        var rect = context.convertToDeviceSpace(rect);
-    
-        let oldOrigin = rect.origin;
-    
-        rect.origin.x   = round(rect.origin.x - CGFloat(0.5));
-        rect.size.width = round(oldOrigin.x + rect.size.width - CGFloat(0.5)) - rect.origin.x;
-        rect.origin.x  += CGFloat(0.5);
-    
-        rect.origin.y    = ceil(rect.maxY) - CGFloat(0.5);
-        rect.size.height = ceil(oldOrigin.y - CGFloat(0.5) - rect.origin.y);
-    
-        return context.convertToUserSpace(rect);
+    func CPTOrthogonalCoordinate(_ coord: CPTCoordinate) -> CPTCoordinate {
+        return (coord == CPTCoordinate.x ? CPTCoordinate.y : CPTCoordinate.x) as! CPTCoordinate
     }
     //
     //#pragma mark -
-    //#pragma mark Integral Geometry Conversions
+    // MARK: Quartz pixel-alignment functions
+    func CPTAlignPointToUserSpace(_ context: CGContext, _ point: CGPoint) -> CGPoint {
+        var point = point
+        // Compute the coordinates of the point in device space.
+        point = context.convertToDeviceSpace(point)
+        
+        // Ensure that coordinates are at exactly the corner
+        // of a device pixel.
+        point.x = CGFloat(round(Double(point.x - CGFloat(0.5))) + CGFloat(0.5))
+        point.y = ceil(point.y) - CGFloat(0.5)
+        
+        // Convert the device aligned coordinate back to user space.
+        return context.convertToUserSpace(point)
+    }
+    
+    
+    func CPTAlignSizeToUserSpace(_ context: CGContext, _ size: CGSize) -> CGSize {
+        var size = size
+        // Compute the size in device space.
+        size = context.convertToDeviceSpace(size)
+        
+        // Ensure that size is an integer multiple of device pixels.
+        size.width = CGFloat(round(Double(size.width)))
+        size.height = CGFloat(round(Double(size.height)))
+        
+        // Convert back to user space.
+        return context.convertToUserSpace(size)
+    }
+
+    func CPTAlignRectToUserSpace(context: CGContext , rect : CGRect )-> CGRect
+    {
+        var rect = context.convertToDeviceSpace(rect);
+        
+        let oldOrigin = rect.origin;
+        
+        rect.origin.x   = round(rect.origin.x - CGFloat(0.5));
+        rect.size.width = round(oldOrigin.x + rect.size.width - CGFloat(0.5)) - rect.origin.x;
+        rect.origin.x  += CGFloat(0.5);
+        
+        rect.origin.y    = ceil(rect.maxY) - CGFloat(0.5);
+        rect.size.height = ceil(oldOrigin.y - CGFloat(0.5) - rect.origin.y);
+        
+        return context.convertToUserSpace(rect);
+    }
     //
-    ///**
-    // *  @brief Aligns a point in user space between integral coordinates in device space.
-    // *
-    // *  Ensures that the x and y coordinates are between pixels in device space.
-    // *
-    // *  @param context The graphics context.
-    // *  @param point The point in user space.
-    // *  @return The device aligned point in user space.
-    // **/
-    //CGPoint CPTAlignIntegralPointToUserSpace(__nonnull CGContextRef context, CGPoint point)
-    //{
-    //    point = CGContextConvertPointToDeviceSpace(context, point);
-    //
-    //    point.x = round(point.x);
-    //    point.y = ceil(point.y - CGFloat(0.5));
-    //
-    //    return CGContextConvertPointToUserSpace(context, point);
-    //}
-    //
-    ///**
-    // *  @brief Aligns a rectangle in user space between integral coordinates in device space.
-    // *
-    // *  Ensures that the x and y coordinates are between pixels in device space
-    // *  and the width and height are an integer number of device pixels.
-    // *
-    // *  @param context The graphics context.
-    // *  @param rect The rectangle in user space.
-    // *  @return The device aligned rectangle in user space.
-    // **/
+    // MARK: Integral Geometry Conversions
+    func CPTAlignIntegralPointToUserSpace(_ context: CGContext, _ point: CGPoint) -> CGPoint {
+        var point = point
+        point = context.convertToDeviceSpace(point)
+        
+        point.x = CGFloat(round(Double(point.x)))
+        point.y = ceil(point.y - CGFloat(0.5))
+        
+        return context.convertToUserSpace(point)
+    }
+    
     func CPTAlignIntegralRectToUserSpace(context: CGContext , rect: CGRect )->CGRect
     {
         
         var rect = rect
         rect = context.convertToDeviceSpace(rect);
-    
+        
         let oldOrigin = rect.origin;
-    
+        
         rect.origin.x   = round(rect.origin.x);
         rect.size.width = round(oldOrigin.x + rect.size.width) - rect.origin.x;
-    
+        
         rect.origin.y    = ceil(rect.maxY - CGFloat(0.5));
         rect.size.height = ceil(oldOrigin.y - CGFloat(0.5) - rect.origin.y);
-    
+        
         return context.convertToUserSpace(rect);
     }
     
@@ -999,12 +950,12 @@ class CPTUtilities {
     {
         var borderRect = CGRect.zero
         var contextScale = CGFloat(1.0);
-    
+        
         if ( rect.size.height != CGFloat(0.0)) {
             let deviceRect = context.convertToDeviceSpace(rect);
             contextScale = deviceRect.size.height / rect.size.height;
         }
-    
+        
         if ( contextScale != CGFloat(1.0)) {
             let borderWidth = borderLineStyle.lineWidth;
             if ((borderWidth > CGFloat(0.0)) && (borderWidth == round(borderWidth))) {
@@ -1017,7 +968,7 @@ class CPTUtilities {
         else {
             borderRect = CPTAlignRectToUserSpace(context: context, rect: rect);
         }
-    
+        
         return borderRect;
     }
     //
@@ -1027,20 +978,20 @@ class CPTUtilities {
     // *  @param point The point.
     // *  @return A string with the format <code> {x, y}</code>.
     // **/
-//    NSString *__nonnull CPTStringFromPoint(CGPoint point)
-//    {
-//        return [NSString stringWithFormat:@"{%g, %g}", (double)point.x, (double)point.y];
-//    }
+    //    NSString *__nonnull CPTStringFromPoint(CGPoint point)
+    //    {
+    //        return [NSString stringWithFormat:@"{%g, %g}", (double)point.x, (double)point.y];
+    //    }
     
     ///** @brief Creates a string representation of the given size.
     // *  @param size The size.
     // *  @return A string with the format <code> {width, height}</code>.
     // **/
-//    NSString *__nonnull CPTStringFromSize(CGSize size)
-//    {
-//        return [NSString stringWithFormat:@"{%g, %g}", (double)size.width, (double)size.height];
-//    }
-//
+    //    NSString *__nonnull CPTStringFromSize(CGSize size)
+    //    {
+    //        return [NSString stringWithFormat:@"{%g, %g}", (double)size.width, (double)size.height];
+    //    }
+    //
     ///** @brief Creates a string representation of the given rectangle.
     // *  @param rect The rectangle.
     // *  @return A string with the format <code> {{x, y}, {width, height}}</code>.
@@ -1056,8 +1007,8 @@ class CPTUtilities {
     // **/
     func CPTStringFromVector(vector:CGVector )->String
     {
-//        return String stringWithFormat:@"{%g, %g}", Double(vector.dx), Double(vector.dy))
-       return String(format: "{%f, %f}", Double(vector.dx), Double(vector.dy))
+        //        return String stringWithFormat:@"{%g, %g}", Double(vector.dx), Double(vector.dy))
+        return String(format: "{%f, %f}", Double(vector.dx), Double(vector.dy))
     }
     
     
@@ -1086,24 +1037,24 @@ class CPTUtilities {
     // *  @param right The right inset.
     // *  @return A CPTEdgeInsets struct with the given insets.
     // **/
-    //CPTEdgeInsets CPTEdgeInsetsMake(CGFloat top, CGFloat left, CGFloat bottom, CGFloat right)
-    //{
-    //    CPTEdgeInsets insets;
-    //
-    //    insets.top    = top;
-    //    insets.left   = left;
-    //    insets.bottom = bottom;
-    //    insets.right  = right;
-    //
-    //    return insets;
-    //}
+    func  CPTEdgeInsetsMake(top : CGFloat, left: CGFloat , bottom: CGFloat , right: CGFloat ) -> NSEdgeInsets
+    {
+        var insets = NSEdgeInsets ()
+    
+        insets.top    = top;
+        insets.left   = left;
+        insets.bottom = bottom;
+        insets.right  = right;
+    
+        return insets;
+    }
     //
     ///** @brief Compares two CPTEdgeInsets structstructs.
     // *  @param insets1 The first inset.
     // *  @param insets2 The second inset.
     // *  @return @YES if the two CPTEdgeInsets structs are equal.
     // **/
-    func CPTEdgeInsetsEqualToEdgeInsets(CPTEdgeInsets insets1: CPTEdgeInsets, insets2: CPTEdgeInsets)-> Bool
+    func CPTEdgeInsetsEqualToEdgeInsets(insets1: CPTEdgeInsets, insets2: CPTEdgeInsets)-> Bool
     {
         return (insets1.top == insets2.top) &&
             (insets1.left == insets2.left) &&

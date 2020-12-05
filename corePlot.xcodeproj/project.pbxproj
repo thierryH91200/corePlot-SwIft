@@ -74,6 +74,7 @@
 		037244482545FE4600B59C97 /* corePlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 0372443A2545FE4600B59C97 /* corePlot.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		037244542545FF1700B59C97 /* CPTLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037244532545FF1700B59C97 /* CPTLayer.swift */; };
 		03848EFB255F2F7000F1C1D5 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 03848EFA255F2F7000F1C1D5 /* README.md */; };
+		0387947E257BD06300F322E8 /* Platform+Graphics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0387947D257BD06300F322E8 /* Platform+Graphics.swift */; };
 		0397469B2557269E008CF3E6 /* CPTShadow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397469A2557269E008CF3E6 /* CPTShadow.swift */; };
 		0397469F2557281B008CF3E6 /* CPTColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397469E2557281B008CF3E6 /* CPTColor.swift */; };
 		039746A325572B55008CF3E6 /* CPTImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 039746A225572B55008CF3E6 /* CPTImage.swift */; };
@@ -189,6 +190,7 @@
 		037244472545FE4600B59C97 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		037244532545FF1700B59C97 /* CPTLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTLayer.swift; sourceTree = "<group>"; };
 		03848EFA255F2F7000F1C1D5 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		0387947D257BD06300F322E8 /* Platform+Graphics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Platform+Graphics.swift"; sourceTree = "<group>"; };
 		0397469A2557269E008CF3E6 /* CPTShadow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTShadow.swift; sourceTree = "<group>"; };
 		0397469E2557281B008CF3E6 /* CPTColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTColor.swift; sourceTree = "<group>"; };
 		039746A225572B55008CF3E6 /* CPTImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTImage.swift; sourceTree = "<group>"; };
@@ -550,6 +552,7 @@
 			children = (
 				03A9CD322559CCF70096853D /* CPTGraphHostingView.swift */,
 				03DDD46B256311BF00CAB29B /* CPTPlatformSpecificDefines.swift */,
+				0387947D257BD06300F322E8 /* Platform+Graphics.swift */,
 			);
 			path = "Mac Specific";
 			sourceTree = "<group>";
@@ -783,6 +786,7 @@
 				03A9CD072559AAE70096853D /* CPTFillGradient.swift in Sources */,
 				03A9CD132559B1120096853D /* CPTTheme.swift in Sources */,
 				03A9CCFA2559A2D60096853D /* CPTLineCap.swift in Sources */,
+				0387947E257BD06300F322E8 /* Platform+Graphics.swift in Sources */,
 				030A6521255FFA4C002B3D13 /* CPTPlotSpace.swift in Sources */,
 				03A9CCF225595D320096853D /* CPTPlotSpaceAnnotation.swift in Sources */,
 				0320B00C255C8A5400D32BF9 /* CPTPlotAreaFrame.swift in Sources */,

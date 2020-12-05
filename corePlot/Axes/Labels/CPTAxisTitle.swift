@@ -5,9 +5,14 @@
 //  Created by thierryH24 on 16/11/2020.
 //
 
+//==============================
+//  OK
+//==============================
+
+
 import AppKit
 
-class CPTAxisTitle: CPTAxisLabel {
+public class CPTAxisTitle: CPTAxisLabel {
     
     override init(layer: CPTLayer)
     {
@@ -23,25 +28,27 @@ class CPTAxisTitle: CPTAxisLabel {
      *  @param object The object to be compared with the receiver.
      *  @return @YES if @par{object} is equal to the receiver, @false otherwise.
      **/
-    func isEqual(object :Any)->Bool
+    
+    // https://stackoverflow.com/questions/24022874/custom-equality-in-swift-objects-preserving-compatibility-with-legacy-objective
+    override public func isEqual(_ object :Any?)->Bool
     {
-        if ( self == object ) {
+        if ( self == object as? CPTAxisTitle) {
             return true
         }
         else if (object is CPTAxisTitle) == true {
-            var otherTitle = object as! CPTAxisTitle
+            let otherTitle = object as! CPTAxisTitle
             
             if ((self.rotation != otherTitle.rotation) || (self.offset != otherTitle.offset)) {
                 return false;
             }
             if self.contentLayer.isEqual(otherTitle ) == false {
-                return false;
+                return false
             }
             
             let location = (object as! CPTAxisLabel).tickLocation;
             
-            if ( location ) {
-                return [self.tickLocation isEqualToNumber:location];
+            if location != 0 {
+                return self.tickLocation == location
             }
             else {
                 return false;
@@ -52,24 +59,12 @@ class CPTAxisTitle: CPTAxisLabel {
         }
     }
     
-    /// @}
+    static func == (lhs: CPTAxisTitle, rhs: CPTAxisTitle) -> Bool {
+        return lhs.rotation == rhs.rotation //&& lhs.height == rhs.height
+    }
     
-    /// @cond
-    
-    //    -(NSUInteger)hash
-    //    {
-    //    NSUInteger hashValue = 0;
-    //
-    //    // Equal objects must hash the same.
-    //    double tickLocationAsDouble = self.tickLocation.doubleValue;
-    //
-    //    if ( !isnan(tickLocationAsDouble)) {
-    //    hashValue = (NSUInteger)lrint(fmod(ABS(tickLocationAsDouble), (double)NSUIntegerMax));
-    //    }
-    //    hashValue += (NSUInteger)lrint(fmod(ABS(self.rotation), (double)NSUIntegerMax));
-    //    hashValue += (NSUInteger)lrint(fmod(ABS(self.offset), (double)NSUIntegerMax));
-    //
-    //    return hashValue;
-    //    }
-    
+    override public var hash: Int {
+        return rotation.hashValue
+    }
 }
+    

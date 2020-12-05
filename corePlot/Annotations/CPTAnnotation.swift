@@ -23,6 +23,8 @@ class CPTAnnotation: NSObject {
         rotation            = CGFloat(0.0);
     }
     
+
+    
     var _contentLayer: CPTLayer?
     var contentLayer : CPTLayer? {
         get {

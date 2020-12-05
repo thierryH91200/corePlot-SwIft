@@ -25,27 +25,27 @@ class CPTAnimationOperation: NSObject {
     
     init(animationPeriod: CPTAnimationPeriod, animationCurve curve: CPTAnimationCurve, object: Any, getter: Selector, setter: Selector) {
         super.init()
-            period = animationPeriod
-            animationCurve = curve
-            boundObject = object
-            boundGetter = getter
-            boundSetter = setter
-            delegate = nil
+        period = animationPeriod
+        animationCurve = curve
+        boundObject = object
+        boundGetter = getter
+        boundSetter = setter
+        delegate = nil
         isCanceled = false
-            identifier = nil
-            userInfo = nil
+        identifier = nil
+        userInfo = nil
     }
 
-    @objc convenience override init() {
-        assert(false, "Must call -initWithAnimationPeriod:animationCurve:object:getter:setter: to initialize a CPTAnimationOperation.")
-
-        self.init(
-            animationPeriod: CPTAnimationPeriod(),
-            animationCurve: CPTAnimationCurve.default,
-            object: NSObject(),
-            getter: #selector(init),
-            setter: #selector(init))
-    }
+//    @objc convenience override init() {
+//        assert(false, "Must call -initWithAnimationPeriod:animationCurve:object:getter:setter: to initialize a CPTAnimationOperation.")
+//
+//        self.init(
+//            animationPeriod: CPTAnimationPeriod(),
+//            animationCurve: CPTAnimationCurve.default,
+//            object: NSObject(),
+//            getter: #selector,
+//            setter: #selector )
+//    }
     
 //    func  initWithAnimationPeriod(
 //        animationPeriod: CPTAnimationPeriod,
