@@ -51,10 +51,10 @@ class CPTGraph: CPTBorderedLayer {
 
     
     // MARK: Layers
-    var axisSet : CPTAxisSet
+//    var axisSet : CPTAxisSet
     var newAxisSet : CPTAxisSet?
     var plotAreaFrame : CPTPlotAreaFrame
-    var defaultPlotSpace : CPTPlotSpace
+//    var defaultPlotSpace : CPTPlotSpace
     var newPlotSpace : CPTPlotSpace?
     var topDownLayerOrder : CPTNumberArray
     
@@ -85,7 +85,7 @@ class CPTGraph: CPTBorderedLayer {
         
         // Axis set
         let newAxisSet = self.newAxisSet
-        axisSet = newAxisSet!
+//        axisSet = newAxisSet!
         
         // Title
         title = ""

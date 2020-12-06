@@ -33,12 +33,9 @@ import AppKit
     func didFinishDrawing(plot: CPTPlot )
 }
 
-
-
 public class CPTPlot: CPTAnnotationHostLayer {
     
 //    let CPTPlotBindingDataLabels = "dataLabels"
-    
     
     public weak var dataSource : CPTPlotDataSource?
     public var delegatePlot: CPTPlotDelegate?
@@ -123,7 +120,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
     
     init(layer: Any)
     {
-        super.init(layer: layer)
+        super.init()
         let theLayer = CPTPlot(layer: layer)
         
         cachedData           = theLayer.cachedData;
@@ -198,23 +195,12 @@ public class CPTPlot: CPTAnnotationHostLayer {
     //    @implementation CPTPlot(AbstractMethods)
     //
     //    #pragma mark -
-    //    #pragma mark Fields
+    // MARK:Fields
     
-    /** @brief Number of fields in a plot data record.
-     *  @return The number of fields.
-     **/
     func numberOfFields() -> Int
     {
-    return 0
+        return 0
     }
-    
-    /** @brief Identifiers (enum values) identifying the fields.
-     *  @return Array of NSNumber objects for the various field identifiers.
-     **/
-//    func fieldIdentifiers()-> [NSNumber]
-//    {
-//    return [];
-//    }
     
     /** @brief The field identifiers that correspond to a particular coordinate.
      *  @param coord The coordinate for which the corresponding field identifiers are desired.
@@ -236,10 +222,6 @@ public class CPTPlot: CPTAnnotationHostLayer {
     
     // MARK: - Data Labels
     
-    /** @brief Adjusts the position of the data label annotation for the plot point at the given index.
-     *  @param label The annotation for the data label.
-     *  @param idx The data index for the label.
-     **/
     func positionLabelAnnotation(label:  CPTPlotSpaceAnnotation, forIndex: Int)
     {
     // do nothing--implementation provided by subclasses
@@ -269,9 +251,8 @@ public class CPTPlot: CPTAnnotationHostLayer {
         }
     }
     
-    /**
-     *  @brief Marks the receiver as needing the data source reloaded before the content is next drawn.
-     **/
+    
+    //  @brief Marks the receiver as needing the data source reloaded before the content is next drawn.
     func setDataNeedsReloading()
     {
         self.dataNeedsReloading = true;
@@ -301,13 +282,9 @@ public class CPTPlot: CPTAnnotationHostLayer {
      *  @param indexRange The index range to load.
      **/
     func reloadData( indexRange: NSRange) {
-        assert(NSMaxRange(indexRange) <= numberOfRecords, "Invalid parameter not satisfying: NSMaxRange(indexRange) <= numberOfRecords")
         
         dataNeedsReloading = false
-        
         reloadPlotData(indexRange: indexRange)
-        
-        // Data labels
         reloadDataLabels(indexRange: indexRange)
     }
     

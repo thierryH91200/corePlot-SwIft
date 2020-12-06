@@ -27,8 +27,7 @@ class CPTLegendEntry: NSObject {
         column    = 0;
         textStyle = nil;
     }
-    
-    
+
     func title() -> String
     {
         let thePlot = self.plot
@@ -60,7 +59,7 @@ class CPTLegendEntry: NSObject {
             let theTextStyle = self.textStyle
             
             if ( theTitle && theTextStyle ) {
-                theTitleSize = theTitle sizeWithTextStyle:theTextStyle];
+                theTitleSize = theTitle.sizeWithTextStyle:theTextStyle];
             }
         }
         

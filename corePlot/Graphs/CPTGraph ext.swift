@@ -307,7 +307,7 @@ extension CPTGraph {
         let plotSpace        = notif.object as! CPTPlotSpace
         let backgroundBandsNeedRedraw = false;
         
-        for axis in self.axisSet.axes {
+        for axis in self.axisSet().axes {
             if  axis.plotSpace == plotSpace {
                 axis.setNeedsRelabel()
                 axis.updateAxisTitle()
@@ -323,7 +323,7 @@ extension CPTGraph {
             }
         }
         if ( backgroundBandsNeedRedraw ) {
-            self.plotAreaFrame.plotArea.setNeedsDisplay()
+            self.plotAreaFrame.plotArea?.setNeedsDisplay()
         }
     }
     
@@ -399,42 +399,42 @@ extension CPTGraph {
     
     func contentAnchorForRectAnchor(anchor: CPTRectAnchor)->CGPoint
     {
-        let contentAnchor = CGPoint()
+        var contentAnchor = CGPoint()
         
         switch ( anchor ) {
         case .bottomLeft:
             contentAnchor = CGPoint()
             
         case .bottom:
-            contentAnchor = CGPoint(0.5, 0.0);
+            contentAnchor = CGPoint(x: 0.5, y: 0.0);
             
         case .bottomRight:
-            contentAnchor = CGPoint(1.0, 0.0);
+            contentAnchor = CGPoint(x: 1.0, y: 0.0);
             
         case .left:
-            contentAnchor = CGPoint(0.0, 0.5);
+            contentAnchor = CGPoint(x: 0.0, y: 0.5);
             
         case .right:
-            contentAnchor = CGPoint(1.0, 0.5);
+            contentAnchor = CGPoint(x: 1.0, y: 0.5);
             
         case .topLeft:
-            contentAnchor = CGPoint(0.0, 1.0);
+            contentAnchor = CGPoint(x: 0.0, y: 1.0);
             
         case .top:
-            contentAnchor = CGPoint(0.5, 1.0);
+            contentAnchor = CGPoint(x: 0.5, y: 1.0);
             
         case .topRight:
-            contentAnchor = CGPoint(1.0, 1.0);
+            contentAnchor = CGPoint(x: 1.0, y: 1.0);
             
         case .center:
-            contentAnchor = CGPoint(0.5, 0.5);
+            contentAnchor = CGPoint(x: 0.5, y: 0.5);
         }
         return contentAnchor;
     }
     
     
     // MARK: - Accessors
-    func setPaddingLeft(newPadding: CGFloat)
+    override func setPaddingLeft(newPadding: CGFloat)
     {
         if newPadding != self.paddingLeft  {
             super.paddingLeft = newPadding
@@ -442,7 +442,7 @@ extension CPTGraph {
         }
     }
     
-    func setPaddingRight(newPadding:CGFloat)
+    override func setPaddingRight(newPadding:CGFloat)
     {
         if ( newPadding != self.paddingRight ) {
             super.paddingRight = newPadding;
@@ -450,7 +450,7 @@ extension CPTGraph {
         }
     }
     
-    func setPaddingTop(newPadding:CGFloat)
+    override func setPaddingTop(newPadding:CGFloat)
     {
         if ( newPadding != self.paddingTop ) {
             super.paddingTop = newPadding
@@ -458,7 +458,7 @@ extension CPTGraph {
         }
     }
     
-    func setPaddingBottom(newPadding: CGFloat)
+    override func setPaddingBottom(newPadding: CGFloat)
     {
         if ( newPadding != self.paddingBottom ) {
             super.paddingBottom = newPadding
@@ -466,26 +466,26 @@ extension CPTGraph {
         }
     }
     
-    func topDownLayerOrder() -> CPTNumberArray? {
-        return plotAreaFrame.plotArea.topDownLayerOrder()
-    }
+//    func topDownLayerOrder() -> CPTNumberArray? {
+//        return plotAreaFrame.plotArea.topDownLayerOrder()
+//    }
     
     func setTopDownLayerOrder(_ newArray: CPTNumberArray?) {
-        plotAreaFrame.plotArea.topDownLayerOrder() = newArray
+        plotAreaFrame.plotArea.topDownLayerOrder = newArray
     }
-    func setTitle(title : String)
+    func setTitle(newTitle : String)
     {
         if ( newTitle != title ) {
             title = newTitle
             
-            if ( !self.inTitleUpdate ) {
+            if self.inTitleUpdate == false {
                 self.inTitleUpdate   = true
                 self.attributedTitle = nil;
                 self.inTitleUpdate   = false
                 
                 let theTitleAnnotation = self.titleAnnotation;
                 
-                if ( title ) {
+                if title != "" {
                     if ( theTitleAnnotation ) {
                         theTitleAnnotation.contentLayer.text = title;
                     }
@@ -551,12 +551,12 @@ extension CPTGraph {
                     self.titleTextStyle = nil;
                     self.title          = nil;
                     
-                    if ( theTitleAnnotation ) {
+                    if (( theTitleAnnotation ) != nil) {
                         self.removeAnnotation(theTitleAnnotation)
                         self.titleAnnotation = nil;
                     }
                 }
-                self.inTitleUpdate = NO;
+                self.inTitleUpdate = false
             }
         }
     }

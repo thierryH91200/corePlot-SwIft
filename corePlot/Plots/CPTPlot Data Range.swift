@@ -160,135 +160,133 @@ extension CPTPlot {
 ///**
 // *  @brief Updates the data labels in the labelIndexRange.
 // **/
-//-(void)relabel
-//{
-//    if ( !self.needsRelabel ) {
-//        return;
-//    }
-//
-//    self.needsRelabel = NO;
-//
-//    id nullObject         = [NSNull null];
-//    Class nullClass       = [NSNull class];
-//    Class annotationClass = [CPTAnnotation class];
-//
-//    CPTTextStyle *dataLabelTextStyle = self.labelTextStyle;
-//    NSFormatter *dataLabelFormatter  = self.labelFormatter;
-//    BOOL plotProvidesLabels          = dataLabelTextStyle && dataLabelFormatter;
-//
-//    BOOL hasCachedLabels               = NO;
-//    CPTMutableLayerArray *cachedLabels = (CPTMutableLayerArray *)[self cachedArrayForKey:CPTPlotBindingDataLabels];
-//
-//    for ( CPTLayer *label in cachedLabels ) {
-//        if ( ![label isKindOfClass:nullClass] ) {
-//            hasCachedLabels = YES;
-//            break;
-//        }
-//    }
-//
-//    if ( !self.showLabels || (!hasCachedLabels && !plotProvidesLabels)) {
-//        for ( CPTAnnotation *annotation in self.labelAnnotations ) {
-//            if ( [annotation isKindOfClass:annotationClass] ) {
-//                [self removeAnnotation:annotation];
-//            }
-//        }
-//        self.labelAnnotations = nil;
-//        return;
-//    }
-//
-//    CPTDictionary *textAttributes = dataLabelTextStyle.attributes;
-//    BOOL hasAttributedFormatter   = ([dataLabelFormatter attributedStringForObjectValue:[NSDecimalNumber zero]
-//                                                                  withDefaultAttributes:textAttributes] != nil);
-//
-//    NSUInteger sampleCount = self.cachedDataCount;
-//    NSRange indexRange     = self.labelIndexRange;
-//    NSUInteger maxIndex    = NSMaxRange(indexRange);
-//
-//    if ( !self.labelAnnotations ) {
-//        self.labelAnnotations = [NSMutableArray arrayWithCapacity:sampleCount];
-//    }
-//
-//    CPTPlotSpace *thePlotSpace            = self.plotSpace;
-//    CGFloat theRotation                   = self.labelRotation;
-//    CPTMutableAnnotationArray *labelArray = self.labelAnnotations;
-//    NSUInteger oldLabelCount              = labelArray.count;
-//    id nilObject                          = [CPTPlot nilData];
-//
-//    CPTMutableNumericData *labelFieldDataCache = [self cachedNumbersForField:self.labelField];
-//    CPTShadow *theShadow                       = self.labelShadow;
-//
-//    for ( NSUInteger i = indexRange.location; i < maxIndex; i++ ) {
-//        NSNumber *dataValue = [labelFieldDataCache sampleValue:i];
-//
-//        CPTLayer *newLabelLayer;
-//        if ( isnan([dataValue doubleValue])) {
-//            newLabelLayer = nil;
-//        }
-//        else {
-//            newLabelLayer = [self cachedValueForKey:CPTPlotBindingDataLabels recordIndex:i];
-//
-//            if (((newLabelLayer == nil) || (newLabelLayer == nilObject)) && plotProvidesLabels ) {
-//                if ( hasAttributedFormatter ) {
-//                    NSAttributedString *labelString = [dataLabelFormatter attributedStringForObjectValue:dataValue withDefaultAttributes:textAttributes];
-//                    newLabelLayer = [[CPTTextLayer alloc] initWithAttributedText:labelString];
-//                }
-//                else {
-//                    NSString *labelString = [dataLabelFormatter stringForObjectValue:dataValue];
-//                    newLabelLayer = [[CPTTextLayer alloc] initWithText:labelString style:dataLabelTextStyle];
-//                }
-//            }
-//
-//            if ( [newLabelLayer isKindOfClass:nullClass] || (newLabelLayer == nilObject)) {
-//                newLabelLayer = nil;
-//            }
-//        }
-//        newLabelLayer.shadow = theShadow;
-//
-//        CPTPlotSpaceAnnotation *labelAnnotation;
-//        if ( i < oldLabelCount ) {
-//            labelAnnotation = labelArray[i];
-//            if ( newLabelLayer ) {
-//                if ( [labelAnnotation isKindOfClass:nullClass] ) {
-//                    labelAnnotation = [[CPTPlotSpaceAnnotation alloc] initWithPlotSpace:thePlotSpace anchorPlotPoint:nil];
-//                    labelArray[i]   = labelAnnotation;
-//                    [self addAnnotation:labelAnnotation];
-//                }
-//            }
-//            else {
-//                if ( [labelAnnotation isKindOfClass:annotationClass] ) {
-//                    labelArray[i] = nullObject;
-//                    [self removeAnnotation:labelAnnotation];
-//                }
-//            }
-//        }
-//        else {
-//            if ( newLabelLayer ) {
-//                labelAnnotation = [[CPTPlotSpaceAnnotation alloc] initWithPlotSpace:thePlotSpace anchorPlotPoint:nil];
-//                [labelArray addObject:labelAnnotation];
-//                [self addAnnotation:labelAnnotation];
-//            }
-//            else {
-//                [labelArray addObject:nullObject];
-//            }
-//        }
-//
-//        if ( newLabelLayer ) {
-//            labelAnnotation.contentLayer = newLabelLayer;
-//            labelAnnotation.rotation     = theRotation;
-//            [self positionLabelAnnotation:labelAnnotation forIndex:i];
-//            [self updateContentAnchorForLabel:labelAnnotation];
-//        }
-//    }
-//
-//    // remove labels that are no longer needed
-//    while ( labelArray.count > sampleCount ) {
-//        CPTAnnotation *oldAnnotation = labelArray[labelArray.count - 1];
-//        if ( [oldAnnotation isKindOfClass:annotationClass] ) {
-//            [self removeAnnotation:oldAnnotation];
-//        }
-//        [labelArray removeLastObject];
-//    }
-//}
+func relabel()
+{
+    guard self.needsRelabel == true else { return }
+
+    self.needsRelabel = false
+
+    let  nullObject         = [NSNull null];
+    Class nullClass       = [NSNull class];
+    Class annotationClass = [CPTAnnotation class];
+
+    let dataLabelTextStyle = self.labelTextStyle;
+    let dataLabelFormatter  = self.labelFormatter;
+    let plotProvidesLabels  = dataLabelTextStyle && dataLabelFormatter
+    
+    var hasCachedLabels               = false
+    var cachedLabels = (CPTMutableLayerArray *)[self.cachedArrayForKey:CPTPlotBindingDataLabels];
+
+    for ( CPTLayer label in cachedLabels ) {
+        if ( !label isKindOfClass:nullClass] ) {
+            hasCachedLabels = true
+            break
+        }
+    }
+
+    if ( !self.showLabels || (!hasCachedLabels && !plotProvidesLabels)) {
+        for ( CPTAnnotation *annotation in self.labelAnnotations ) {
+            if ( [annotation isKindOfClass:annotationClass] ) {
+                [self removeAnnotation:annotation];
+            }
+        }
+        self.labelAnnotations = nil;
+        return;
+    }
+
+    let textAttributes = dataLabelTextStyle?.attributes
+    let hasAttributedFormatter   = ([dataLabelFormatter.attributedStringForObjectValue:[NSDecimalNumber zero]
+                                                                  withDefaultAttributes:textAttributes] != nil);
+
+    let sampleCount = self.cachedDataCount;
+    let indexRange     = self.labelIndexRange;
+    let maxIndex    = NSMaxRange(indexRange)
+
+    if ( !self.labelAnnotations.isEmpty ) {
+        self.labelAnnotations = []()
+    }
+
+    let thePlotSpace            = self.plotSpace;
+    let theRotation                   = self.labelRotation;
+    let labelArray = self.labelAnnotations;
+    let oldLabelCount    = labelArray.count;
+    id nilObject         = [CPTPlot nilData];
+
+    CPTMutableNumericData *labelFieldDataCache = [self cachedNumbersForField:self.labelField];
+    CPTShadow *theShadow                       = self.labelShadow;
+
+    for ( NSUInteger i = indexRange.location; i < maxIndex; i++ ) {
+        NSNumber *dataValue = [labelFieldDataCache sampleValue:i];
+
+        CPTLayer *newLabelLayer;
+        if ( isnan([dataValue doubleValue])) {
+            newLabelLayer = nil;
+        }
+        else {
+            newLabelLayer = [self cachedValueForKey:CPTPlotBindingDataLabels recordIndex:i];
+
+            if (((newLabelLayer == nil) || (newLabelLayer == nilObject)) && plotProvidesLabels ) {
+                if ( hasAttributedFormatter ) {
+                    NSAttributedString *labelString = [dataLabelFormatter attributedStringForObjectValue:dataValue withDefaultAttributes:textAttributes];
+                    newLabelLayer = [[CPTTextLayer alloc] initWithAttributedText:labelString];
+                }
+                else {
+                    NSString *labelString = [dataLabelFormatter stringForObjectValue:dataValue];
+                    newLabelLayer = [[CPTTextLayer alloc] initWithText:labelString style:dataLabelTextStyle];
+                }
+            }
+
+            if ( [newLabelLayer isKindOfClass:nullClass] || (newLabelLayer == nilObject)) {
+                newLabelLayer = nil;
+            }
+        }
+        newLabelLayer.shadow = theShadow;
+
+       var labelAnnotation : CPTPlotSpaceAnnotation
+        if ( i < oldLabelCount ) {
+            labelAnnotation = labelArray[i]
+            if ( newLabelLayer ) {
+                if ( [labelAnnotation isKindOfClass:nullClass] ) {
+                    labelAnnotation = [[CPTPlotSpaceAnnotation alloc] initWithPlotSpace:thePlotSpace anchorPlotPoint:nil];
+                    labelArray[i]   = labelAnnotation;
+                    [self addAnnotation:labelAnnotation];
+                }
+            }
+            else {
+                if ( [labelAnnotation isKindOfClass:annotationClass] ) {
+                    labelArray[i] = nullObject;
+                    self.removeAnnotation(labelAnnotation)
+                }
+            }
+        }
+        else {
+            if ( newLabelLayer ) {
+                labelAnnotation = [[CPTPlotSpaceAnnotation alloc] initWithPlotSpace:thePlotSpace anchorPlotPoint:nil];
+                [labelArray addObject:labelAnnotation];
+                [self addAnnotation:labelAnnotation];
+            }
+            else {
+                labelArray.apppend(:nullObject)
+            }
+        }
+
+        if ( newLabelLayer ) {
+            labelAnnotation.contentLayer = newLabelLayer;
+            labelAnnotation.rotation     = theRotation;
+            [self positionLabelAnnotation:labelAnnotation forIndex:i];
+            [self updateContentAnchorForLabel:labelAnnotation];
+        }
+    }
+
+    // remove labels that are no longer needed
+    while ( labelArray.count > sampleCount ) {
+        CPTAnnotation *oldAnnotation = labelArray[labelArray.count - 1];
+        if ( [oldAnnotation isKindOfClass:annotationClass] ) {
+            [self removeAnnotation:oldAnnotation];
+        }
+        labelArray.removeLastObject
+    }
+}
 //
 ///** @brief Marks the receiver as needing to update a range of data labels before the content is next drawn.
 // *  @param indexRange The index range needing update.

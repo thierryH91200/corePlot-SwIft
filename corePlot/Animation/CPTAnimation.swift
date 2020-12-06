@@ -87,7 +87,7 @@ class CPTAnimation: NSObject {
     }
     
     class func animate(_ object: Any, property: String, period: CPTAnimationPeriod, animationCurve: CPTAnimationCurve, delegate: CPTAnimationDelegate?) -> CPTAnimationOperation {
-        let animationOperation = CPTAnimationOperation(
+        let animationOperation = CPTAnimationOperation (
             animationPeriod: period,
             animationCurve: animationCurve,
             object: object,
@@ -168,7 +168,7 @@ class CPTAnimation: NSObject {
         
         let theAnimationOperations = self.animationOperations;
         let runningOperations      = self.runningAnimationOperations;
-        CPTMutableAnimationArray *expiredOperations      = [[NSMutableArray alloc] init];
+        let expiredOperations      = [[NSMutableArray alloc] init];
         
         CGFloat currentTime      = self.timeOffset;
         CPTStringArray *runModes = @[NSRunLoopCommonModes];
@@ -211,48 +211,59 @@ class CPTAnimation: NSObject {
             else if ( currentTime >= startTime ) {
                 let boundObject = animationOperation.boundObject;
                 
-                CPTAnimationTimingFunction timingFunction = [self timingFunctionForAnimationCurve:animationOperation.animationCurve];
+                let timingFunction = self.timingFunctionForAnimationCurve(animationOperation.animationCurve)
                 
                 if ( boundObject && timingFunction ) {
                     var started = false;
                     
-                    if ( ![runningOperations containsObject:animationOperation] ) {
+                    if runningOperations.containsObject(animationOperation) == false{
                         // Remove any running animations for the same property
-                        SEL boundGetter = animationOperation.boundGetter;
-                        SEL boundSetter = animationOperation.boundSetter;
+                        let boundGetter = animationOperation.boundGetter
+                        let boundSetter = animationOperation.boundSetter
                         
-                        for ( CPTAnimationOperation *operation in runningOperations ) {
+                        for operation in runningOperations {
                             if ( operation.boundObject == boundObject ) {
                                 if ((operation.boundGetter == boundGetter) && (operation.boundSetter == boundSetter)) {
-                                    operation.canceled = YES;
+                                    operation.canceled = true;
                                 }
                             }
                         }
                         
+                        
+                        
+                        
+                        
+                        
                         // Start the new animation
-                        [runningOperations addObject:animationOperation];
-                        started = YES;
+                        runningOperations.addObject(animationOperation)
+                        started = true;
                     }
                     if ( !animationOperation.isCanceled ) {
                         if ( !period.startValue ) {
-                            [period setStartValueFromObject:animationOperation.boundObject propertyGetter:animationOperation.boundGetter];
+                            period.setStartValueFromObject(animationOperation.boundObject, propertyGetter:animationOperation.boundGetter)
                         }
                         
-                        Class valueClass = period.valueClass;
-                        CGFloat progress = timingFunction(currentTime - startTime, duration);
+                        let valueClass = period.valueClass;
+                        let progress = timingFunction(currentTime - startTime, duration);
                         
-                        CPTDictionary *parameters = @{
-                            CPTAnimationOperationKey: animationOperation,
-                            CPTAnimationValueKey: [period tweenedValueForProgress:progress],
-                            CPTAnimationValueClassKey: valueClass ? valueClass : [NSNull null],
-                            CPTAnimationStartedKey: @(started),
-                            CPTAnimationFinishedKey: @(currentTime >= endTime)
-                        };
+                        typealias CPTDictionary = [String : Any?]
+                        var parameters = [
+                            CPTAnimationOperationKey  : animationOperation,
+                            CPTAnimationValueKey      : period.tweenedValue(forProgress: progress),
+                            CPTAnimationValueClassKey : valueClass ? valueClass : NSNull(),
+                            CPTAnimationStartedKey    : started),
+                            CPTAnimationFinishedKey: NSNumber(value: currentTime >= endTime)
+                        ] as? CPTDictionary
+                        
+                        
+                        
+                        
+                        
                         
                         // Used -performSelectorOnMainThread:... instead of GCD to ensure the animation continues to run in all run loop common modes.
                         [self performSelectorOnMainThread:@selector(updateOnMainThreadWithParameters:)
                         withObject:parameters
-                        waitUntilDone:NO
+                        waitUntilDone:false,
                         modes:runModes];
                         
                         if ( currentTime >= endTime ) {
@@ -263,7 +274,7 @@ class CPTAnimation: NSObject {
             }
         }
         
-        for ( CPTAnimationOperation *animationOperation in expiredOperations ) {
+        for ( animationOperation in expiredOperations ) {
             [runningOperations removeObjectIdenticalTo:animationOperation];
             [theAnimationOperations removeObjectIdenticalTo:animationOperation];
         }
@@ -274,16 +285,19 @@ class CPTAnimation: NSObject {
     }
     
     // This method must be called from the main thread.
-    -(void)updateOnMainThreadWithParameters:(nonnull CPTDictionary *)parameters
+    func updateOnMainThreadWithParameters(parameters: CPTDictionary)
     {
-    CPTAnimationOperation *animationOperation = parameters[CPTAnimationOperationKey];
-    
-    __block BOOL canceled;
-    
-    dispatch_sync(self.animationQueue, ^{
-    canceled = animationOperation.isCanceled;
-    });
-    
+        let animationOperation = parameters[CPTAnimationOperationKey]
+
+    var canceled: Bool
+
+    animationQueue.sync(execute: {
+        canceled = animationOperation?.isCanceled ?? false
+    })
+        
+        
+        
+        
     if ( !canceled ) {
     @try {
     Class valueClass = parameters[CPTAnimationValueClassKey];
@@ -291,10 +305,15 @@ class CPTAnimation: NSObject {
     valueClass = Nil;
     }
     
-    id<CPTAnimationDelegate> delegate = animationOperation.delegate;
-    
-    NSNumber *started = parameters[CPTAnimationStartedKey];
+  let delegate = animationOperation.delegate
+        
+    let started = parameters[CPTAnimationStartedKey];
     if ( started.boolValue ) {
+    
+    
+    
+    
+    
     if ( [delegate respondsToSelector:@selector(animationDidStart:)] ) {
     [delegate animationDidStart:animationOperation];
     }
@@ -304,9 +323,11 @@ class CPTAnimation: NSObject {
     [delegate animationWillUpdate:animationOperation];
     }
     
-    SEL boundSetter = animationOperation.boundSetter;
-    id boundObject  = animationOperation.boundObject;
-    id tweenedValue = parameters[CPTAnimationValueKey];
+        
+    let boundSetter = animationOperation.boundSetter
+    let boundObject = animationOperation.boundObject
+    let tweenedValue = parameters[CPTAnimationValueKey]
+        
     
     if ( !valueClass && [tweenedValue isKindOfClass:[NSDecimalNumber class]] ) {
     NSDecimal buffer = ((NSDecimalNumber *)tweenedValue).decimalValue;

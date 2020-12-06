@@ -12,7 +12,7 @@ extension CPTLayer {
     
 
     
-    func setPaddingLeft(newPadding: CGFloat)
+    @objc func setPaddingLeft(newPadding: CGFloat)
     {
         if ( newPadding != paddingLeft ) {
             paddingLeft = newPadding
@@ -20,7 +20,7 @@ extension CPTLayer {
         }
     }
     
-    func setPaddingRight(newPadding : CGFloat)
+    @objc func setPaddingRight(newPadding : CGFloat)
     {
         if ( newPadding != paddingRight ) {
             paddingRight = newPadding;
@@ -28,7 +28,7 @@ extension CPTLayer {
         }
     }
     
-    func setPaddingTop(newPadding: CGFloat)
+    @objc func setPaddingTop(newPadding: CGFloat)
     {
         if ( newPadding != paddingTop ) {
             paddingTop = newPadding;
@@ -36,7 +36,7 @@ extension CPTLayer {
         }
     }
     
-    func setPaddingBottom( newPadding:CGFloat)
+    @objc func setPaddingBottom( newPadding:CGFloat)
     {
         if ( newPadding != paddingBottom ) {
             paddingBottom = newPadding

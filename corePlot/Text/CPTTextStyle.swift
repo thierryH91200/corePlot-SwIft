@@ -5,6 +5,11 @@
 //  Created by thierryH24 on 09/11/2020.
 //
 
+//==============================
+//  OK
+//==============================
+
+
 import AppKit
 
 class CPTTextStyle: NSObject {
@@ -17,17 +22,17 @@ class CPTTextStyle: NSObject {
     var lineBreakMode = NSLineBreakMode.byWordWrapping
     
     
-    init( textStyle: CPTTextStyle?)  {
+    init( textStyle: CPTTextStyle)  {
         
-//        let newTextStyle = super.init()
+        super.init()
+        let newTextStyle = CPTTextStyle()
 
-        newTextStyle?.font = textStyle?.font
-        newTextStyle?.color = textStyle?.color
-        newTextStyle?.fontName = textStyle?.fontName
-        newTextStyle?.fontSize = textStyle?.fontSize
-        newTextStyle?.textAlignment = textStyle?.textAlignment
-        newTextStyle?.lineBreakMode = textStyle?.lineBreakMode
-
+        newTextStyle.font = textStyle.font
+        newTextStyle.color = textStyle.color
+        newTextStyle.fontName = textStyle.fontName
+        newTextStyle.fontSize = textStyle.fontSize
+        newTextStyle.textAlignment = textStyle.textAlignment
+        newTextStyle.lineBreakMode = textStyle.lineBreakMode
     }
     
     override init ()
@@ -40,9 +45,25 @@ class CPTTextStyle: NSObject {
         textAlignment = NSTextAlignment.left
         lineBreakMode = NSLineBreakMode.byWordWrapping
     }
-
-
-
     
-    
+    // MARK: - Accessors
+    func attributes()-> [NSAttributedString.Key: Any]
+    {
+        var myAttributes = [NSAttributedString.Key: Any]()
+
+        // Text alignment and line break mode
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineBreakMode = .byClipping
+        paragraphStyle.alignment = .left
+        
+        paragraphStyle.alignment     = self.textAlignment;
+        paragraphStyle.lineBreakMode = self.lineBreakMode;
+        
+        
+        myAttributes = [.font: NSFont( name:fontName, size:self.fontSize)!,
+                        .foregroundColor : color,
+                        .backgroundColor : NSColor.black,
+                        .paragraphStyle : paragraphStyle]
+        return myAttributes
+    }
 }

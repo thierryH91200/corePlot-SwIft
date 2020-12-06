@@ -36,6 +36,14 @@ corePlot/Source/Animation/CPTAnimationCGFloatPeriod
 ## class CPTMutablePlotRange
 
 
+-(void)cacheNumbers:(nullable id)numbers forField:(NSUInteger)fieldEnum
+{
+    NSNumber *cacheKey = @(fieldEnum);
+
+    CPTCoordinate coordinate   = [self coordinateForFieldIdentifier:fieldEnum];
+    CPTPlotSpace *thePlotSpace = self.plotSpace;
+
+    if ( numbers ) {
 
 
 # Add change 
@@ -56,5 +64,19 @@ CPTTextLayer ok
 
 This is the only thing I could find (Swift alternative to respondsToSelector:) but isn’t too relevant in my case as its checking the existence of the delegate, I don’t have a delegate I just want to check if a new API exists or not when running on the device and if not fall back to a previous version of the api.
 
+ https://izziswift.com/what-is-the-swift-equivalent-of-respondstoselector/
 
-// https://izziswift.com/what-is-the-swift-equivalent-of-respondstoselector/
+https://nshipster.com/nil/
+
+CPTAnimationCurve
+
+// Returns a singleton class object
+let nl:NSNull = NSNull()
+
+if ( [labelAnnotation isKindOfClass:nullClass] ) {
+    labelAnnotation = [[CPTPlotSpaceAnnotation alloc] initWithPlotSpace:thePlotSpace anchorPlotPoint:nil];
+    labelArray[i]   = labelAnnotation;
+    [self addAnnotation:labelAnnotation];
+}
+
+
