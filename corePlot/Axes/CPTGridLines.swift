@@ -9,7 +9,7 @@ import Cocoa
 
 class CPTGridLines: CPTLayer {
     
-    var axis : CPTAxis?
+//    var axis : CPTAxis?
     var major = false
     
     // MARK: Init/Dealloc
@@ -41,12 +41,21 @@ class CPTGridLines: CPTLayer {
         guard ( self.isHidden == false) else { return }
         
         super.renderAsVectorInContext(context: context)
-        let theAxis = self.axis;
+        let theAxis = self.axis
         theAxis?.drawGridLinesInContext(context: context, isMajor:self.major)
     }
     
     
     // MARK: Accessors
+    var _axis : CPTAxis?
+    var axis: CPTAxis? {
+        get {
+            return _axis
+        }
+        set {
+            
+        }
+    }
     func setAxis(newAxis: CPTAxis)
     {
         if ( newAxis != axis ) {

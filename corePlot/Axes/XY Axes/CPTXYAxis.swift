@@ -9,78 +9,30 @@ import Cocoa
 
 class CPTXYAxis: CPTAxis {
 
-//
-//
-//    -(void)drawTicksInContext:(nonnull CGContextRef)context atLocations:(nullable CPTNumberSet *)locations withLength:(CGFloat)length inRange:(nullable CPTPlotRange *)labeledRange isMajor:(BOOL)major;
-//
-//    -(void)orthogonalCoordinateViewLowerBound:(nonnull CGFloat *)lower upperBound:(nonnull CGFloat *)upper;
-//    -(CGPoint)viewPointForOrthogonalCoordinate:(nullable NSNumber *)orthogonalCoord axisCoordinate:(nullable NSNumber *)coordinateValue;
-//
-//    -(NSUInteger)initialBandIndexForSortedLocations:(nonnull CPTNumberArray *)sortedLocations inRange:(nullable CPTMutablePlotRange *)range;
-//
-//    @end
-//
-//    /// @endcond
-//
-//    #pragma mark -
-//
-//    /**
-//     *  @brief A 2-dimensional cartesian (X-Y) axis class.
-//     **/
-//    @implementation CPTXYAxis
-//
-//    /** @property nullable NSNumber *orthogonalPosition
-//     *  @brief The data coordinate value where the axis crosses the orthogonal axis.
-//     *  If the @ref axisConstraints is non-nil, the constraints take priority and this property is ignored.
-//     *  @see @ref axisConstraints
-//     **/
-//    @synthesize orthogonalPosition;
-//
-//    /** @property nullable CPTConstraints *axisConstraints
-//     *  @brief The constraints used when positioning relative to the plot area.
-//     *  If @nil (the default), the axis is fixed relative to the plot space coordinates,
-//     *  crossing the orthogonal axis at @ref orthogonalPosition and moves only
-//     *  whenever the plot space ranges change.
-//     *  @see @ref orthogonalPosition
-//     **/
-//    @synthesize axisConstraints;
-//
-//    #pragma mark -
-//    #pragma mark Init/Dealloc
-//
-//    /// @name Initialization
-//    /// @{
-//
-//    /** @brief Initializes a newly allocated CPTXYAxis object with the provided frame rectangle.
-//     *
-//     *  This is the designated initializer. The initialized layer will have the following properties:
-//     *  - @ref orthogonalPosition = @num{0}
-//     *  - @ref axisConstraints = @nil
-//     *
-//     *  @param newFrame The frame rectangle.
-//     *  @return The initialized CPTXYAxis object.
-//     **/
-//    -(nonnull instancetype)initWithFrame:(CGRect)newFrame
-//    {
-//        if ((self = [super initWithFrame:newFrame])) {
-//            orthogonalPosition = @0.0;
-//            axisConstraints    = nil;
-//            self.tickDirection = CPTSignNone;
-//        }
-//        return self;
-//    }
-//
-//    /// @}
-//
-//    /// @cond
-//
-    init(layer: Any)    {
-        super.init(Layer:layer) {
-            theLayer = CPTXYAxis()
 
-            orthogonalPosition = theLayer.orthogonalPosition;
-            axisConstraints    = theLayer.axisConstraints;
-        }
+//    typedef CGPoint (*CPTAlignPointFunction)(__nonnull CGContextRef, CGPoint);
+
+    
+    
+    var orthogonalPosition = CGFloat(0)
+    var axisConstraints : CPTConstraints?
+    
+    // MARK: - Init/Dealloc
+    
+    init(frame: newFrame)
+    {
+        super.init(newFrame)
+        orthogonalPosition = 0.0;
+        axisConstraints    = nil;
+        self.tickDirection = CPTSign.none;
+    }
+    
+    init(layer: Any)    {
+        super.init()
+        let theLayer = CPTXYAxis()
+        
+        orthogonalPosition = theLayer.orthogonalPosition;
+        axisConstraints    = theLayer.axisConstraints;
     }
     
     required init?(coder: NSCoder) {
@@ -187,12 +139,7 @@ class CPTXYAxis: CPTAxis {
 //        return point;
 //    }
 //
-//    /// @endcond
-//
-//    #pragma mark -
-//    #pragma mark Drawing
-//
-//    /// @cond
+// MARK: Drawing
 //
 //    -(void)drawTicksInContext:(nonnull CGContextRef)context atLocations:(nullable CPTNumberSet *)locations withLength:(CGFloat)length inRange:(nullable CPTPlotRange *)labeledRange isMajor:(BOOL)major
 //    {
@@ -359,108 +306,107 @@ class CPTXYAxis: CPTAxis {
 //        }
 //    }
 //
-//    /// @endcond
-//
-//    #pragma mark -
-//    #pragma mark Grid Lines
+// MARK: - Grid Lines
 //
 //    /// @cond
 //
-//    -(void)drawGridLinesInContext:(nonnull CGContextRef)context isMajor:(BOOL)major
-//    {
-//        CPTLineStyle *lineStyle = (major ? self.majorGridLineStyle : self.minorGridLineStyle);
-//
-//        if ( lineStyle ) {
-//            [super renderAsVectorInContext:context];
-//
-//            [self relabel];
-//
-//            CPTPlotSpace *thePlotSpace           = self.plotSpace;
-//            CPTNumberSet *locations              = (major ? self.majorTickLocations : self.minorTickLocations);
-//            CPTCoordinate selfCoordinate         = self.coordinate;
-//            CPTCoordinate orthogonalCoordinate   = CPTOrthogonalCoordinate(selfCoordinate);
-//            CPTMutablePlotRange *orthogonalRange = [[thePlotSpace plotRangeForCoordinate:orthogonalCoordinate] mutableCopy];
-//            CPTPlotRange *theGridLineRange       = self.gridLinesRange;
-//            CPTMutablePlotRange *labeledRange    = nil;
-//
-//            switch ( self.labelingPolicy ) {
-//                case CPTAxisLabelingPolicyNone:
-//                case CPTAxisLabelingPolicyLocationsProvided:
-//                {
-//                    labeledRange = [[self.plotSpace plotRangeForCoordinate:self.coordinate] mutableCopy];
-//                    CPTPlotRange *theVisibleRange = self.visibleRange;
-//                    if ( theVisibleRange ) {
-//                        [labeledRange intersectionPlotRange:theVisibleRange];
-//                    }
-//                }
-//                break;
-//
-//                default:
-//                    break;
-//            }
-//
-//            if ( theGridLineRange ) {
-//                [orthogonalRange intersectionPlotRange:theGridLineRange];
-//            }
-//
-//            CPTPlotArea *thePlotArea = self.plotArea;
-//            NSDecimal startPlotPoint[2];
-//            NSDecimal endPlotPoint[2];
-//            startPlotPoint[orthogonalCoordinate] = orthogonalRange.locationDecimal;
-//            endPlotPoint[orthogonalCoordinate]   = orthogonalRange.endDecimal;
-//            CGPoint originTransformed = [self convertPoint:self.bounds.origin fromLayer:thePlotArea];
-//
-//            CGFloat lineWidth = lineStyle.lineWidth;
-//
-//            CPTAlignPointFunction alignmentFunction = NULL;
-//            if ((self.contentsScale > CPTFloat(1.0)) && (round(lineWidth) == lineWidth)) {
-//                alignmentFunction = CPTAlignIntegralPointToUserSpace;
-//            }
-//            else {
-//                alignmentFunction = CPTAlignPointToUserSpace;
-//            }
-//
-//            CGContextBeginPath(context);
-//
-//            for ( NSDecimalNumber *location in locations ) {
-//                NSDecimal locationDecimal = location.decimalValue;
-//
-//                if ( labeledRange && ![labeledRange contains:locationDecimal] ) {
-//                    continue;
-//                }
-//
-//                startPlotPoint[selfCoordinate] = locationDecimal;
-//                endPlotPoint[selfCoordinate]   = locationDecimal;
-//
-//                // Start point
-//                CGPoint startViewPoint = [thePlotSpace plotAreaViewPointForPlotPoint:startPlotPoint numberOfCoordinates:2];
-//                startViewPoint.x += originTransformed.x;
-//                startViewPoint.y += originTransformed.y;
-//
-//                // End point
-//                CGPoint endViewPoint = [thePlotSpace plotAreaViewPointForPlotPoint:endPlotPoint numberOfCoordinates:2];
-//                endViewPoint.x += originTransformed.x;
-//                endViewPoint.y += originTransformed.y;
-//
-//                // Align to pixels
-//                startViewPoint = alignmentFunction(context, startViewPoint);
-//                endViewPoint   = alignmentFunction(context, endViewPoint);
-//
-//                // Add grid line
-//                CGContextMoveToPoint(context, startViewPoint.x, startViewPoint.y);
-//                CGContextAddLineToPoint(context, endViewPoint.x, endViewPoint.y);
-//            }
-//
-//            // Stroke grid lines
-//            [lineStyle setLineStyleInContext:context];
-//            [lineStyle strokePathInContext:context];
-//        }
-//    }
-//
-//    /// @endcond
-//
-//    #pragma mark -
-//    #pragma mark Background Bands
+    override func drawGridLinesInContext(context:  CGContext, isMajor: Bool)
+    {
+        let lineStyle = isMajor ? self.majorGridLineStyle : self.minorGridLineStyle
+
+        if (( lineStyle ) != nil) {
+            super.renderAsVectorInContext(context: context)
+
+            self.relabel()
+
+            let thePlotSpace           = self.plotSpace;
+            let locations              = (isMajor ? self.majorTickLocations : self.minorTickLocations);
+            let selfCoordinate         = self.coordinate;
+            let orthogonalCoordinate   = CPTOrthogonalCoordinate(selfCoordinate);
+            let orthogonalRange = thePlotSpace.plotRangeForCoordinate(orthogonalCoordinate)
+            let theGridLineRange       = self.gridLinesRange;
+            let labeledRange    = CPTMutablePlotRange()
+
+            switch ( self.labelingPolicy ) {
+            case .none:
+                break
+            case .locationsProvided:
+                
+                    let labeledRange = self.plotSpace.plotRangeForCoordinate(self.coordinate)
+                    let theVisibleRange = self.visibleRange
+                    if ( theVisibleRange ) {
+                        labeledRange.intersectionPlotRange(theVisibleRange)
+                    }
+                
+                break;
+
+                default:
+                    break;
+            }
+
+            if ( theGridLineRange ) {
+                orthogonalRange.intersectionPlotRange(heGridLineRange)
+            }
+
+            let thePlotArea = self.plotArea;
+            var startPlotPoint = [CGFloat]()
+            var endPlotPoint = [CGFloat]()
+            startPlotPoint[orthogonalCoordinate] = orthogonalRange.locationDecimal;
+            endPlotPoint[orthogonalCoordinate]   = orthogonalRange.endDecimal;
+            let originTransformed = self.convertPoint(self.bounds.origin, fromLayer:thePlotArea)
+
+            let lineWidth = lineStyle.lineWidth;
+
+            CPTAlignPointFunction alignmentFunction = nil;
+            if ((self.contentsScale > CGFloat(1.0)) && (round(lineWidth) == lineWidth)) {
+                alignmentFunction = CPTAlignIntegralPointToUserSpace;
+            }
+            else {
+                alignmentFunction = CPTAlignPointToUserSpace;
+            }
+
+            context.beginPath();
+
+            for location in locations {
+                let locationDecimal = location.decimalValue;
+
+                if ( labeledRange && !labeledRange.contains(locationDecimal ) {
+                    continue;
+                }
+
+                startPlotPoint[selfCoordinate] = locationDecimal;
+                endPlotPoint[selfCoordinate]   = locationDecimal;
+
+                // Start point
+                let startViewPoint = [thePlotSpace plotAreaViewPointForPlotPoint:startPlotPoint numberOfCoordinates:2];
+                startViewPoint.x += originTransformed.x;
+                startViewPoint.y += originTransformed.y;
+
+                // End point
+                var endViewPoint = thePlotSpace.plotAreaViewPoint(forPlotPoint: endPlotPoint, numberOfCoordinates: 2)
+                endViewPoint.x += originTransformed.x
+                endViewPoint.y += originTransformed.y
+                
+                
+                // Align to pixels
+                startViewPoint = alignmentFunction(context, startViewPoint);
+                endViewPoint   = alignmentFunction(context, endViewPoint);
+
+                // Add grid line
+                CGContextMoveToPoint(context, startViewPoint.x, startViewPoint.y);
+                CGContextAddLineToPoint(context, endViewPoint.x, endViewPoint.y);
+            }
+
+            // Stroke grid lines
+            lineStyle.setLineStyleInContext(context)
+            lineStyle.strokePathInContext(context)
+        }
+    }
+
+
+    
+    
+    // MARK: Background Bands
 //
 //    /// @cond
 //

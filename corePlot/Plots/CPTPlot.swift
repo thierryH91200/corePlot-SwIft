@@ -8,6 +8,7 @@
 import AppKit
 
 
+
 @objc public protocol CPTPlotDataSource: NSObjectProtocol {
     
     func numberOfRecordsForPlot(plot:  CPTPlot) -> Int
@@ -55,7 +56,8 @@ public class CPTPlot: CPTAnnotationHostLayer {
     var labelShadow : CPTShadow?
     
     var dataNeedsReloading = false
-    var cachedData :  Dictionary<String, [String]> = [:]
+//    var cachedData :  Dictionary<String, Any> = [:]
+    var cachedData = NSMutableDictionary()
     
     var needsRelabel = false
     var labelIndexRange = NSRange()

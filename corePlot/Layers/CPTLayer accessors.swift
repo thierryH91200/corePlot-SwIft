@@ -82,39 +82,39 @@ func setPaddingBottom(_ newPadding: CGFloat) {
         }
     }
 
-    func insertSublayer(layer: CALayer, atIndex idx:Int)
+    func insertSublayer(layer: CALayer, atIndex idx:UInt32)
     {
-        super.insertSublayer(layer , atIndex:idx)
+        super.insertSublayer(layer , at:idx)
 
         if layer is CPTLayer {
             layer.contentsScale = self.contentsScale
         }
     }
 
-    -(void)insertSublayer:(nonnull CALayer *)layer below:(nullable CALayer *)sibling
+    func insertSublayer(layer: CALayer, below sibling: CALayer )
     {
-        [super insertSublayer:layer below:sibling];
+        super.insertSublayer(layer, below:sibling)
 
-        if ( [layer isKindOfClass:[CPTLayer class]] ) {
-            ((CPTLayer *)layer).contentsScale = self.contentsScale;
+        if layer is CPTLayer {
+            layer.contentsScale = self.contentsScale
         }
     }
 
-    -(void)insertSublayer:(nonnull CALayer *)layer above:(nullable CALayer *)sibling
+    func insertSublayer(layer: CALayer, above sibling: CALayer )
     {
-        [super insertSublayer:layer above:sibling];
+        super.insertSublayer(layer, above:sibling)
 
-        if ( [layer isKindOfClass:[CPTLayer class]] ) {
-            ((CPTLayer *)layer).contentsScale = self.contentsScale;
+        if  layer is CPTLayer {
+            layer.contentsScale = self.contentsScale
         }
     }
 
-    -(void)replaceSublayer:(nonnull CALayer *)layer with:(nonnull CALayer *)layer2
+    func replaceSublayer(layer: CALayer , with layer2: CALayer )
     {
-        [super replaceSublayer:layer with:layer2];
+        super.replaceSublayer(layer, with:layer2)
 
-        if ( [layer2 isKindOfClass:[CPTLayer class]] ) {
-            ((CPTLayer *)layer2).contentsScale = self.contentsScale;
+    if layer is CPTLayer {
+        layer.contentsScale = self.contentsScale
         }
     }
 
@@ -142,10 +142,10 @@ func setPaddingBottom(_ newPadding: CGFloat) {
         }
     }
 
-    -(nullable CGPathRef)sublayerMaskingPath
-    {
-        return self.innerBorderPath;
-    }
+//    func sublayerMaskingPath() -> CGPath
+//    {
+//        return self.innerBorderPath!;
+//    }
 
     /// @endcond
 

@@ -97,6 +97,7 @@ typealias CPTEdgeInsets = NSEdgeInsets
 typealias CPTNumberArray = [NSNumber]
 typealias CPTMutableNumberArray = [NSNumber]
 typealias CPTNumberSet = Set<NSNumber>
+typealias CPTFloatSet = Set<CGFloat>
 typealias CPTMutableNumberSet = Set<NSNumber>
 typealias CPTStringArray = [String]
 typealias CPTMutableStringArray = [String]

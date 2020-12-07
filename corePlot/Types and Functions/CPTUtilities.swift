@@ -7,7 +7,7 @@
 
 import Foundation
 
-class CPTUtilities {
+class CPTUtilities : NSObject {
     
     let shared = CPTUtilities()
     
@@ -1071,7 +1071,7 @@ class CPTUtilities {
     // **/
     func CPTLogModulus(_ value: Double) -> Double {
         if value != 0.0 {
-            let sign = (value.signbit() != 0) ? -1.0 : +1.0
+            let sign = (value.signbit()) ? -1.0 : +1.0
             
             return Double(sign * Double(log10(abs(CGFloat(value)) + CGFloat(1.0))))
         } else {
@@ -1086,7 +1086,7 @@ class CPTUtilities {
     func CPTInverseLogModulus(value: Double)-> Double
     {
         if ( value != 0.0 ) {
-            let sign = (((value.signbit()) != 0) ? -1.0 : +1.0)
+            let sign = ((value.signbit()) ? -1.0 : +1.0)
             return sign * (pow(10.0, fabs(value)) - 1.0)
         }
         else {
@@ -1104,8 +1104,8 @@ protocol Signable {
 }
 
 extension Signable {
-    func signbit() -> Int {
-        return (self >= Self() ? 1 : -1)
+    func signbit() -> Bool {
+        return (self >= Self() ? true : false)
     }
 }
 

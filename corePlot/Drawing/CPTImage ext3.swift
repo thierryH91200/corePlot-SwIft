@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension CPTImage{
+extension CPTImage {
     
     
     func drawImage( theImage: CGImage?,  context: CGContext, rect:CGRect, scaleRatio: CGFloat)

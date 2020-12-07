@@ -58,6 +58,7 @@
 		033BF56B2572D1DF003ECB08 /* CPTAnimationTimingFunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 033BF56A2572D1DF003ECB08 /* CPTAnimationTimingFunction.swift */; };
 		03411EC725646EA300CE639F /* CPTImage ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03411EC625646EA300CE639F /* CPTImage ext.swift */; };
 		034C436625679565003FAD33 /* CPTLayer ext1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034C436525679565003FAD33 /* CPTLayer ext1.swift */; };
+		034D8D43257E8C7D0040151E /* CPTAxis autoMajor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034D8D42257E8C7D0040151E /* CPTAxis autoMajor.swift */; };
 		03525995256C185500FEA155 /* CPTLayer accessors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03525994256C185500FEA155 /* CPTLayer accessors.swift */; };
 		03525999256C18EB00FEA155 /* CPTLayer Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03525998256C18EB00FEA155 /* CPTLayer Layout.swift */; };
 		0352599D256C19A500FEA155 /* CPTLayer masking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0352599C256C19A500FEA155 /* CPTLayer masking.swift */; };
@@ -171,6 +172,7 @@
 		033BF56A2572D1DF003ECB08 /* CPTAnimationTimingFunction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTAnimationTimingFunction.swift; sourceTree = "<group>"; };
 		03411EC625646EA300CE639F /* CPTImage ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTImage ext.swift"; sourceTree = "<group>"; };
 		034C436525679565003FAD33 /* CPTLayer ext1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTLayer ext1.swift"; sourceTree = "<group>"; };
+		034D8D42257E8C7D0040151E /* CPTAxis autoMajor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTAxis autoMajor.swift"; sourceTree = "<group>"; };
 		03525994256C185500FEA155 /* CPTLayer accessors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTLayer accessors.swift"; sourceTree = "<group>"; };
 		03525998256C18EB00FEA155 /* CPTLayer Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTLayer Layout.swift"; sourceTree = "<group>"; };
 		0352599C256C19A500FEA155 /* CPTLayer masking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTLayer masking.swift"; sourceTree = "<group>"; };
@@ -513,6 +515,7 @@
 			children = (
 				03DDD4652562BB1D00CAB29B /* CPTAxis  Accessors.swift */,
 				0320AFEB255C6A6200D32BF9 /* CPTAxis.swift */,
+				034D8D42257E8C7D0040151E /* CPTAxis autoMajor.swift */,
 				0320AFE7255C6A1800D32BF9 /* CPTAxisSet.swift */,
 				0320AFF3255C6AB200D32BF9 /* CPTGridLineGroup.swift */,
 				0320AFEF255C6A8600D32BF9 /* CPTGridLines.swift */,
@@ -768,6 +771,7 @@
 				0320AFD4255C5A7000D32BF9 /* CPTXYGraph.swift in Sources */,
 				03DDD45E2562748C00CAB29B /* CPTAxisLabelGroup.swift in Sources */,
 				039746A325572B55008CF3E6 /* CPTImage.swift in Sources */,
+				034D8D43257E8C7D0040151E /* CPTAxis autoMajor.swift in Sources */,
 				0332627125738ACE00224856 /* CPTAnimationCGPointPeriod.swift in Sources */,
 				03A9CCDE2559565E0096853D /* CPTGraph.swift in Sources */,
 				034C436625679565003FAD33 /* CPTLayer ext1.swift in Sources */,

@@ -22,41 +22,40 @@ extension CPTAxis {
                 axisLabels = newLabels;
             }
             else {
-                for ( label as CPTAxisLabel in axisLabels ) {
+                for ( label as! CPTAxisLabel) in axisLabels  {
 //                for ( label in axisLabels ) {
-                    label.contentLayer.removeFromSuperlayer;
+                    label.contentLayer.removeFromSuperlayer()
                 }
 
                 axisLabels = newLabels;
 
                 let thePlotArea = self.plotArea;
-                [thePlotArea updateAxisSetLayersForType:CPTGraphLayerTypeAxisLabels];
+                thePlotArea?.updateAxisSetLayersForType( layerType: .axisLabels)
 
                 if ( axisLabels ) {
-                    CPTAxisLabelGroup *axisLabelGroup = thePlotArea.axisLabelGroup;
-                    CALayer *lastLayer                = nil;
+                    let axisLabelGroup = thePlotArea?.axisLabelGroup;
+                    let lastLayer      = nil;
 
-                    for ( CPTAxisLabel *label in axisLabels ) {
-                        CPTLayer *contentLayer = label.contentLayer;
+                    for label in axisLabels  {
+                        let contentLayer = label.contentLayer;
                         if ( contentLayer ) {
                             if ( lastLayer ) {
-                                [axisLabelGroup insertSublayer:contentLayer below:lastLayer];
+                                axisLabelGroup.insertSublayer(contentLayer, below:lastLayer)
                             }
                             else {
-                                [axisLabelGroup insertSublayer:contentLayer atIndex:[thePlotArea sublayerIndexForAxis:self layerType:CPTGraphLayerTypeAxisLabels]];
+                                axisLabelGroup.insertSublayer(contentLayer, atIndex:(thePlotArea.sublayerIndexForAxis(self, layerType:.axisLabels))
                             }
-
                             lastLayer = contentLayer;
                         }
                     }
                 }
             }
 
-            if ( self.labelingPolicy == CPTAxisLabelingPolicyNone ) {
-                [self updateCustomTickLabels];
+            if ( self.labelingPolicy == .none ) {
+                self.updateCustomTickLabels()
             }
             else {
-                [self updateMajorTickLabels];
+                self.updateMajorTickLabels()
             }
         }
     }
@@ -981,45 +980,46 @@ extension CPTAxis {
 //            [self setNeedsRelabel];
 //        }
 //    }
-//    -(void)updateCustomTickLabels
-//    {
-//        CPTMutablePlotRange *range = [[self.plotSpace plotRangeForCoordinate:self.coordinate] mutableCopy];
-//
-//        if ( range ) {
-//            CPTPlotRange *theVisibleRange = self.visibleRange;
-//            if ( theVisibleRange ) {
-//                [range intersectionPlotRange:theVisibleRange];
-//            }
-//
-//            if ( range.lengthDouble != 0.0 ) {
-//                CPTCoordinate orthogonalCoordinate = CPTOrthogonalCoordinate(self.coordinate);
-//
-//                CPTSign direction = self.tickLabelDirection;
-//
-//                if ( direction == CPTSignNone ) {
-//                    direction = self.tickDirection;
-//                }
-//
-//                for ( CPTAxisLabel *label in self.axisLabels ) {
-//                    BOOL visible = [range containsNumber:label.tickLocation];
-//                    label.contentLayer.hidden = !visible;
-//                    if ( visible ) {
-//                        CGPoint tickBasePoint = [self viewPointForCoordinateValue:label.tickLocation];
-//                        [label positionRelativeToViewPoint:tickBasePoint forCoordinate:orthogonalCoordinate inDirection:direction];
-//                    }
-//                }
-//
-//                for ( CPTAxisLabel *label in self.minorTickAxisLabels ) {
-//                    BOOL visible = [range containsNumber:label.tickLocation];
-//                    label.contentLayer.hidden = !visible;
-//                    if ( visible ) {
-//                        CGPoint tickBasePoint = [self viewPointForCoordinateValue:label.tickLocation];
-//                        [label positionRelativeToViewPoint:tickBasePoint forCoordinate:orthogonalCoordinate inDirection:direction];
-//                    }
-//                }
-//            }
-//        }
-//    }
+    func updateCustomTickLabels()
+    {
+//        let range = NSRange(location: 0,length: 0) //self.plotSpace.plotRangeForCoordinate(self.coordinate)
+        let range = self.plotSpace.plotRangeForCoordinate(self.coordinate)
+
+        if ( range ) {
+            let theVisibleRange = self.visibleRange;
+            if (( theVisibleRange ) != nil) {
+                range.intersectionPlotRange(theVisibleRange)
+            }
+
+            if ( range.lengthDouble != 0.0 ) {
+                let orthogonalCoordinate = CPTUtilities.shared.CPTOrthogonalCoordinate(self.coordinate)
+
+                var direction = self.tickLabelDirection;
+
+                if ( direction == CPTSign.none ) {
+                    direction = self.tickDirection;
+                }
+
+                for label in self.axisLabels {
+                    let isVisible = range.containsNumber(label.tickLocation)
+                    label.contentLayer.hidden = !isVisible;
+                    if ( isVisible == true) {
+                        let tickBasePoint = self.viewPointForCoordinateValue(coordinateValue: label.tickLocation)
+                        label.positionRelativeToViewPoint(tickBasePoint, forCoordinate:orthogonalCoordinate, inDirection:direction)
+                    }
+                }
+
+                for label in self.minorTickAxisLabels {
+                    let isVisible = range.containsNumber(label.tickLocation)
+                    label.contentLayer.hidden = !isVisible
+                    if ( isVisible == true) {
+                        let tickBasePoint = self.viewPointForCoordinateValue(coordinateValue: label.tickLocation)
+                        label.positionRelativeToViewPoint(tickBasePoint, forCoordinate:orthogonalCoordinate, inDirection:direction)
+                    }
+                }
+            }
+        }
+    }
 //
 //    -(void)updateMajorTickLabelOffsets
 //    {
@@ -1099,3 +1099,4 @@ extension CPTAxis {
             label.positionRelative(toViewPoint: tickBasePoint, for: orthogonalCoordinate, inDirection: direction)
         }
     }
+}

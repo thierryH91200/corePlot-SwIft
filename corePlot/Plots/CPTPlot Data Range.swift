@@ -11,75 +11,74 @@ import Foundation
 extension CPTPlot {
 
 
-//#pragma mark -
-//#pragma mark Data Ranges
+// MARK:  Data Ranges
 //
 ///** @brief Determines the smallest plot range that fully encloses the data for a particular field.
 // *  @param fieldEnum The field enumerator identifying the field.
 // *  @return The plot range enclosing the data.
 // **/
-//-(nullable CPTPlotRange *)plotRangeForField:(NSUInteger)fieldEnum
-//{
-//    if ( self.dataNeedsReloading ) {
-//        [self reloadData];
-//    }
-//    CPTMutableNumericData *numbers = [self cachedNumbersForField:fieldEnum];
-//    CPTPlotRange *range            = nil;
-//
-//    NSUInteger numberOfSamples = numbers.numberOfSamples;
-//
-//    if ( numberOfSamples > 0 ) {
-//        if ( self.doublePrecisionCache ) {
-//            double min = (double)INFINITY;
-//            double max = -(double)INFINITY;
-//
-//            const double *doubles    = (const double *)numbers.bytes;
-//            const double *lastSample = doubles + numberOfSamples;
-//
-//            while ( doubles < lastSample ) {
-//                double value = *doubles++;
-//
-//                if ( !isnan(value)) {
-//                    if ( value < min ) {
-//                        min = value;
-//                    }
-//                    if ( value > max ) {
-//                        max = value;
-//                    }
-//                }
-//            }
-//
-//            if ( max >= min ) {
-//                range = [CPTPlotRange plotRangeWithLocation:@(min) length:@(max - min)];
-//            }
-//        }
-//        else {
-//            NSDecimal min = [NSDecimalNumber maximumDecimalNumber].decimalValue;
-//            NSDecimal max = [NSDecimalNumber minimumDecimalNumber].decimalValue;
-//
-//            const NSDecimal *decimals   = (const NSDecimal *)numbers.bytes;
-//            const NSDecimal *lastSample = decimals + numberOfSamples;
-//
-//            while ( decimals < lastSample ) {
-//                NSDecimal value = *decimals++;
-//
-//                if ( !NSDecimalIsNotANumber(&value)) {
-//                    if ( CPTDecimalLessThan(value, min)) {
-//                        min = value;
-//                    }
-//                    if ( CPTDecimalGreaterThan(value, max)) {
-//                        max = value;
-//                    }
-//                }
-//            }
-//
-//            if ( CPTDecimalGreaterThanOrEqualTo(max, min)) {
-//                range = [CPTPlotRange plotRangeWithLocationDecimal:min lengthDecimal:CPTDecimalSubtract(max, min)];
-//            }
-//        }
-//    }
-//    return range;
-//}
+    func plotRangeForField(fieldEnum: Int )-> CPTPlotRange
+    {
+        if self.dataNeedsReloading == true {
+            self.reloadData]()
+        }
+        CPTMutableNumericData *numbers = [self cachedNumbersForField:fieldEnum];
+        CPTPlotRange *range            = nil;
+        
+        let numberOfSamples = numbers.numberOfSamples;
+        
+        if ( numberOfSamples > 0 ) {
+            if ( self.doublePrecisionCache ) {
+                let  min = Double.infinity
+                let max = -double.infinity
+                
+                const double *doubles    = (const double *)numbers.bytes;
+                const double *lastSample = doubles + numberOfSamples;
+                
+                while ( doubles < lastSample ) {
+                    double value = *doubles++;
+                    
+                    if ( !isnan(value)) {
+                        if ( value < min ) {
+                            min = value;
+                        }
+                        if ( value > max ) {
+                            max = value;
+                        }
+                    }
+                }
+                
+                if ( max >= min ) {
+                    range = [CPTPlotRange plotRangeWithLocation:@(min) length:@(max - min)];
+                }
+            }
+            else {
+                NSDecimal min = [NSDecimalNumber maximumDecimalNumber].decimalValue;
+                NSDecimal max = [NSDecimalNumber minimumDecimalNumber].decimalValue;
+                
+                const NSDecimal *decimals   = (const NSDecimal *)numbers.bytes;
+                const NSDecimal *lastSample = decimals + numberOfSamples;
+                
+                while ( decimals < lastSample ) {
+                    NSDecimal value = *decimals++;
+                    
+                    if ( !NSDecimalIsNotANumber(&value)) {
+                        if ( CPTDecimalLessThan(value, min)) {
+                            min = value;
+                        }
+                        if ( CPTDecimalGreaterThan(value, max)) {
+                            max = value;
+                        }
+                    }
+                }
+                
+                if ( CPTDecimalGreaterThanOrEqualTo(max, min)) {
+                    range = [CPTPlotRange plotRangeWithLocationDecimal:min lengthDecimal:CPTDecimalSubtract(max, min)];
+                }
+            }
+        }
+        return range;
+    }
 //
 ///** @brief Determines the smallest plot range that fully encloses the data for a particular coordinate.
 // *  @param coord The coordinate identifier.
@@ -215,10 +214,10 @@ func relabel()
     CPTMutableNumericData *labelFieldDataCache = [self cachedNumbersForField:self.labelField];
     CPTShadow *theShadow                       = self.labelShadow;
 
-    for ( NSUInteger i = indexRange.location; i < maxIndex; i++ ) {
-        NSNumber *dataValue = [labelFieldDataCache sampleValue:i];
+    for i in indexRange.location..<maxIndex {
+        let dataValue = labelFieldDataCache (sampleValue:i)
 
-        CPTLayer *newLabelLayer;
+        let newLabelLayer = CPTLayer()
         if ( isnan([dataValue doubleValue])) {
             newLabelLayer = nil;
         }
@@ -227,16 +226,16 @@ func relabel()
 
             if (((newLabelLayer == nil) || (newLabelLayer == nilObject)) && plotProvidesLabels ) {
                 if ( hasAttributedFormatter ) {
-                    NSAttributedString *labelString = [dataLabelFormatter attributedStringForObjectValue:dataValue withDefaultAttributes:textAttributes];
-                    newLabelLayer = [[CPTTextLayer alloc] initWithAttributedText:labelString];
+                    let labelString = [dataLabelFormatter attributedStringForObjectValue:dataValue withDefaultAttributes:textAttributes];
+                    newLabelLayer = CPTTextLayer(newText: labelString)
                 }
                 else {
-                    NSString *labelString = [dataLabelFormatter stringForObjectValue:dataValue];
-                    newLabelLayer = [[CPTTextLayer alloc] initWithText:labelString style:dataLabelTextStyle];
+                    let labelString = dataLabelFormatter.stringForObjectValue(dataValue)
+                    newLabelLayer = CPTTextLayer(newText: labelString, style:dataLabelTextStyle)
                 }
             }
 
-            if ( [newLabelLayer isKindOfClass:nullClass] || (newLabelLayer == nilObject)) {
+            if ( newLabelLayer is nullClass || (newLabelLayer == nilObject)) {
                 newLabelLayer = nil;
             }
         }
@@ -246,14 +245,14 @@ func relabel()
         if ( i < oldLabelCount ) {
             labelAnnotation = labelArray[i]
             if ( newLabelLayer ) {
-                if ( [labelAnnotation isKindOfClass:nullClass] ) {
+                if ( [labelAnnotation is nullClass] ) {
                     labelAnnotation = [[CPTPlotSpaceAnnotation alloc] initWithPlotSpace:thePlotSpace anchorPlotPoint:nil];
                     labelArray[i]   = labelAnnotation;
                     [self addAnnotation:labelAnnotation];
                 }
             }
             else {
-                if ( [labelAnnotation isKindOfClass:annotationClass] ) {
+                if ( labelAnnotation is annotationClass) {
                     labelArray[i] = nullObject;
                     self.removeAnnotation(labelAnnotation)
                 }
@@ -266,23 +265,23 @@ func relabel()
                 [self addAnnotation:labelAnnotation];
             }
             else {
-                labelArray.apppend(:nullObject)
+                labelArray.apppend(nullObject)
             }
         }
 
         if ( newLabelLayer ) {
             labelAnnotation.contentLayer = newLabelLayer;
             labelAnnotation.rotation     = theRotation;
-            [self positionLabelAnnotation:labelAnnotation forIndex:i];
-            [self updateContentAnchorForLabel:labelAnnotation];
+            [self.positionLabelAnnotationlabelAnnotation, for Index:i)
+                self.updateContentAnchorForLabel(labelAnnotation)
         }
     }
 
     // remove labels that are no longer needed
     while ( labelArray.count > sampleCount ) {
-        CPTAnnotation *oldAnnotation = labelArray[labelArray.count - 1];
-        if ( [oldAnnotation isKindOfClass:annotationClass] ) {
-            [self removeAnnotation:oldAnnotation];
+        let oldAnnotation = labelArray[labelArray.count - 1];
+        if oldAnnotation is annotationClass {
+                self.removeAnnotation(oldAnnotation)
         }
         labelArray.removeLastObject
     }
@@ -297,9 +296,8 @@ func relabel()
 //    self.labelIndexRange = indexRange;
 //    self.needsRelabel    = YES;
 //}
-//
-///// @cond
-//
+
+
     func updateContentAnchorForLabel(label: CPTPlotSpaceAnnotation )
     {
         if ( label && self.adjustLabelAnchors == true ) {
@@ -325,7 +323,6 @@ func relabel()
         }
     }
     
-    ///// @endcond
     //
     ///**
     // *  @brief Repositions all existing label annotations.

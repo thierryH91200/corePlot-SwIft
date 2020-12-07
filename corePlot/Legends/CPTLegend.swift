@@ -1706,3 +1706,4 @@ public class CPTLegend: CPTBorderedLayer {
 //    /// @endcond
 //
 //}
+}

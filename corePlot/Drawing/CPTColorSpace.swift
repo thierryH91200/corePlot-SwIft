@@ -65,9 +65,5 @@ return space;
     {
         cgColorSpace = colorSpace;
     }
-
-
-
-
 }
 

@@ -430,31 +430,36 @@ class CPTPlotSpace: NSObject {
     //     *  @param plots An array of the plots that have to fit in the visible area.
     //     *  @param coordinate The axis coordinate.
     //     **/
-    //    -(void)scaleToFitPlots:(nullable CPTPlotArray *)plots forCoordinate:(CPTCoordinate)coordinate
-    //    {
-    //        if ( plots.count == 0 ) {
-    //            return;
-    //        }
-    //
-    //        // Determine union of ranges
-    //        CPTMutablePlotRange *unionRange = nil;
-    //
-    //        for ( CPTPlot *plot in plots ) {
-    //            CPTPlotRange *currentRange = [plot plotRangeForCoordinate:coordinate];
-    //            if ( !unionRange ) {
-    //                unionRange = [currentRange mutableCopy];
-    //            }
-    //            [unionRange unionPlotRange:currentRange];
-    //        }
-    //
-    //        // Set range
-    //        if ( unionRange ) {
-    //            if ( CPTDecimalEquals(unionRange.lengthDecimal, CPTDecimalFromInteger(0))) {
-    //                [unionRange unionPlotRange:[self plotRangeForCoordinate:coordinate]];
-    //            }
-    //            [self setPlotRange:unionRange forCoordinate:coordinate];
-    //        }
-    //    }
+    func scale(toFitPlots plots: CPTPlotArray?, for coordinate: CPTCoordinate) {
+        if plots?.count == 0 {
+            return
+        }
+        
+        // Determine union of ranges
+        var unionRange: CPTMutablePlotRange? = nil
+        
+        if let plots = plots {
+            for plot in plots {
+                guard let plot = plot as? CPTPlot else {
+                    continue
+                }
+                let currentRange = plot.plotRange(for: coordinate)
+                if unionRange == nil {
+                    unionRange = currentRange
+                }
+                unionRange?.union(currentRange)
+            }
+        }
+        
+        // Set range
+        if let unionRange = unionRange {
+            if CPTDecimalEquals(unionRange.lengthDecimal, CPTDecimalFromInteger(0)) {
+                unionRange.union(plotRange(for: coordinate))
+            }
+            setPlotRange(unionRange, for: coordinate)
+        }
+    }
+
     //
     //    /** @brief Scales the plot ranges so that the plots just fit in the visible space.
     //     *  @param plots An array of the plots that have to fit in the visible area.
