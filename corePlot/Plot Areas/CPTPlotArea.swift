@@ -395,28 +395,28 @@ class CPTPlotArea: CPTAnnotationHostLayer {
     func setAxisSetLayersForType(layerType: CPTGraphLayerType)
     {
         switch ( layerType ) {
-        case CPTGraphLayerTypeMinorGridLines:
+        case .minorGridLines:
             if ( !self.minorGridLineGroup ) {
                 CPTGridLineGroup *newGridLineGroup = [[CPTGridLineGroup alloc] initWithFrame:self.bounds];
                 self.minorGridLineGroup = newGridLineGroup;
             }
             break;
             
-        case CPTGraphLayerTypeMajorGridLines:
+        case .majorGridLines:
             if ( !self.majorGridLineGroup ) {
                 CPTGridLineGroup *newGridLineGroup = [[CPTGridLineGroup alloc] initWithFrame:self.bounds];
                 self.majorGridLineGroup = newGridLineGroup;
             }
             break;
             
-        case CPTGraphLayerTypeAxisLabels:
+        case .axisLabels:
             if ( !self.axisLabelGroup ) {
                 CPTAxisLabelGroup *newAxisLabelGroup = [[CPTAxisLabelGroup alloc] initWithFrame:self.bounds];
                 self.axisLabelGroup = newAxisLabelGroup;
             }
             break;
             
-        case CPTGraphLayerType.AxisTitles:
+        case .axisTitles:
             if ( !self.axisTitleGroup ) {
                 CPTAxisLabelGroup *newAxisTitleGroup = [[CPTAxisLabelGroup alloc] initWithFrame:self.bounds];
                 self.axisTitleGroup = newAxisTitleGroup;

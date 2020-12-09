@@ -23,7 +23,7 @@ extension CPTLayer {
                 return path;
             }
             
-            path            = CPTCreateRoundedRectPath(self.bounds, self.cornerRadius);
+            path   = CPTCreateRoundedRectPath(self.bounds, self.cornerRadius);
             self.outerBorderPath = path;
             
             return self.outerBorderPath;

@@ -53,27 +53,27 @@ extension CPTPlot {
                 }
             }
             else {
-                NSDecimal min = [NSDecimalNumber maximumDecimalNumber].decimalValue;
+                let min = [NSDecimalNumber maximumDecimalNumber].decimalValue;
                 NSDecimal max = [NSDecimalNumber minimumDecimalNumber].decimalValue;
                 
-                const NSDecimal *decimals   = (const NSDecimal *)numbers.bytes;
-                const NSDecimal *lastSample = decimals + numberOfSamples;
+                let decimals   = (const NSDecimal *)numbers.bytes;
+                let lastSample = decimals + numberOfSamples;
                 
                 while ( decimals < lastSample ) {
                     NSDecimal value = *decimals++;
                     
                     if ( !NSDecimalIsNotANumber(&value)) {
-                        if ( CPTDecimalLessThan(value, min)) {
+                        if value < min {
                             min = value;
                         }
-                        if ( CPTDecimalGreaterThan(value, max)) {
+                        if value> max {
                             max = value;
                         }
                     }
                 }
                 
-                if ( CPTDecimalGreaterThanOrEqualTo(max, min)) {
-                    range = [CPTPlotRange plotRangeWithLocationDecimal:min lengthDecimal:CPTDecimalSubtract(max, min)];
+                if  max >= min {
+                    range = [CPTPlotRange plotRangeWithLocationDecimal:min ,lengthDecimal:max - min)
                 }
             }
         }
@@ -84,28 +84,26 @@ extension CPTPlot {
 // *  @param coord The coordinate identifier.
 // *  @return The plot range enclosing the data.
 // **/
-//-(nullable CPTPlotRange *)plotRangeForCoordinate:(CPTCoordinate)coord
-//{
-//    CPTNumberArray *fields = [self fieldIdentifiersForCoordinate:coord];
-//
-//    if ( fields.count == 0 ) {
-//        return nil;
-//    }
-//
-//    CPTMutablePlotRange *unionRange = nil;
-//
-//    for ( NSNumber *field in fields ) {
-//        CPTPlotRange *currentRange = [self plotRangeForField:field.unsignedIntegerValue];
-//        if ( !unionRange ) {
-//            unionRange = [currentRange mutableCopy];
-//        }
-//        else {
-//            [unionRange unionPlotRange:[self plotRangeForField:field.unsignedIntegerValue]];
-//        }
-//    }
-//
-//    return unionRange;
-//}
+    func plotRangeForCoordinate(coord: CPTCoordinate)-> CPTPlotRange?
+    {
+        let fields = self.fieldIdentifiersForCoordinate(coord: coord)
+        
+        guard ( fields.count != 0 ) else { return nil }
+        
+        let unionRange : CPTMutablePlotRange?
+        
+        for field in fields  {
+            let currentRange = self.plotRangeForField(field.unsignedIntegerValue)
+            if ( !unionRange == false) {
+                unionRange = currentRange
+            }
+            else {
+                unionRangeunionPlotRange(self, plotRangeForField:field.unsignedIntegerValue)
+            }
+        }
+        
+        return unionRange;
+    }
 //
 ///** @brief Determines the smallest plot range that fully encloses the entire plot for a particular field.
 // *  @param fieldEnum The field enumerator identifying the field.

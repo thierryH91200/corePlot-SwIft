@@ -324,229 +324,229 @@ class CPTPlotRange: NSObject {
 ////        return result;
 ////    }
 ////
-////    /** @brief Determines whether a given number is inside the range.
-////     *  @param number The number to check.
-////     *  @return @YES if @ref locationDouble ≤ @par{number} ≤ @ref endDouble.
-////     **/
-////    -(BOOL)containsDouble:(double)number
-////    {
-////        return (number >= self.minLimitDouble) && (number <= self.maxLimitDouble);
-////    }
-////
-////    /** @brief Determines whether a given number is inside the range.
-////     *  @param number The number to check.
-////     *  @return @YES if @ref location ≤ @par{number} ≤ @ref end.
-////     **/
-////    -(BOOL)containsNumber:(nullable NSNumber *)number
-////    {
-////        if ( [number isKindOfClass:[NSDecimalNumber class]] ) {
-////            return [self contains:number.decimalValue];
-////        }
-////        else {
-////            return [self containsDouble:number.doubleValue];
-////        }
-////    }
-////
-////    /** @brief Determines whether a given range is equal to the range of the receiver.
-////     *  @param otherRange The range to check.
-////     *  @return @YES if the ranges both have the same location and length.
-////     **/
-////    -(BOOL)isEqualToRange:(nullable CPTPlotRange *)otherRange
-////    {
-////        if ( otherRange ) {
-////            return CPTDecimalEquals(self.locationDecimal, otherRange.locationDecimal) &&
-////                   CPTDecimalEquals(self.lengthDecimal, otherRange.lengthDecimal) &&
-////                   (self.isInfinite == otherRange.isInfinite) &&
-////                   (self.lengthSign == otherRange.lengthSign);
-////        }
-////        else {
-////            return NO;
-////        }
-////    }
-////
-////    /** @brief Determines whether the receiver entirely contains another range.
-////     *  @param otherRange The range to check.
-////     *  @return @YES if the other range fits entirely within the range of the receiver.
-////     **/
-////    -(BOOL)containsRange:(nullable CPTPlotRange *)otherRange
-////    {
-////        BOOL result = NO;
-////
-////        if ( otherRange ) {
-////            if ( self.isInfinite ) {
-////                if ( !otherRange.isInfinite || (otherRange.lengthSign == self.lengthSign)) {
-////                    switch ( self.lengthSign ) {
-////                        case CPTSignPositive:
-////                            result = CPTDecimalGreaterThanOrEqualTo(otherRange.minLimitDecimal, self.minLimitDecimal);
-////                            break;
-////
-////                        case CPTSignNegative:
-////                            result = CPTDecimalLessThanOrEqualTo(otherRange.maxLimitDecimal, self.maxLimitDecimal);
-////                            break;
-////
-////                        default:
-////                            break;
-////                    }
-////                }
-////            }
-////            else {
-////                result = CPTDecimalGreaterThanOrEqualTo(otherRange.minLimitDecimal, self.minLimitDecimal) && CPTDecimalLessThanOrEqualTo(otherRange.maxLimitDecimal, self.maxLimitDecimal);
-////            }
-////        }
-////
-////        return result;
-////    }
-////
-////    /** @brief Determines whether a given range intersects the receiver.
-////     *  @param otherRange The range to check.
-////     *  @return @YES if the ranges intersect.
-////     **/
-////    -(BOOL)intersectsRange:(nullable CPTPlotRange *)otherRange
-////    {
-////        BOOL result = NO;
-////
-////        if ( otherRange ) {
-////            if ( self.isInfinite ) {
-////                if ( otherRange.isInfinite ) {
-////                    result = (otherRange.lengthSign == self.lengthSign);
-////                }
-////                if ( !result ) {
-////                    switch ( self.lengthSign ) {
-////                        case CPTSignPositive:
-////                            result = CPTDecimalGreaterThanOrEqualTo(otherRange.maxLimitDecimal, self.minLimitDecimal);
-////                            break;
-////
-////                        case CPTSignNegative:
-////                            result = CPTDecimalLessThanOrEqualTo(otherRange.minLimitDecimal, self.maxLimitDecimal);
-////                            break;
-////
-////                        default:
-////                            break;
-////                    }
-////                }
-////            }
-////            else {
-////                if ( otherRange.isInfinite ) {
-////                    switch ( otherRange.lengthSign ) {
-////                        case CPTSignPositive:
-////                            result = CPTDecimalLessThanOrEqualTo(otherRange.minLimitDecimal, self.maxLimitDecimal);
-////                            break;
-////
-////                        case CPTSignNegative:
-////                            result = CPTDecimalLessThanOrEqualTo(otherRange.maxLimitDecimal, self.minLimitDecimal);
-////                            break;
-////
-////                        default:
-////                            break;
-////                    }
-////                }
-////                else {
-////                    NSDecimal min1    = self.minLimitDecimal;
-////                    NSDecimal min2    = otherRange.minLimitDecimal;
-////                    NSDecimal minimum = CPTDecimalMax(min1, min2);
-////
-////                    NSDecimal max1    = self.maxLimitDecimal;
-////                    NSDecimal max2    = otherRange.maxLimitDecimal;
-////                    NSDecimal maximum = CPTDecimalMin(max1, max2);
-////
-////                    result = CPTDecimalGreaterThanOrEqualTo(maximum, minimum);
-////                }
-////            }
-////        }
-////
-////        return result;
-////    }
-////
-////    /** @brief Compares a number to the range, determining if it is in the range, or above or below it.
-////     *  @param number The number to check.
-////     *  @return The comparison result.
-////     **/
-////    -(CPTPlotRangeComparisonResult)compareToNumber:(nonnull NSNumber *)number
-////    {
-////        CPTPlotRangeComparisonResult result;
-////
-////        if ( [number isKindOfClass:[NSDecimalNumber class]] ) {
-////            result = [self compareToDecimal:number.decimalValue];
-////        }
-////        else {
-////            result = [self compareToDouble:number.doubleValue];
-////        }
-////        return result;
-////    }
-////
-////    /** @brief Compares a number to the range, determining if it is in the range, or above or below it.
-////     *  @param number The number to check.
-////     *  @return The comparison result.
-////     **/
-////    -(CPTPlotRangeComparisonResult)compareToDecimal:(NSDecimal)number
-////    {
-////        CPTPlotRangeComparisonResult result;
-////
-////        if ( NSDecimalIsNotANumber(&number)) {
-////            result = CPTPlotRangeComparisonResultNumberUndefined;
-////        }
-////        else if ( [self contains:number] ) {
-////            result = CPTPlotRangeComparisonResultNumberInRange;
-////        }
-////        else if ( CPTDecimalLessThan(number, self.minLimitDecimal)) {
-////            result = CPTPlotRangeComparisonResultNumberBelowRange;
-////        }
-////        else {
-////            result = CPTPlotRangeComparisonResultNumberAboveRange;
-////        }
-////        return result;
-////    }
-////
-////    /** @brief Compares a number to the range, determining if it is in the range, or above or below it.
-////     *  @param number The number to check.
-////     *  @return The comparison result.
-////     **/
-////    -(CPTPlotRangeComparisonResult)compareToDouble:(double)number
-////    {
-////        CPTPlotRangeComparisonResult result;
-////
-////        if ( isnan(number)) {
-////            result = CPTPlotRangeComparisonResultNumberUndefined;
-////        }
-////        else if ( number < self.minLimitDouble ) {
-////            result = CPTPlotRangeComparisonResultNumberBelowRange;
-////        }
-////        else if ( number > self.maxLimitDouble ) {
-////            result = CPTPlotRangeComparisonResultNumberAboveRange;
-////        }
-////        else {
-////            result = CPTPlotRangeComparisonResultNumberInRange;
-////        }
-////        return result;
-////    }
-////
-////    #pragma mark -
-////    #pragma mark Label comparison
-////
-////    /// @cond
-////
-////    -(BOOL)isEqual:(nullable id)object
-////    {
-////        if ( self == object ) {
-////            return YES;
-////        }
-////        else if ( [object isKindOfClass:[self class]] ) {
-////            return [self isEqualToRange:object];
-////        }
-////        else {
-////            return NO;
-////        }
-////    }
-////
-////    -(NSUInteger)hash
-////    {
-////        NSDecimalNumber *locationNumber = [NSDecimalNumber decimalNumberWithDecimal:self.locationDecimal];
-////        NSDecimalNumber *lengthNumber   = [NSDecimalNumber decimalNumberWithDecimal:self.lengthDecimal];
-////
-////        return locationNumber.hash + lengthNumber.hash;
-////    }
-////
-////    /// @endcond
-////
+//    /** @brief Determines whether a given number is inside the range.
+//     *  @param number The number to check.
+//     *  @return @YES if @ref locationDouble ≤ @par{number} ≤ @ref endDouble.
+//     **/
+//    -(BOOL)containsDouble:(double)number
+//    {
+//        return (number >= self.minLimitDouble) && (number <= self.maxLimitDouble);
+//    }
 //
+//    /** @brief Determines whether a given number is inside the range.
+//     *  @param number The number to check.
+//     *  @return @YES if @ref location ≤ @par{number} ≤ @ref end.
+//     **/
+//    -(BOOL)containsNumber:(nullable NSNumber *)number
+//    {
+//        if ( [number isKindOfClass:[NSDecimalNumber class]] ) {
+//            return [self contains:number.decimalValue];
+//        }
+//        else {
+//            return [self containsDouble:number.doubleValue];
+//        }
+//    }
+//
+//    /** @brief Determines whether a given range is equal to the range of the receiver.
+//     *  @param otherRange The range to check.
+//     *  @return @YES if the ranges both have the same location and length.
+//     **/
+//    -(BOOL)isEqualToRange:(nullable CPTPlotRange *)otherRange
+//    {
+//        if ( otherRange ) {
+//            return CPTDecimalEquals(self.locationDecimal, otherRange.locationDecimal) &&
+//                   CPTDecimalEquals(self.lengthDecimal, otherRange.lengthDecimal) &&
+//                   (self.isInfinite == otherRange.isInfinite) &&
+//                   (self.lengthSign == otherRange.lengthSign);
+//        }
+//        else {
+//            return NO;
+//        }
+//    }
+//
+//    /** @brief Determines whether the receiver entirely contains another range.
+//     *  @param otherRange The range to check.
+//     *  @return @YES if the other range fits entirely within the range of the receiver.
+//     **/
+//    -(BOOL)containsRange:(nullable CPTPlotRange *)otherRange
+//    {
+//        BOOL result = NO;
+//
+//        if ( otherRange ) {
+//            if ( self.isInfinite ) {
+//                if ( !otherRange.isInfinite || (otherRange.lengthSign == self.lengthSign)) {
+//                    switch ( self.lengthSign ) {
+//                        case CPTSignPositive:
+//                            result = CPTDecimalGreaterThanOrEqualTo(otherRange.minLimitDecimal, self.minLimitDecimal);
+//                            break;
+//
+//                        case CPTSignNegative:
+//                            result = CPTDecimalLessThanOrEqualTo(otherRange.maxLimitDecimal, self.maxLimitDecimal);
+//                            break;
+//
+//                        default:
+//                            break;
+//                    }
+//                }
+//            }
+//            else {
+//                result = CPTDecimalGreaterThanOrEqualTo(otherRange.minLimitDecimal, self.minLimitDecimal) && CPTDecimalLessThanOrEqualTo(otherRange.maxLimitDecimal, self.maxLimitDecimal);
+//            }
+//        }
+//
+//        return result;
+//    }
+//
+//    /** @brief Determines whether a given range intersects the receiver.
+//     *  @param otherRange The range to check.
+//     *  @return @YES if the ranges intersect.
+//     **/
+    -(BOOL)intersectsRange:(nullable CPTPlotRange *)otherRange
+    {
+        BOOL result = NO;
+
+        if ( otherRange ) {
+            if ( self.isInfinite ) {
+                if ( otherRange.isInfinite ) {
+                    result = (otherRange.lengthSign == self.lengthSign);
+                }
+                if ( !result ) {
+                    switch ( self.lengthSign ) {
+                        case CPTSignPositive:
+                            result = CPTDecimalGreaterThanOrEqualTo(otherRange.maxLimitDecimal, self.minLimitDecimal);
+                            break;
+
+                        case CPTSignNegative:
+                            result = CPTDecimalLessThanOrEqualTo(otherRange.minLimitDecimal, self.maxLimitDecimal);
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+            else {
+                if ( otherRange.isInfinite ) {
+                    switch ( otherRange.lengthSign ) {
+                        case CPTSignPositive:
+                            result = CPTDecimalLessThanOrEqualTo(otherRange.minLimitDecimal, self.maxLimitDecimal);
+                            break;
+
+                        case CPTSignNegative:
+                            result = CPTDecimalLessThanOrEqualTo(otherRange.maxLimitDecimal, self.minLimitDecimal);
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+                else {
+                    NSDecimal min1    = self.minLimitDecimal;
+                    NSDecimal min2    = otherRange.minLimitDecimal;
+                    NSDecimal minimum = CPTDecimalMax(min1, min2);
+
+                    NSDecimal max1    = self.maxLimitDecimal;
+                    NSDecimal max2    = otherRange.maxLimitDecimal;
+                    NSDecimal maximum = CPTDecimalMin(max1, max2);
+
+                    result = CPTDecimalGreaterThanOrEqualTo(maximum, minimum);
+                }
+            }
+        }
+
+        return result;
+    }
+
+//    /** @brief Compares a number to the range, determining if it is in the range, or above or below it.
+//     *  @param number The number to check.
+//     *  @return The comparison result.
+//     **/
+//    -(CPTPlotRangeComparisonResult)compareToNumber:(nonnull NSNumber *)number
+//    {
+//        CPTPlotRangeComparisonResult result;
+//
+//        if ( [number isKindOfClass:[NSDecimalNumber class]] ) {
+//            result = [self compareToDecimal:number.decimalValue];
+//        }
+//        else {
+//            result = [self compareToDouble:number.doubleValue];
+//        }
+//        return result;
+//    }
+//
+//    /** @brief Compares a number to the range, determining if it is in the range, or above or below it.
+//     *  @param number The number to check.
+//     *  @return The comparison result.
+//     **/
+//    -(CPTPlotRangeComparisonResult)compareToDecimal:(NSDecimal)number
+//    {
+//        CPTPlotRangeComparisonResult result;
+//
+//        if ( NSDecimalIsNotANumber(&number)) {
+//            result = CPTPlotRangeComparisonResultNumberUndefined;
+//        }
+//        else if ( [self contains:number] ) {
+//            result = CPTPlotRangeComparisonResultNumberInRange;
+//        }
+//        else if ( CPTDecimalLessThan(number, self.minLimitDecimal)) {
+//            result = CPTPlotRangeComparisonResultNumberBelowRange;
+//        }
+//        else {
+//            result = CPTPlotRangeComparisonResultNumberAboveRange;
+//        }
+//        return result;
+//    }
+//
+//    /** @brief Compares a number to the range, determining if it is in the range, or above or below it.
+//     *  @param number The number to check.
+//     *  @return The comparison result.
+//     **/
+//    -(CPTPlotRangeComparisonResult)compareToDouble:(double)number
+//    {
+//        CPTPlotRangeComparisonResult result;
+//
+//        if ( isnan(number)) {
+//            result = CPTPlotRangeComparisonResultNumberUndefined;
+//        }
+//        else if ( number < self.minLimitDouble ) {
+//            result = CPTPlotRangeComparisonResultNumberBelowRange;
+//        }
+//        else if ( number > self.maxLimitDouble ) {
+//            result = CPTPlotRangeComparisonResultNumberAboveRange;
+//        }
+//        else {
+//            result = CPTPlotRangeComparisonResultNumberInRange;
+//        }
+//        return result;
+//    }
+//
+//    #pragma mark -
+//    #pragma mark Label comparison
+//
+//    /// @cond
+//
+//    -(BOOL)isEqual:(nullable id)object
+//    {
+//        if ( self == object ) {
+//            return YES;
+//        }
+//        else if ( [object isKindOfClass:[self class]] ) {
+//            return [self isEqualToRange:object];
+//        }
+//        else {
+//            return NO;
+//        }
+//    }
+//
+//    -(NSUInteger)hash
+//    {
+//        NSDecimalNumber *locationNumber = [NSDecimalNumber decimalNumberWithDecimal:self.locationDecimal];
+//        NSDecimalNumber *lengthNumber   = [NSDecimalNumber decimalNumberWithDecimal:self.lengthDecimal];
+//
+//        return locationNumber.hash + lengthNumber.hash;
+//    }
+//
+//    /// @endcond
+//
+
 }

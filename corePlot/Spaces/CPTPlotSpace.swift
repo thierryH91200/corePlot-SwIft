@@ -62,16 +62,14 @@ class CPTPlotSpace: NSObject {
             categoryNames = names
         }
         
-        let cacheKey = NSNumber(value: coordinate)
-        
-        var categories = names[cacheKey]
+        let cacheKey = coordinate.rawValue
+        var categories = names?[cacheKey]
         
         if categories == nil {
             categories = NSMutableOrderedSet()
-            names[cacheKey] = categories
+            names?[cacheKey] = categories
         }
-        
-        return categories
+        return categories!
     }
     
     
@@ -84,13 +82,13 @@ class CPTPlotSpace: NSObject {
     func removeCategory(category: String, forCoordinate coordinate:CPTCoordinate)
     {
         var categories = orderedSet(for: coordinate)
-        categories.remove(at: category)
+        categories.remove( category)
     }
     
     func insertCategory(category: String, forCoordinate coordinate :CPTCoordinate, atIndex idx:Int)
     {
-        let categories = self.orderedSet(for:coordinate)
-        categories.insertObject(category, atIndex:idx)
+        var categories = self.orderedSet(for:coordinate)
+        categories.insert(category, atIndex:idx)
     }
     
     func setCategories(newCategories: [String],  forCoordinate coordinate:CPTCoordinate)

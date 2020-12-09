@@ -164,6 +164,7 @@ public class CPTAxisLabel: NSObject {
         }
         
         if validDirection == false {
+            print(#function, "  ", #line )
             print("Invalid direction in positionRelativeToViewPoint:forCoordinate:inDirection:")
         }
         
@@ -174,11 +175,11 @@ public class CPTAxisLabel: NSObject {
         
         if ( abs(newAnchorX) <= abs(newAnchorY)) {
             newAnchorX /= abs(newAnchorY);
-            newAnchorY  = ((newAnchorY.signbit()) != 0) ? CGFloat(-1.0) : CGFloat(1.0);
+            newAnchorY  = newAnchorY.signbit() ? CGFloat(-1.0) : CGFloat(1.0);
         }
         else {
             newAnchorY /= abs(newAnchorX);
-            newAnchorX  = ((newAnchorX.signbit()) != 0) ? CGFloat(-1.0) : CGFloat(1.0);
+            newAnchorX  = newAnchorX.signbit() ? CGFloat(-1.0) : CGFloat(1.0);
         }
         let anchor = CGPoint(x: (newAnchorX + CGFloat(1.0)) / CGFloat(2.0), y: (newAnchorY + CGFloat(1.0)) / CGFloat(2.0));
         

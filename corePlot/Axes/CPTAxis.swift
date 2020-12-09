@@ -41,7 +41,6 @@ class CPTAxis : CPTLayer {
     var labelFormatterChanged = false
     var minorLabelFormatterChanged = false
     //    var  mutableBackgroundLimitBands: CPTMutableLimitBandArray
-    var tickOffset = CGFloat(0)
     var inTitleUpdate = false
     var labelsUpdated = false
     
@@ -308,11 +307,11 @@ class CPTAxis : CPTLayer {
         var majorLocations = Set<CGFloat>()
         var minorLocations =  Set<CGFloat>()
         
-        let zero          = 0
+        let zero          = 0.0
         var majorInterval = self.majorIntervalLength
         
-        if (majorInterval > zero) {
-            //            let range = self.plotSpace.plotRangeForCoordinate(self.coordinate)
+        if majorInterval > Int(zero) {
+            let range = self.plotSpace.plotRangeForCoordinate(self.coordinate)
             
             
             if ( range ) {
@@ -324,7 +323,7 @@ class CPTAxis : CPTLayer {
                 let rangeMin = range.minLimitDecimal;
                 let rangeMax = range.maxLimitDecimal;
                 
-                var minorInterval = 0
+                var minorInterval = CGFloat(0.0)
                 let minorTickCount = self.minorTicksPerInterval;
                 if ( minorTickCount > 0 ) {
                     minorInterval = majorInterval / (minorTickCount + 1)
@@ -343,11 +342,11 @@ class CPTAxis : CPTLayer {
                 if ( minorTickCount > 0 ) {
                     let minorCoord = coord - minorInterval
                     
-                    for  minorTickIndex in 0..<minorTickCount  {
+                    for  minorTickIndex in 0..<Int(minorTickCount)  {
                         if minorCoord < rangeMin {
                             break
                         }
-                        [minorLocations.addObject(NSDecimalNumber decimalNumberWithDecimal:minorCoord]];
+                        minorLocations.addObject(NSDecimalNumber decimalNumberWithDecimal:minorCoord]];
                             minorCoord = minorCoord - minorInterval
                         }
                 }
@@ -361,7 +360,7 @@ class CPTAxis : CPTLayer {
                     if ( minorTickCount > 0 ) {
                         let minorCoord = coord + minorInterval
                         
-                        for minorTickIndex in  0..<minorTickCount {
+                        for minorTickIndex in  0..<Int(minorTickCount) {
                             if minorCoord > rangeMax {
                                 break
                             }
@@ -392,71 +391,7 @@ class CPTAxis : CPTLayer {
     //     *  @param newMajorLocations A new NSSet containing the major tick locations.
     //     *  @param newMinorLocations A new NSSet containing the minor tick locations.
     //     */
-    func generateEqualMajorTickLocations(newMajorLocations: inout Set<CGFloat>,  newMinorLocations: inout Set<CGFloat>)
-    {
-        var majorLocations = Set<CGFloat>()
-        var minorLocations = Set<CGFloat>()
-        
-        var range = self.plotSpace.plotRangeForCoordinate(self.coordinate)
-        
-        if ( range ) {
-            var theVisibleRange = self.visibleRange;
-            if (( theVisibleRange ) != nil) {
-                range.intersectionPlotRange(theVisibleRange)
-            }
-            
-            if ( range.lengthDouble != 0.0 ) {
-                var zero     = CPTDecimalFromInteger(0);
-                let rangeMin = range.minLimitDecimal;
-                let rangeMax = range.maxLimitDecimal;
-                
-                NSUInteger majorTickCount = self.preferredNumberOfMajorTicks;
-                
-                if ( majorTickCount < 2 ) {
-                    majorTickCount = 2;
-                }
-                NSDecimal majorInterval = CPTDecimalDivide(range.lengthDecimal, CPTDecimalFromUnsignedInteger(majorTickCount - 1));
-                if ( CPTDecimalLessThan(majorInterval, zero)) {
-                    majorInterval = CPTDecimalMultiply(majorInterval, CPTDecimalFromInteger(-1));
-                }
-                
-                NSDecimal minorInterval;
-                NSUInteger minorTickCount = self.minorTicksPerInterval;
-                if ( minorTickCount > 0 ) {
-                    minorInterval = CPTDecimalDivide(majorInterval, CPTDecimalFromUnsignedInteger(minorTickCount + 1));
-                }
-                else {
-                    minorInterval = zero;
-                }
-                
-                NSDecimal coord = rangeMin;
-                
-                // Set tick locations
-                while ( CPTDecimalLessThanOrEqualTo(coord, rangeMax)) {
-                    // Major tick
-                    [majorLocations addObject:[NSDecimalNumber decimalNumberWithDecimal:coord]];
-                    
-                    // Minor ticks
-                    if ( minorTickCount > 0 ) {
-                        NSDecimal minorCoord = CPTDecimalAdd(coord, minorInterval);
-                        
-                        for ( NSUInteger minorTickIndex = 0; minorTickIndex < minorTickCount; minorTickIndex++ ) {
-                            if ( CPTDecimalGreaterThan(minorCoord, rangeMax)) {
-                                break;
-                            }
-                            [minorLocations addObject:[NSDecimalNumber decimalNumberWithDecimal:minorCoord]];
-                            minorCoord = CPTDecimalAdd(minorCoord, minorInterval);
-                        }
-                    }
-                    
-                    coord = CPTDecimalAdd(coord, majorInterval);
-                }
-            }
-        }
-        newMajorLocations = majorLocations
-        newMinorLocations = minorLocations
-    }
-    
+ 
     //
     //    /**
     //     *  @internal
@@ -555,25 +490,25 @@ class CPTAxis : CPTLayer {
     //     *  @param allLocations A set of tick locations.
     //     *  @return The filtered set of tick locations.
     //     */
-    //    -(nullable CPTNumberSet *)filteredTickLocations:(nullable CPTNumberSet *)allLocations
-    //    {
-    //        CPTPlotRangeArray *exclusionRanges = self.labelExclusionRanges;
-    //
-    //        if ( exclusionRanges ) {
-    //            CPTMutableNumberSet *filteredLocations = [allLocations mutableCopy];
-    //            for ( CPTPlotRange *range in exclusionRanges ) {
-    //                for ( NSNumber *location in allLocations ) {
-    //                    if ( [range containsNumber:location] ) {
-    //                        [filteredLocations removeObject:location];
-    //                    }
-    //                }
-    //            }
-    //            return filteredLocations;
-    //        }
-    //        else {
-    //            return allLocations;
-    //        }
-    //    }
+    func filteredTickLocations(allLocations: CPTNumberSet )-> CPTNumberSet
+    {
+        let exclusionRanges = self.labelExclusionRanges;
+        
+        if ( exclusionRanges.isEmpty == false ) {
+            let filteredLocations = allLocations 
+            for range in exclusionRanges  {
+                for location in allLocations {
+                    if range.containsNumber(location) {
+                        filteredLocations.removeObject(location)
+                    }
+                }
+            }
+            return filteredLocations;
+        }
+        else {
+            return allLocations;
+        }
+    }
     //
     //    /// @endcond
     //
@@ -581,42 +516,45 @@ class CPTAxis : CPTLayer {
     //     *  @param allLocations A set of major tick locations.
     //     *  @return The filtered set.
     //     **/
-    //    -(nullable CPTNumberSet *)filteredMajorTickLocations:(nullable CPTNumberSet *)allLocations
-    //    {
-    //        return [self filteredTickLocations:allLocations];
-    //    }
+    func filteredMajorTickLocations(allLocations: CPTNumberSet )-> CPTNumberSet
+    {
+        return self.filteredTickLocations(allLocations: allLocations)
+    }
     //
     //    /** @brief Removes any minor ticks falling inside the label exclusion ranges from the set of tick locations.
     //     *  @param allLocations A set of minor tick locations.
     //     *  @return The filtered set.
     //     **/
-    //    -(nullable CPTNumberSet *)filteredMinorTickLocations:(nullable CPTNumberSet *)allLocations
-    //    {
-    //        return [self filteredTickLocations:allLocations];
-    //    }
+    func filteredMinorTickLocations(allLocations: CPTNumberSet )-> CPTNumberSet
+    {
+        return self.filteredTickLocations(allLocations: allLocations)
+    }
     //
     //    #pragma mark -
     //    #pragma mark Labels
     //
     //    /// @cond
     //
-    //    -(CGFloat)tickOffset
-    //    {
-    //        CGFloat offset = CGFloat(0.0);
-    //
-    //        switch ( self.tickDirection ) {
-    //            case CPTSignNone:
-    //                offset += self.majorTickLength * CGFloat(0.5);
-    //                break;
-    //
-    //            case CPTSignPositive:
-    //            case CPTSignNegative:
-    //                offset += self.majorTickLength;
-    //                break;
-    //        }
-    //
-    //        return offset;
-    //    }
+    var _tickOffset = CGFloat(0)
+    func tickOffset() -> CGFloat
+        {
+            var offset = CGFloat(0.0);
+    
+            switch ( self.tickDirection ) {
+            case CPTSign.none:
+                    offset += self.majorTickLength * CGFloat(0.5);
+                    break;
+    
+            case CPTSign.positive:
+                fallthrough
+                
+            case CPTSign.negative:
+                    offset += self.majorTickLength;
+                    break;
+            }
+    
+            return offset;
+        }
     //
     //    /**
     //     *  @internal
@@ -808,21 +746,21 @@ class CPTAxis : CPTLayer {
     //     *  @brief Marks the receiver as needing to update the labels before the content is next drawn.
     //     **/
     
-    func setNeedsRelabel(_ newNeedsRelabel: var) {
+    func setNeedsRelabel(_ newNeedsRelabel: Bool) {
         if newNeedsRelabel != needsRelabel {
             needsRelabel = newNeedsRelabel
             if needsRelabel {
                 setNeedsDisplay()
                 if separateLayers {
                     var gridlines = majorGridLines
-                    gridlines.setNeedsDisplay()
+                    gridlines?.setNeedsDisplay()
                     
                     gridlines = minorGridLines
-                    gridlines.setNeedsDisplay()
+                    gridlines?.setNeedsDisplay()
                 } else {
                     let thePlotArea = plotArea
-                    thePlotArea.majorGridLineGroup!.setNeedsDisplay()
-                    thePlotArea.minorGridLineGroup!.setNeedsDisplay()
+                    thePlotArea?.majorGridLineGroup!.setNeedsDisplay()
+                    thePlotArea?.minorGridLineGroup!.setNeedsDisplay()
                 }
             }
         }
@@ -839,7 +777,7 @@ class CPTAxis : CPTLayer {
         if ( !self.needsRelabel ) {
             return;
         }
-        if ( !self.plotSpace != nil) {
+        if ( (self.plotSpace == nil) != nil) {
             return;
         }
         let theDelegate = self.delegate;
@@ -853,34 +791,34 @@ class CPTAxis : CPTLayer {
         var newMinorLocations = 0
         
         switch ( self.labelingPolicy ) {
-        case CPTAxisLabelingPolicyNone:
-        case CPTAxisLabelingPolicyLocationsProvided:
+        case .none:
+        case .provided:
             // Locations are set by user
             break;
             
-        case CPTAxisLabelingPolicyFixedInterval:
+        case .fixedInterval:
             [self generateFixedIntervalMajorTickLocations:&newMajorLocations minorTickLocations:&newMinorLocations];
             break;
             
-        case CPTAxisLabelingPolicyAutomatic:
+        case .automatic:
             [self autoGenerateMajorTickLocations:&newMajorLocations minorTickLocations:&newMinorLocations];
             break;
             
-        case CPTAxisLabelingPolicyEqualDivisions:
+        case .divisions:
             [self generateEqualMajorTickLocations:&newMajorLocations minorTickLocations:&newMinorLocations];
             break;
         }
         
         switch ( self.labelingPolicy ) {
-        case CPTAxisLabelingPolicyNone:
-        case CPTAxisLabelingPolicyLocationsProvided:
+        case .none:
+        case .provided:
             // Locations are set by user--no filtering required
             break;
             
         default:
             // Filter and set tick locations
-            self.majorTickLocations = [self filteredMajorTickLocations:newMajorLocations];
-            self.minorTickLocations = [self filteredMinorTickLocations:newMinorLocations];
+            self.majorTickLocations = self.filteredMajorTickLocations(newMajorLocations)
+            self.minorTickLocations = self.filteredMinorTickLocations(newMinorLocations)
         }
         
         // Label ticks
@@ -890,9 +828,9 @@ class CPTAxis : CPTLayer {
             break;
             
         case .provided:
-            {
-                CPTMutablePlotRange *labeledRange = [[self.plotSpace plotRangeForCoordinate:self.coordinate] mutableCopy];
-                CPTPlotRange *theVisibleRange     = self.visibleRange;
+            
+            let labeledRange = self.plotSpace.plotRangeForCoordinate(self.coordinate)
+                let theVisibleRange     = self.visibleRange;
                 if ( theVisibleRange ) {
                     [labeledRange intersectionPlotRange:theVisibleRange];
                 }
@@ -901,15 +839,15 @@ class CPTAxis : CPTLayer {
                 inRange:labeledRange
                 useMajorAxisLabels:true];
                 
-                [self updateAxisLabelsAtLocations:self.minorTickLocations
-                inRange:labeledRange
-                useMajorAxisLabels:false];
-            }
-            break;
+            self.updateAxisLabelsAtLocations:self.minorTickLocations,
+                inRange:labeledRange,
+                useMajorAxisLabels:false)
+            
+            break
             
         default:
-            [self updateAxisLabelsAtLocations(self.majorTickLocations
-                                              inRange:nil
+            self.updateAxisLabelsAtLocations(self.majorTickLocations,
+                                              inRange:nil,
                                               useMajorAxisLabels:true)
             
             [self updateAxisLabelsAtLocations:self.minorTickLocations
@@ -921,7 +859,7 @@ class CPTAxis : CPTLayer {
         self.needsRelabel = false
         if ( self.alternatingBandFills.count > 0 ) {
             let thePlotArea = self.plotArea;
-            thePlotArea.setNeedsDisplay()
+            thePlotArea?.setNeedsDisplay()
         }
         
         if ( [theDelegate respondsToSelector:@selector(axisDidRelabel:)] ) {
@@ -1054,10 +992,10 @@ class CPTAxis : CPTLayer {
     //            [label positionRelativeToViewPoint:tickBasePoint forCoordinate:orthogonalCoordinate inDirection:direction];
     //        }
     //    }
+    
     //
-    //    #pragma mark -
-    //    #pragma mark Titles
-    //
+    // MARK: - Titles
+
     //    -(nonnull NSNumber *)defaultTitleLocation
     //    {
     //        return @(NAN);
@@ -1070,19 +1008,22 @@ class CPTAxis : CPTLayer {
     func updateAxisTitle()
     {
         var direction = self.titleDirection;
-        
         if direction == .none {
             direction = self.tickDirection;
         }
         
-        self.axisTitle.positionRelativeToViewPoint( self, viewPointForCoordinateValue:self.titleLocation
-                                                    forCoordinate:CPTOrthogonalCoordinate(self.coordinate)
-                                                    inDirection:direction)
+        let coordValue = self.viewPointForCoordinateValue(coordinateValue: CGFloat(self.titleLocation))
+        let ortho = CPTUtilities.shared.CPTOrthogonalCoordinate(coordinate)
+            
+        self.axisTitle?.positionRelativeToViewPoint( point: coordValue,
+                                                    coordinate: ortho,
+                                                    direction:direction)
     }
+
+
     
-    //
-    //    #pragma mark -
-    //    #pragma mark Layout
+    
+// MARK: - Layout
     //
     //    /// @name Layout
     //    /// @{

@@ -973,13 +973,14 @@ extension CPTAxis {
 //        return thePlotArea.axisSet;
 //    }
 //
-//    -(void)setHidden:(BOOL)newHidden
-//    {
-//        if ( newHidden != self.hidden ) {
-//            super.hidden = newHidden;
-//            [self setNeedsRelabel];
-//        }
-//    }
+    func setHidden(newHidden: Bool)
+    {
+        if ( newHidden != self.isHidden ) {
+            super.isHidden = newHidden;
+            self.setNeedsRelabel()
+        }
+    }
+    
     func updateCustomTickLabels()
     {
 //        let range = NSRange(location: 0,length: 0) //self.plotSpace.plotRangeForCoordinate(self.coordinate)

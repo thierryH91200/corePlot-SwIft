@@ -10,6 +10,73 @@ import Foundation
 
 extension CPTAxis {
     
+    func generateEqualMajorTickLocations(newMajorLocations: inout Set<CGFloat>,  newMinorLocations: inout Set<CGFloat>)
+    {
+        var majorLocations = Set<CGFloat>()
+        var minorLocations = Set<CGFloat>()
+        
+        var range = self.plotSpace.plotRangeForCoordinate(self.coordinate)
+        
+        if ( range ) {
+            var theVisibleRange = self.visibleRange;
+            if (( theVisibleRange ) != nil) {
+                range.intersectionPlotRange(theVisibleRange)
+            }
+            
+            if ( range.lengthDouble != 0.0 ) {
+                var zero     = 0
+                let rangeMin = range.minLimitDecimal;
+                let rangeMax = range.maxLimitDecimal;
+                
+                var majorTickCount = self.preferredNumberOfMajorTicks;
+                
+                if ( majorTickCount < 2 ) {
+                    majorTickCount = 2;
+                }
+                let majorInterval = range.lengthDecimal / (majorTickCount - 1)
+                if majorInterval < zero {
+                    majorInterval = majorInterval * (-1)
+                }
+                
+                var minorInterval = CGFloat(0.0)
+                let minorTickCount = self.minorTicksPerInterval;
+                if ( minorTickCount > 0 ) {
+                    minorInterval = majorInterval / (minorTickCount + 1)
+                }
+                else {
+                    minorInterval = CGFloat(zero)
+                }
+                
+                let coord = rangeMin;
+                
+                // Set tick locations
+                while (coord >= rangeMax) {
+                    // Major tick
+                    majorLocations.addObject(NSDecimalNumber decimalNumberWithDecimal:coord]];
+                    
+                    // Minor ticks
+                    if ( minorTickCount > 0 ) {
+                        let minorCoord = coord + minorInterval
+                        
+                        for minorTickIndex in 0..<Int(minorTickCount) {
+                            if minorCoord > rangeMax {
+                                break
+                            }
+                            minorLocations.addObject(:[NSDecimalNumber decimalNumberWithDecimal:minorCoord]])
+                            minorCoord = minorCoord + minorInterval
+                        }
+                    }
+                    
+                    coord = coord + majorInterval
+                }
+            }
+        }
+        newMajorLocations = majorLocations
+        newMinorLocations = minorLocations
+    }
+    
+    
+    
     func autoGenerateMajorTickLocations(newMajorLocations :CPTFloatSet, newMinorLocations:CPTFloatSet)
     {
         var newMajorLocations = newMajorLocations
@@ -150,7 +217,6 @@ extension CPTAxis {
                 break;
                 
             case .log:
-                
                 let minLimit = range.minLimitDouble;
                 let maxLimit = range.maxLimitDouble;
                 

@@ -280,7 +280,7 @@ class CPTAnimation: NSObject {
         }
         
         if ( theAnimationOperations.count == 0 ) {
-            [self cancelTimer];
+            [self.cancelTimer];
         }
     }
     
@@ -289,23 +289,23 @@ class CPTAnimation: NSObject {
     {
         let animationOperation = parameters[CPTAnimationOperationKey]
 
-    var canceled: Bool
+    var isCanceled = false
 
     animationQueue.sync(execute: {
-        canceled = animationOperation?.isCanceled ?? false
+        isCanceled = animationOperation?.isCanceled ?? false
     })
         
         
         
         
-    if ( !canceled ) {
+    if ( !isCanceled ) {
     @try {
-    Class valueClass = parameters[CPTAnimationValueClassKey];
-    if ( [valueClass isKindOfClass:[NSNull class]] ) {
-    valueClass = Nil;
+        var valueClass = parameters[self.CPTAnimationValueClassKey];
+    if valueClass is NSNull {
+    valueClass = nil
     }
     
-  let delegate = animationOperation.delegate
+    let delegate = animationOperation.delegate
         
     let started = parameters[CPTAnimationStartedKey];
     if ( started.boolValue ) {

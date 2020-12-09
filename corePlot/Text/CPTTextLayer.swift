@@ -8,11 +8,10 @@
 import Cocoa
 
 class CPTTextLayer: CPTBorderedLayer {
-
+    
     let kCPTTextLayerMarginWidth = CGFloat(2.0)
     
     var inTextUpdate = false
-    var attributedText = NSAttributedString()
     
     private lazy var _attributedText = NSAttributedString()
     override var attributedText: NSAttributedString {
@@ -34,37 +33,66 @@ class CPTTextLayer: CPTBorderedLayer {
         get { return _maximumSize }
         set { _maximumSize = newValue }
     }
-
+    
     convenience init(text newText: String?, style newStyle: CPTTextStyle?) {
         self.init(frame: CGRect())
         textStyle = newStyle!
         text = newText!
-
+        
         sizeToFit()
     }
     
     
-    init(newText: String)
-    {
-        self.init(text : newText, style: textStyle)
+    convenience init(text newText: String) {
+        self.init(text: newText, style: CPTTextStyle())
     }
+    
+    
+    class func textStyle(withAttributes attributes: CPTDictionary?) -> Self {
+        let newStyle = CPTMutableTextStyle()
 
+        // Font
+        let styleFont = attributes?[NSAttributedString.Key.font] as? NSFont
+
+        if let styleFont = styleFont {
+            newStyle.font = styleFont
+            newStyle.fontName = styleFont.fontName
+            newStyle.fontSize = styleFont.pointSize
+        }
+
+        // Color
+        let styleColor = attributes?[NSAttributedString.Key.foregroundColor] as? NSColor
+
+        if let styleColor = styleColor {
+            newStyle.color = CPTColor(cgColor: styleColor.cgColor)
+        }
+
+        // Text alignment and line break mode
+        let paragraphStyle = attributes?[NSAttributedString.Key.paragraphStyle] as? NSParagraphStyle
+
+        if let paragraphStyle = paragraphStyle {
+            newStyle.textAlignment = paragraphStyle.alignment as? CPTTextAlignment
+            newStyle.lineBreakMode = paragraphStyle.lineBreakMode
+        }
+
+        return newStyle
+    }
+    
+    
+    
     /** @brief Initializes a newly allocated CPTTextLayer object with the provided styled text.
      *  @param newText The styled text to display.
      *  @return The initialized CPTTextLayer object.
      **/
-    init WithAttributedText:(newText: NSAttributedString )
-    {
-        CPTTextStyle *newStyle = [CPTTextStyle textStyleWithAttributes:[newText attributesAtIndex:0 effectiveRange:NULL]];
+    convenience init(attributedText newText: NSAttributedString) {
+        let newStyle = CPTTextStyle(attributes: newText.attributes(at: 0, effectiveRange: nil))
 
-        if ((self = [self initWithText:newText.string style:newStyle])) {
+        self.init(text: newText.string, style: newStyle)
             attributedText = newText
 
-    self.sizeToFit()
-        }
-
+            sizeToFit()
     }
-
+    
     init(layer: Any?)
     {
         let theLayer = layer as? CPTTextLayer
@@ -75,76 +103,77 @@ class CPTTextLayer: CPTBorderedLayer {
         attributedText = theLayer!.attributedText;
         inTextUpdate   = theLayer!.inTextUpdate;
     }
-
+    
     override init(frame:CGRect)
     {
         super.init(frame:frame)
-            text           = ""
-            textStyle      = CPTTextStyle()
-            attributedText = NSAttributedString()
-            maximumSize    = CGSize()
-            inTextUpdate   = false
-
-            self.needsDisplayOnBoundsChange = false;
+        text           = ""
+        textStyle      = CPTTextStyle()
+        attributedText = NSAttributedString()
+        maximumSize    = CGSize()
+        inTextUpdate   = false
+        
+        self.needsDisplayOnBoundsChange = false;
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    //MARK: Layout
+    //MARK: - Layout
     func sizeThatFits() -> CGSize
     {
-        let textSize  = CGSize()
+        var textSize  = CGSize()
         var myText = self.text
-
-        if ( myText.length > 0 ) {
+        
+        if  myText.count > 0  {
             let styledText = self.attributedText
             if ( styledText.length > 0 ) {
-                textSize = [styledText sizeAsDrawn];
+                textSize = styledText.sizeAsDrawn()
             }
-            else {
+            else
+            {
                 textSize = myText (sizeWithTextStyle:self.textStyle)
             }
-
+            
             // Add small margin
-            textSize.width += kCPTTextLayerMarginWidth * CPTFloat(2.0);
+            textSize.width += kCPTTextLayerMarginWidth * CGFloat(2.0);
             textSize.width  = ceil(textSize.width);
-
-            textSize.height += kCPTTextLayerMarginWidth * CPTFloat(2.0);
+            
+            textSize.height += kCPTTextLayerMarginWidth * CGFloat(2.0);
             textSize.height  = ceil(textSize.height);
         }
-
+        
         return textSize;
     }
-
+    
     /**
      *  @brief Resizes the layer to fit its contents leaving a narrow margin on all four sides.
      **/
     func sizeToFit()
     {
-        if ( self.text.length > 0 ) {
+        if ( self.text.count > 0 ) {
             let sizeThatFits = self.sizeThatFits()
-            let newBounds    = self.bounds;
+            var newBounds    = self.bounds;
             newBounds.size         = sizeThatFits;
             newBounds.size.width  += self.paddingLeft + self.paddingRight;
             newBounds.size.height += self.paddingTop + self.paddingBottom;
-
+            
             let myMaxSize = self.maximumSize;
             if  myMaxSize.width > CGFloat(0.0) {
-                newBounds.size.width = MIN(newBounds.size.width, myMaxSize.width);
+                newBounds.size.width = min(newBounds.size.width, myMaxSize.width);
             }
-            if ( myMaxSize.height > CPTFloat(0.0)) {
-                newBounds.size.height = MIN(newBounds.size.height, myMaxSize.height);
+            if ( myMaxSize.height > CGFloat(0.0)) {
+                newBounds.size.height = min(newBounds.size.height, myMaxSize.height);
             }
-
+            
             newBounds.size.width  = ceil(newBounds.size.width);
             newBounds.size.height = ceil(newBounds.size.height);
-
+            
             self.bounds = newBounds;
             self.setNeedsLayout()
             self.setNeedsDisplay()
         }
     }
-
+    
 }

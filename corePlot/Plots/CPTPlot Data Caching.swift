@@ -239,15 +239,15 @@ extension CPTPlot {
         let mutableNumbers : CPTMutableNumericData? = nil
         let loadedDataType :CPTNumericDataType?
     
-        if ( [numbers isKindOfClass:[CPTNumericData class]] ) {
-            mutableNumbers = [numbers mutableCopy];
+        if numbers is CPTNumericData  {
+            mutableNumbers = numbers
             // ensure the numeric data is in a supported format; default to double if not already NSDecimal
             if ( !CPTDataTypeEqualToDataType(mutableNumbers.dataType, self.decimalDataType) &&
                  !CPTDataTypeEqualToDataType(mutableNumbers.dataType, self.doubleDataType)) {
                 mutableNumbers.dataType = self.doubleDataType;
             }
         }
-        else if ( [numbers isKindOfClass:[NSData class]] ) {
+        else if numbers is NSData {
             loadedDataType = self.doubleDataType;
             mutableNumbers = [[CPTMutableNumericData alloc] initWithData:numbers dataType:loadedDataType shape:nil];
         }

@@ -19,7 +19,7 @@ class PieChartController: NSViewController , CPTPieChartDataSource{
         // Do view setup here.
 
         // Create graph from theme
-        let newGraph = CPTXYGraph(newFrame: CGRect())
+        let newGraph = CPTXYGraph(frame: CGRect())
         newGraph.applyTheme(CPTTheme(named: kCPTDarkGradientTheme))
 
         let hostingView = self.view as! CPTGraphHostingView
@@ -68,17 +68,17 @@ class PieChartController: NSViewController , CPTPieChartDataSource{
         else {
             switch CPTPieChartField(rawValue: Int(field))! {
             case .SliceWidth:
-                return (self.dataForChart)[Int(recordIndex)] as NSNumber
+                return (self.dataForChart)[Int(recordIndex)] as Int
 
             default:
-                return recordIndex as NSNumber
+                return recordIndex
             }
         }
     }
 
     func dataLabelForPlot(plot: CPTPlot, recordIndex: UInt) -> CPTLayer?
     {
-        let label = CPTTextLayer(text:"\(recordIndex)")
+        let label = CPTTextLayer(text:"\(recordIndex)", style: <#CPTTextStyle?#>)
 
         if let textStyle = label.textStyle?.mutableCopy() as? CPTMutableTextStyle {
             textStyle.color = CPTColor.lightGrayColor()

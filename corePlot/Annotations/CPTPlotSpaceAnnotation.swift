@@ -96,11 +96,11 @@ class CPTPlotSpaceAnnotation: CPTAnnotation {
             
             self.anchorCount = anchorPlotPoint.count
             
-            let decimalPoint = calloc(self.anchorCount, MemoryLayout<CGFloat>.size);
+            var decimalPoint = [CGFloat]()
             for i in 0..<self.anchorCount {
-                decimalPoint[i] = anchorPlotPoint[i]
+                decimalPoint.append(anchorPlotPoint[i])
             }
-            self.decimalAnchor = decimalPoint;
+            self.decimalAnchor = decimalPoint
             
             self.setContentNeedsLayout()
         }

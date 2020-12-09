@@ -8,6 +8,10 @@ public protocol CPTLayerDelegate {
 
 public class CPTLayer : CALayer
 {
+    
+    typealias CPTSublayerArray = [CALayer]
+    
+    
     var paddingLeft : CGFloat         = 0.0
     var paddingTop   : CGFloat        = 0.0
     var paddingRight : CGFloat        = 0.0
@@ -110,10 +114,8 @@ public class CPTLayer : CALayer
     func applyMask(to context: CGContext) {
         
         let mySuperlayer = self.superlayer
-        
         if (mySuperlayer is CPTLayer) == true {
             let sup = superlayer as! CPTLayer
-
             sup.applySublayerMaskToContext(context: context, forSublayer: self, withOffset: CGPoint.zero)
         }
         
@@ -154,9 +156,9 @@ public class CPTLayer : CALayer
         get {
             return super.cornerRadius
         }
-        set(newRadius) {
-            if newRadius != cornerRadius {
-                super.cornerRadius = newRadius
+        set(newValue) {
+            if newValue != cornerRadius {
+                super.cornerRadius = newValue
                 
                 setNeedsDisplay()
                 
@@ -168,10 +170,27 @@ public class CPTLayer : CALayer
     
     public override var anchorPoint: CGPoint {
         get {
+            var adjustedAnchor = super.anchorPoint
+            
+            if (( self.shadow ) != nil) {
+                let sizeOffset   = self.shadowMargin;
+                let selfBounds   = self.bounds;
+                let adjustedSize = CGSize(width: selfBounds.size.width + sizeOffset.width * CGFloat(2.0),
+                                          height: selfBounds.size.height + sizeOffset.height * CGFloat(2.0));
+                
+                if ( selfBounds.size.width > CGFloat(0.0)) {
+                    adjustedAnchor.x = (adjustedAnchor.x - CGFloat(0.5)) * (adjustedSize.width / selfBounds.size.width) + CGFloat(0.5);
+                }
+                if ( selfBounds.size.height > CGFloat(0.0)) {
+                    adjustedAnchor.y = (adjustedAnchor.y - CGFloat(0.5)) * (adjustedSize.height / selfBounds.size.height) + CGFloat(0.5);
+                }
+            }
+            
+            super.anchorPoint = adjustedAnchor
             return super.anchorPoint
         }
-        set(newAnchorPoint) {
-            var newAnchorPoint = newAnchorPoint
+        set(newValue) {
+            var newAnchorPoint = newValue
             if (shadow != nil) {
                 let sizeOffset = shadowMargin
                 let selfBounds = bounds

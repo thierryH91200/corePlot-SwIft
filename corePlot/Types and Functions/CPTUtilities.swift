@@ -9,7 +9,7 @@ import Foundation
 
 class CPTUtilities : NSObject {
     
-    let shared = CPTUtilities()
+    static let shared = CPTUtilities()
     
     //#pragma mark -
     //#pragma mark Convert NSDecimal to primitive types
@@ -853,11 +853,11 @@ class CPTUtilities : NSObject {
     //    return rgbColor;
     //}
     //
-
-
-
-
-
+    
+    
+    
+    
+    
     // MARK: -  Coordinates
     //
     ///**
@@ -869,25 +869,25 @@ class CPTUtilities : NSObject {
     // *  @return The orthogonal CPTCoordinate.
     // **/
     func CPTOrthogonalCoordinate(_ coord: CPTCoordinate) -> CPTCoordinate {
-        return (coord == CPTCoordinate.x ? CPTCoordinate.y : CPTCoordinate.x) as! CPTCoordinate
+        return (coord == CPTCoordinate.x ? CPTCoordinate.y : CPTCoordinate.x)
     }
     //
     //#pragma mark -
     // MARK: Quartz pixel-alignment functions
-    func CPTAlignPointToUserSpace(_ context: CGContext, _ point: CGPoint) -> CGPoint {
-        var point = point
-        // Compute the coordinates of the point in device space.
-        point = context.convertToDeviceSpace(point)
-        
-        // Ensure that coordinates are at exactly the corner
-        // of a device pixel.
-        point.x = CGFloat(round(Double(point.x - CGFloat(0.5))) + CGFloat(0.5))
-        point.y = ceil(point.y) - CGFloat(0.5)
-        
-        // Convert the device aligned coordinate back to user space.
-        return context.convertToUserSpace(point)
-    }
-    
+//    func CPTAlignPointToUserSpace(_ context: CGContext, _ point: CGPoint) -> CGPoint {
+//        var point = point
+//        // Compute the coordinates of the point in device space.
+//        point = context.convertToDeviceSpace(point)
+//
+//        // Ensure that coordinates are at exactly the corner
+//        // of a device pixel.
+//        point.x = CGFloat(round(Double(point.x - CGFloat(0.5))) + CGFloat(0.5))
+//        point.y = ceil(point.y) - CGFloat(0.5)
+//
+//        // Convert the device aligned coordinate back to user space.
+//        return context.convertToUserSpace(point)
+//    }
+//
     
     func CPTAlignSizeToUserSpace(_ context: CGContext, _ size: CGSize) -> CGSize {
         var size = size
@@ -901,7 +901,7 @@ class CPTUtilities : NSObject {
         // Convert back to user space.
         return context.convertToUserSpace(size)
     }
-
+    
     func CPTAlignRectToUserSpace(context: CGContext , rect : CGRect )-> CGRect
     {
         var rect = context.convertToDeviceSpace(rect);
@@ -1040,12 +1040,12 @@ class CPTUtilities : NSObject {
     func  CPTEdgeInsetsMake(top : CGFloat, left: CGFloat , bottom: CGFloat , right: CGFloat ) -> NSEdgeInsets
     {
         var insets = NSEdgeInsets ()
-    
+        
         insets.top    = top;
         insets.left   = left;
         insets.bottom = bottom;
         insets.right  = right;
-    
+        
         return insets;
     }
     //
@@ -1093,7 +1093,7 @@ class CPTUtilities : NSObject {
             return 0.0
         }
     }
-
+    
 }
 
 protocol Signable {
