@@ -53,6 +53,8 @@
 		0333908C2565658900C231D9 /* CPTImage ext2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0333908B2565658900C231D9 /* CPTImage ext2.swift */; };
 		033390902565675F00C231D9 /* CPTImage ext3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0333908F2565675E00C231D9 /* CPTImage ext3.swift */; };
 		033390982565850F00C231D9 /* CPTImagePlatformSpecific.swift in Sources */ = {isa = PBXBuildFile; fileRef = 033390972565850F00C231D9 /* CPTImagePlatformSpecific.swift */; };
+		03361CB12581240D00D2B7F0 /* CPTLegend Drawing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03361CB02581240D00D2B7F0 /* CPTLegend Drawing.swift */; };
+		03361CB525812A2500D2B7F0 /* CPTPlotArea Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03361CB425812A2500D2B7F0 /* CPTPlotArea Layout.swift */; };
 		033667072557DFBD00B109CE /* CPTDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 033667062557DFBD00B109CE /* CPTDefinitions.swift */; };
 		03384E4A255D12A4003C5BD3 /* CPTMutableLineStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03384E49255D12A4003C5BD3 /* CPTMutableLineStyle.swift */; };
 		033BF56B2572D1DF003ECB08 /* CPTAnimationTimingFunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 033BF56A2572D1DF003ECB08 /* CPTAnimationTimingFunction.swift */; };
@@ -167,6 +169,8 @@
 		0333908B2565658900C231D9 /* CPTImage ext2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTImage ext2.swift"; sourceTree = "<group>"; };
 		0333908F2565675E00C231D9 /* CPTImage ext3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTImage ext3.swift"; sourceTree = "<group>"; };
 		033390972565850F00C231D9 /* CPTImagePlatformSpecific.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTImagePlatformSpecific.swift; sourceTree = "<group>"; };
+		03361CB02581240D00D2B7F0 /* CPTLegend Drawing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTLegend Drawing.swift"; sourceTree = "<group>"; };
+		03361CB425812A2500D2B7F0 /* CPTPlotArea Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTPlotArea Layout.swift"; sourceTree = "<group>"; };
 		033667062557DFBD00B109CE /* CPTDefinitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTDefinitions.swift; sourceTree = "<group>"; };
 		03384E49255D12A4003C5BD3 /* CPTMutableLineStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTMutableLineStyle.swift; sourceTree = "<group>"; };
 		033BF56A2572D1DF003ECB08 /* CPTAnimationTimingFunction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTAnimationTimingFunction.swift; sourceTree = "<group>"; };
@@ -262,6 +266,7 @@
 				0333908F2565675E00C231D9 /* CPTImage ext3.swift */,
 				039746A225572B55008CF3E6 /* CPTImage.swift */,
 				03411EC625646EA300CE639F /* CPTImage ext.swift */,
+				032EE506256674B30085F4E1 /* CPTPathExtensions.swift */,
 			);
 			name = CPTImage;
 			sourceTree = "<group>";
@@ -432,7 +437,6 @@
 				03A9CCFD2559A75E0096853D /* Fills */,
 				033390952565847500C231D9 /* iOS Specifics */,
 				033390962565849800C231D9 /* Mac Specific */,
-				032EE506256674B30085F4E1 /* CPTPathExtensions.swift */,
 			);
 			path = Drawing;
 			sourceTree = "<group>";
@@ -464,6 +468,7 @@
 				0320B003255C89FF00D32BF9 /* CPTPlotArea.swift */,
 				0320B007255C8A2800D32BF9 /* CPTLimitBand.swift */,
 				0320B00B255C8A5400D32BF9 /* CPTPlotAreaFrame.swift */,
+				03361CB425812A2500D2B7F0 /* CPTPlotArea Layout.swift */,
 			);
 			path = "Plot Areas";
 			sourceTree = "<group>";
@@ -505,6 +510,7 @@
 			isa = PBXGroup;
 			children = (
 				03C433C6255ED3AA00F00A24 /* CPTLegend.swift */,
+				03361CB02581240D00D2B7F0 /* CPTLegend Drawing.swift */,
 				03C433CA255ED3D600F00A24 /* CPTLegendEntry.swift */,
 			);
 			path = Legends;
@@ -735,6 +741,7 @@
 				03411EC725646EA300CE639F /* CPTImage ext.swift in Sources */,
 				03595088257A8B4A00B12614 /* CPTMutablePlotRange.swift in Sources */,
 				03DDD45625626DC200CAB29B /* CPTAxisLabel.swift in Sources */,
+				03361CB525812A2500D2B7F0 /* CPTPlotArea Layout.swift in Sources */,
 				030A6512255FC5E0002B3D13 /* CPTAnimationCGFloatPeriod.swift in Sources */,
 				0320AFB9255C0EE100D32BF9 /* CPTConstraintsFixed.swift in Sources */,
 				035C8A90256D82C700954017 /* CPTPlot Dtat Source.swift in Sources */,
@@ -763,6 +770,7 @@
 				0332627925738B5400224856 /* CPTAnimationCGRectPeriod.swift in Sources */,
 				03A9CCE22559569E0096853D /* CPTBorderedLayer.swift in Sources */,
 				03073485256815B6008B7413 /* Notification.swift in Sources */,
+				03361CB12581240D00D2B7F0 /* CPTLegend Drawing.swift in Sources */,
 				0320AFE8255C6A1800D32BF9 /* CPTAxisSet.swift in Sources */,
 				0320B010255C8C4300D32BF9 /* CPTPlotGroup.swift in Sources */,
 				03DDD45A25626DF500CAB29B /* CPTAxisTitle.swift in Sources */,

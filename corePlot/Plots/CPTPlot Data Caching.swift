@@ -255,7 +255,7 @@ extension CPTPlot {
             if (((CPTNumberArray *)numbers).count == 0 ) {
                 loadedDataType = self.doubleDataType;
             }
-            else if ( [((NSArray<NSNumber *> *)numbers)[0] isKindOfClass:[NSDecimalNumber class]] ) {
+            else if ( [((NSArray<NSNumber *> *)numbers)[0] is [NSDecimalNumber class]] ) {
                 loadedDataType = self.decimalDataType;
             }
             else {
@@ -265,7 +265,7 @@ extension CPTPlot {
             mutableNumbers = [[CPTMutableNumericData alloc] initWithArray:numbers dataType:loadedDataType shape:nil];
         }
         else {
-            [NSException raise:CPTException format:@"Unsupported number array format"];
+            print("NSException raise:CPTException format:@Unsupported number array format")
         }
     
         return mutableNumbers;
@@ -426,13 +426,10 @@ extension CPTPlot {
     
         return dataType;
     }
-    
-    
-    
-    
+
     func decimalDataType() -> CPTNumericDataType
     {
-        static CPTNumericDataType dataType;
+        static  dataType: CPTNumericDataType
         static dispatch_once_t onceToken = 0;
     
         dispatch_once(&onceToken, ^{

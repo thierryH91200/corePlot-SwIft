@@ -10,7 +10,7 @@ public class CPTLayer : CALayer
 {
     
     typealias CPTSublayerArray = [CALayer]
-    
+    typealias CPTSublayerSet = Set<CALayer>
     
     var paddingLeft : CGFloat         = 0.0
     var paddingTop   : CGFloat        = 0.0
@@ -35,7 +35,6 @@ public class CPTLayer : CALayer
             }
             return margin;
         }
-        
         set {
             _shadowMargin = newValue
         }
@@ -49,7 +48,6 @@ public class CPTLayer : CALayer
     var innerBorderPath  :CGPath?    = nil;
     var identifier  : UUID?         = nil;
     
-    typealias CPTSublayerSet = Set<CALayer>
     
     init ( frame : CGRect) {
         
@@ -73,38 +71,36 @@ public class CPTLayer : CALayer
         self.masksToBounds              = false
     }
     
-    init( layer: CPTLayer) {
-        super.init()
-    }
+    //    init( layer: CPTLayer) {
+    //        super.init()
+    //    }
     
     override init () {
-        super.init ( layer : CALayer())
+        super.init ()
     }
     
-    
-    override init(layer: Any?)
+    override init(layer: Any)
     {
-        if  let theLayer = layer as? CPTLayer {
-            
-            paddingLeft          = theLayer.paddingLeft
-            paddingTop           = theLayer.paddingTop
-            paddingRight         = theLayer.paddingRight
-            paddingBottom        = theLayer.paddingBottom
-            
-            masksToBorder        = theLayer.masksToBorder;
-            shadow               = theLayer.shadow
-            renderingRecursively = theLayer.renderingRecursively
-            graph                = theLayer.graph
-            outerBorderPath      = theLayer.outerBorderPath!
-            innerBorderPath      = theLayer.innerBorderPath!
-            identifier           = theLayer.identifier
-        }
+        let theLayer = layer as! CPTLayer
+        
+        paddingLeft          = theLayer.paddingLeft
+        paddingTop           = theLayer.paddingTop
+        paddingRight         = theLayer.paddingRight
+        paddingBottom        = theLayer.paddingBottom
+        
+        masksToBorder        = theLayer.masksToBorder;
+        shadow               = theLayer.shadow
+        renderingRecursively = theLayer.renderingRecursively
+        graph                = theLayer.graph
+        outerBorderPath      = theLayer.outerBorderPath!
+        innerBorderPath      = theLayer.innerBorderPath!
+        identifier           = theLayer.identifier
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     public override func draw(in context: CGContext) {
         useFastRendering = true
         renderAsVector(in: context)
@@ -114,14 +110,15 @@ public class CPTLayer : CALayer
     func applyMask(to context: CGContext) {
         
         let mySuperlayer = self.superlayer
+        
         if (mySuperlayer is CPTLayer) == true {
             let sup = superlayer as! CPTLayer
             sup.applySublayerMaskToContext(context: context, forSublayer: self, withOffset: CGPoint.zero)
         }
         
-        //        let maskPath = self.maskingPath
+        let maskPath = self.maskingPath
         
-        if let maskPath = self.maskingPath {
+        if  maskPath != nil {
             context.addPath(maskPath!)
             context.clip()
         }
@@ -134,8 +131,7 @@ public class CPTLayer : CALayer
         }
         shadow?.shadowIn(context:  context)
     }
-    
-    
+
     
     //    func maskingPath() -> CGPath? {
     //        if masksToBounds {
@@ -254,7 +250,7 @@ public class CPTLayer : CALayer
             sup.applySublayerMaskToContext(context: context,forSublayer:self, withOffset:CGPoint())
         }
         
-        let maskPath = self.maskingPath()
+        let maskPath = self.maskingPath
         if ( maskPath != nil ) {
             context.addPath(maskPath!);
             context.clip();
@@ -284,13 +280,13 @@ public class CPTLayer : CALayer
         
         let maskPath = self.sublayerMaskingPath;
         
-//        if ( maskPath != nil  ) {
-            context.translateBy(x: -layerOffset.x, y: -layerOffset.y);
-            context.addPath(maskPath());
-            context.clip();
-            context.translateBy(x: layerOffset.x, y: layerOffset.y);
-//        }
+        //        if ( maskPath != nil  ) {
+        context.translateBy(x: -layerOffset.x, y: -layerOffset.y);
+        context.addPath(maskPath());
+        context.clip();
+        context.translateBy(x: layerOffset.x, y: layerOffset.y);
+        //        }
         context.concatenate(sublayerTransform);
     }
-
+    
 }

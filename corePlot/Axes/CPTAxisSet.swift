@@ -5,9 +5,12 @@
 //  Created by thierryH24 on 11/11/2020.
 //
 
-import Cocoa
+import AppKit
 
 class CPTAxisSet: CPTLayer {
+    
+//    var axes = [CPTAxis]()
+//    var borderLineStyle : CPTLineStyle?
     
     override init(frame : CGRect)
     {
@@ -16,14 +19,14 @@ class CPTAxisSet: CPTLayer {
         borderLineStyle = nil;
         
         self.needsDisplayOnBoundsChange = true
-        
     }
     
     override init(layer : Any)
     {
-        super.init(layer: layer)
-        axes = layer.axes
-        borderLineStyle = layer.borderLineStyle
+        super.init(layer: layer  )
+        let theLayer = layer as! CPTAxisSet
+        axes = theLayer.axes
+        borderLineStyle = theLayer.borderLineStyle
         
         self.needsDisplayOnBoundsChange = true
     }
@@ -157,7 +160,6 @@ class CPTAxisSet: CPTLayer {
                 _borderLineStyle = newValue
                 self.setNeedsLayout()
                 self.setNeedsDisplay()
-                
             }
         }
     }

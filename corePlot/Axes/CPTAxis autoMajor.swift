@@ -47,7 +47,7 @@ extension CPTAxis {
                     minorInterval = CGFloat(zero)
                 }
                 
-                let coord = rangeMin;
+                let coord = rangeMin
                 
                 // Set tick locations
                 while (coord >= rangeMax) {

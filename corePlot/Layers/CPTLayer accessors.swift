@@ -10,9 +10,6 @@ import AppKit
 
 extension CPTLayer {
     
-    
-    /// @cond
-    
     func setPaddingLeft(_ newPadding: CGFloat) {
         if newPadding != paddingLeft {
             paddingLeft = newPadding
@@ -41,31 +38,15 @@ extension CPTLayer {
         }
     }
     
-    /** @brief Returns the margins that should be left between the bounds of the receiver and all sublayers.
-     *  @param left The left margin.
-     *  @param top The top margin.
-     *  @param right The right margin.
-     *  @param bottom The bottom margin.
-     **/
-    
-    //Invalid redeclaration of 'sublayerMargin(left:top:right:bottom:)'
-    //    func sublayerMargin(left: inout CGFloat, top: inout CGFloat, right: inout CGFloat , bottom: inout CGFloat)
-    //    {
-    //        left   = self.paddingLeft;
-    //        top    = self.paddingTop
-    //        right  = self.paddingRight
-    //        bottom = self.paddingBottom
-    //    }
     
     // MARK: Sublayers
     func setSublayers(sublayers: CPTSublayerArray)
     {
         super.sublayers = sublayers;
         
-        //        Class layerClass = [CPTLayer class];
         let scale    = self.contentsScale;
         
-        for ( layer in sublayers ) {
+        for layer in sublayers  {
             if layer is CPTLayer {
                 layer.contentsScale = scale
             }
@@ -119,9 +100,6 @@ extension CPTLayer {
     
     // MARK: Masking
     
-    /// @cond
-    
-    // default path is the rounded rect layer bounds
     -(nullable CGPathRef)maskingPath
     {
     if ( self.masksToBounds ) {
@@ -165,35 +143,8 @@ extension CPTLayer {
      *
      *  @param context The graphics context to clip.
      **/
-//    func applyMaskToContext:(nonnull CGContextRef)context
-//    {
-//    CPTLayer *mySuperlayer = (CPTLayer *)self.superlayer;
-//
-//    if ( [mySuperlayer isKindOfClass:[CPTLayer class]] ) {
-//    [mySuperlayer applySublayerMaskToContext:context forSublayer:self.withOffset:CGPointZero];
-//    }
-//
-//    CGPathRef maskPath = self.maskingPath;
-//
-//    if ( maskPath ) {
-//    CGContextAddPath(context, maskPath);
-//    CGContextClip(context);
-//    }
-//    }
     
     /// @cond
-    
-//    override func setNeedsLayout()
-//    {
-//        super.setNeedsLayout()
-//
-//        let theGraph = self.graph
-//
-//        if (( theGraph ) != nil) {
-//            NotificationCenter.default.post(name:.CPTGraphNeedsRedrawNotification,
-//                                            object:theGraph)
-//        }
-//    }
     
     
     
@@ -220,9 +171,8 @@ extension CPTLayer {
                 super.contentsScale = newContentsScale;
                 self.setNeedsDisplay()
                 
-                Class layerClass = [CPTLayer class];
-                for ( CALayer *subLayer in self.sublayers ) {
-                    if ( [subLayer isKindOfClass:layerClass] ) {
+                for subLayer in self.sublayers  {
+                    if ( subLayer is CPTLayer ) {
                         subLayer.contentsScale = newContentsScale;
                     }
                 }
@@ -234,10 +184,9 @@ extension CPTLayer {
     {
         var scale = CGFloat(1.0);
         
-        if ( [CALayer instancesRespondToSelector:@selector(contentsScale)] ) {
+        if ( CALayer instancesRespondToSelector:@selector(contentsScale)] ) {
             scale = super.contentsScale;
         }
-        
         return scale;
     }
     
@@ -253,7 +202,6 @@ extension CPTLayer {
     func setOuterBorderPath(newPath: CGPath)
     {
         if ( newPath != outerBorderPath ) {
-            //            CGPathRelease(outerBorderPath!);
             outerBorderPath = newPath
         }
     }
@@ -265,9 +213,6 @@ extension CPTLayer {
             self.mask?.setNeedsDisplay()
         }
     }
-    
-    
-    
 }
 
 

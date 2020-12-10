@@ -12,10 +12,14 @@ extension CPTGraph {
     
     
     // MARK: - Drawing
-    func layoutAndRenderInContext(context: CGContext)
+    override func layoutAndRenderInContext(context: CGContext)
     {
         self.reloadDataIfNeeded()
-        self.axisSet.axes.makeObjectsPerformSelector(#selector(relabel))
+        
+        
+        for theAxis in self.axisSet().axes {
+            theAxis.relabel()
+        }
         
         if  NSView.instancesRespondToSelector(#selector(effectiveAppearance))  {
             let  oldAppearance = NSAppearance.current
@@ -438,7 +442,9 @@ extension CPTGraph {
     {
         if newPadding != self.paddingLeft  {
             super.paddingLeft = newPadding
-            self.axisSet.axes.makeObjectsPerformSelector( #selector(setNeedsDisplay))
+            for theAxes in self.axisSet().axes{
+                theAxes.setNeedsDisplay()
+            }
         }
     }
     
@@ -446,7 +452,9 @@ extension CPTGraph {
     {
         if ( newPadding != self.paddingRight ) {
             super.paddingRight = newPadding;
-            self.axisSet.axes.makeObjectsPerformSelector(#selector(setNeedsDisplay))
+            for theAxes in self.axisSet().axes{
+                theAxes.setNeedsDisplay()
+            }
         }
     }
     
@@ -454,7 +462,9 @@ extension CPTGraph {
     {
         if ( newPadding != self.paddingTop ) {
             super.paddingTop = newPadding
-            self.axisSet.axes.makeObjectsPerformSelector(#selector(setNeedsDisplay))
+            for theAxes in self.axisSet().axes{
+                theAxes.setNeedsDisplay()
+            }
         }
     }
     
@@ -462,7 +472,9 @@ extension CPTGraph {
     {
         if ( newPadding != self.paddingBottom ) {
             super.paddingBottom = newPadding
-            self.axisSet.axes.makeObjectsPerformSelector(#selector(setNeedsDisplay))
+            for theAxes in self.axisSet().axes{
+                theAxes.setNeedsDisplay()
+            }
         }
     }
     

@@ -8,7 +8,10 @@
 import Foundation
 
 
-extension CGPath {
+
+class CPTPathExtensions
+{
+    static let shared = CPTUtilities()
     
     func CPTCreateRoundedRectPath(rect: CGRect ,cornerRadius: CGFloat ) ->CGPath
     {
@@ -17,8 +20,8 @@ extension CGPath {
             cornerRadius = min(min(cornerRadius, rect.size.width * CGFloat(0.5)), rect.size.height * CGFloat(0.5));
             
             // CGPathCreateWithRoundedRect() is available in macOS 10.9 and iOS 7 but not marked in the header file
-            
-            if  CGPathCreateWithRoundedRect  {
+            if #available(macOS 9, iOS 7.0, *) {
+                
                 return CGPath(roundedRect: rect, cornerWidth: cornerRadius, cornerHeight: cornerRadius, transform: nil);
             }
             else {
@@ -43,6 +46,19 @@ extension CGPath {
             return CGPath(rect: rect, transform: nil)
         }
     }
+    
+    /** @brief Adds a rectangular path with rounded corners to a graphics context.
+     *
+     *  @param context The graphics context.
+     *  @param rect The bounding rectangle for the path.
+     *  @param cornerRadius The radius of the rounded corners.
+     **/
+    func CPTAddRoundedRectPath(context: CGContext , rect: CGRect, cornerRadius: CGFloat)
+    {
+        let path = CPTCreateRoundedRectPath(rect: rect, cornerRadius: cornerRadius);
+        context.addPath(path);
+    }
+    
     
     
 }

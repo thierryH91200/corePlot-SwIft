@@ -78,7 +78,7 @@ public class CPTBorderedLayer: CPTAnnotationHostLayer {
             
             if ( radius > CGFloat(0.0)) {
                 context.beginPath();
-                CPTAddRoundedRectPath(context, layerBounds, radius);
+                CPTPathExtensions.shared.CPTAddRoundedRectPath(context, layerBounds, radius);
                 theLineStyle?.strokePathInContext(context: context)
             }
             else {

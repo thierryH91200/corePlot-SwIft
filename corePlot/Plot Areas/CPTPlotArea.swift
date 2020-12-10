@@ -123,104 +123,7 @@ class CPTPlotArea: CPTAnnotationHostLayer {
 
 
 
-// MARK: Layout
-//
-//    /// @name Layout
-//    /// @{
-//
-//    /**
-//     *  @brief Updates the layout of all sublayers. Sublayers fill the super layer&rsquo;s bounds
-//     *  except for the @ref plotGroup, which will fill the receiver&rsquo;s bounds.
-//     *
-//     *  This is where we do our custom replacement for the Mac-only layout manager and autoresizing mask.
-//     *  Subclasses should override this method to provide a different layout of their own sublayers.
-//     **/
-    override func layoutSublayers()
-    {
-        super.layoutSublayers()
-        
-        let myAxisSet = self.axisSet;
-        let axisSetHasBorder = (myAxisSet.borderLineStyle != nil);
-        
-        let superlayer   = self.superlayer as CALayer
-        var sublayerBounds = [self convertRect:superlayer.bounds fromLayer:superlayer];
-        
-        sublayerBounds.origin = CGPointZero;
-        CGPoint sublayerPosition = [self convertPoint:self.bounds.origin toLayer:superlayer];
-        
-        sublayerPosition = CPTPointMake(-sublayerPosition.x, -sublayerPosition.y);
-        CGRect sublayerFrame = CPTRectMake(sublayerPosition.x, sublayerPosition.y, sublayerBounds.size.width, sublayerBounds.size.height);
-        
-        self.minorGridLineGroup.frame = sublayerFrame;
-        self.majorGridLineGroup.frame = sublayerFrame;
-        if ( axisSetHasBorder ) {
-            self.axisSet.frame = sublayerFrame;
-        }
-        
-        // make the plot group the same size as the plot area to clip the plots
-        CPTPlotGroup *thePlotGroup = self.plotGroup;
-        
-        if ( thePlotGroup ) {
-            CGSize selfBoundsSize = self.bounds.size;
-            thePlotGroup.frame = CPTRectMake(0.0, 0.0, selfBoundsSize.width, selfBoundsSize.height);
-        }
-        
-        // the label and title groups never have anything to draw; make them as small as possible to save memory
-        sublayerFrame             = CPTRectMake(sublayerPosition.x, sublayerPosition.y, 0.0, 0.0);
-        self.axisLabelGroup.frame = sublayerFrame;
-        self.axisTitleGroup.frame = sublayerFrame;
-        if ( !axisSetHasBorder ) {
-            myAxisSet.frame = sublayerFrame;
-            [myAxisSet layoutSublayers];
-        }
-    }
-//
-//    /// @}
-//
-//    /// @cond
-//
-    func sublayersExcludedFromAutomaticLayout()->CPTSublayerSet
-    {
-        CPTGridLineGroup minorGrid = self.minorGridLineGroup;
-        CPTGridLineGroup majorGrid = self.majorGridLineGroup;
-        CPTAxisSet theAxisSet      = self.axisSet;
-        CPTPlotGroup thePlotGroup  = self.plotGroup;
-        CPTAxisLabelGroup labels   = self.axisLabelGroup;
-        CPTAxisLabelGroup titles   = self.axisTitleGroup;
-        
-        if ( minorGrid || majorGrid || theAxisSet || thePlotGroup || labels || titles ) {
-            CPTMutableSublayerSet *excludedSublayers = [super.sublayersExcludedFromAutomaticLayout mutableCopy];
-            if ( !excludedSublayers ) {
-                excludedSublayers = [NSMutableSet set];
-            }
-            
-            if ( minorGrid ) {
-                [excludedSublayers addObject:minorGrid];
-            }
-            if ( majorGrid ) {
-                [excludedSublayers addObject:majorGrid];
-            }
-            if ( theAxisSet ) {
-                [excludedSublayers addObject:theAxisSet];
-            }
-            if ( thePlotGroup ) {
-                [excludedSublayers addObject:thePlotGroup];
-            }
-            if ( labels ) {
-                [excludedSublayers addObject:labels];
-            }
-            if ( titles ) {
-                [excludedSublayers addObject:titles];
-            }
-            
-            return excludedSublayers;
-        }
-        else {
-            return super.sublayersExcludedFromAutomaticLayout;
-        }
-    }
-//
-//    /// @endcond
+
 //
 //    #pragma mark -
 //    #pragma mark Layer ordering
@@ -317,42 +220,41 @@ class CPTPlotArea: CPTAnnotationHostLayer {
         }
         return idx;
     }
-//
-//    /// @endcond
-//
-//    #pragma mark -
-//    #pragma mark Axis set layer management
+    
+    
+    
+// MARK: - mark Axis set layer management
 //
 //    /** @brief Checks for the presence of the specified layer group and adds or removes it as needed.
 //     *  @param layerType The layer type being updated.
 //     **/
     func updateAxisSetLayersForType(layerType: CPTGraphLayerType)
     {
-        var needsLayer        = false
-        var theAxisSet = self.axisSet;
+        var needsLayer = false
+        var theAxisSet = self.axisSet
         
-        for axis in theAxisSet?.axes {
+        for axis in theAxisSet!.axes {
             switch ( layerType ) {
-            case CPTGraphLayerTypeMinorGridLines:
-                if ( axis.minorGridLineStyle ) {
+            case .minorGridLines:
+                if (( axis.minorGridLineStyle ) != nil) {
                     needsLayer = true
                 }
                 break;
                 
-            case CPTGraphLayerTypeMajorGridLines:
-                if ( axis.majorGridLineStyle ) {
+            case .majorGridLines:
+                if (( axis.majorGridLineStyle ) != nil) {
                     needsLayer = true
                 }
                 break;
                 
-            case CPTGraphLayerTypeAxisLabels:
+            case .axisLabels:
                 if ( axis.axisLabels.count > 0 ) {
                     needsLayer = true
                 }
                 break;
                 
-            case CPTGraphLayerTypeAxisTitles:
-                if ( axis.axisTitle ) {
+            case .axisTitles:
+                if (( axis.axisTitle ) != nil) {
                     needsLayer = true
                 }
                 break;
@@ -363,23 +265,23 @@ class CPTPlotArea: CPTAnnotationHostLayer {
         }
         
         if needsLayer == true {
-            self.setAxisSetLayersForType(layerType)
+            self.setAxisSetLayersForType(layerType: layerType)
         }
         else {
             switch ( layerType ) {
-            case CPTGraphLayerType.MinorGridLines:
+            case .minorGridLines:
                 self.minorGridLineGroup = nil;
                 break;
                 
-            case CPTGraphLayerTypeMajorGridLines:
+            case .majorGridLines:
                 self.majorGridLineGroup = nil;
                 break;
                 
-            case CPTGraphLayerTypeAxisLabels:
+            case .axisLabels:
                 self.axisLabelGroup = nil;
                 break;
                 
-            case CPTGraphLayerTypeAxisTitles:
+            case .axisTitles:
                 self.axisTitleGroup = nil;
                 break;
                 
@@ -396,32 +298,28 @@ class CPTPlotArea: CPTAnnotationHostLayer {
     {
         switch ( layerType ) {
         case .minorGridLines:
-            if ( !self.minorGridLineGroup ) {
-                CPTGridLineGroup *newGridLineGroup = [[CPTGridLineGroup alloc] initWithFrame:self.bounds];
-                self.minorGridLineGroup = newGridLineGroup;
+            if ( self.minorGridLineGroup == nil ) {
+                self.minorGridLineGroup = CPTGridLineGroup(frame: self.bounds)
             }
-            break;
+            break
             
         case .majorGridLines:
-            if ( !self.majorGridLineGroup ) {
-                CPTGridLineGroup *newGridLineGroup = [[CPTGridLineGroup alloc] initWithFrame:self.bounds];
-                self.majorGridLineGroup = newGridLineGroup;
+            if ( (self.majorGridLineGroup == nil) ) {
+                self.majorGridLineGroup = CPTGridLineGroup(frame:self.bounds)
             }
-            break;
+            break
             
         case .axisLabels:
-            if ( !self.axisLabelGroup ) {
-                CPTAxisLabelGroup *newAxisLabelGroup = [[CPTAxisLabelGroup alloc] initWithFrame:self.bounds];
-                self.axisLabelGroup = newAxisLabelGroup;
+            if ( (self.axisLabelGroup == nil) ) {
+                self.axisLabelGroup = CPTAxisLabelGroup(frame:self.bounds)
             }
-            break;
+            break
             
         case .axisTitles:
-            if ( !self.axisTitleGroup ) {
-                CPTAxisLabelGroup *newAxisTitleGroup = [[CPTAxisLabelGroup alloc] initWithFrame:self.bounds];
-                self.axisTitleGroup = newAxisTitleGroup;
+            if ( (self.axisTitleGroup == nil) ) {
+                self.axisTitleGroup = CPTAxisLabelGroup(frame:self.bounds)
             }
-            break;
+            break
             
         default:
             break;
@@ -433,50 +331,49 @@ class CPTPlotArea: CPTAnnotationHostLayer {
 //     *  @param layerType The layer type being updated.
 //     *  @return The sublayer index for the given layer type.
 //     **/
-//    -(unsigned)sublayerIndexForAxis:(nonnull CPTAxis *)axis layerType:(CPTGraphLayerType)layerType
-//    {
-//        unsigned idx = 0;
-//
-//        for ( CPTAxis *currentAxis in self.axisSet.axes ) {
-//            if ( currentAxis == axis ) {
-//                break;
-//            }
-//
-//            switch ( layerType ) {
-//                case CPTGraphLayerTypeMinorGridLines:
-//                    if ( currentAxis.minorGridLineStyle ) {
-//                        idx++;
-//                    }
-//                    break;
-//
-//                case CPTGraphLayerTypeMajorGridLines:
-//                    if ( currentAxis.majorGridLineStyle ) {
-//                        idx++;
-//                    }
-//                    break;
-//
-//                case CPTGraphLayerTypeAxisLabels:
-//                    if ( currentAxis.axisLabels.count > 0 ) {
-//                        idx++;
-//                    }
-//                    break;
-//
-//                case CPTGraphLayerTypeAxisTitles:
-//                    if ( currentAxis.axisTitle ) {
-//                        idx++;
-//                    }
-//                    break;
-//
-//                default:
-//                    break;
-//            }
-//        }
-//
-//        return idx;
-//    }
-//
-//    #pragma mark -
-//    #pragma mark Event Handling
+    func sublayerIndexForAxis(axis: CPTAxis , layerType:CPTGraphLayerType)->Int
+    {
+        var idx = 0;
+        
+        for currentAxis in self.axisSet!.axes  {
+            if ( currentAxis == axis ) {
+                break;
+            }
+            
+            switch ( layerType ) {
+            case .minorGridLines:
+                if (( currentAxis.minorGridLineStyle ) != nil) {
+                    idx += 1
+                }
+                break;
+                
+            case .majorGridLines:
+                if (( currentAxis.majorGridLineStyle ) != nil) {
+                    idx += 1
+                }
+                break;
+                
+            case .axisLabels:
+                if ( currentAxis.axisLabels.count > 0 ) {
+                    idx += 1
+                }
+                break;
+                
+            case .axisTitles:
+                if (( currentAxis.axisTitle ) != nil) {
+                    idx += 1
+                }
+                break;
+                
+            default:
+                break;
+            }
+        }
+        
+        return idx;
+    }
+
+// MARK: - Event Handling
 //
 //    /// @name User Interaction
 //    /// @{
@@ -599,8 +496,9 @@ class CPTPlotArea: CPTAnnotationHostLayer {
 //
 //    /// @}
 //
-//    #pragma mark -
-//    #pragma mark Accessors
+
+    
+    // MARK: - Accessors
 //
 //    /// @cond
 //

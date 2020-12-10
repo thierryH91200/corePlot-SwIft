@@ -93,6 +93,7 @@ extension CPTLayer {
         // render sublayers
         let sublayersCopy = self.sublayers
         for currentSublayer in sublayersCopy! {
+            var currentSublayer = currentSublayer
             context.saveGState();
             
             // Shift origin of context to match starting coordinate of sublayer

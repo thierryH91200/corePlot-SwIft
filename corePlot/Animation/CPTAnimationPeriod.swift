@@ -9,6 +9,14 @@ import AppKit
 
 class CPTAnimationPeriod: NSObject {
     
+    static let shared = CPTAnimationPeriod()
+    
+    
+    override init() {
+        
+    }
+
+    
     var startValue = CGFloat(0)
     var endValue = CGFloat(0)
     var duration = CGFloat(0)
@@ -18,18 +26,31 @@ class CPTAnimationPeriod: NSObject {
     
     init ( startValue:CGFloat , endValue: CGFloat , ofClass:(Class)class duration:CGFloat, aDelay:CGFloat)
     {
-        initWithStartValue(aStartValue, endValue:anEndValue ofClass:class, duration: aDuration ,withDelay:aDelay)
+        initWithStartValue(aStartValue, endValue anEndValue, ofClass:class, duration: aDuration ,withDelay:aDelay)
     }
     
     
-    func periodWithStartNumber( aStartNumber: CGFloat,endNumber: CGFloat, duration: CGFloat, aDuration :CGFloat)
+    func periodWithStartNumber( aStartNumber: CGFloat,endNumber: CGFloat, duration: CGFloat, aDuration :CGFloat) -> Self
     {
-    return (CPTAnimationNSNumberPeriod(periodWithStartValue:aStartNumber
-    endValue:anEndNumber
-    ofClass:[NSNumber class]
-    duration:aDuration
-    withDelay:aDelay])
+        return (CPTAnimationNSNumberPeriod(startValue:aStartNumber,
+                                           endValue:endNumber,
+                                           ofClass: CGFloat.self,
+                                           duration:aDuration,
+                                           withDelay:aDelay)
     }
     
-    
+    class func period(withStart aStartPlotRange: CPTPlotRange, end anEndPlotRange: CPTPlotRange, duration aDuration: CGFloat, withDelay aDelay: CGFloat) -> Self {
+        
+        var startRange = aStartPlotRange
+        if aStartPlotRange.locationDouble.isNaN || aStartPlotRange.lengthDouble.isNaN {
+            startRange = nil
+        }
+
+        return CPTAnimationPlotRangePeriod.period(
+            withStart: startRange ,
+            end: anEndPlotRange ,
+            ofClass: CPTPlotRange.self,
+            duration: aDuration,
+            withDelay: aDelay)
+    }
 }

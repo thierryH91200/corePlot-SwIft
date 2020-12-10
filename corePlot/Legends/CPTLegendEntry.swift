@@ -11,12 +11,9 @@ class CPTLegendEntry: NSObject {
     
     var plot : CPTPlot?
     var  index = 0
-    
     var textStyle: CPTTextStyle?
-    
     var row = 0
     var column = 0
-//    var titleSize =  CGSize()
     
     override init()
     {
@@ -32,42 +29,45 @@ class CPTLegendEntry: NSObject {
     {
         let thePlot = self.plot
         
-        return (thePlot?.titleForLegendEntryAtIndex(idx:self))!
+        return (thePlot?.titleForLegendEntryAtIndex(idx:self.index))!
     }
     
     func attributedTitle() -> NSAttributedString
     {
-        let thePlot = self.plot;
-        
-        return [thePlot attributedTitleForLegendEntryAtIndex:self.index];
+        return (self.plot?.attributedTitleForLegendEntryAtIndex(idx: self.index))!
     }
     
-    func titleSize() -> CGSize
-    {
-        var theTitleSize = CGSize()
-        let styledTitle = self.attributedTitle
-        
-        if ( styledTitle().length > 0 ) {
-            theTitleSize = styledTitle.sizeAsDrawn
-        }
-        else {
-            var theTitle = styledTitle().string;
-            if theTitle != "" {
-                theTitle = self.title();
+    
+    var _titleSize =  CGSize()
+    var titleSize : CGSize {
+        get {
+            var titleSize = CGSize()
+            let styledTitle = self.attributedTitle
+            
+            if ( styledTitle().length > 0 ) {
+                titleSize = styledTitle.sizeAsDrawn
+            }
+            else {
+                var theTitle = styledTitle.string;
+                if theTitle != "" {
+                    theTitle = self.title();
+                }
+                
+                let theTextStyle = self.textStyle
+                
+                if ( theTitle && theTextStyle ) {
+                    theTitleSize = theTitle.sizeWithTextStyle(theTextStyle)
+                }
             }
             
-            let theTextStyle = self.textStyle
+            titleSize.width  = ceil(titleSize.width)
+            titleSize.height = ceil(titleSize.height)
             
-            if ( theTitle && theTextStyle ) {
-                theTitleSize = theTitle.sizeWithTextStyle:theTextStyle];
-            }
+            return titleSize;
         }
-        
-        theTitleSize.width  = ceil(theTitleSize.width)
-        theTitleSize.height = ceil(theTitleSize.height)
-        
-        return theTitleSize;
+        set { }
     }
+
     
     func drawTitle(in rect: CGRect, in context: CGContext, scale: CGFloat) {
         
@@ -76,9 +76,9 @@ class CPTLegendEntry: NSObject {
         let theTitleSize = self.titleSize;
         
         
-        if theTitleSize.height < textRect.size.height {
-            let offset = (textRect.size.height - theTitleSize.height) / CPTFloat(2.0);
-            if ( scale == CPTFloat(1.0)) {
+        if theTitleSize().height < textRect.size.height {
+            var offset = (textRect.size.height - theTitleSize.height) / CGFloat(2.0);
+            if ( scale == CGFloat(1.0)) {
                 offset = round(offset);
             }
             else {
@@ -94,7 +94,7 @@ class CPTLegendEntry: NSObject {
         let styledTitle = self.attributedTitle;
         
         if ((styledTitle.length > 0) && styledTitle.respondsToSelector(#selector(drawInRect:) ) {
-            styledTitle.drawInRect(textRect,inContext:context)
+            styledTitle.drawInRect(rect: textRect,context:context)
         }
         else {
             let theTitle = styledTitle.string;

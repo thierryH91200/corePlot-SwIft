@@ -88,8 +88,6 @@ public class CPTAnnotationHostLayer: CPTLayer {
     public override func layoutSublayers()
     {
         super.layoutSublayers()
-        //        self.annotations.    makeObjectsPerformSelector:@selector(positionContentLayer)
-        
         for annotation in annotations {
             annotation.positionContentLayer()
         }

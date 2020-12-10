@@ -8,24 +8,38 @@
 import Cocoa
 
 class CPTXYAxisSet: CPTAxisSet {
+    
     var xAxis: CPTXYAxis
     var yAxis: CPTXYAxis
     
     // MARK: - Init/Dealloc
-
-    override init(frame : CGRect)
-    {
-        super.init(frame:frame)
-        let xAxis = CPTXYAxis(frame:frame)
-        xAxis.coordinate    = CPTCoordinate.x;
+    
+    override init(frame newFrame: CGRect) {
+        super.init(frame: newFrame)
+        let xAxis = CPTXYAxis(layer: newFrame)
+        xAxis.coordinate = CPTCoordinate.x
         xAxis.tickDirection = CPTSign.negative
-        
-        let yAxis = CPTXYAxis( frame : frame)
-        yAxis.coordinate    = CPTCoordinate.Y
+
+        let yAxis = CPTXYAxis(layer: newFrame)
+        yAxis.coordinate = CPTCoordinate.y
         yAxis.tickDirection = CPTSign.negative
-        
-        self.axes = [xAxis, yAxis]
+
+            axes = [xAxis, yAxis]
     }
+
+//    override init(frame : CGRect)
+//    {
+//        super.init(frame:frame)
+//        let xAxis = CPTXYAxis(frame:frame)
+//        xAxis.coordinate    = CPTCoordinate.x
+//        xAxis.tickDirection = CPTSign.negative
+//
+//        let yAxis = CPTXYAxis( frame : frame)
+//        yAxis.coordinate    = CPTCoordinate.Y
+//        yAxis.tickDirection = CPTSign.negative
+//
+//        self.axes = [xAxis, yAxis]
+//    }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -43,7 +57,7 @@ class CPTXYAxisSet: CPTAxisSet {
             super.renderAsVectorInContext(context: context)
 
             let superlayer = self.superlayer;
-            let borderRect   = CPTAlignRectToUserSpace(context, [self convertRect:superlayer.bounds fromLayer:superlayer]);
+            let borderRect   = CPTAlignRectToUserSpace(context, self.convertRect(superlayer.bounds, fromLayer:superlayer)
 
             theLineStyle?.setLineStyleInContext(context: context)
 
@@ -51,21 +65,20 @@ class CPTXYAxisSet: CPTAxisSet {
 
             if ( radius! > CGFloat(0.0)) {
                 context.beginPath();
-                CPTAddRoundedRectPath(context, borderRect, radius);
+                CPTPathExtensions.shared.CPTAddRoundedRectPath(context, borderRect, radius);
 
-                theLineStyle?.strokePathInContext(context]
+                theLineStyle?.strokePathInContext(context: context)
                 
             }
             else {
-                theLineStyle.strokeRect(borderRect:  rect, :context)
+                theLineStyle.strokeRect(borderRect,context :context)
             }
         }
     }
 
     /// @endcond
 
-    #pragma mark -
-    #pragma mark Layout
+    // MARK: - mark Layout
 
     /// @name Layout
     /// @{
@@ -76,21 +89,21 @@ class CPTXYAxisSet: CPTAxisSet {
      *  This is where we do our custom replacement for the Mac-only layout manager and autoresizing mask.
      *  Subclasses should override this method to provide a different layout of their own sublayers.
      **/
-    -(void)layoutSublayers
+    override func layoutSublayers()
     {
         // If we have a border, the default layout will work. Otherwise, the axis set layer has zero size
         // and we need to calculate the correct size for the axis layers.
-        if ( self.borderLineStyle ) {
-            [super layoutSublayers];
+        if (( self.borderLineStyle ) != nil) {
+            super.layoutSublayers()
         }
         else {
-            CALayer *plotAreaFrame = self.superlayer.superlayer;
+            let plotAreaFrame = self.superlayer?.superlayer;
             CGRect sublayerBounds  = [self convertRect:plotAreaFrame.bounds fromLayer:plotAreaFrame];
-            sublayerBounds.origin = CGPointZero;
+            sublayerBounds.origin = CGPoint()
             CGPoint sublayerPosition = [self convertPoint:self.bounds.origin toLayer:plotAreaFrame];
             sublayerPosition = CGPointMake(-sublayerPosition.x, -sublayerPosition.y);
             CGRect subLayerFrame = CGRectMake(sublayerPosition.x, sublayerPosition.y, sublayerBounds.size.width, sublayerBounds.size.height);
-
+            
             CPTSublayerSet *excludedSublayers = self.sublayersExcludedFromAutomaticLayout;
             Class layerClass                  = [CPTLayer class];
             for ( CALayer *subLayer in self.sublayers ) {
@@ -103,26 +116,19 @@ class CPTXYAxisSet: CPTAxisSet {
 
     /// @}
 
-    #pragma mark -
-    #pragma mark Accessors
+    // MARK: - Accessors
+    
+//    var xAxis: GCControllerAxisInput {
+//        return (axis(forCoordinate: CPTCoordinateX, atIndex: 0) as? CPTXYAxis)!
+//    }
+//
+//    var yAxis: GCControllerAxisInput {
+//        return (axis(forCoordinate: CPTCoordinateY, atIndex: 0) as? CPTXYAxis)!
+//    }
 
-    /// @cond
-
-    -(nullable CPTXYAxis *)xAxis
-    {
-        return (CPTXYAxis *)[self axisForCoordinate:CPTCoordinateX atIndex:0];
-    }
-
-    -(nullable CPTXYAxis *)yAxis
-    {
-        return (CPTXYAxis *)[self axisForCoordinate:CPTCoordinateY atIndex:0];
-    }
-
-    /// @endcond
-
-    @end
 
 }
+
 
 
 
