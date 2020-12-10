@@ -7,6 +7,16 @@
 
 import AppKit
  
+ 
+ 
+ enum CPTLegendSwatchLayout : Int {
+     case left ///< Lay out the swatch to the left side of the title.
+     case right ///< Lay out the swatch to the right side of the title.
+     case top ///< Lay out the swatch above the title.
+     case bottom ///< Lay out the swatch below the title.
+ }
+
+ 
  @objc public protocol CPTLegendDelegate: CPTLayerDelegate {
 
 
@@ -25,189 +35,50 @@ import AppKit
     func legend( legend: CPTLegend, legendEntryForPlot plot: CPTPlot, touchUpAtIndex:Int, withEvent: CPTNativeEvent)
 }
     
-public class CPTLegend: CPTBorderedLayer {
+ public class CPTLegend: CPTBorderedLayer {
     
+    
+    var textStyle = CPTTextStyle()
+    var swatchSize = CGSize()
+    var swatchBorderLineStyle = CPTLineStyle()
+    var swatchCornerRadius = CGFloat(0)
+    var swatchFill = CPTFill()
+    
+    var entryBorderLineStyle = CPTLineStyle()
+    var entryCornerRadius = CGFloat(0)
+    var entryFill = CPTFill()
+    var entryPaddingLeft  = CGFloat(0)
+    var entryPaddingTop  = CGFloat(0)
+    var entryPaddingRight = CGFloat(0)
+    var entryPaddingBottom = CGFloat(0)
+    
+    // @name Layout
+    var layoutChanged = false
+    var numberOfRows = 0
+    var numberOfColumns = 0
+    var equalRows = false
+    var equalColumns = false;
+    var rowHeights  = [Int]()
+    var rowHeightsThatFit  = [Int]()
+    var columnWidths = CGFloat(0)
+    var columnWidthsThatFit = [Int]()
+    var columnMargin = CGFloat(0)
+    var rowMargin = CGFloat(0)
+    var titleOffset = CGFloat(0)
+    var swatchLayout = CPTLegendSwatchLayout(rawValue: 0)
+    
+    
+    var plots = [CPTPlot]()
+    var legendEntries [LegendEntry]()Array
+    var rowHeightsThatFit = [CGFLoat]()
+    var columnWidthsThatFit = [CGFLoat]()
+    var layoutChanged= false
+    var pointingDeviceDownEntry : CPTLegendEntry
 
-//    @property (nonatomic, readwrite, strong, nonnull) CPTMutablePlotArray *plots;
-//@property (nonatomic, readwrite, strong, nonnull) CPTMutableLegendEntryArray *legendEntries;
-//@property (nonatomic, readwrite, strong, nullable) CPTNumberArray *rowHeightsThatFit;
-//@property (nonatomic, readwrite, strong, nullable) CPTNumberArray *columnWidthsThatFit;
-//@property (nonatomic, readwrite, assign) BOOL layoutChanged;
-//@property (nonatomic, readwrite, cpt_weak_property, nullable) CPTLegendEntry *pointingDeviceDownEntry;
 
-
-//
-//    /** @property nullable CPTTextStyle *textStyle
-//     *  @brief The text style used to draw all legend entry titles.
-//     **/
-//    @synthesize textStyle;
-//
-//    /** @property CGSize swatchSize
-//     *  @brief The size of the graphical swatch.
-//     *  If swatchSize is (@num{0.0}, @num{0.0}), swatches will be drawn using a square @num{150%} of the text size on a side.
-//     **/
-//    @synthesize swatchSize;
-//
-//    /** @property nullable CPTLineStyle *swatchBorderLineStyle
-//     *  @brief The line style for the border drawn around each swatch.
-//     *  If @nil (the default), no border is drawn.
-//     **/
-//    @synthesize swatchBorderLineStyle;
-//
-//    /** @property CGFloat swatchCornerRadius
-//     *  @brief The corner radius for each swatch. Default is @num{0.0}.
-//     *  @ingroup legendAnimation
-//     **/
-//    @synthesize swatchCornerRadius;
-//
-//    /** @property nullable CPTFill *swatchFill
-//     *  @brief The background fill drawn behind each swatch.
-//     *  If @nil (the default), no fill is drawn.
-//     **/
-//    @synthesize swatchFill;
-//
-//    /** @property nullable CPTLineStyle *entryBorderLineStyle
-//     *  @brief The line style for the border drawn around each legend entry.
-//     *  If @nil (the default), no border is drawn.
-//     **/
-//    @synthesize entryBorderLineStyle;
-//
-//    /** @property CGFloat entryCornerRadius
-//     *  @brief The corner radius for the border around each legend entry. Default is @num{0.0}.
-//     *  @ingroup legendAnimation
-//     **/
-//    @synthesize entryCornerRadius;
-//
-//    /** @property nullable CPTFill *entryFill
-//     *  @brief The background fill drawn behind each legend entry.
-//     *  If @nil (the default), no fill is drawn.
-//     **/
-//    @synthesize entryFill;
-//
-//    /** @property CGFloat entryPaddingLeft
-//     *  @brief Amount to inset the swatch and title from the left side of the legend entry.
-//     **/
-//    @synthesize entryPaddingLeft;
-//
-//    /** @property CGFloat entryPaddingTop
-//     *  @brief Amount to inset the swatch and title from the top of the legend entry.
-//     **/
-//    @synthesize entryPaddingTop;
-//
-//    /** @property CGFloat entryPaddingRight
-//     *  @brief Amount to inset the swatch and title from the right side of the legend entry.
-//     **/
-//    @synthesize entryPaddingRight;
-//
-//    /** @property CGFloat entryPaddingBottom
-//     *  @brief Amount to inset the swatch and title from the bottom of the legend entry.
-//     **/
-//    @synthesize entryPaddingBottom;
-//
-//    /** @property NSUInteger numberOfRows
-//     *  @brief The desired number of rows of legend entries.
-//     *  If zero (@num{0}) (the default), the number of rows will be automatically determined.
-//     *  If both @ref numberOfRows and @ref numberOfColumns are greater than zero but their product is less than
-//     *  the total number of legend entries, some entries will not be shown.
-//     **/
-//    @synthesize numberOfRows;
-//
-//    /** @property NSUInteger numberOfColumns
-//     *  @brief The desired number of columns of legend entries.
-//     *  If zero (@num{0}) (the default), the number of columns will be automatically determined.
-//     *  If both @ref numberOfRows and @ref numberOfColumns are greater than zero but their product is less than
-//     *  the total number of legend entries, some entries will not be shown.
-//     **/
-//    @synthesize numberOfColumns;
-//
-//    /** @property BOOL equalRows
-//     *  @brief If @YES (the default) each row of legend entries will have the same height, otherwise rows will be sized to best fit the entries.
-//     **/
-//    @synthesize equalRows;
-//
-//    /** @property BOOL equalColumns
-//     *  @brief If @YES each column of legend entries will have the same width, otherwise columns will be sized to best fit the entries.
-//     *  Default is @NO, meaning columns will be sized for the best fit.
-//     **/
-//    @synthesize equalColumns;
-//
-//    /** @property nullable CPTNumberArray *rowHeights
-//     *  @brief The desired height of each row of legend entries, including the swatch and title.
-//     *  Each element in this array should be an NSNumber representing the height of the corresponding row in device units.
-//     *  Rows are numbered from top to bottom starting from zero (@num{0}). If @nil, all rows will be sized automatically.
-//     *  If there are more rows in the legend than specified in this array, the remaining rows will be sized automatically.
-//     *  Default is @nil.
-//     **/
-//    @synthesize rowHeights;
-//
-//    /** @property nullable CPTNumberArray *rowHeightsThatFit
-//     *  @brief The computed best-fit height of each row of legend entries, including the swatch and title.
-//     *  Each element in this array is an NSNumber representing the height of the corresponding row in device units.
-//     *  Rows are numbered from top to bottom starting from zero (@num{0}).
-//     **/
-//    @synthesize rowHeightsThatFit;
-//
-//    /** @property nullable CPTNumberArray *columnWidths
-//     *  @brief The desired width of each column of legend entries, including the swatch, title, and title offset.
-//     *  Each element in this array should be an NSNumber representing the width of the corresponding column in device units.
-//     *  Columns are numbered from left to right starting from zero (@num{0}). If @nil, all columns will be sized automatically.
-//     *  If there are more columns in the legend than specified in this array, the remaining columns will be sized automatically.
-//     *  Default is @nil.
-//     **/
-//    @synthesize columnWidths;
-//
-//    /** @property nullable CPTNumberArray *columnWidthsThatFit
-//     *  @brief The computed best-fit width of each column of legend entries, including the swatch, title, and title offset.
-//     *  Each element in this array is an NSNumber representing the width of the corresponding column in device units.
-//     *  Columns are numbered from left to right starting from zero (@num{0}).
-//     **/
-//    @synthesize columnWidthsThatFit;
-//
-//    /** @property CGFloat columnMargin
-//     *  @brief The margin between columns, specified in device units. Default is @num{10.0}.
-//     **/
-//    @synthesize columnMargin;
-//
-//    /** @property CGFloat rowMargin
-//     *  @brief The margin between rows, specified in device units. Default is @num{5.0}.
-//     **/
-//    @synthesize rowMargin;
-//
-//    /** @property CGFloat titleOffset
-//     *  @brief The distance between each swatch and its title, specified in device units. Default is @num{5.0}.
-//     **/
-//    @synthesize titleOffset;
-//
-//    /** @property CPTLegendSwatchLayout swatchLayout
-//     *  @brief Where to draw the legend swatch relative to the title. Default is #CPTLegendSwatchLayoutLeft.
-//     **/
-//    @synthesize swatchLayout;
-//
-//    /** @internal
-//     *  @property nonnull CPTMutablePlotArray *plots
-//     *  @brief An array of all plots associated with the legend.
-//     **/
-//    @synthesize plots;
-//
-//    /** @internal
-//     *  @property nonnull CPTMutableLegendEntryArray *legendEntries
-//     *  @brief An array of all legend entries.
-//     **/
-//    @synthesize legendEntries;
-//
-//    /** @property  BOOL layoutChanged
-//     *  @brief If @YES, the legend layout needs to recalculated.
-//     **/
-//    @synthesize layoutChanged;
-//
-//    /** @internal
-//     *  @property nullable CPTLegendEntry *pointingDeviceDownEntry
-//     *  @brief The legend entry that was selected on the pointing device down event.
-//     **/
-//    @synthesize pointingDeviceDownEntry;
 //
 //    #pragma mark -
-//    #pragma mark Factory Methods
+// MARK: Factory Methods
 //
 //    /** @brief Creates and returns a new CPTLegend instance with legend entries for each plot in the given array.
 //     *  @param newPlots An array of plots.
@@ -227,91 +98,54 @@ public class CPTLegend: CPTBorderedLayer {
 //        return [[self alloc] initWithGraph:graph];
 //    }
 //
-//    #pragma mark -
-//    #pragma mark Init/Dealloc
-//
-//    /// @name Initialization
-//    /// @{
-//
-//    /** @brief Initializes a newly allocated CPTLegend object with the provided frame rectangle.
-//     *
-//     *  This is the designated initializer. The initialized layer will have the following properties:
-//     *  - @ref layoutChanged = @YES
-//     *  - @ref textStyle = default text style
-//     *  - @ref swatchSize = (@num{0.0}, @num{0.0})
-//     *  - @ref swatchBorderLineStyle = @nil
-//     *  - @ref swatchCornerRadius = @num{0}
-//     *  - @ref swatchFill = @nil
-//     *  - @ref entryBorderLineStyle = @nil
-//     *  - @ref entryCornerRadius = @num{0}
-//     *  - @ref entryFill = @nil
-//     *  - @ref entryPaddingLeft = @num{0}
-//     *  - @ref entryPaddingTop = @num{0}
-//     *  - @ref entryPaddingRight = @num{0}
-//     *  - @ref entryPaddingBottom = @num{0}
-//     *  - @ref numberOfRows = @num{0}
-//     *  - @ref numberOfColumns = @num{0}
-//     *  - @ref equalRows = @YES
-//     *  - @ref equalColumns = @NO
-//     *  - @ref rowHeights = @nil
-//     *  - @ref rowHeightsThatFit = @nil
-//     *  - @ref columnWidths = @nil
-//     *  - @ref columnWidthsThatFit = @nil
-//     *  - @ref columnMargin = @num{10.0}
-//     *  - @ref rowMargin = @num{5.0}
-//     *  - @ref titleOffset = @num{5.0}
-//     *  - @ref swatchLayout = #CPTLegendSwatchLayoutLeft
-//     *  - @ref paddingLeft = @num{5.0}
-//     *  - @ref paddingTop = @num{5.0}
-//     *  - @ref paddingRight = @num{5.0}
-//     *  - @ref paddingBottom = @num{5.0}
-//     *  - @ref needsDisplayOnBoundsChange = @YES
-//     *
-//     *  @param newFrame The frame rectangle.
-//     *  @return The initialized CPTLegend object.
-//     **/
-//    -(nonnull instancetype)initWithFrame:(CGRect)newFrame
-//    {
-//        if ((self = [super initWithFrame:newFrame])) {
-//            plots                 = [[NSMutableArray alloc] init];
-//            legendEntries         = [[NSMutableArray alloc] init];
-//            layoutChanged         = YES;
-//            textStyle             = [[CPTTextStyle alloc] init];
-//            swatchSize            = CGSizeZero;
-//            swatchBorderLineStyle = nil;
-//            swatchCornerRadius    = CPTFloat(0.0);
-//            swatchFill            = nil;
-//            entryBorderLineStyle  = nil;
-//            entryCornerRadius     = CPTFloat(0.0);
-//            entryFill             = nil;
-//            entryPaddingLeft      = CPTFloat(0.0);
-//            entryPaddingTop       = CPTFloat(0.0);
-//            entryPaddingRight     = CPTFloat(0.0);
-//            entryPaddingBottom    = CPTFloat(0.0);
-//            numberOfRows          = 0;
-//            numberOfColumns       = 0;
-//            equalRows             = YES;
-//            equalColumns          = NO;
-//            rowHeights            = nil;
-//            rowHeightsThatFit     = nil;
-//            columnWidths          = nil;
-//            columnWidthsThatFit   = nil;
-//            columnMargin          = CPTFloat(10.0);
-//            rowMargin             = CPTFloat(5.0);
-//            titleOffset           = CPTFloat(5.0);
-//            swatchLayout          = CPTLegendSwatchLayoutLeft;
-//
-//            pointingDeviceDownEntry = nil;
-//
-//            self.paddingLeft   = CPTFloat(5.0);
-//            self.paddingTop    = CPTFloat(5.0);
-//            self.paddingRight  = CPTFloat(5.0);
-//            self.paddingBottom = CPTFloat(5.0);
-//
-//            self.needsDisplayOnBoundsChange = YES;
-//        }
-//        return self;
-//    }
+//  MARK: Init/Dealloc
+
+    init(newFrame : CGRect)
+    {
+        super.init(frame:newFrame) 
+        plots                 = [[NSMutableArray alloc] init];
+        legendEntries         = [[NSMutableArray alloc] init];
+        layoutChanged         = true
+        textStyle             = CPTTextStyle()
+        swatchSize            = CGSize()
+        swatchBorderLineStyle = nil;
+        swatchCornerRadius    = CGFloat(0.0);
+        swatchFill            = nil;
+        entryBorderLineStyle  = nil;
+        entryCornerRadius     = CGFloat(0.0);
+        entryFill             = nil;
+        entryPaddingLeft      = CGFloat(0.0);
+        entryPaddingTop       = CGFloat(0.0);
+        entryPaddingRight     = CGFloat(0.0);
+        entryPaddingBottom    = CGFloat(0.0);
+        numberOfRows          = 0;
+        numberOfColumns       = 0;
+        equalRows             = true
+        equalColumns          = NO;
+        rowHeights            = nil;
+        rowHeightsThatFit     = nil;
+        columnWidths          = nil;
+        columnWidthsThatFit   = nil;
+        columnMargin          = CGFloat(10.0);
+        rowMargin             = CGFloat(5.0);
+        titleOffset           = CGFloat(5.0);
+        swatchLayout          = CPTLegendSwatchLayoutLeft;
+        
+        pointingDeviceDownEntry = nil;
+        
+        self.paddingLeft   = CGFloat(5.0);
+        self.paddingTop    = CGFloat(5.0);
+        self.paddingRight  = CGFloat(5.0);
+        self.paddingBottom = CGFloat(5.0);
+        
+        self.needsDisplayOnBoundsChange = true
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    return self;
+ }
 //
 //    /// @}
 //
@@ -345,53 +179,48 @@ public class CPTLegend: CPTBorderedLayer {
 //
 //    /// @cond
 //
-//    -(nonnull instancetype)initWithLayer:(nonnull id)layer
-//    {
-//        if ((self = [super initWithLayer:layer])) {
-//            CPTLegend *theLayer = (CPTLegend *)layer;
-//
-//            plots                 = theLayer->plots;
-//            legendEntries         = theLayer->legendEntries;
-//            layoutChanged         = theLayer->layoutChanged;
-//            textStyle             = theLayer->textStyle;
-//            swatchSize            = theLayer->swatchSize;
-//            swatchBorderLineStyle = theLayer->swatchBorderLineStyle;
-//            swatchCornerRadius    = theLayer->swatchCornerRadius;
-//            swatchFill            = theLayer->swatchFill;
-//            entryBorderLineStyle  = theLayer->entryBorderLineStyle;
-//            entryCornerRadius     = theLayer->entryCornerRadius;
-//            entryFill             = theLayer->entryFill;
-//            entryPaddingLeft      = theLayer->entryPaddingLeft;
-//            entryPaddingTop       = theLayer->entryPaddingTop;
-//            entryPaddingRight     = theLayer->entryPaddingRight;
-//            entryPaddingBottom    = theLayer->entryPaddingBottom;
-//            numberOfRows          = theLayer->numberOfRows;
-//            numberOfColumns       = theLayer->numberOfColumns;
-//            equalRows             = theLayer->equalRows;
-//            equalColumns          = theLayer->equalColumns;
-//            rowHeights            = theLayer->rowHeights;
-//            rowHeightsThatFit     = theLayer->rowHeightsThatFit;
-//            columnWidths          = theLayer->columnWidths;
-//            columnWidthsThatFit   = theLayer->columnWidthsThatFit;
-//            columnMargin          = theLayer->columnMargin;
-//            rowMargin             = theLayer->rowMargin;
-//            titleOffset           = theLayer->titleOffset;
-//            swatchLayout          = theLayer->swatchLayout;
-//
-//            pointingDeviceDownEntry = theLayer->pointingDeviceDownEntry;
-//        }
-//        return self;
-//    }
+    init (layer: CP         TLayer)
+    {
+        super.init(layer:layer)
+        let theLayer = CPTLegend(layer:CPTLayer)
+        
+        plots                 = theLayer->plots
+        legendEntries         = theLayer.legendEntries;
+        layoutChanged         = theLayer.layoutChanged;
+        textStyle             = theLayer.textStyle;
+        swatchSize            = theLayer.swatchSize;
+        swatchBorderLineStyle = theLayer.swatchBorderLineStyle;
+        swatchCornerRadius    = theLayer.swatchCornerRadius;
+        swatchFill            = theLayer.swatchFill;
+        entryBorderLineStyle  = theLayer.entryBorderLineStyle;
+        entryCornerRadius     = theLayer.entryCornerRadius;
+        entryFill             = theLayer.entryFill;
+        entryPaddingLeft      = theLayer.entryPaddingLeft;
+        entryPaddingTop       = theLayer.entryPaddingTop;
+        entryPaddingRight     = theLayer.entryPaddingRight;
+        entryPaddingBottom    = theLayer.entryPaddingBottom;
+        numberOfRows          = theLayer.numberOfRows;
+        numberOfColumns       = theLayer.numberOfColumns;
+        equalRows             = theLayer.equalRows;
+        equalColumns          = theLayer.equalColumns;
+        rowHeights            = theLayer.rowHeights;
+        rowHeightsThatFit     = theLayer.rowHeightsThatFit;
+        columnWidths          = theLayer.columnWidths;
+        columnWidthsThatFit   = theLayer.columnWidthsThatFit;
+        columnMargin          = theLayer.columnMargin;
+        rowMargin             = theLayer.rowMargin;
+        titleOffset           = theLayer.titleOffset;
+        swatchLayout          = theLayer.swatchLayout;
+        
+        pointingDeviceDownEntry = theLayer.pointingDeviceDownEntry;
+    }
+}
 //
 
 
 
 
-//
-//    /// @endcond
-//
-//    #pragma mark -
-//    #pragma mark Animation
+// MARK: Animation
 //
 //    /// @cond
 //
@@ -406,7 +235,7 @@ public class CPTLegend: CPTBorderedLayer {
 //        });
 //
 //        if ( [keys containsObject:aKey] ) {
-//            return YES;
+//            return true
 //        }
 //        else {
 //            return [super needsDisplayForKey:aKey];
@@ -416,25 +245,25 @@ public class CPTLegend: CPTBorderedLayer {
 //    /// @endcond
 //
 //    #pragma mark -
-//    #pragma mark Layout
+ // MARK: LAYOUT
 //
 //    /**
 //     *  @brief Marks the receiver as needing to update the layout of its legend entries.
 //     **/
-//    -(void)setLayoutChanged
+//    func )setLayoutChanged
 //    {
-//        self.layoutChanged = YES;
+//        self.layoutChanged = true
 //    }
 //
 //    /// @cond
 //
-//    -(void)layoutSublayers
+//    func layoutSublayers
 //    {
 //        [self recalculateLayout];
 //        [super layoutSublayers];
 //    }
 //
-//    -(void)recalculateLayout
+//    func recalculateLayout
 //    {
 //        if ( !self.layoutChanged ) {
 //            return;
@@ -445,7 +274,7 @@ public class CPTLegend: CPTBorderedLayer {
 //        switch ( self.swatchLayout ) {
 //            case CPTLegendSwatchLayoutLeft:
 //            case CPTLegendSwatchLayoutRight:
-//                isHorizontalLayout = YES;
+//                isHorizontalLayout = true
 //                break;
 //
 //            case CPTLegendSwatchLayoutTop:
@@ -601,10 +430,8 @@ public class CPTLegend: CPTBorderedLayer {
 //        self.layoutChanged = NO;
 //    }
 //
-//    /// @endcond
-//
-//    #pragma mark -
-//    #pragma mark Plots
+/
+//  MARK: - Plots
 //
 //    /** @brief All plots associated with the legend.
 //     *  @return An array of all plots associated with the legend.
@@ -642,17 +469,16 @@ public class CPTLegend: CPTBorderedLayer {
 //        return nil;
 //    }
 //
-//    #pragma mark -
-//    #pragma mark Organizing Plots
+// MARK:  Organizing Plots
 //
 //    /** @brief Add a plot to the legend.
 //     *  @param plot The plot.
 //     **/
-//    -(void)addPlot:(nonnull CPTPlot *)plot
+//    func addPlot:(nonnull CPTPlot *)plot
 //    {
 //        if ( [plot isKindOfClass:[CPTPlot class]] ) {
 //            [self.plots addObject:plot];
-//            self.layoutChanged = YES;
+//            self.layoutChanged = true
 //
 //            CPTMutableLegendEntryArray *theLegendEntries = self.legendEntries;
 //            CPTTextStyle *theTextStyle                   = self.textStyle;
@@ -677,7 +503,7 @@ public class CPTLegend: CPTBorderedLayer {
 //     *  @param plot The plot.
 //     *  @param idx An index within the bounds of the plot array.
 //     **/
-//    -(void)insertPlot:(nonnull CPTPlot *)plot atIndex:(NSUInteger)idx
+//    func insertPlot:(nonnull CPTPlot *)plot atIndex:(NSUInteger)idx
 //    {
 //        if ( [plot isKindOfClass:[CPTPlot class]] ) {
 //            CPTMutablePlotArray *thePlots = self.plots;
@@ -699,7 +525,7 @@ public class CPTLegend: CPTBorderedLayer {
 //            }
 //
 //            [thePlots insertObject:plot atIndex:idx];
-//            self.layoutChanged = YES;
+//            self.layoutChanged = true
 //
 //            CPTTextStyle *theTextStyle       = self.textStyle;
 //            NSUInteger numberOfLegendEntries = [plot numberOfLegendEntries];
@@ -722,12 +548,12 @@ public class CPTLegend: CPTBorderedLayer {
 //    /** @brief Remove a plot from the legend.
 //     *  @param plot The plot to remove.
 //     **/
-//    -(void)removePlot:(nonnull CPTPlot *)plot
+//    func removePlot:(nonnull CPTPlot *)plot
 //    {
 //        if ( [self.plots containsObject:plot] ) {
 //            [self.plots removeObjectIdenticalTo:plot];
 //            [self removeLegendEntriesForPlot:plot];
-//            self.layoutChanged = YES;
+//            self.layoutChanged = true
 //            [[NSNotificationCenter defaultCenter] removeObserver:self name:CPTLegendNeedsRedrawForPlotNotification object:plot];
 //            [[NSNotificationCenter defaultCenter] removeObserver:self name:CPTLegendNeedsLayoutForPlotNotification object:plot];
 //            [[NSNotificationCenter defaultCenter] removeObserver:self name:CPTLegendNeedsReloadEntriesForPlotNotification object:plot];
@@ -740,14 +566,14 @@ public class CPTLegend: CPTBorderedLayer {
 //    /** @brief Remove a plot from the legend.
 //     *  @param identifier The identifier of the plot to remove.
 //     **/
-//    -(void)removePlotWithIdentifier:(nullable id<NSCopying>)identifier
+//    func removePlotWithIdentifier:(nullable id<NSCopying>)identifier
 //    {
 //        CPTPlot *plotToRemove = [self plotWithIdentifier:identifier];
 //
 //        if ( plotToRemove ) {
 //            [self.plots removeObjectIdenticalTo:plotToRemove];
 //            [self removeLegendEntriesForPlot:plotToRemove];
-//            self.layoutChanged = YES;
+//            self.layoutChanged = true
 //            [[NSNotificationCenter defaultCenter] removeObserver:self name:CPTLegendNeedsRedrawForPlotNotification object:plotToRemove];
 //            [[NSNotificationCenter defaultCenter] removeObserver:self name:CPTLegendNeedsLayoutForPlotNotification object:plotToRemove];
 //            [[NSNotificationCenter defaultCenter] removeObserver:self name:CPTLegendNeedsReloadEntriesForPlotNotification object:plotToRemove];
@@ -760,7 +586,7 @@ public class CPTLegend: CPTBorderedLayer {
 //     *  @brief Remove all legend entries for the given plot from the legend.
 //     *  @param plot The plot.
 //     **/
-//    -(void)removeLegendEntriesForPlot:(nonnull CPTPlot *)plot
+//    func removeLegendEntriesForPlot:(nonnull CPTPlot *)plot
 //    {
 //        CPTMutableLegendEntryArray *theLegendEntries = self.legendEntries;
 //        CPTMutableLegendEntryArray *entriesToRemove  = [[NSMutableArray alloc] init];
@@ -773,25 +599,22 @@ public class CPTLegend: CPTBorderedLayer {
 //        [theLegendEntries removeObjectsInArray:entriesToRemove];
 //    }
 //
-//    /// @endcond
-//
-//    #pragma mark -
-//    #pragma mark Notifications
+// MARK: Notifications
 //
 //    /// @cond
 //
-//    -(void)legendNeedsRedraw:(nonnull NSNotification *__unused)notif
+//    func legendNeedsRedraw:(nonnull NSNotification *__unused)notif
 //    {
 //        [self setNeedsDisplay];
 //    }
 //
-//    -(void)legendNeedsLayout:(nonnull NSNotification *__unused)notif
+//    func legendNeedsLayout:(nonnull NSNotification *__unused)notif
 //    {
-//        self.layoutChanged = YES;
+//        self.layoutChanged = true
 //        [self setNeedsDisplay];
 //    }
 //
-//    -(void)legendNeedsReloadEntries:(nonnull NSNotification *)notif
+//    func legendNeedsReloadEntries:(nonnull NSNotification *)notif
 //    {
 //        CPTPlot *thePlot = (CPTPlot *)notif.object;
 //
@@ -821,7 +644,7 @@ public class CPTLegend: CPTBorderedLayer {
 //                [theLegendEntries insertObject:newLegendEntry atIndex:legendEntryIndex++];
 //            }
 //        }
-//        self.layoutChanged = YES;
+//        self.layoutChanged = true
 //    }
 //
 //    /// @endcond
@@ -831,7 +654,7 @@ public class CPTLegend: CPTBorderedLayer {
 //
 //    /// @cond
 //
-//    -(void)legendEntryForInteractionPoint:(CGPoint)interactionPoint row:(nonnull NSUInteger *)row col:(nonnull NSUInteger *)col
+//    func legendEntryForInteractionPoint:(CGPoint)interactionPoint row:(nonnull NSUInteger *)row col:(nonnull NSUInteger *)col
 //    {
 //        // Convert the interaction point to the local coordinate system
 //        CPTGraph *theGraph = self.graph;
@@ -943,16 +766,16 @@ public class CPTLegend: CPTBorderedLayer {
 //                        BOOL handled        = NO;
 //
 //                        if ( [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:touchDownAtIndex:)] ) {
-//                            handled = YES;
+//                            handled = true
 //                            [theDelegate legend:self legendEntryForPlot:legendPlot touchDownAtIndex:legendEntry.index];
 //                        }
 //                        if ( [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:touchDownAtIndex:withEvent:)] ) {
-//                            handled = YES;
+//                            handled = true
 //                            [theDelegate legend:self legendEntryForPlot:legendPlot touchDownAtIndex:legendEntry.index withEvent:event];
 //                        }
 //
 //                        if ( handled ) {
-//                            return YES;
+//                            return true
 //                        }
 //                    }
 //                }
@@ -995,7 +818,7 @@ public class CPTLegend: CPTBorderedLayer {
 //            return NO;
 //        }
 //
-//        id<CPTLegendDelegate> theDelegate = (id<CPTLegendDelegate>)self.delegate;
+//        theDelegate = self.delegate
 //
 //        if ( [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:touchUpAtIndex:)] ||
 //             [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:touchUpAtIndex:withEvent:)] ||
@@ -1014,28 +837,28 @@ public class CPTLegend: CPTBorderedLayer {
 //                        CPTPlot *entryPlot = legendEntry.plot;
 //
 //                        if ( [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:touchUpAtIndex:)] ) {
-//                            handled = YES;
+//                            handled = true
 //                            [theDelegate legend:self legendEntryForPlot:entryPlot touchUpAtIndex:legendEntry.index];
 //                        }
 //                        if ( [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:touchUpAtIndex:withEvent:)] ) {
-//                            handled = YES;
+//                            handled = true
 //                            [theDelegate legend:self legendEntryForPlot:entryPlot touchUpAtIndex:legendEntry.index withEvent:event];
 //                        }
 //
 //                        if ( legendEntry == selectedDownEntry ) {
 //                            if ( [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:wasSelectedAtIndex:)] ) {
-//                                handled = YES;
+//                                handled = true
 //                                [theDelegate legend:self legendEntryForPlot:entryPlot wasSelectedAtIndex:legendEntry.index];
 //                            }
 //
 //                            if ( [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:wasSelectedAtIndex:withEvent:)] ) {
-//                                handled = YES;
+//                                handled = true
 //                                [theDelegate legend:self legendEntryForPlot:entryPlot wasSelectedAtIndex:legendEntry.index withEvent:event];
 //                            }
 //                        }
 //
 //                        if ( handled ) {
-//                            return YES;
+//                            return true
 //                        }
 //                    }
 //                }
@@ -1048,7 +871,7 @@ public class CPTLegend: CPTBorderedLayer {
 //    /// @}
 //
 //    #pragma mark -
-//    #pragma mark Description
+//  MARK: Description
 //
 //    /// @cond
 //
@@ -1059,58 +882,58 @@ public class CPTLegend: CPTBorderedLayer {
 //
 //    /// @endcond
 //
-//    #pragma mark -
 //    #pragma mark Accessors
 //
 //    /// @cond
 //
-    func setTextStyle(newTextStyle: CPTTextStyle)
-    {
-        if ( newTextStyle != textStyle ) {
-            textStyle = newTextStyle
-            
-            [self.legendEntries makeObjectsPerformSelector:@selector(setTextStyle:) withObject:textStyle];
-            
-            for legendEntry in self.legendEntries {
-                legendEntry.setTextStyle(w)
+//    func setTextStyle(newTextStyle: CPTTextStyle)
+//    {
+//        if ( newTextStyle != textStyle ) {
+//            textStyle = newTextStyle
+//            
+//            self.legendEntries makeObjectsPerformSelector:@selector(setTextStyle:) withObject:textStyle];
+//            
+//            for legendEntry in self.legendEntries {
+//                legendEntry.setTextStyle(w)
+//            }
+//            
+//            self.layoutChanged = true
+//        }
+//    }
+    
+ var  _swatchSize = CGSize()
+ var swatchSize : CGSize {
+    get {
+        var theSwatchSize = _swatchSize
+        
+        if theSwatchSize.equalTo( CGSize()) {
+            let theTextStyle = textStyle
+            let fontSize        = theTextStyle.fontSize
+            if ( fontSize > CGFloat(0.0)) {
+                fontSize     *= CGFloat(1.5)
+                fontSize      = round(fontSize)
+                theSwatchSize = CGSize(fontSize, fontSize)
             }
-            
-            
-            
-            self.layoutChanged = true
+            else {
+                theSwatchSize = CGSize(width: 15.0, height: 15.0)
+            }
         }
+        return theSwatchSize
     }
     
+    set {
+        if ( !_swatchSize.equalTo( newValue)) {
+            _swatchSize         = newValue
+            layoutChanged = true
+        }
+        }
+ }
+ 
+
+    
     
 //
-//    -(void)setSwatchSize:(CGSize)newSwatchSize
-//    {
-//        if ( !CGSizeEqualToSize(newSwatchSize, swatchSize)) {
-//            swatchSize         = newSwatchSize;
-//            self.layoutChanged = YES;
-//        }
-//    }
-//
-//    -(CGSize)swatchSize
-//    {
-//        CGSize theSwatchSize = swatchSize;
-//
-//        if ( CGSizeEqualToSize(theSwatchSize, CGSizeZero)) {
-//            CPTTextStyle *theTextStyle = self.textStyle;
-//            CGFloat fontSize           = theTextStyle.fontSize;
-//            if ( fontSize > CPTFloat(0.0)) {
-//                fontSize     *= CPTFloat(1.5);
-//                fontSize      = round(fontSize);
-//                theSwatchSize = CPTSizeMake(fontSize, fontSize);
-//            }
-//            else {
-//                theSwatchSize = CPTSizeMake(15.0, 15.0);
-//            }
-//        }
-//        return theSwatchSize;
-//    }
-//
-//    -(void)setSwatchBorderLineStyle:(nullable CPTLineStyle *)newSwatchBorderLineStyle
+//    func setSwatchBorderLineStyle:(nullable CPTLineStyle *)newSwatchBorderLineStyle
 //    {
 //        if ( newSwatchBorderLineStyle != swatchBorderLineStyle ) {
 //            swatchBorderLineStyle = [newSwatchBorderLineStyle copy];
@@ -1118,15 +941,15 @@ public class CPTLegend: CPTBorderedLayer {
 //        }
 //    }
 //
-//    -(void)setSwatchCornerRadius:(CGFloat)newSwatchCornerRadius
-//    {
-//        if ( newSwatchCornerRadius != swatchCornerRadius ) {
-//            swatchCornerRadius = newSwatchCornerRadius;
-//            [self setNeedsDisplay];
-//        }
-//    }
+    func setSwatchCornerRadius(newSwatchCornerRadius: CGFloat)
+    {
+        if ( newSwatchCornerRadius != swatchCornerRadius ) {
+            swatchCornerRadius = newSwatchCornerRadius;
+            [self.setNeedsDisplay];
+        }
+    }
 //
-//    -(void)setSwatchFill:(nullable CPTFill *)newSwatchFill
+//    func setSwatchFill:(nullable CPTFill *)newSwatchFill
 //    {
 //        if ( newSwatchFill != swatchFill ) {
 //            swatchFill = [newSwatchFill copy];
@@ -1134,7 +957,7 @@ public class CPTLegend: CPTBorderedLayer {
 //        }
 //    }
 //
-//    -(void)setEntryBorderLineStyle:(nullable CPTLineStyle *)newEntryBorderLineStyle
+//    func setEntryBorderLineStyle:(nullable CPTLineStyle *)newEntryBorderLineStyle
 //    {
 //        if ( newEntryBorderLineStyle != entryBorderLineStyle ) {
 //            entryBorderLineStyle = [newEntryBorderLineStyle copy];
@@ -1142,7 +965,7 @@ public class CPTLegend: CPTBorderedLayer {
 //        }
 //    }
 //
-//    -(void)setEntryCornerRadius:(CGFloat)newEntryCornerRadius
+//    func setEntryCornerRadius:(CGFloat)newEntryCornerRadius
 //    {
 //        if ( newEntryCornerRadius != entryCornerRadius ) {
 //            entryCornerRadius = newEntryCornerRadius;
@@ -1150,7 +973,7 @@ public class CPTLegend: CPTBorderedLayer {
 //        }
 //    }
 //
-//    -(void)setEntryFill:(nullable CPTFill *)newEntryFill
+//    func setEntryFill:(nullable CPTFill *)newEntryFill
 //    {
 //        if ( newEntryFill != entryFill ) {
 //            entryFill = [newEntryFill copy];
@@ -1158,119 +981,119 @@ public class CPTLegend: CPTBorderedLayer {
 //        }
 //    }
 //
-//    -(void)setEntryPaddingLeft:(CGFloat)newPadding
+//    func setEntryPaddingLeft:(CGFloat)newPadding
 //    {
 //        if ( newPadding != entryPaddingLeft ) {
 //            entryPaddingLeft   = newPadding;
-//            self.layoutChanged = YES;
+//            self.layoutChanged = true
 //        }
 //    }
 //
-//    -(void)setEntryPaddingTop:(CGFloat)newPadding
+//    func setEntryPaddingTop:(CGFloat)newPadding
 //    {
 //        if ( newPadding != entryPaddingTop ) {
 //            entryPaddingTop    = newPadding;
-//            self.layoutChanged = YES;
+//            self.layoutChanged = true
 //        }
 //    }
 //
-//    -(void)setEntryPaddingRight:(CGFloat)newPadding
+//    func setEntryPaddingRight:(CGFloat)newPadding
 //    {
 //        if ( newPadding != entryPaddingRight ) {
 //            entryPaddingRight  = newPadding;
-//            self.layoutChanged = YES;
+//            self.layoutChanged = true
 //        }
 //    }
 //
-//    -(void)setEntryPaddingBottom:(CGFloat)newPadding
+//    func setEntryPaddingBottom:(CGFloat)newPadding
 //    {
 //        if ( newPadding != entryPaddingBottom ) {
 //            entryPaddingBottom = newPadding;
-//            self.layoutChanged = YES;
+//            self.layoutChanged = true
 //        }
 //    }
 //
-//    -(void)setNumberOfRows:(NSUInteger)newNumberOfRows
+//    func setNumberOfRows:(NSUInteger)newNumberOfRows
 //    {
 //        if ( newNumberOfRows != numberOfRows ) {
 //            numberOfRows       = newNumberOfRows;
-//            self.layoutChanged = YES;
+//            self.layoutChanged = true
 //        }
 //    }
 //
-//    -(void)setNumberOfColumns:(NSUInteger)newNumberOfColumns
+//    func setNumberOfColumns:(NSUInteger)newNumberOfColumns
 //    {
 //        if ( newNumberOfColumns != numberOfColumns ) {
 //            numberOfColumns    = newNumberOfColumns;
-//            self.layoutChanged = YES;
+//            self.layoutChanged = true
 //        }
 //    }
 //
-//    -(void)setEqualRows:(BOOL)newEqualRows
+//    func setEqualRows:(BOOL)newEqualRows
 //    {
 //        if ( newEqualRows != equalRows ) {
 //            equalRows          = newEqualRows;
-//            self.layoutChanged = YES;
+//            self.layoutChanged = true
 //        }
 //    }
 //
-//    -(void)setEqualColumns:(BOOL)newEqualColumns
+//    func setEqualColumns:(BOOL)newEqualColumns
 //    {
 //        if ( newEqualColumns != equalColumns ) {
 //            equalColumns       = newEqualColumns;
-//            self.layoutChanged = YES;
+//            self.layoutChanged = true
 //        }
 //    }
 //
-//    -(void)setRowHeights:(nullable CPTNumberArray *)newRowHeights
+//    func setRowHeights:(nullable CPTNumberArray *)newRowHeights
 //    {
 //        if ( newRowHeights != rowHeights ) {
 //            rowHeights         = [newRowHeights copy];
-//            self.layoutChanged = YES;
+//            self.layoutChanged = true
 //        }
 //    }
 //
-//    -(void)setColumnWidths:(nullable CPTNumberArray *)newColumnWidths
+//    func setColumnWidths:(nullable CPTNumberArray *)newColumnWidths
 //    {
 //        if ( newColumnWidths != columnWidths ) {
 //            columnWidths       = [newColumnWidths copy];
-//            self.layoutChanged = YES;
+//            self.layoutChanged = true
 //        }
 //    }
 //
-//    -(void)setColumnMargin:(CGFloat)newColumnMargin
+//    func setColumnMargin:(CGFloat)newColumnMargin
 //    {
 //        if ( newColumnMargin != columnMargin ) {
 //            columnMargin       = newColumnMargin;
-//            self.layoutChanged = YES;
+//            self.layoutChanged = true
 //        }
 //    }
 //
-//    -(void)setRowMargin:(CGFloat)newRowMargin
+//    func setRowMargin:(CGFloat)newRowMargin
 //    {
 //        if ( newRowMargin != rowMargin ) {
 //            rowMargin          = newRowMargin;
-//            self.layoutChanged = YES;
+//            self.layoutChanged = true
 //        }
 //    }
 //
-//    -(void)setTitleOffset:(CGFloat)newTitleOffset
+//    func setTitleOffset:(CGFloat)newTitleOffset
 //    {
 //        if ( newTitleOffset != titleOffset ) {
 //            titleOffset        = newTitleOffset;
-//            self.layoutChanged = YES;
+//            self.layoutChanged = true
 //        }
 //    }
 //
-//    -(void)setSwatchLayout:(CPTLegendSwatchLayout)newSwatchLayout
+//    func setSwatchLayout:(CPTLegendSwatchLayout)newSwatchLayout
 //    {
 //        if ( newSwatchLayout != swatchLayout ) {
 //            swatchLayout       = newSwatchLayout;
-//            self.layoutChanged = YES;
+//            self.layoutChanged = true
 //        }
 //    }
 //
-//    -(void)setLayoutChanged:(BOOL)newLayoutChanged
+//    func setLayoutChanged:(BOOL)newLayoutChanged
 //    {
 //        if ( newLayoutChanged != layoutChanged ) {
 //            layoutChanged = newLayoutChanged;
@@ -1282,39 +1105,39 @@ public class CPTLegend: CPTBorderedLayer {
 //        }
 //    }
 //
-//    -(void)setPaddingLeft:(CGFloat)newPadding
+//    func setPaddingLeft:(CGFloat)newPadding
 //    {
 //        if ( newPadding != self.paddingLeft ) {
 //            super.paddingLeft  = newPadding;
-//            self.layoutChanged = YES;
+//            self.layoutChanged = true
 //        }
 //    }
 //
-//    -(void)setPaddingTop:(CGFloat)newPadding
+//    func setPaddingTop:(CGFloat)newPadding
 //    {
 //        if ( newPadding != self.paddingTop ) {
 //            super.paddingTop   = newPadding;
-//            self.layoutChanged = YES;
+//            self.layoutChanged = true
 //        }
 //    }
 //
-//    -(void)setPaddingRight:(CGFloat)newPadding
+//    func setPaddingRight:(CGFloat)newPadding
 //    {
 //        if ( newPadding != self.paddingRight ) {
 //            super.paddingRight = newPadding;
-//            self.layoutChanged = YES;
+//            self.layoutChanged = true
 //        }
 //    }
 //
-//    -(void)setPaddingBottom:(CGFloat)newPadding
+//    func setPaddingBottom:(CGFloat)newPadding
 //    {
 //        if ( newPadding != self.paddingBottom ) {
 //            super.paddingBottom = newPadding;
-//            self.layoutChanged  = YES;
+//            self.layoutChanged  = true
 //        }
 //    }
 //
-//    -(void)setBorderLineStyle:(nullable CPTLineStyle *)newLineStyle
+//    func setBorderLineStyle:(nullable CPTLineStyle *)newLineStyle
 //    {
 //        CPTLineStyle *oldLineStyle = self.borderLineStyle;
 //
@@ -1322,7 +1145,7 @@ public class CPTLegend: CPTBorderedLayer {
 //            super.borderLineStyle = newLineStyle;
 //
 //            if ( newLineStyle.lineWidth != oldLineStyle.lineWidth ) {
-//                self.layoutChanged = YES;
+//                self.layoutChanged = true
 //            }
 //        }
 //    }

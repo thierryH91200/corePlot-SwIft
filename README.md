@@ -79,4 +79,4 @@ if ( [labelAnnotation isKindOfClass:nullClass] ) {
     [self addAnnotation:labelAnnotation];
 }
 
-
+class CPTLegendEntry : ok

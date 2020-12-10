@@ -53,7 +53,6 @@
 		0333908C2565658900C231D9 /* CPTImage ext2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0333908B2565658900C231D9 /* CPTImage ext2.swift */; };
 		033390902565675F00C231D9 /* CPTImage ext3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0333908F2565675E00C231D9 /* CPTImage ext3.swift */; };
 		033390982565850F00C231D9 /* CPTImagePlatformSpecific.swift in Sources */ = {isa = PBXBuildFile; fileRef = 033390972565850F00C231D9 /* CPTImagePlatformSpecific.swift */; };
-		03361CB12581240D00D2B7F0 /* CPTLegend Drawing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03361CB02581240D00D2B7F0 /* CPTLegend Drawing.swift */; };
 		03361CB525812A2500D2B7F0 /* CPTPlotArea Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03361CB425812A2500D2B7F0 /* CPTPlotArea Layout.swift */; };
 		033667072557DFBD00B109CE /* CPTDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 033667062557DFBD00B109CE /* CPTDefinitions.swift */; };
 		03384E4A255D12A4003C5BD3 /* CPTMutableLineStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03384E49255D12A4003C5BD3 /* CPTMutableLineStyle.swift */; };
@@ -101,8 +100,6 @@
 		03A9CD332559CCF70096853D /* CPTGraphHostingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A9CD322559CCF70096853D /* CPTGraphHostingView.swift */; };
 		03BB66A2255AC0CF002C20A3 /* CPTFillColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03BB66A1255AC0CF002C20A3 /* CPTFillColor.swift */; };
 		03C433C1255EC38D00F00A24 /* CPTColorSpace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C433C0255EC38D00F00A24 /* CPTColorSpace.swift */; };
-		03C433C7255ED3AA00F00A24 /* CPTLegend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C433C6255ED3AA00F00A24 /* CPTLegend.swift */; };
-		03C433CB255ED3D600F00A24 /* CPTLegendEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C433CA255ED3D600F00A24 /* CPTLegendEntry.swift */; };
 		03DDD45625626DC200CAB29B /* CPTAxisLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DDD45525626DC200CAB29B /* CPTAxisLabel.swift */; };
 		03DDD45A25626DF500CAB29B /* CPTAxisTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DDD45925626DF500CAB29B /* CPTAxisTitle.swift */; };
 		03DDD45E2562748C00CAB29B /* CPTAxisLabelGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DDD45D2562748C00CAB29B /* CPTAxisLabelGroup.swift */; };
@@ -110,6 +107,9 @@
 		03DDD4662562BB1D00CAB29B /* CPTAxis  Accessors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DDD4652562BB1D00CAB29B /* CPTAxis  Accessors.swift */; };
 		03DDD46C256311BF00CAB29B /* CPTPlatformSpecificDefines.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DDD46B256311BF00CAB29B /* CPTPlatformSpecificDefines.swift */; };
 		03E3D50325683D4200FB3F07 /* CPTPlotAccessors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E3D50225683D4200FB3F07 /* CPTPlotAccessors.swift */; };
+		03E60DAE25828F7B00DB4F73 /* CPTLegend Drawing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E60DAD25828F7B00DB4F73 /* CPTLegend Drawing.swift */; };
+		03E60DB325828F8E00DB4F73 /* CPTLegendEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E60DB125828F8E00DB4F73 /* CPTLegendEntry.swift */; };
+		03E60DB425828F8E00DB4F73 /* CPTLegend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E60DB225828F8E00DB4F73 /* CPTLegend.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -169,7 +169,6 @@
 		0333908B2565658900C231D9 /* CPTImage ext2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTImage ext2.swift"; sourceTree = "<group>"; };
 		0333908F2565675E00C231D9 /* CPTImage ext3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTImage ext3.swift"; sourceTree = "<group>"; };
 		033390972565850F00C231D9 /* CPTImagePlatformSpecific.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTImagePlatformSpecific.swift; sourceTree = "<group>"; };
-		03361CB02581240D00D2B7F0 /* CPTLegend Drawing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTLegend Drawing.swift"; sourceTree = "<group>"; };
 		03361CB425812A2500D2B7F0 /* CPTPlotArea Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTPlotArea Layout.swift"; sourceTree = "<group>"; };
 		033667062557DFBD00B109CE /* CPTDefinitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTDefinitions.swift; sourceTree = "<group>"; };
 		03384E49255D12A4003C5BD3 /* CPTMutableLineStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTMutableLineStyle.swift; sourceTree = "<group>"; };
@@ -220,8 +219,6 @@
 		03A9CD322559CCF70096853D /* CPTGraphHostingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTGraphHostingView.swift; sourceTree = "<group>"; };
 		03BB66A1255AC0CF002C20A3 /* CPTFillColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTFillColor.swift; sourceTree = "<group>"; };
 		03C433C0255EC38D00F00A24 /* CPTColorSpace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTColorSpace.swift; sourceTree = "<group>"; };
-		03C433C6255ED3AA00F00A24 /* CPTLegend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTLegend.swift; sourceTree = "<group>"; };
-		03C433CA255ED3D600F00A24 /* CPTLegendEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTLegendEntry.swift; sourceTree = "<group>"; };
 		03DDD45525626DC200CAB29B /* CPTAxisLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTAxisLabel.swift; sourceTree = "<group>"; };
 		03DDD45925626DF500CAB29B /* CPTAxisTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTAxisTitle.swift; sourceTree = "<group>"; };
 		03DDD45D2562748C00CAB29B /* CPTAxisLabelGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTAxisLabelGroup.swift; sourceTree = "<group>"; };
@@ -229,6 +226,9 @@
 		03DDD4652562BB1D00CAB29B /* CPTAxis  Accessors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTAxis  Accessors.swift"; sourceTree = "<group>"; };
 		03DDD46B256311BF00CAB29B /* CPTPlatformSpecificDefines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTPlatformSpecificDefines.swift; sourceTree = "<group>"; };
 		03E3D50225683D4200FB3F07 /* CPTPlotAccessors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTPlotAccessors.swift; sourceTree = "<group>"; };
+		03E60DAD25828F7B00DB4F73 /* CPTLegend Drawing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CPTLegend Drawing.swift"; sourceTree = "<group>"; };
+		03E60DB125828F8E00DB4F73 /* CPTLegendEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPTLegendEntry.swift; sourceTree = "<group>"; };
+		03E60DB225828F8E00DB4F73 /* CPTLegend.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPTLegend.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -257,6 +257,14 @@
 				030A652925601394002B3D13 /* CPTXYAxisSet.swift */,
 			);
 			path = "XY Axes";
+			sourceTree = "<group>";
+		};
+		032573BF2582751C00B79E3B /* Mac Specific */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "Mac Specific";
+			path = Legends;
 			sourceTree = "<group>";
 		};
 		032EE4FD256656900085F4E1 /* CPTImage */ = {
@@ -415,6 +423,7 @@
 		03A9CCCF25592EE60096853D /* Text */ = {
 			isa = PBXGroup;
 			children = (
+				032573BF2582751C00B79E3B /* Mac Specific */,
 				03A9CD162559B32B0096853D /* CPTTextLayer.swift */,
 				03A9CD1A2559B4AC0096853D /* CPTTextStyle.swift */,
 				03DDD4612562893900CAB29B /* CPTTextLayer ext.swift */,
@@ -509,9 +518,9 @@
 		03A9CCD8255930360096853D /* Legends */ = {
 			isa = PBXGroup;
 			children = (
-				03C433C6255ED3AA00F00A24 /* CPTLegend.swift */,
-				03361CB02581240D00D2B7F0 /* CPTLegend Drawing.swift */,
-				03C433CA255ED3D600F00A24 /* CPTLegendEntry.swift */,
+				03E60DB225828F8E00DB4F73 /* CPTLegend.swift */,
+				03E60DB125828F8E00DB4F73 /* CPTLegendEntry.swift */,
+				03E60DAD25828F7B00DB4F73 /* CPTLegend Drawing.swift */,
 			);
 			path = Legends;
 			sourceTree = "<group>";
@@ -720,6 +729,7 @@
 				03E3D50325683D4200FB3F07 /* CPTPlotAccessors.swift in Sources */,
 				03525999256C18EB00FEA155 /* CPTLayer Layout.swift in Sources */,
 				030A650A255FBB8F002B3D13 /* CPTAnimationOperation.swift in Sources */,
+				03E60DB325828F8E00DB4F73 /* CPTLegendEntry.swift in Sources */,
 				03384E4A255D12A4003C5BD3 /* CPTMutableLineStyle.swift in Sources */,
 				0320AFBD255C0F1A00D32BF9 /* CPTConstraintsRelative.swift in Sources */,
 				03A9CD0B2559B0A60096853D /* CPTPlainWhiteTheme.swift in Sources */,
@@ -736,7 +746,6 @@
 				035C8A9E256D847700954017 /* CPTPlot Legend.swift in Sources */,
 				037244542545FF1700B59C97 /* CPTLayer.swift in Sources */,
 				0320AFB5255C0EA100D32BF9 /* CPTConstraints.swift in Sources */,
-				03C433C7255ED3AA00F00A24 /* CPTLegend.swift in Sources */,
 				0320AFCC255C515800D32BF9 /* CPTSlateTheme.swift in Sources */,
 				03411EC725646EA300CE639F /* CPTImage ext.swift in Sources */,
 				03595088257A8B4A00B12614 /* CPTMutablePlotRange.swift in Sources */,
@@ -752,6 +761,7 @@
 				035C8AA2256D85ED00954017 /* CPTPlot Responder.swift in Sources */,
 				0332628125738BE100224856 /* CPTAnimationNSNumberPeriod.swift in Sources */,
 				0397469F2557281B008CF3E6 /* CPTColor.swift in Sources */,
+				03E60DAE25828F7B00DB4F73 /* CPTLegend Drawing.swift in Sources */,
 				0320AFD0255C518900D32BF9 /* CPTPlainBlackTheme.swift in Sources */,
 				033BF56B2572D1DF003ECB08 /* CPTAnimationTimingFunction.swift in Sources */,
 				030A652A25601394002B3D13 /* CPTXYAxisSet.swift in Sources */,
@@ -770,7 +780,6 @@
 				0332627925738B5400224856 /* CPTAnimationCGRectPeriod.swift in Sources */,
 				03A9CCE22559569E0096853D /* CPTBorderedLayer.swift in Sources */,
 				03073485256815B6008B7413 /* Notification.swift in Sources */,
-				03361CB12581240D00D2B7F0 /* CPTLegend Drawing.swift in Sources */,
 				0320AFE8255C6A1800D32BF9 /* CPTAxisSet.swift in Sources */,
 				0320B010255C8C4300D32BF9 /* CPTPlotGroup.swift in Sources */,
 				03DDD45A25626DF500CAB29B /* CPTAxisTitle.swift in Sources */,
@@ -808,8 +817,8 @@
 				033667072557DFBD00B109CE /* CPTDefinitions.swift in Sources */,
 				0320AFF0255C6A8600D32BF9 /* CPTGridLines.swift in Sources */,
 				03C433C1255EC38D00F00A24 /* CPTColorSpace.swift in Sources */,
+				03E60DB425828F8E00DB4F73 /* CPTLegend.swift in Sources */,
 				033390982565850F00C231D9 /* CPTImagePlatformSpecific.swift in Sources */,
-				03C433CB255ED3D600F00A24 /* CPTLegendEntry.swift in Sources */,
 				03525995256C185500FEA155 /* CPTLayer accessors.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

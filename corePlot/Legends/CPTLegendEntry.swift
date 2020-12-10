@@ -4,17 +4,22 @@
 //
 //  Created by thierryH24 on 13/11/2020.
 //
+//==============================
+//  OK
+//==============================
+
 
 import AppKit
 
 class CPTLegendEntry: NSObject {
     
     var plot : CPTPlot?
-    var  index = 0
+    var index = 0
     var textStyle: CPTTextStyle?
     var row = 0
     var column = 0
     
+    // MARK: Init/Dealloc
     override init()
     {
         super.init()
@@ -24,17 +29,16 @@ class CPTLegendEntry: NSObject {
         column    = 0;
         textStyle = nil;
     }
-
-    func title() -> String
-    {
-        let thePlot = self.plot
-        
-        return (thePlot?.titleForLegendEntryAtIndex(idx:self.index))!
+    
+    // MARK: Accessors
+    var title: String {
+        get { return (self.plot?.titleForLegendEntryAtIndex(idx:self.index))! }
+        set {}
     }
     
-    func attributedTitle() -> NSAttributedString
-    {
-        return (self.plot?.attributedTitleForLegendEntryAtIndex(idx: self.index))!
+    var  attributedTitle : NSAttributedString {
+        get { return (self.plot?.attributedTitleForLegendEntryAtIndex(idx: self.index))! }
+        set {}
     }
     
     
@@ -44,71 +48,66 @@ class CPTLegendEntry: NSObject {
             var titleSize = CGSize()
             let styledTitle = self.attributedTitle
             
-            if ( styledTitle().length > 0 ) {
-                titleSize = styledTitle.sizeAsDrawn
+            if ( styledTitle.length > 0 ) {
+                titleSize = styledTitle.sizeAsDrawn()
             }
             else {
                 var theTitle = styledTitle.string;
                 if theTitle != "" {
-                    theTitle = self.title();
+                    theTitle = self.title;
                 }
                 
                 let theTextStyle = self.textStyle
                 
-                if ( theTitle && theTextStyle ) {
-                    theTitleSize = theTitle.sizeWithTextStyle(theTextStyle)
+                if ( theTitle && _titleSize ) {
+                    _titleSize = theTitle.sizeWithTextStyle(theTextStyle)
                 }
             }
             
-            titleSize.width  = ceil(titleSize.width)
-            titleSize.height = ceil(titleSize.height)
+            _titleSize.width  = ceil(_titleSize.width)
+            _titleSize.height = ceil(_titleSize.height)
             
-            return titleSize;
+            return _titleSize;
         }
         set { }
     }
-
     
+    // MARK: - Drawing
     func drawTitle(in rect: CGRect, in context: CGContext, scale: CGFloat) {
         
         // center the title vertically
-        let textRect     = rect;
+        var textRect     = rect;
         let theTitleSize = self.titleSize;
         
         
-        if theTitleSize().height < textRect.size.height {
-            var offset = (textRect.size.height - theTitleSize.height) / CGFloat(2.0);
-            if ( scale == CGFloat(1.0)) {
+        if theTitleSize.height < textRect.size.height {
+            var offset = (textRect.size.height - theTitleSize.height) / CGFloat(2.0)
+            if  scale == CGFloat(1.0) {
                 offset = round(offset);
             }
             else {
                 offset = round(offset * scale) / scale;
             }
-            
-            textRect = CPTRectInset(textRect, 0.0, offset);
+            textRect = textRect.insetBy(dx: 0.0, dy: offset);
         }
         
+        _ = CPTUtilities.shared.CPTAlignRectToUserSpace(context: context, rect: textRect)
+        let styledTitle = self.attributedTitle
         
-        CPTAlignRectToUserSpace(context, textRect);
-        
-        let styledTitle = self.attributedTitle;
-        
-        if ((styledTitle.length > 0) && styledTitle.respondsToSelector(#selector(drawInRect:) ) {
-            styledTitle.drawInRect(rect: textRect,context:context)
-        }
-        else {
-            let theTitle = styledTitle.string;
-            
-            if ( !theTitle ) {
-                theTitle = self.title;
+        if (styledTitle.length > 0)  {
+            if let method = styledTitle.drawInRect(rect: textRect, context:context) {
+                method()
             }
-            
-            theTitle.drawInRect(textRect)
-            withTextStyle:self.textStyle
-            inContext:context];
+            else {
+                let theTitle = styledTitle().string;
+                
+                if  theTitle == ""  {
+                    theTitle = self.title
+                }
+                theTitle.drawInRect(textRect, withTextStyle:self.textStyle,  inContext:context)
+            }
         }
-        
-        
         
     }
 }
+

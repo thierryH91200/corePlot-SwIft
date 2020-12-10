@@ -89,7 +89,8 @@ extension CPTPlot {
             }
             
             if (( theLineStyle ) != nil) {
-                theLineStyle?.setLineStyleInContext(context: context)
+                theLineStyle?.setLcptleg
+                neStyleInContext(context: context)
                 context.beginPath()
                 CPTPathExtensions.shared.CPTAddRoundedRectPath(context, CPTAlignBorderedRectToUserSpace(context, rect, theLineStyle), radius);
                 theLineStyle?.strokePathInContext(context: context)
