@@ -19,7 +19,6 @@
  
  @objc public protocol CPTLegendDelegate: CPTLayerDelegate {
     
-    
     func legend( legend: CPTLegend, fillForEntryAtIndex:Int, forPlot plot: CPTPlot) -> CPTFill
     
     func legend(legend: CPTLegend, fillForSwatchAtIndex:Int,idx forPlot: CPTPlot)-> CPTFill
@@ -42,7 +41,7 @@
         get {return _textStyle}
         set {_textStyle = newValue}
     }
-//    var swatchSize = CGSize()
+    //    var swatchSize = CGSize()
     var swatchBorderLineStyle = CPTLineStyle()
     var swatchCornerRadius = CGFloat(0)
     var swatchFill = CPTFill()
@@ -60,7 +59,7 @@
     var numberOfRows = 0
     var numberOfColumns = 0
     var equalRows = false
-    var equalColumns = false;
+    var equalColumns = false
     var rowHeights  = [CGFloat]()
     //    var rowHeightsThatFit  = [Int]()
     var columnWidths = [CGFloat]()
@@ -70,12 +69,9 @@
     var titleOffset = CGFloat(0)
     var swatchLayout = CPTLegendSwatchLayout.left
     
-    
     var plots = [CPTPlot]()
     var legendEntries = [CPTLegendEntry]()
-    //    var columnWidthsThatFit = [CGFloat]()
-    //    var layoutChanged = false
-    var pointingDeviceDownEntry : CPTLegendEntry
+    var pointingDeviceDownEntry : CPTLegendEntry?
     
     
     //
@@ -86,25 +82,18 @@
     //     *  @param newPlots An array of plots.
     //     *  @return A new CPTLegend instance.
     //     **/
-//    class func legend(withPlots newPlots: [CPTPlot]?) -> Self {
-//        return self.init(plots: newPlots!)
-//    }
+    //    class func legend(withPlots newPlots: [CPTPlot]?) -> Self {
+    //        return self.init(plots: newPlots!)
+    //    }
     
-    
-    
-    
-    
-    
+
     //    /** @brief Creates and returns a new CPTLegend instance with legend entries for each plot in the given graph.
     //     *  @param graph The graph.
     //     *  @return A new CPTLegend instance.
     //     **/
-//    class func legend(with graph: CPTGraph?) -> Self {
-//        return self.init(graph: graph)
-//    }
-    
-    
-    
+    //    class func legend(with graph: CPTGraph?) -> Self {
+    //        return self.init(graph: graph)
+    //    }
     
     //
     //  MARK: Init/Dealloc
@@ -130,7 +119,7 @@
         numberOfRows          = 0;
         numberOfColumns       = 0;
         equalRows             = true
-        equalColumns          = false;
+        equalColumns          = false
         rowHeights.removeAll()
         columnWidths.removeAll()
         columnWidthsThatFit.removeAll()
@@ -157,15 +146,15 @@
     //     *  @return The initialized CPTLegend object.
     //     **/
     
-    convenience init(plots newPlots: [CPTPlot]) {
-        self.init(newFrame: CGRect.zero)
-        if let newPlots = newPlots {
-            for plot in newPlots {
-                guard let plot = plot as? CPTPlot else {   continue }
-                self.add(plot)
-            }
-        }
-    }
+//    convenience init(plots newPlots: [CPTPlot]) {
+//        self.init(newFrame: CGRect.zero)
+//        if let newPlots = newPlots {
+//            for plot in newPlots {
+//                guard let plot = plot as? CPTPlot else {   continue }
+//                self.add(plot)
+//            }
+//        }
+//    }
     
     
     //    /** @brief Initializes a newly allocated CPTLegend object and adds legend entries for each plot in the given graph.
@@ -225,254 +214,245 @@
     }
     
     // MARK: Animation
-    //
-    //    /// @cond
-    //
-    //    +(BOOL)needsDisplayForKey:(nonnull NSString *)aKey
-    //    {
-    //        static NSSet<NSString *> *keys   = nil;
-    //        static dispatch_once_t onceToken = 0;
-    //
-    //        dispatch_once(&onceToken, ^{
-    //            keys = [NSSet setWithArray:@[@"swatchSize",
-    //                                         @"swatchCornerRadius"]];
-    //        });
-    //
-    //        if ( [keys containsObject:aKey] ) {
-    //            return true
-    //        }
-    //        else {
-    //            return [super needsDisplayForKey:aKey];
-    //        }
-    //    }
-    //
-    //    /// @endcond
-    //
-    //    #pragma mark -
-    // MARK: LAYOUT
-    //
-    //    /**
-    //     *  @brief Marks the receiver as needing to update the layout of its legend entries.
-    //     **/
-    //    func )setLayoutChanged
-    //    {
-    //        self.layoutChanged = true
-    //    }
-    //
-    //    /// @cond
-    //
-    //    func layoutSublayers
-    //    {
-    //        [self recalculateLayout];
-    //        [super layoutSublayers];
-    //    }
-    //
-        func recalculateLayout()
-        {
-            guard ( !self.layoutChanged ) else { return }
-    
-            var isHorizontalLayout = false
-    
-            switch ( self.swatchLayout ) {
-            case .left:
-                fallthrough
-            case .right:
-                    isHorizontalLayout = true
-                    break;
-    
-            case .top:
-                    fallthrough
-            case .bottom:
-                    isHorizontalLayout = false
-                    break;
-            }
-    
-            // compute the number of rows and columns needed to hold the legend entries
-            var rowCount           = self.numberOfRows;
-            var columnCount        = self.numberOfColumns;
-            let desiredRowCount    = rowCount;
-            let desiredColumnCount = columnCount;
-    
-            let legendEntryCount = self.legendEntries.count;
-    
-            if ((rowCount == 0) && (columnCount == 0)) {
-                rowCount    = Int(sqrt((Double(legendEntryCount))))
-                columnCount = rowCount
-                if ( rowCount * columnCount < legendEntryCount ) {
-                    columnCount += 1
-                }
-                if ( rowCount * columnCount < legendEntryCount ) {
-                    rowCount += 1
-                }
-            }
-            else if ((rowCount == 0) && (columnCount > 0)) {
-                rowCount = legendEntryCount / columnCount;
-                if ((legendEntryCount % columnCount) != 0) {
-                    rowCount += 1
-                }
-            }
-            else if ((rowCount > 0) && (columnCount == 0)) {
-                columnCount = legendEntryCount / rowCount;
-                if (( legendEntryCount % rowCount ) != 0) {
-                    columnCount += 1
-                }
-            }
-    
-            // compute row heights and column widths
-            var row                      = 0;
-            var col                      = 0;
-            var maxTitleHeight             = [CGFloat]()
-            var maxTitleWidth              = [CGFloat]()
-            let theSwatchSize                = self.swatchSize;
-            var desiredRowHeights   = self.rowHeights
-            var desiredColumnWidths = self.columnWidths
-//            Class numberClass                   = [NSNumber class];
-    
-            for legendEntry in self.legendEntries  {
-                legendEntry.row    = row;
-                legendEntry.column = col;
-                let titleSize = legendEntry.titleSize;
-    
-                if ((desiredRowCount == 0) || (row < desiredRowCount)) {
-                    maxTitleHeight[row] = max(maxTitleHeight[row], titleSize.height)
-                    
-                    if ( isHorizontalLayout == true) {
-                        maxTitleHeight[row] = max(maxTitleHeight[row], theSwatchSize.height);
-                    }
-    
-                    if ( row < desiredRowHeights.count ) {
-                        let desiredRowHeight = desiredRowHeights[row];
-                        
-                        if ( desiredRowHeight is CGFloat ) {
-                            maxTitleHeight[row] = max(maxTitleHeight[row], desiredRowHeight)
-                        }
-                    }
-                }
-    
-                if ((desiredColumnCount == 0) || (col < desiredColumnCount)) {
-                    maxTitleWidth[col] = max(maxTitleWidth[col], titleSize.width);
-                    if ( !isHorizontalLayout ) {
-                        maxTitleWidth[col] = max(maxTitleWidth[col], theSwatchSize.width);
-                    }
-    
-                    if ( col < desiredColumnWidths.count ) {
-                        let desiredColumnWidth = desiredColumnWidths[col];
-//                        if desiredColumnWidth is CGFloat {
-                            maxTitleWidth[col] = max(maxTitleWidth[col], desiredColumnWidth )
-//                        }
-                    }
-                }
-    
-                col += 1
-                if ( col >= columnCount ) {
-                    row += 1;
-                    col = 0;
-                    if row >= rowCount {
-                        break;
-                    }
-                }
-            }
-    
-            // save row heights and column widths
-            var maxRowHeights = [CGFloat]()
-    
-            for i in  0..<rowCount {
-                maxRowHeights.append(maxTitleHeight[i])
-            }
-            self.rowHeightsThatFit = maxRowHeights;
-    
-            var maxColumnWidths = [CGFloat]()
-    
-            for i in 0..<columnCount {
-                maxColumnWidths.append(maxTitleWidth[i])
-            }
-            self.columnWidthsThatFit = maxColumnWidths;
-    
-    
-            // compute the size needed to contain all legend entries, margins, and padding
-            let legendSize = CGSize(self.paddingLeft + self.paddingRight, self.paddingTop + self.paddingBottom);
-    
-            let lineWidth = self.borderLineStyle.lineWidth;
-    
-            legendSize.width  += lineWidth;
-            legendSize.height += lineWidth;
-    
-            if ( self.equalColumns ) {
-                let maxWidth = maxColumnWidths
-                legendSize.width += maxWidth  * columnCount;
-            }
-            else {
-                for width in maxColumnWidths  {
-                    legendSize.width += width
-                }
-            }
-            if ( columnCount > 0 ) {
-                legendSize.width += ((self.entryPaddingLeft + self.entryPaddingRight) * columnCount) + (self.columnMargin * (columnCount - 1));
-                if ( isHorizontalLayout ) {
-                    legendSize.width += (theSwatchSize.width + self.titleOffset) * columnCount;
-                }
-            }
-    
-            var rows = row
-    
-            if (( col ) != 0) {
-                rows += 1
-            }
-            for height in maxRowHeights  {
-                legendSize.height += height
-            }
-            if ( rows > 0 ) {
-                legendSize.height += ((self.entryPaddingBottom + self.entryPaddingTop) * rowCount) + (self.rowMargin * (rows - 1));
-                if ( !isHorizontalLayout ) {
-                    legendSize.height += (theSwatchSize.height + self.titleOffset) * rowCount;
-                }
-            }
-    
-            self.bounds = CGRect(0.0, 0.0, ceil(legendSize.width), ceil(legendSize.height));
-            self.pixelAlign()
-    
-            self.layoutChanged = false
+    func needsDisplayForKey(forKey key: String )-> Bool
+    {
+        var keys        = Set<String>()
+        
+        keys.insert("swatchSize")
+        keys.insert("swatchCornerRadius")
+        
+        if keys.contains(key ) {
+            return true;
         }
-    //
-    //
+        else {
+            return CPTBorderedLayer.needsDisplay(forKey: key)
+        }
+    }
+    
+    // MARK: LAYOUT
+    func setLayoutChanged()
+    {
+        self.layoutChanged = true
+    }
+    
+    public override func layoutSublayers()
+    {
+        self.recalculateLayout()
+        super.layoutSublayers()
+    }
+    
+    func recalculateLayout()
+    {
+        guard ( !self.layoutChanged ) else { return }
+        
+        var isHorizontalLayout = false
+        
+        switch ( self.swatchLayout ) {
+        case .left:
+            fallthrough
+        case .right:
+            isHorizontalLayout = true
+            break;
+            
+        case .top:
+            fallthrough
+        case .bottom:
+            isHorizontalLayout = false
+            break;
+        }
+        
+        // compute the number of rows and columns needed to hold the legend entries
+        var rowCount           = self.numberOfRows;
+        var columnCount        = self.numberOfColumns;
+        let desiredRowCount    = rowCount;
+        let desiredColumnCount = columnCount;
+        
+        let legendEntryCount = self.legendEntries.count;
+        
+        if ((rowCount == 0) && (columnCount == 0)) {
+            rowCount    = Int(sqrt((Double(legendEntryCount))))
+            columnCount = rowCount
+            if ( rowCount * columnCount < legendEntryCount ) {
+                columnCount += 1
+            }
+            if ( rowCount * columnCount < legendEntryCount ) {
+                rowCount += 1
+            }
+        }
+        else if ((rowCount == 0) && (columnCount > 0)) {
+            rowCount = legendEntryCount / columnCount;
+            if ((legendEntryCount % columnCount) != 0) {
+                rowCount += 1
+            }
+        }
+        else if ((rowCount > 0) && (columnCount == 0)) {
+            columnCount = legendEntryCount / rowCount;
+            if (( legendEntryCount % rowCount ) != 0) {
+                columnCount += 1
+            }
+        }
+        
+        // compute row heights and column widths
+        var row                      = 0;
+        var col                      = 0;
+        var maxTitleHeight             = [CGFloat]()
+        var maxTitleWidth              = [CGFloat]()
+        let theSwatchSize                = self.swatchSize;
+        let desiredRowHeights   = self.rowHeights
+        let desiredColumnWidths = self.columnWidths
+        //            Class numberClass                   = [NSNumber class];
+        
+        for legendEntry in self.legendEntries  {
+            legendEntry.row    = row;
+            legendEntry.column = col;
+            let titleSize = legendEntry.titleSize;
+            
+            if ((desiredRowCount == 0) || (row < desiredRowCount)) {
+                maxTitleHeight[row] = max(maxTitleHeight[row], titleSize.height)
+                
+                if ( isHorizontalLayout == true) {
+                    maxTitleHeight[row] = max(maxTitleHeight[row], theSwatchSize.height);
+                }
+                
+                if ( row < desiredRowHeights.count ) {
+                    let desiredRowHeight = desiredRowHeights[row];
+                    
+                    maxTitleHeight[row] = max(maxTitleHeight[row], desiredRowHeight)
+                }
+            }
+            
+            if ((desiredColumnCount == 0) || (col < desiredColumnCount)) {
+                maxTitleWidth[col] = max(maxTitleWidth[col], titleSize.width);
+                if ( isHorizontalLayout == false) {
+                    maxTitleWidth[col] = max(maxTitleWidth[col], theSwatchSize.width);
+                }
+                
+                if ( col < desiredColumnWidths.count ) {
+                    let desiredColumnWidth = desiredColumnWidths[col];
+                    //                        if desiredColumnWidth is CGFloat {
+                    maxTitleWidth[col] = max(maxTitleWidth[col], desiredColumnWidth )
+                    //                        }
+                }
+            }
+            
+            col += 1
+            if ( col >= columnCount ) {
+                row += 1;
+                col = 0;
+                if row >= rowCount {
+                    break;
+                }
+            }
+        }
+        
+        // save row heights and column widths
+        var maxRowHeights = [CGFloat]()
+        for i in  0..<rowCount {
+            maxRowHeights.append(maxTitleHeight[i])
+        }
+        self.rowHeightsThatFit = maxRowHeights;
+        
+        var maxColumnWidths = [CGFloat]()
+        for i in 0..<columnCount {
+            maxColumnWidths.append(maxTitleWidth[i])
+        }
+        self.columnWidthsThatFit = maxColumnWidths;
+        
+        // compute the size needed to contain all legend entries, margins, and padding
+        let width = self.paddingLeft + self.paddingRight
+        let height = self.paddingTop + self.paddingBottom
+        var legendSize = CGSize(width: width, height: height)
+        
+        let lineWidth = self.borderLineStyle?.lineWidth;
+        
+        legendSize.width  += lineWidth!
+        legendSize.height += lineWidth!
+        
+        if self.equalColumns  == true {
+            
+            let maxWidth = maxColumnWidths.max()
+            legendSize.width = legendSize.width + (maxWidth!  * CGFloat(columnCount))
+        }
+        else {
+            for width in maxColumnWidths  {
+                legendSize.width += width
+            }
+        }
+        if columnCount > 0 {
+            
+            let horizon = (self.entryPaddingLeft + self.entryPaddingRight) * CGFloat(columnCount)
+            legendSize.width = legendSize.width +  horizon + (self.columnMargin * CGFloat((columnCount - 1)))
+            
+            if isHorizontalLayout == true  {
+                legendSize.width = legendSize.width + (theSwatchSize.width + self.titleOffset) * CGFloat(columnCount)
+            }
+        }
+        
+        var rows = row
+        
+        if (( col ) != 0) {
+            rows += 1
+        }
+        for height in maxRowHeights  {
+            legendSize.height += height
+        }
+        if ( rows > 0 ) {
+            let vertical = (self.entryPaddingBottom + self.entryPaddingTop) * CGFloat(rowCount)
+            
+            legendSize.height += vertical + (self.rowMargin * CGFloat((rows - 1)))
+
+            if ( !isHorizontalLayout == false ) {
+                legendSize.height += (theSwatchSize.height + self.titleOffset) * CGFloat(rowCount);
+            }
+        }
+        
+        
+        self.bounds = CGRect(x: 0.0, y: 0.0, width: ceil(legendSize.width), height: ceil(legendSize.height))
+        self.pixelAlign()
+        
+        self.layoutChanged = false
+    }
+
     //  MARK: - Plots
     //
     //    /** @brief All plots associated with the legend.
     //     *  @return An array of all plots associated with the legend.
     //     **/
-    //    -(nonnull CPTPlotArray *)allPlots
-    //    {
-    //        return [NSArray arrayWithArray:self.plots];
-    //    }
+        func allPlots() -> [ CPTPlot]
+        {
+            return self.plots
+        }
     //
     //    /** @brief Gets the plot at the given index in the plot array.
     //     *  @param idx An index within the bounds of the plot array.
     //     *  @return The plot at the given index.
     //     **/
-    //    -(nullable CPTPlot *)plotAtIndex:(NSUInteger)idx
-    //    {
-    //        if ( idx < self.plots.count ) {
-    //            return (self.plots)[idx];
-    //        }
-    //        else {
-    //            return nil;
-    //        }
-    //    }
-    //
+    
+    func plotAtIndex(idx : Int)-> CPTPlot?
+    {
+        if ( idx < self.plots.count ) {
+            return self.plots[idx];
+        }
+        else {
+            return nil
+        }
+    }
+    
     //    /** @brief Gets the plot with the given identifier from the plot array.
     //     *  @param identifier A plot identifier.
     //     *  @return The plot with the given identifier or nil if it was not found.
     //     **/
-    //    -(nullable CPTPlot *)plotWithIdentifier:(nullable id<NSCopying>)identifier
-    //    {
-    //        for ( CPTPlot *plot in self.plots ) {
-    //            if ( [plot.identifier isEqual:identifier] ) {
-    //                return plot;
-    //            }
-    //        }
-    //        return nil;
-    //    }
-    //
+    func plotWithIdentifier(identifier: Any) ->CPTPlot?
+        {
+        let identifier = identifier as! UUID
+            for plot in self.plots {
+                if plot.identifier == identifier {
+                    return plot
+                }
+            }
+            return nil;
+        }
+    
     // MARK:  Organizing Plots
     //
     //    /** @brief Add a plot to the legend.
@@ -489,7 +469,7 @@
         for i in 0..<numberOfLegendEntries {
             let newTitle = plot.titleForLegendEntryAtIndex(idx: i)
             if ( newTitle.count > 0 ) {
-                var newLegendEntry = CPTLegendEntry()
+                let newLegendEntry = CPTLegendEntry()
                 newLegendEntry.plot      = plot
                 newLegendEntry.index     = i
                 newLegendEntry.textStyle = theTextStyle
@@ -520,82 +500,123 @@
     //     *  @param plot The plot.
     //     *  @param idx An index within the bounds of the plot array.
     //     **/
-    //    func insertPlot:(nonnull CPTPlot *)plot atIndex:(NSUInteger)idx
-    //    {
-    //        if ( [plot isKindOfClass:[CPTPlot class]] ) {
-    //            CPTMutablePlotArray *thePlots = self.plots;
-    //            NSAssert(idx <= thePlots.count, @"index greater than the number of plots");
-    //
-    //            CPTMutableLegendEntryArray *theLegendEntries = self.legendEntries;
-    //            NSUInteger legendEntryIndex                  = 0;
-    //            if ( idx == thePlots.count ) {
-    //                legendEntryIndex = theLegendEntries.count;
-    //            }
-    //            else {
-    //                CPTPlot *lastPlot = thePlots[idx];
-    //                for ( CPTLegendEntry *legendEntry in theLegendEntries ) {
-    //                    if ( legendEntry.plot == lastPlot ) {
-    //                        break;
-    //                    }
-    //                    legendEntryIndex++;
-    //                }
-    //            }
-    //
-    //            [thePlots insertObject:plot atIndex:idx];
-    //            self.layoutChanged = true
-    //
-    //            CPTTextStyle *theTextStyle       = self.textStyle;
-    //            NSUInteger numberOfLegendEntries = [plot numberOfLegendEntries];
-    //            for ( NSUInteger i = 0; i < numberOfLegendEntries; i++ ) {
-    //                NSString *newTitle = [plot titleForLegendEntryAtIndex:i];
-    //                if ( newTitle ) {
-    //                    CPTLegendEntry *newLegendEntry = [[CPTLegendEntry alloc] init];
-    //                    newLegendEntry.plot      = plot;
-    //                    newLegendEntry.index     = i;
-    //                    newLegendEntry.textStyle = theTextStyle;
-    //                    [theLegendEntries insertObject:newLegendEntry atIndex:legendEntryIndex++];
-    //                }
-    //            }
-    //            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(legendNeedsRedraw:) name:CPTLegendNeedsRedrawForPlotNotification object:plot];
-    //            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(legendNeedsLayout:) name:CPTLegendNeedsLayoutForPlotNotification object:plot];
-    //            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(legendNeedsReloadEntries:) name:CPTLegendNeedsReloadEntriesForPlotNotification object:plot];
-    //        }
-    //    }
-    //
+    
+    func insertPlot(plot: CPTPlot, atIndex idx :Int)
+    {
+        var thePlots = self.plots;
+        
+        var theLegendEntries = self.legendEntries;
+        var legendEntryIndex                  = 0;
+        if ( idx == thePlots.count ) {
+            legendEntryIndex = theLegendEntries.count;
+        }
+        else {
+            let lastPlot = thePlots[idx];
+            for legendEntry in theLegendEntries {
+                if ( legendEntry.plot == lastPlot ) {
+                    break;
+                }
+                legendEntryIndex += 1
+            }
+        }
+        
+        thePlots.insert(plot, at:idx)
+        self.layoutChanged = true
+        
+        let theTextStyle       = self.textStyle;
+        let numberOfLegendEntries = plot.numberOfLegendEntries()
+        for idx in 0..<numberOfLegendEntries {
+            
+            let newTitle = plot.titleForLegendEntryAtIndex(idx: idx)
+            if ( newTitle.count > 0 ) {
+                let newLegendEntry = CPTLegendEntry()
+                newLegendEntry.plot      = plot
+                newLegendEntry.index     = idx
+                newLegendEntry.textStyle = theTextStyle
+                theLegendEntries.insert(newLegendEntry,  at:legendEntryIndex)
+                legendEntryIndex += legendEntryIndex
+            }
+        }
+        
+        NotificationCenter.receive(
+            instance:self,
+            name: .CPTLegendNeedsRedrawForPlotNotification,
+            selector: #selector(legendNeedsRedraw(_:)),
+            object:plot)
+        
+        NotificationCenter.receive(
+            instance: self,
+            name: .CPTLegendNeedsLayoutForPlotNotification,
+            selector: #selector(legendNeedsLayout(_:)),
+            object:plot)
+        
+        NotificationCenter.receive(
+            instance: self,
+            name: .CPTLegendNeedsReloadEntriesForPlotNotification,
+            selector: #selector(legendNeedsReloadEntries(_:)),
+            object:plot)
+    }
+    
     //    /** @brief Remove a plot from the legend.
     //     *  @param plot The plot to remove.
     //     **/
-    //    func removePlot:(nonnull CPTPlot *)plot
-    //    {
-    //        if ( [self.plots containsObject:plot] ) {
-    //            [self.plots removeObjectIdenticalTo:plot];
-    //            [self removeLegendEntriesForPlot:plot];
-    //            self.layoutChanged = true
-    //            [[NSNotificationCenter defaultCenter] removeObserver:self name:CPTLegendNeedsRedrawForPlotNotification object:plot];
-    //            [[NSNotificationCenter defaultCenter] removeObserver:self name:CPTLegendNeedsLayoutForPlotNotification object:plot];
-    //            [[NSNotificationCenter defaultCenter] removeObserver:self name:CPTLegendNeedsReloadEntriesForPlotNotification object:plot];
-    //        }
-    //        else {
-    //            [NSException raise:CPTException format:@"Tried to remove CPTPlot which did not exist."];
-    //        }
-    //    }
+    func removePlot(plot: CPTPlot)
+        {
+        if ( self.plots.contains(plot) ) {
+//                [self.plots removeObjectIdenticalTo:plot];
+            self.removeLegendEntriesForPlot(plot: plot)
+                self.layoutChanged = true
+    
+    
+            NotificationCenter.remove(
+                instance: self,
+                name: .CPTLegendNeedsRedrawForPlotNotification,
+                object:plot)
+            
+            NotificationCenter.remove(
+                instance: self,
+                name: .CPTLegendNeedsLayoutForPlotNotification,
+                object:plot)
+            
+            NotificationCenter.remove(
+                instance: self,
+                name: .CPTLegendNeedsReloadEntriesForPlotNotification,
+                object:plot)
+            }
+            else {
+                print("CPTException format:@Tried to remove CPTPlot which did not exist.")
+            }
+        }
     //
     //    /** @brief Remove a plot from the legend.
     //     *  @param identifier The identifier of the plot to remove.
     //     **/
-    //    func removePlotWithIdentifier:(nullable id<NSCopying>)identifier
-    //    {
-    //        CPTPlot *plotToRemove = [self plotWithIdentifier:identifier];
-    //
-    //        if ( plotToRemove ) {
-    //            [self.plots removeObjectIdenticalTo:plotToRemove];
-    //            [self removeLegendEntriesForPlot:plotToRemove];
-    //            self.layoutChanged = true
-    //            [[NSNotificationCenter defaultCenter] removeObserver:self name:CPTLegendNeedsRedrawForPlotNotification object:plotToRemove];
-    //            [[NSNotificationCenter defaultCenter] removeObserver:self name:CPTLegendNeedsLayoutForPlotNotification object:plotToRemove];
-    //            [[NSNotificationCenter defaultCenter] removeObserver:self name:CPTLegendNeedsReloadEntriesForPlotNotification object:plotToRemove];
-    //        }
-    //    }
+    func removePlotWithIdentifier(identifier: Any)
+    {
+        let plotToRemove = self.plotWithIdentifier(identifier: identifier)
+        
+        if (( plotToRemove ) != nil) {
+            self.plots.removeObjectIdenticalTo(plotToRemove)
+            self.removeLegendEntriesForPlot(plot: plotToRemove!)
+            self.layoutChanged = true
+            
+            
+            NotificationCenter.remove(
+                instance: self,
+                name:.CPTLegendNeedsRedrawForPlotNotification,
+                object:plotToRemove)
+            
+            NotificationCenter.remove(
+                instance: self,
+                name:.CPTLegendNeedsLayoutForPlotNotification,
+                object:plotToRemove)
+            
+            NotificationCenter.remove(
+                instance: self,
+                name:.CPTLegendNeedsReloadEntriesForPlotNotification,
+                object:plotToRemove)
+        }
+    }
     //
     //    /// @cond
     //
@@ -603,21 +624,17 @@
     //     *  @brief Remove all legend entries for the given plot from the legend.
     //     *  @param plot The plot.
     //     **/
-    //    func removeLegendEntriesForPlot:(nonnull CPTPlot *)plot
-    //    {
-    //        CPTMutableLegendEntryArray *theLegendEntries = self.legendEntries;
-    //        CPTMutableLegendEntryArray *entriesToRemove  = [[NSMutableArray alloc] init];
-    //
-    //        for ( CPTLegendEntry *legendEntry in theLegendEntries ) {
-    //            if ( legendEntry.plot == plot ) {
-    //                [entriesToRemove addObject:legendEntry];
-    //            }
-    //        }
-    //        [theLegendEntries removeObjectsInArray:entriesToRemove];
-    //    }
-    //
-    
-    
+    func removeLegendEntriesForPlot(plot: CPTPlot)
+    {
+        var theLegendEntries = self.legendEntries;
+        
+        for idx in 0..<theLegendEntries.count {
+            if theLegendEntries[idx].plot == plot {
+                theLegendEntries.remove(at: idx)
+            }
+        }
+    }
+
     // MARK: Notifications
     @objc func legendNeedsRedraw(_ notif: Notification )
     {
@@ -633,7 +650,7 @@
     @objc func legendNeedsReloadEntries(_ notif: Notification )
     {
         let thePlot = notif.object as! CPTPlot
-        let theLegendEntries = self.legendEntries;
+        var theLegendEntries = self.legendEntries;
         var legendEntryIndex = 0
         
         for legendEntry in theLegendEntries {
@@ -642,7 +659,7 @@
             }
             legendEntryIndex += 1
         }
-        self.removeLegendEntriesForPlot(thePlot)
+        self.removeLegendEntriesForPlot(plot: thePlot)
         
         let theTextStyle  = self.textStyle;
         let numberOfLegendEntries = thePlot.numberOfLegendEntries()
@@ -654,7 +671,7 @@
                 newLegendEntry.plot      = thePlot
                 newLegendEntry.index     = i
                 newLegendEntry.textStyle = theTextStyle
-                theLegendEntries.insertObject(newLegendEntry, atIndex: legendEntryIndex)
+                theLegendEntries.insert(newLegendEntry, at: legendEntryIndex)
                 legendEntryIndex += 1
             }
         }
@@ -662,7 +679,7 @@
     }
     
     
-    // MARK:Responder Chain and User interaction
+    // MARK: - Responder Chain and User interaction
     //
     //    /// @cond
     //
@@ -882,7 +899,6 @@
     //
     //    /// @}
     //
-    //    #pragma mark -
     //  MARK: Description
     //
     //    /// @cond
@@ -1165,10 +1181,10 @@
     var _rowHeightsThatFit     = [CGFloat]()
     var  rowHeightsThatFit : [CGFloat] {
         get {
-        if !_rowHeightsThatFit.isEmpty {
-            recalculateLayout()
-        }
-        return _rowHeightsThatFit
+            if !_rowHeightsThatFit.isEmpty {
+                recalculateLayout()
+            }
+            return _rowHeightsThatFit
         }
         set {}
     }
@@ -1177,9 +1193,9 @@
     var columnWidthsThatFit : [CGFloat] {
         get {
             if !_columnWidthsThatFit.isEmpty {
-            recalculateLayout()
-        }
-        return _columnWidthsThatFit
+                recalculateLayout()
+            }
+            return _columnWidthsThatFit
         }
         set {}
     }

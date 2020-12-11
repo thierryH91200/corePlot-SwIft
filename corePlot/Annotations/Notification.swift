@@ -46,21 +46,21 @@ extension NotificationCenter {
     }
     
     // Receive(addObserver) Notification
-    static func receive(instance: Any, name: Notification.Name, selector: Selector) {
+    static func receive(instance: Any, name: Notification.Name, selector: Selector, object :Any? = nil) {
         self.default.addObserver(
             instance,
             selector: selector,
             name: name,
-            object: nil
+            object: object
         )
     }
     
     // Remove(removeObserver) Notification
-    static func remove( instance: Any, name: Notification.Name  ) {
+    static func remove( instance: Any, name: Notification.Name, object :Any? = nil  ) {
         self.default.removeObserver(
             instance,
             name: name,
-            object: nil
+            object: object
         )
     }
 }
