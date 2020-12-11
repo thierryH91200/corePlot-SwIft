@@ -63,7 +63,7 @@ class CPTTextStyle: NSObject {
         myAttributes = [.font: NSFont( name:fontName, size:self.fontSize)!,
                         .foregroundColor : color,
                         .backgroundColor : NSColor.black,
-                        .paragraphStyle : paragraphStyle]
+                        .paragraphStyle  : paragraphStyle]
         return myAttributes
     }
 }

@@ -261,7 +261,6 @@ extension CPTGraph {
         NotificationCenter.receive(
             instance: self,
             name:.CPTPlotSpaceCoordinateMapping,
-
             selector:#selector(plotSpaceMappingDidChange))
         
         NotificationCenter.default.post(
