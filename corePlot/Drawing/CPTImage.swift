@@ -5,60 +5,60 @@
 ////  Created by thierryH24 on 07/11/2020.
 ////
 //
-//import Cocoa
-//
-//class CPTImage: NSObject {
-//    
-//    enum CPTSlice : Int {
-//        case topLeft = 0 ///< Top left corner
-//        case top ///< Top middle
-//        case topRight ///< Top right corner
-//        case left ///< Left middle
-//        case middle ///< Middle
-//        case right ///< Right middle
-//        case bottomLeft ///< Bottom left corner
-//        case bottom ///< Bottom middle
-//        case bottomRight ///< Bottom right corner
-//    }
-//    
-//    struct _CPTImageSlices {
-//        var  slice = [CGImage?] ()       ///< The image slices used to render a stretchable image.
-//    }
-//    typealias CPTImageSlices = _CPTImageSlices
-//
-//    var nativeImage: CPTNativeImage?
-//    var image: CGImage?
-//    var scale: CGFloat = 0.0
-//    var tiled = false
-//    var edgeInsets: NSEdgeInsets?
-//    var tileAnchoredToContext = false
-//    var opaque = false
-//    let slices: CPTImageSlices
-//    
-//    var  lastDrawnScale = CGFloat(0.0)
-//    
-//    
-//    // MARK: - Init/Dealloc
-//    init(path : String)
-//    {
-//        //        self.initWithNativeImage([[CPTNativeImage alloc] initWithContentsOfFile:path]];
-//    }
-//    
-//    init( anImage: CGImage, newScale: CGFloat )
-//    {
-//        guard newScale > CGFloat(0.0) else {return };
-//        
-//        super.init()
-//        
-//        nativeImage           = nil;
-//        image                 = anImage;
-//        scale                 = newScale;
-//        lastDrawnScale        = newScale;
-//        tiled                 = false
-//        tileAnchoredToContext = true;
-//        edgeInsets            = NSEdgeInsetsZero
-//    }
-//    
+import AppKit
+
+class CPTImage: NSObject {
+    
+    enum CPTSlice : Int {
+        case topLeft = 0 ///< Top left corner
+        case top ///< Top middle
+        case topRight ///< Top right corner
+        case left ///< Left middle
+        case middle ///< Middle
+        case right ///< Right middle
+        case bottomLeft ///< Bottom left corner
+        case bottom ///< Bottom middle
+        case bottomRight ///< Bottom right corner
+    }
+    
+    struct _CPTImageSlices {
+        var  slice = [CGImage?] ()       ///< The image slices used to render a stretchable image.
+    }
+    typealias CPTImageSlices = _CPTImageSlices
+
+    var nativeImage: CPTNativeImage?
+    var image: CGImage?
+    var scale: CGFloat = 0.0
+    var tiled = false
+    var edgeInsets: NSEdgeInsets?
+    var tileAnchoredToContext = false
+    var opaque = false
+    let slices: CPTImageSlices
+    
+    var  lastDrawnScale = CGFloat(0.0)
+    
+    
+    // MARK: - Init/Dealloc
+    init(path : String)
+    {
+        //        self.initWithNativeImage([[CPTNativeImage alloc] initWithContentsOfFile:path]];
+    }
+    
+    init( anImage: CGImage, newScale: CGFloat )
+    {
+        guard newScale > CGFloat(0.0) else {return };
+        
+        super.init()
+        
+        nativeImage           = nil;
+        image                 = anImage;
+        scale                 = newScale;
+        lastDrawnScale        = newScale;
+        tiled                 = false
+        tileAnchoredToContext = true;
+        edgeInsets            = NSEdgeInsetsZero
+    }
+}
 //    convenience init( anImage: CGImage)
 //    {
 //        self.init(anImage: anImage, newScale:CGFloat(1.0))
@@ -512,135 +512,135 @@
 ////     *  @param rect The rectangle to draw into.
 ////     *  @param context The graphics context to draw into.
 ////     **/
-////    -(void)drawInRect:(CGRect)rect inContext:(nonnull CGContextRef)context
-////    {
-////    CGImageRef theImage = self.image;
-////    
-////    // compute drawing scale
-////    CGFloat lastScale    = self.lastDrawnScale;
-////    CGFloat contextScale = CPTFloat(1.0);
-////    
-////    if ( rect.size.height != CPTFloat(0.0)) {
-////    CGRect deviceRect = CGContextConvertRectToDeviceSpace(context, rect);
-////    contextScale = deviceRect.size.height / rect.size.height;
-////    }
-////    
-////    // generate a Core Graphics image if needed
-////    if ( !theImage || (contextScale != lastScale)) {
-////    CPTNativeImage *theNativeImage = self.nativeImage;
-////    
-////    if ( theNativeImage ) {
-////    #if TARGET_OS_SIMULATOR || TARGET_OS_IPHONE
-////    theImage   = theNativeImage.CGImage;
-////    self.scale = theNativeImage.scale;
-////    #else
-////    NSSize imageSize   = theNativeImage.size;
-////    NSRect drawingRect = NSMakeRect(0.0, 0.0, imageSize.width, imageSize.height);
-////    
-////    theImage = [theNativeImage CGImageForProposedRect:&drawingRect
-////    context:[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO]
-////    hints:nil];
-////    self.scale = contextScale;
-////    #endif
-////    self.image = theImage;
-////    }
-////    }
-////    
-////    if ( !theImage ) {
-////    return;
-////    }
-////    
-////    // draw the image
-////    CGFloat imageScale = self.scale;
-////    CGFloat scaleRatio = contextScale / imageScale;
-////    
-////    CPTEdgeInsets insets = self.edgeInsets;
-////    
-////    if ( CPTEdgeInsetsEqualToEdgeInsets(insets, CPTEdgeInsetsZero)) {
-////    [self drawImage:theImage inContext:context rect:rect scaleRatio:scaleRatio];
-////    }
-////    else {
-////    CPTImageSlices imageSlices = self.slices;
-////    BOOL hasSlices             = NO;
-////    
-////    for  i in   0..<9 {
-////    if ( imageSlices.slice[i] ) {
-////    hasSlices = YES;
-////    break;
-////    }
-////    }
-////    
-////    // create new slices if needed
-////    if ( !hasSlices || (contextScale != lastScale)) {
-////    [self makeImageSlices];
-////    imageSlices = self.slices;
-////    }
-////    
-////    CGFloat capTop    = insets.top;
-////    CGFloat capLeft   = insets.left;
-////    CGFloat capBottom = insets.bottom;
-////    CGFloat capRight  = insets.right;
-////    
-////    CGSize centerSize = CGSizeMake(rect.size.width - capLeft - capRight,
-////    rect.size.height - capTop - capBottom);
-////    
-////    // top row
-////    [self drawImage:imageSlices.slice[CPTSliceTopLeft]
-////    inContext:context
-////    rect:CPTRectMake(0.0, rect.size.height - capTop, capLeft, capTop)
-////    scaleRatio:scaleRatio];
-////    [self drawImage:imageSlices.slice[CPTSliceTop]
-////    inContext:context
-////    rect:CPTRectMake(capLeft, rect.size.height - capTop, centerSize.width, capTop)
-////    scaleRatio:scaleRatio];
-////    [self drawImage:imageSlices.slice[CPTSliceTopRight]
-////    inContext:context
-////    rect:CPTRectMake(rect.size.width - capRight, rect.size.height - capTop, capRight, capTop)
-////    scaleRatio:scaleRatio];
-////    
-////    // middle row
-////    [self drawImage:imageSlices.slice[CPTSliceLeft]
-////    inContext:context
-////    rect:CPTRectMake(0.0, capBottom, capLeft, centerSize.height)
-////    scaleRatio:scaleRatio];
-////    [self drawImage:imageSlices.slice[CPTSliceMiddle]
-////    inContext:context
-////    rect:CPTRectMake(capLeft, capBottom, centerSize.width, centerSize.height)
-////    scaleRatio:scaleRatio];
-////    [self drawImage:imageSlices.slice[CPTSliceRight]
-////    inContext:context
-////    rect:CPTRectMake(rect.size.width - capRight, capBottom, capRight, centerSize.height)
-////    scaleRatio:scaleRatio];
-////    
-////    // bottom row
-////    [self drawImage:imageSlices.slice[CPTSliceBottomLeft]
-////    inContext:context
-////    rect:CPTRectMake(0.0, 0.0, capLeft, capBottom)
-////    scaleRatio:scaleRatio];
-////    [self drawImage:imageSlices.slice[CPTSliceBottom]
-////    inContext:context
-////    rect:CPTRectMake(capLeft, 0.0, centerSize.width, capBottom)
-////    scaleRatio:scaleRatio];
-////    [self drawImage:imageSlices.slice[CPTSliceBottomRight]
-////    inContext:context
-////    rect:CPTRectMake(rect.size.width - capRight, 0.0, capRight, capBottom)
-////    scaleRatio:scaleRatio];
-////    }
-////    
-////    self.lastDrawnScale = contextScale;
-////    }
-////    
-////    #pragma mark -
-////    #pragma mark Debugging
-////    
-////    /// @cond
-////    
-////    -(nullable id)debugQuickLookObject
-////    {
-////    return self.nativeImage;
-////    }
-////    
-////    /// @endcond
+func drawInRect(rect: CGRect, inContext(context: CGContextRef)
+    {
+    CGImageRef theImage = self.image;
+    
+    // compute drawing scale
+    CGFloat lastScale    = self.lastDrawnScale;
+    CGFloat contextScale = CPTFloat(1.0);
+    
+    if ( rect.size.height != CPTFloat(0.0)) {
+    CGRect deviceRect = CGContextConvertRectToDeviceSpace(context, rect);
+    contextScale = deviceRect.size.height / rect.size.height;
+    }
+    
+    // generate a Core Graphics image if needed
+    if ( !theImage || (contextScale != lastScale)) {
+    CPTNativeImage *theNativeImage = self.nativeImage;
+    
+    if ( theNativeImage ) {
+    #if TARGET_OS_SIMULATOR || TARGET_OS_IPHONE
+    theImage   = theNativeImage.CGImage;
+    self.scale = theNativeImage.scale;
+    #else
+    NSSize imageSize   = theNativeImage.size;
+    NSRect drawingRect = NSMakeRect(0.0, 0.0, imageSize.width, imageSize.height);
+    
+    theImage = [theNativeImage CGImageForProposedRect:&drawingRect
+    context:[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO]
+    hints:nil];
+    self.scale = contextScale;
+    #endif
+    self.image = theImage;
+    }
+    }
+    
+    if ( !theImage ) {
+    return;
+    }
+    
+    // draw the image
+    CGFloat imageScale = self.scale;
+    CGFloat scaleRatio = contextScale / imageScale;
+    
+    CPTEdgeInsets insets = self.edgeInsets;
+    
+    if ( CPTEdgeInsetsEqualToEdgeInsets(insets, CPTEdgeInsetsZero)) {
+    [self drawImage:theImage inContext:context rect:rect scaleRatio:scaleRatio];
+    }
+    else {
+    CPTImageSlices imageSlices = self.slices;
+    BOOL hasSlices             = NO;
+    
+    for  i in   0..<9 {
+    if ( imageSlices.slice[i] ) {
+    hasSlices = YES;
+    break;
+    }
+    }
+    
+    // create new slices if needed
+    if ( !hasSlices || (contextScale != lastScale)) {
+    [self makeImageSlices];
+    imageSlices = self.slices;
+    }
+    
+    CGFloat capTop    = insets.top;
+    CGFloat capLeft   = insets.left;
+    CGFloat capBottom = insets.bottom;
+    CGFloat capRight  = insets.right;
+    
+    CGSize centerSize = CGSizeMake(rect.size.width - capLeft - capRight,
+    rect.size.height - capTop - capBottom);
+    
+    // top row
+    [self drawImage:imageSlices.slice[CPTSliceTopLeft]
+    inContext:context
+    rect:CPTRectMake(0.0, rect.size.height - capTop, capLeft, capTop)
+    scaleRatio:scaleRatio];
+    [self drawImage:imageSlices.slice[CPTSliceTop]
+    inContext:context
+    rect:CPTRectMake(capLeft, rect.size.height - capTop, centerSize.width, capTop)
+    scaleRatio:scaleRatio];
+    [self drawImage:imageSlices.slice[CPTSliceTopRight]
+    inContext:context
+    rect:CPTRectMake(rect.size.width - capRight, rect.size.height - capTop, capRight, capTop)
+    scaleRatio:scaleRatio];
+    
+    // middle row
+    [self drawImage:imageSlices.slice[CPTSliceLeft]
+    inContext:context
+    rect:CPTRectMake(0.0, capBottom, capLeft, centerSize.height)
+    scaleRatio:scaleRatio];
+    [self drawImage:imageSlices.slice[CPTSliceMiddle]
+    inContext:context
+    rect:CPTRectMake(capLeft, capBottom, centerSize.width, centerSize.height)
+    scaleRatio:scaleRatio];
+    [self drawImage:imageSlices.slice[CPTSliceRight]
+    inContext:context
+    rect:CPTRectMake(rect.size.width - capRight, capBottom, capRight, centerSize.height)
+    scaleRatio:scaleRatio];
+    
+    // bottom row
+    [self drawImage:imageSlices.slice[CPTSliceBottomLeft]
+    inContext:context
+    rect:CPTRectMake(0.0, 0.0, capLeft, capBottom)
+    scaleRatio:scaleRatio];
+    [self drawImage:imageSlices.slice[CPTSliceBottom]
+    inContext:context
+    rect:CPTRectMake(capLeft, 0.0, centerSize.width, capBottom)
+    scaleRatio:scaleRatio];
+    [self drawImage:imageSlices.slice[CPTSliceBottomRight]
+    inContext:context
+    rect:CPTRectMake(rect.size.width - capRight, 0.0, capRight, capBottom)
+    scaleRatio:scaleRatio];
+    }
+    
+    self.lastDrawnScale = contextScale;
+    }
+    
+    #pragma mark -
+    #pragma mark Debugging
+    
+    /// @cond
+    
+    -(nullable id)debugQuickLookObject
+    {
+    return self.nativeImage;
+    }
+    
+    /// @endcond
 ////    
 ////    @end
 ////    

@@ -973,13 +973,22 @@ extension CPTAxis {
 //        return thePlotArea.axisSet;
 //    }
 //
-    func setHidden(newHidden: Bool)
-    {
-        if ( newHidden != self.isHidden ) {
-            super.isHidden = newHidden;
-            self.setNeedsRelabel()
+    
+    public override var isHidden: Bool {
+        get {
+            return super.isHidden
+        }
+        set {
+            if ( newValue != self.isHidden ) {
+                super.isHidden = newValue;
+                if ( newValue == true ) {
+                    self.setNeedsRelabel()
+                }
+            }
+
         }
     }
+
     
     func updateCustomTickLabels()
     {
@@ -1006,7 +1015,7 @@ extension CPTAxis {
                     label.contentLayer.hidden = !isVisible;
                     if ( isVisible == true) {
                         let tickBasePoint = self.viewPointForCoordinateValue(coordinateValue: label.tickLocation)
-                        label.positionRelativeToViewPoint(tickBasePoint, forCoordinate:orthogonalCoordinate, inDirection:direction)
+                        label.positionRelativeToViewPoint(point: tickBasePoint, coordinate:orthogonalCoordinate, direction:direction)
                     }
                 }
 
@@ -1021,74 +1030,73 @@ extension CPTAxis {
             }
         }
     }
-//
-//    -(void)updateMajorTickLabelOffsets
-//    {
-//        CPTSign direction      = self.tickDirection;
-//        CPTSign labelDirection = self.tickLabelDirection;
-//
-//        if ( labelDirection == CPTSignNone ) {
-//            labelDirection = direction;
-//        }
-//
-//        CGFloat majorOffset = self.labelOffset;
-//
-//        if ((direction == CPTSignNone) || (labelDirection == direction)) {
-//            majorOffset += self.tickOffset;
-//        }
-//
-//        for ( CPTAxisLabel *label in self.axisLabels ) {
-//            label.offset = majorOffset;
-//        }
-//    }
-//
-//    -(void)updateMinorTickLabelOffsets
-//    {
-//        CPTSign direction      = self.tickDirection;
-//        CPTSign labelDirection = self.minorTickLabelDirection;
-//
-//        if ( labelDirection == CPTSignNone ) {
-//            labelDirection = direction;
-//        }
-//
-//        CGFloat minorOffset = self.minorTickLabelOffset;
-//
-//        if ((direction == CPTSignNone) || (labelDirection == direction)) {
-//            minorOffset += self.tickOffset;
-//        }
-//
-//        for ( CPTAxisLabel *label in self.minorTickAxisLabels ) {
-//            label.offset = minorOffset;
-//        }
-//    }
-//
-//    /// @endcond
-//
-//    /**
+
+    func updateMajorTickLabelOffsets()
+    {
+        let direction      = self.tickDirection;
+        var labelDirection = self.tickLabelDirection
+
+        if ( labelDirection == CPTSign.none ) {
+            labelDirection = direction
+        }
+
+        var majorOffset = self.labelOffset;
+
+        if ((direction == CPTSign.none) || (labelDirection == direction)) {
+            majorOffset += self.tickOffset
+        }
+
+        for label in self.axisLabels  {
+            label.offset = majorOffset
+        }
+    }
+
+    func updateMinorTickLabelOffsets()
+    {
+        let direction      = self.tickDirection;
+        var labelDirection = self.minorTickLabelDirection;
+
+        if ( labelDirection == .none ) {
+            labelDirection = direction;
+        }
+
+        var minorOffset = self.minorTickLabelOffset;
+
+        if ((direction == .none) || (labelDirection == direction)) {
+            minorOffset += self.tickOffset;
+        }
+
+        for label in self.minorTickAxisLabels {
+            label.offset = minorOffset
+        }
+    }
+
+    
+    //    /**
 //     *  @brief Update the major tick mark labels.
 //     **/
-//    -(void)updateMajorTickLabels
-//    {
-//        CPTCoordinate orthogonalCoordinate = CPTOrthogonalCoordinate(self.coordinate);
-//
-//        CPTSign direction = self.tickLabelDirection;
-//
-//        if ( direction == CPTSignNone ) {
-//            direction = self.tickDirection;
-//        }
-//
-//        for ( CPTAxisLabel *label in self.axisLabels ) {
-//            CGPoint tickBasePoint = [self viewPointForCoordinateValue:label.tickLocation];
-//            [label positionRelativeToViewPoint:tickBasePoint forCoordinate:orthogonalCoordinate inDirection:direction];
-//        }
-//    }
-//
+    func updateMajorTickLabels()
+    {
+        let orthogonalCoordinate = CPTUtilities.shared.CPTOrthogonalCoordinate(self.coordinate);
+
+        var direction = self.tickLabelDirection;
+
+        if ( direction == .none ) {
+            direction = self.tickDirection;
+        }
+
+        for label in self.axisLabels {
+            let tickBasePoint = self.viewPointForCoordinateValue(coordinateValue: label.tickLocation)
+            label.positionRelativeToViewPoint(point: tickBasePoint, coordinate:orthogonalCoordinate, direction:direction)
+        }
+    }
+
 //    /**
 //     *  @brief Update the minor tick mark labels.
 //     **/
     func updateMinorTickLabels() {
-        let orthogonalCoordinate = CPTOrthogonalCoordinate(coordinate)
 
+        let orthogonalCoordinate = CPTUtilities.shared.CPTOrthogonalCoordinate(coordinate)
         var direction = minorTickLabelDirection
 
         if direction == CPTSign.none {
@@ -1096,7 +1104,7 @@ extension CPTAxis {
         }
 
         for label in minorTickAxisLabels {
-            let tickBasePoint = viewPoint(forCoordinateValue: label.tickLocation)
+            let tickBasePoint = self.viewPointForCoordinateValue( coordinateValue: label.tickLocation)
             label.positionRelative(toViewPoint: tickBasePoint, for: orthogonalCoordinate, inDirection: direction)
         }
     }

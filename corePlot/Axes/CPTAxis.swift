@@ -536,25 +536,27 @@ class CPTAxis : CPTLayer {
     //    /// @cond
     //
     var _tickOffset = CGFloat(0)
-    func tickOffset() -> CGFloat
-        {
+    var tickOffset : CGFloat {
+        get   {
             var offset = CGFloat(0.0);
-    
+            
             switch ( self.tickDirection ) {
-            case CPTSign.none:
-                    offset += self.majorTickLength * CGFloat(0.5);
-                    break;
-    
-            case CPTSign.positive:
+            case .none:
+                offset += self.majorTickLength * CGFloat(0.5);
+                break;
+                
+            case .positive:
                 fallthrough
                 
-            case CPTSign.negative:
-                    offset += self.majorTickLength;
-                    break;
+            case .negative:
+                offset += self.majorTickLength;
+                break;
             }
-    
+            
             return offset;
         }
+        set {}
+    }
     //
     //    /**
     //     *  @internal

@@ -11,7 +11,7 @@ public class CPTBorderedLayer: CPTAnnotationHostLayer {
     
     var text = ""
     var textStyle = CPTTextStyle()
-    var attributedText =  NSAttributedString()
+    var attributedText =  NSAttributedString(string: "")
     var maximumSize = CGSize()
     
     var borderLineStyle: CPTLineStyle?
@@ -78,7 +78,7 @@ public class CPTBorderedLayer: CPTAnnotationHostLayer {
             
             if ( radius > CGFloat(0.0)) {
                 context.beginPath();
-                CPTPathExtensions.shared.CPTAddRoundedRectPath(context, layerBounds, radius);
+                CPTPathExtensions.shared.CPTAddRoundedRectPath(context:context, rect: layerBounds, cornerRadius: radius)
                 theLineStyle?.strokePathInContext(context: context)
             }
             else {

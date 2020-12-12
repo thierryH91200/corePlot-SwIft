@@ -19,25 +19,27 @@ class CPTPlotRange: NSObject {
     var  lengthDouble: CGFloat = 0.0
     var  endDouble: Double = 0.0
 
-    var minLimit: NSNumber = 0.0
-    var midPoint: NSNumber = 0.0;
-    var maxLimit: NSNumber = 0.0
-    var minLimitDecimal: Decimal = 0.0;
-    var midPointDecimal: Decimal = 0.0
-    var maxLimitDecimal: Decimal = 0.0
-    var minLimitDouble: Double = 0.0
-    var midPointDouble: Double = 0.0;
-    var maxLimitDouble: Double = 0.0
+    var minLimit = 0.0
+    var midPoint = 0.0;
+    var maxLimit = 0.0
+    var minLimitDecimal = 0.0;
+    var midPointDecimal = 0.0
+    var maxLimitDecimal = 0.0
+    var minLimitDouble = 0.0
+    var midPointDouble = 0.0;
+    var maxLimitDouble = 0.0
 
     var  isInfinite = true
-    var  lengthSign: CPTSign = .positive
+    var  lengthSign  = CPTSign.positive
 
 
 // MARK: Init/Dealloc
     +(nonnull instancetype)plotRangeWithLocation:(nonnull NSNumber *)loc length:(nonnull NSNumber *)len
-    {
-        return [[self alloc] initWithLocation:loc length:len];
-    }
+{
+    return [[self alloc] initWithLocation:loc length:len];
+}
+    
+    
 //
 //    /** @brief Creates and returns a new CPTPlotRange instance initialized with the provided location and length.
 //     *  @param loc The starting location of the range.
@@ -166,164 +168,164 @@ class CPTPlotRange: NSObject {
 ////        }
 ////    }
 ////
-////    -(void)setLengthDouble:(double)newLength
-////    {
-////        if ( lengthDouble != newLength ) {
-////            lengthDouble = newLength;
-////
-////            if ( isnan(newLength)) {
-////                self.isInfinite = NO;
-////                self.lengthSign = CPTSignNone;
-////            }
-////            else {
-////                self.isInfinite = (BOOL)isinf(newLength);
-////                self.lengthSign = signbit(newLength) ? CPTSignNegative : CPTSignPositive;
-////            }
-////
-////            if ( !self.inValueUpdate ) {
-////                self.inValueUpdate = YES;
-////
-////                self.lengthDecimal = CPTDecimalFromDouble(newLength);
-////
-////                self.inValueUpdate = NO;
-////            }
-////        }
-////    }
-////
-////    -(NSNumber *)end
-////    {
-////        return [NSDecimalNumber decimalNumberWithDecimal:self.endDecimal];
-////    }
-////
-////    -(NSDecimal)endDecimal
-////    {
-////        return CPTDecimalAdd(self.locationDecimal, self.lengthDecimal);
-////    }
-////
-////    -(double)endDouble
-////    {
-////        return self.locationDouble + self.lengthDouble;
-////    }
-////
-////    -(NSNumber *)minLimit
-////    {
-////        return [NSDecimalNumber decimalNumberWithDecimal:self.minLimitDecimal];
-////    }
-////
-////    -(NSDecimal)minLimitDecimal
-////    {
-////        NSDecimal loc = self.locationDecimal;
-////        NSDecimal len = self.lengthDecimal;
-////
-////        if ( NSDecimalIsNotANumber(&len)) {
-////            return loc;
-////        }
-////        else if ( CPTDecimalLessThan(len, CPTDecimalFromInteger(0))) {
-////            return CPTDecimalAdd(loc, len);
-////        }
-////        else {
-////            return loc;
-////        }
-////    }
-////
-////    -(double)minLimitDouble
-////    {
-////        double doubleLoc = self.locationDouble;
-////        double doubleLen = self.lengthDouble;
-////
-////        if ( doubleLen < 0.0 ) {
-////            return doubleLoc + doubleLen;
-////        }
-////        else {
-////            return doubleLoc;
-////        }
-////    }
-////
-////    -(NSNumber *)midPoint
-////    {
-////        return [NSDecimalNumber decimalNumberWithDecimal:self.midPointDecimal];
-////    }
-////
-////    -(NSDecimal)midPointDecimal
-////    {
-////        return CPTDecimalAdd(self.locationDecimal, CPTDecimalDivide(self.lengthDecimal, CPTDecimalFromInteger(2)));
-////    }
-////
-////    -(double)midPointDouble
-////    {
-////        return fma(self.lengthDouble, 0.5, self.locationDouble);
-////    }
-////
-////    -(NSNumber *)maxLimit
-////    {
-////        return [NSDecimalNumber decimalNumberWithDecimal:self.maxLimitDecimal];
-////    }
-////
-////    -(NSDecimal)maxLimitDecimal
-////    {
-////        NSDecimal loc = self.locationDecimal;
-////        NSDecimal len = self.lengthDecimal;
-////
-////        if ( NSDecimalIsNotANumber(&len)) {
-////            return loc;
-////        }
-////        else if ( CPTDecimalGreaterThan(len, CPTDecimalFromInteger(0))) {
-////            return CPTDecimalAdd(loc, len);
-////        }
-////        else {
-////            return loc;
-////        }
-////    }
-////
-////    -(double)maxLimitDouble
-////    {
-////        double doubleLoc = self.locationDouble;
-////        double doubleLen = self.lengthDouble;
-////
-////        if ( doubleLen > 0.0 ) {
-////            return doubleLoc + doubleLen;
-////        }
-////        else {
-////            return doubleLoc;
-////        }
-////    }
-////
-////    /// @endcond
-////
-////    #pragma mark -
-////
-////    #pragma mark -
-////    #pragma mark Checking Containership
-////
-////    /** @brief Determines whether a given number is inside the range.
-////     *  @param number The number to check.
-////     *  @return @YES if @ref location ≤ @par{number} ≤ @ref end.
-////     **/
-////    -(BOOL)contains:(NSDecimal)number
-////    {
-////        BOOL result = NO;
-////
-////        if ( self.isInfinite ) {
-////            switch ( self.lengthSign ) {
-////                case CPTSignPositive:
-////                    result = CPTDecimalGreaterThanOrEqualTo(number, self.minLimitDecimal);
-////                    break;
-////
-////                case CPTSignNegative:
-////                    result = CPTDecimalLessThanOrEqualTo(number, self.maxLimitDecimal);
-////                    break;
-////
-////                default:
-////                    break;
-////            }
-////        }
-////        else {
-////            result = CPTDecimalGreaterThanOrEqualTo(number, self.minLimitDecimal) && CPTDecimalLessThanOrEqualTo(number, self.maxLimitDecimal);
-////        }
-////
-////        return result;
-////    }
-////
+//    -(void)setLengthDouble:(double)newLength
+//    {
+//        if ( lengthDouble != newLength ) {
+//            lengthDouble = newLength;
+//
+//            if ( isnan(newLength)) {
+//                self.isInfinite = NO;
+//                self.lengthSign = CPTSignNone;
+//            }
+//            else {
+//                self.isInfinite = (BOOL)isinf(newLength);
+//                self.lengthSign = signbit(newLength) ? CPTSignNegative : CPTSignPositive;
+//            }
+//
+//            if ( !self.inValueUpdate ) {
+//                self.inValueUpdate = YES;
+//
+//                self.lengthDecimal = CPTDecimalFromDouble(newLength);
+//
+//                self.inValueUpdate = NO;
+//            }
+//        }
+//    }
+//
+//    -(NSNumber *)end
+//    {
+//        return [NSDecimalNumber decimalNumberWithDecimal:self.endDecimal];
+//    }
+//
+//    -(NSDecimal)endDecimal
+//    {
+//        return CPTDecimalAdd(self.locationDecimal, self.lengthDecimal);
+//    }
+//
+//    -(double)endDouble
+//    {
+//        return self.locationDouble + self.lengthDouble;
+//    }
+//
+//    -(NSNumber *)minLimit
+//    {
+//        return [NSDecimalNumber decimalNumberWithDecimal:self.minLimitDecimal];
+//    }
+//
+//    -(NSDecimal)minLimitDecimal
+//    {
+//        NSDecimal loc = self.locationDecimal;
+//        NSDecimal len = self.lengthDecimal;
+//
+//        if ( NSDecimalIsNotANumber(&len)) {
+//            return loc;
+//        }
+//        else if ( CPTDecimalLessThan(len, CPTDecimalFromInteger(0))) {
+//            return CPTDecimalAdd(loc, len);
+//        }
+//        else {
+//            return loc;
+//        }
+//    }
+//
+//    -(double)minLimitDouble
+//    {
+//        double doubleLoc = self.locationDouble;
+//        double doubleLen = self.lengthDouble;
+//
+//        if ( doubleLen < 0.0 ) {
+//            return doubleLoc + doubleLen;
+//        }
+//        else {
+//            return doubleLoc;
+//        }
+//    }
+//
+//    -(NSNumber *)midPoint
+//    {
+//        return [NSDecimalNumber decimalNumberWithDecimal:self.midPointDecimal];
+//    }
+//
+//    -(NSDecimal)midPointDecimal
+//    {
+//        return CPTDecimalAdd(self.locationDecimal, CPTDecimalDivide(self.lengthDecimal, CPTDecimalFromInteger(2)));
+//    }
+//
+//    -(double)midPointDouble
+//    {
+//        return fma(self.lengthDouble, 0.5, self.locationDouble);
+//    }
+//
+//    -(NSNumber *)maxLimit
+//    {
+//        return [NSDecimalNumber decimalNumberWithDecimal:self.maxLimitDecimal];
+//    }
+//
+//    -(NSDecimal)maxLimitDecimal
+//    {
+//        NSDecimal loc = self.locationDecimal;
+//        NSDecimal len = self.lengthDecimal;
+//
+//        if ( NSDecimalIsNotANumber(&len)) {
+//            return loc;
+//        }
+//        else if ( CPTDecimalGreaterThan(len, CPTDecimalFromInteger(0))) {
+//            return CPTDecimalAdd(loc, len);
+//        }
+//        else {
+//            return loc;
+//        }
+//    }
+//
+//    -(double)maxLimitDouble
+//    {
+//        double doubleLoc = self.locationDouble;
+//        double doubleLen = self.lengthDouble;
+//
+//        if ( doubleLen > 0.0 ) {
+//            return doubleLoc + doubleLen;
+//        }
+//        else {
+//            return doubleLoc;
+//        }
+//    }
+//
+//    /// @endcond
+//
+//    #pragma mark -
+//
+//    #pragma mark -
+//    #pragma mark Checking Containership
+//
+//    /** @brief Determines whether a given number is inside the range.
+//     *  @param number The number to check.
+//     *  @return @YES if @ref location ≤ @par{number} ≤ @ref end.
+//     **/
+//    -(BOOL)contains:(NSDecimal)number
+//    {
+//        BOOL result = NO;
+//
+//        if ( self.isInfinite ) {
+//            switch ( self.lengthSign ) {
+//                case CPTSignPositive:
+//                    result = CPTDecimalGreaterThanOrEqualTo(number, self.minLimitDecimal);
+//                    break;
+//
+//                case CPTSignNegative:
+//                    result = CPTDecimalLessThanOrEqualTo(number, self.maxLimitDecimal);
+//                    break;
+//
+//                default:
+//                    break;
+//            }
+//        }
+//        else {
+//            result = CPTDecimalGreaterThanOrEqualTo(number, self.minLimitDecimal) && CPTDecimalLessThanOrEqualTo(number, self.maxLimitDecimal);
+//        }
+//
+//        return result;
+//    }
+//
 //    /** @brief Determines whether a given number is inside the range.
 //     *  @param number The number to check.
 //     *  @return @YES if @ref locationDouble ≤ @par{number} ≤ @ref endDouble.
@@ -401,9 +403,9 @@ class CPTPlotRange: NSObject {
 //     *  @param otherRange The range to check.
 //     *  @return @YES if the ranges intersect.
 //     **/
-    -(BOOL)intersectsRange:(nullable CPTPlotRange *)otherRange
+    func intersectsRange(otherRange: CPTPlotRange? ) -> Bool
     {
-        BOOL result = NO;
+        var result = false
 
         if ( otherRange ) {
             if ( self.isInfinite ) {

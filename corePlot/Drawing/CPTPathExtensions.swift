@@ -11,7 +11,7 @@ import Foundation
 
 class CPTPathExtensions
 {
-    static let shared = CPTUtilities()
+    static let shared = CPTPathExtensions()
     
     func CPTCreateRoundedRectPath(rect: CGRect ,cornerRadius: CGFloat ) ->CGPath
     {

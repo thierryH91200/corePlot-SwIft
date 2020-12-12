@@ -32,10 +32,11 @@ class CPTXYGraph: CPTGraph {
         yScaleType = CPTScaleType.linear
     }
     
-    override init(layer: Any) {
-        super.init(layer: layer)
+    override init(layer: CPTLayer) {
+        
         let theLayer = layer as? CPTXYGraph
 
+        super.init(layer: theLayer!)
         xScaleType = theLayer?.xScaleType
         yScaleType = theLayer?.yScaleType
     }
@@ -58,8 +59,8 @@ class CPTXYGraph: CPTGraph {
     {
         let newAxisSet = CPTXYAxisSet( frame: self.bounds)
 
-        newAxisSet.xAxis.plotSpace = self.defaultPlotSpace
-        newAxisSet.yAxis.plotSpace = self.defaultPlotSpace
+        newAxisSet.xAxis.plotSpace = self.defaultPlotSpace()
+        newAxisSet.yAxis.plotSpace = self.defaultPlotSpace()
         return newAxisSet;
     }
 }

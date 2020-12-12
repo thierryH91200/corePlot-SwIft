@@ -11,7 +11,6 @@ extension CPTImage{
     
     func draw(in rect: CGRect, in context: CGContext) {
         
-        
         let theImage = self.image;
         
         // compute drawing scale
@@ -58,10 +57,8 @@ extension CPTImage{
         let scaleRatio = contextScale / imageScale;
         
         let insets = self.edgeInsets;
-        //
         
-//        if insets.equal
-        if ( CPTEdgeInsetsEqualToEdgeInsets(  insets, EdgeInsets.zeto)) {
+        if NSEdgeInsetsEqual(insets!, NSEdgeInsets()) == true {
             self.drawImage(theImage: theImage, context:context, rect:rect, scaleRatio:scaleRatio)
         }
         else {
@@ -74,7 +71,6 @@ extension CPTImage{
                     break;
                 }
             }
-            //
             // create new slices if needed
             if ( !hasSlices || (contextScale != lastScale)) {
                 self.makeImageSlices()
@@ -90,51 +86,56 @@ extension CPTImage{
                                     height: rect.size.height - capTop - capBottom)
             
             // top row
-            let rect = CGRect(x: 0.0, y: rect.size.height - capTop, width: capLeft, height: capTop)
-            self.drawImage(imageSlices.slice[.topLeft]
-            inContext:context,
-            rect: rect,
-            scaleRatio:scaleRatio]
+            self.drawImage(theImage: imageSlices.slice[CPTSlice.topLeft.rawValue],
+                           context:context,
+                           rect: CGRect(x: 0.0, y: rect.size.height - capTop, width: capLeft, height: capTop),
+                           scaleRatio:scaleRatio)
             
-            [self drawImage:imageSlices.slice[CPTSliceTop]
-            inContext:context
-            rect:CPTRectMake(capLeft, rect.size.height - capTop, centerSize.width, capTop)
-            scaleRatio:scaleRatio];
-            [self drawImage:imageSlices.slice[CPTSliceTopRight]
-            inContext:context
-            rect:CPTRectMake(rect.size.width - capRight, rect.size.height - capTop, capRight, capTop)
-            scaleRatio:scaleRatio];
+            self.drawImage(theImage: imageSlices.slice[CPTSlice.top.rawValue],
+                           context:context,
+                           rect:CGRect(x: capLeft, y: rect.size.height - capTop, width: centerSize.width, height: capTop),
+                           scaleRatio:scaleRatio)
             
-            //        // middle row
-            //        [self drawImage:imageSlices.slice[CPTSliceLeft]
-            //        inContext:context
-            //        rect:CPTRectMake(0.0, capBottom, capLeft, centerSize.height)
-            //        scaleRatio:scaleRatio];
-            //        [self drawImage:imageSlices.slice[CPTSliceMiddle]
-            //        inContext:context
-            //        rect:CPTRectMake(capLeft, capBottom, centerSize.width, centerSize.height)
-            //        scaleRatio:scaleRatio];
-            //        [self drawImage:imageSlices.slice[CPTSliceRight]
-            //        inContext:context
-            //        rect:CPTRectMake(rect.size.width - capRight, capBottom, capRight, centerSize.height)
-            //        scaleRatio:scaleRatio];
-            //
-            //        // bottom row
-            //        [self drawImage:imageSlices.slice[CPTSliceBottomLeft]
-            //        inContext:context
-            //        rect:CPTRectMake(0.0, 0.0, capLeft, capBottom)
-            //        scaleRatio:scaleRatio];
-            //        [self drawImage:imageSlices.slice[CPTSliceBottom]
-            //        inContext:context
-            //        rect:CPTRectMake(capLeft, 0.0, centerSize.width, capBottom)
-            //        scaleRatio:scaleRatio];
-            //        [self drawImage:imageSlices.slice[CPTSliceBottomRight]
-            //        inContext:context
-            //        rect:CPTRectMake(rect.size.width - capRight, 0.0, capRight, capBottom)
-            //        scaleRatio:scaleRatio];
+            self.drawImage(theImage: imageSlices.slice[CPTSlice.topRight.rawValue],
+                           context:context,
+                           rect:CGRect(x: rect.size.width - capRight, y: rect.size.height - capTop, width: capRight, height: capTop),
+                           scaleRatio:scaleRatio)
+            
+            // middle row
+            self.drawImage(theImage: imageSlices.slice[CPTSlice.left.rawValue],
+                           context:context,
+                           rect:CGRect(x: 0.0, y: capBottom, width: capLeft, height: centerSize.height),
+                           scaleRatio:scaleRatio)
+            
+            self.drawImage(theImage: imageSlices.slice[CPTSlice.middle.rawValue],
+                           context:context,
+                           rect:CGRect(x: capLeft, y: capBottom, width: centerSize.width, height: centerSize.height),
+                           scaleRatio:scaleRatio)
+            
+            self.drawImage(theImage: imageSlices.slice[CPTSlice.right.rawValue],
+                           context:context,
+                           rect:CGRect(x: rect.size.width - capRight, y: capBottom, width: capRight, height: centerSize.height),
+                           scaleRatio:scaleRatio)
+            
+            // bottom row
+            self.drawImage(theImage: imageSlices.slice[CPTSlice.bottomLeft.rawValue],
+                           context:context,
+                           rect:CGRect(x: 0.0, y: 0.0, width: capLeft, height: capBottom),
+                           scaleRatio:scaleRatio)
+            
+            self.drawImage(theImage: imageSlices.slice[CPTSlice.bottom.rawValue],
+                           context:context,
+                           rect:CGRect(x: capLeft, y: 0.0, width: centerSize.width, height: capBottom),
+                           scaleRatio:scaleRatio)
+            
+            self.drawImage(theImage: imageSlices.slice[CPTSlice.bottomRight.rawValue],
+                           context:context,
+                           rect:CGRect(x: rect.size.width - capRight, y: 0.0, width: capRight, height: capBottom),
+                           scaleRatio:scaleRatio)
             //    }
             //
             //    self.lastDrawnScale = contextScale;
-            }
-            
         }
+        
+    }
+}

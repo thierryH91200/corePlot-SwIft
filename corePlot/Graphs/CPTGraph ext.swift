@@ -260,12 +260,20 @@ extension CPTGraph {
         
         NotificationCenter.receive(
             instance: self,
-            name:.CPTPlotSpaceCoordinateMapping,
-            selector:#selector(plotSpaceMappingDidChange))
+            name:.CPTPlotSpaceCoordinateMappingDidChangeNotification,
+            selector:#selector(plotSpaceMappingDidChange(_:)),
+            object:space)
         
         NotificationCenter.default.post(
-            name: .CPTGraphDidAddPlotSpaceNotification, object: self)
+            self,
+            name: .CPTGraphDidAddPlotSpaceNotification,
+            object: self)
     }
+    
+  
+    
+    
+    
     
     /** @brief Remove a plot space from the graph.
      *  @param plotSpace The plot space.
@@ -278,14 +286,15 @@ extension CPTGraph {
             if self.plotSpaces.contains(thePlotSpace ) {
                 NotificationCenter.remove(
                     instance: self,
-                    name: .CPTPlotSpaceCoordinateMapping)
+                    name: .CPTPlotSpaceCoordinateMappingDidChangeNotification,
+                    object:thePlotSpace)
                 
                 // Remove space
                 thePlotSpace.graph = nil
                 self.plotSpaces.remove(thePlotSpace)
                 
                 // Update axes that referenced space
-                for axis in self.axisSet.axes {
+                for axis in self.axisSet().axes {
                     if ( axis.plotSpace == thePlotSpace ) {
                         axis.plotSpace = nil
                     }
@@ -305,10 +314,10 @@ extension CPTGraph {
     
     /// @cond
     
-    @objc func plotSpaceMappingDidChange(notif: NSNotification )
+    @objc func plotSpaceMappingDidChange(_ notif: NSNotification )
     {
         let plotSpace        = notif.object as! CPTPlotSpace
-        let backgroundBandsNeedRedraw = false;
+        var backgroundBandsNeedRedraw = false;
         
         for axis in self.axisSet().axes {
             if  axis.plotSpace == plotSpace {
@@ -435,7 +444,6 @@ extension CPTGraph {
         return contentAnchor;
     }
     
-    
     // MARK: - Accessors
     override func setPaddingLeft(newPadding: CGFloat)
     {
@@ -481,8 +489,8 @@ extension CPTGraph {
 //        return plotAreaFrame.plotArea.topDownLayerOrder()
 //    }
     
-    func setTopDownLayerOrder(_ newArray: CPTNumberArray?) {
-        plotAreaFrame.plotArea.topDownLayerOrder = newArray
+    func setTopDownLayerOrder(_ newArray: [CGFloat]?) {
+        plotAreaFrame.plotArea?.topDownLayerOrder = newArray!
     }
     func setTitle(newTitle : String)
     {
@@ -539,10 +547,10 @@ extension CPTGraph {
                 if ( attributedTitle ) {
                     //                self.titleTextStyle = [CPTTextStyle textStyleWithAttributes:[attributedTitle attributesAtIndex:0
                     //                                       effectiveRange:NULL]];
-                    self.title = attributedTitle
+                    self.title = attributedTitle.string
                     
-                    if ( theTitleAnnotation ) {
-                        theTitleAnnotation.contentLayer.attributedText = attributedTitle;
+                    if (( theTitleAnnotation ) != nil) {
+                        theTitleAnnotation?.contentLayer.attributedText = attributedTitle;
                     }
                     else {
                         let frameLayer = self.plotAreaFrame;
@@ -592,10 +600,10 @@ extension CPTGraph {
     
     func setTitleDisplacement(newDisplace:CGPoint)
     {
-        if ( !CGPointEqualToPoint(newDisplace, titleDisplacement)) {
-            titleDisplacement = newDisplace;
+        if ( !newDisplace.equalTo(titleDisplacement!)) {
+            titleDisplacement = newDisplace
             
-            self.titleAnnotation.displacement = newDisplace;
+            self.titleAnnotation?.displacement = newDisplace;
         }
     }
     
@@ -604,10 +612,10 @@ extension CPTGraph {
         if ( newAnchor != titlePlotAreaFrameAnchor ) {
             titlePlotAreaFrameAnchor = newAnchor;
             
-            theTitleAnnotation = self.titleAnnotation;
-            if ( theTitleAnnotation ) {
-                theTitleAnnotation.rectAnchor         = titlePlotAreaFrameAnchor;
-                theTitleAnnotation.contentAnchorPoint = self.contentAnchorForRectAnchor(anchor:titlePlotAreaFrameAnchor)
+            let theTitleAnnotation = self.titleAnnotation;
+            if (( theTitleAnnotation ) != nil) {
+                theTitleAnnotation?.rectAnchor         = titlePlotAreaFrameAnchor;
+                theTitleAnnotation?.contentAnchorPoint = self.contentAnchorForRectAnchor(anchor:titlePlotAreaFrameAnchor!)
             }
         }
     }
@@ -651,17 +659,17 @@ extension CPTGraph {
         }
         
         // Axes Set
-        if self.axisSet.pointingDeviceDownEvent(event :event, atPoint:interactionPoint ) {
+        if self.axisSet().pointingDeviceDownEvent(event :event, atPoint:interactionPoint ) {
             return true
         }
         
         // Plot area
-        if self.plotAreaFrame.ointingDeviceDownEvent(event: event, atPoint:interactionPoint ) {
+        if self.plotAreaFrame.pointingDeviceDownEvent(event: event, atPoint:interactionPoint ) {
             return true
         }
         
         // Legend
-        if self.legend.pointingDeviceDownEvent(event:event, atPoint:interactionPoint) {
+        if ((self.legend?.pointingDeviceDownEvent(event:event, atPoint:interactionPoint)) != nil) {
             return true;
         }
         
@@ -719,7 +727,7 @@ extension CPTGraph {
         }
         
         // Axes Set
-        if  !handledEvent && self.axisSet.pointingDeviceUpEvent(event:event, atPoint:interactionPoint ) {
+        if  !handledEvent && self.axisSet().pointingDeviceUpEvent(event:event, atPoint:interactionPoint ) {
             handledEvent = true
         }
         
@@ -771,7 +779,7 @@ extension CPTGraph {
      *  @param interactionPoint The coordinates of the interaction.
      *  @return Whether the event was handled or not.
      **/
-    func pointingDeviceDraggedEvent(event : CPTNativeEvent, atPoint:CGPoint)-> Bool
+    override func pointingDeviceDraggedEvent(event : CPTNativeEvent, atPoint interactionPoint:CGPoint)-> Bool
     {
         // Plots
         let reversedCollection = plots.reversed()
@@ -782,7 +790,7 @@ extension CPTGraph {
         }
         
         // Axes Set
-        if self.axisSet.pointingDeviceDraggedEvent(event: event, atPoint:interactionPoint ) {
+        if self.axisSet().pointingDeviceDraggedEvent(event: event, atPoint:interactionPoint ) {
             return true
         }
         
@@ -792,7 +800,7 @@ extension CPTGraph {
         }
         
         // Legend
-        if self.legend.pointingDeviceDraggedEvent(event:event, atPoint:interactionPoint) {
+        if ((self.legend?.pointingDeviceDraggedEvent(event:event, atPoint:interactionPoint)) != nil) {
             return true
         }
         
@@ -802,7 +810,7 @@ extension CPTGraph {
         var handledEvent = false
         
         for space in self.plotSpaces  {
-            let handled = space.pointingDeviceDraggedEvent(event, atPoint:interactionPoint)
+            let handled = space.pointingDeviceDraggedEvent(event: event, atPoint:interactionPoint)
             handledEvent |= handled;
         }
         
@@ -810,7 +818,7 @@ extension CPTGraph {
             return true
         }
         else {
-            return super.pointingDeviceDraggedEvent(event, atPoint:interactionPoint)
+            return super.pointingDeviceDraggedEvent(event: event, atPoint:interactionPoint)
         }
     }
     
@@ -834,7 +842,7 @@ extension CPTGraph {
      *  @param event The OS event.
      *  @return Whether the event was handled or not.
      **/
-    func pointingDeviceCancelledEvent(event: CPTNativeEvent )-> Bool
+    override func pointingDeviceCancelledEvent(event: CPTNativeEvent )-> Bool
     {
         // Plots
         let reversedCollection = plots.reversed()
@@ -845,7 +853,7 @@ extension CPTGraph {
         }
         
         // Axes Set
-        if self.axisSet.pointingDeviceCancelledEvent(event ) {
+        if self.axisSet().pointingDeviceCancelledEvent(event: event ) {
             return true
         }
         
@@ -855,16 +863,16 @@ extension CPTGraph {
         }
         
         // Legend
-        if self.legend.pointingDeviceCancelledEvent(event) {
+        if ((self.legend?.pointingDeviceCancelledEvent(event)) != nil) {
             return true
         }
         
         // Plot spaces
-        let handledEvent = false
+        var handledEvent = false
         
         for space in self.plotSpaces  {
-            let handled = space.pointingDeviceCancelledEvent(event)
-            handledEvent |= handled
+            let handled = space.pointingDeviceCancelledEvent(event: event)
+            handledEvent = !handled
         }
         
         if ( handledEvent ) {
@@ -906,7 +914,7 @@ extension CPTGraph {
         }
         
         // Axes Set
-        if self.axisSet.scrollWheelEvent(event: event, fromPoint: fromPoint, toPoint: toPoint)  {
+        if self.axisSet().scrollWheelEvent(event: event, fromPoint: fromPoint, toPoint: toPoint)  {
             return true
         }
         
@@ -921,11 +929,11 @@ extension CPTGraph {
         }
         
         // Plot spaces
-        let handledEvent = false
+        var handledEvent = false
         
         for space in self.plotSpaces  {
             let handled = space.scrollWheelEvent(event :event, fromPoint:fromPoint, toPoint:toPoint)
-            handledEvent |= handled;
+            handledEvent = !handled;
         }
         
         if handledEvent == true {

@@ -5,15 +5,24 @@
 //  Created by thierryH24 on 09/11/2020.
 //
 
-import Cocoa
+import AppKit
 
 class CPTFillImage: CPTFill {
     
+    
+    var fillImage : CPTImage
+    
+    init(anImage: CPTImage )
+    {
+        super.init()
+            fillImage = anImage
+    }
+
+
     override init() {
         
     }
     
-    var fillColor : NSColor
     
     // MARK: Drawing
 
@@ -21,12 +30,17 @@ class CPTFillImage: CPTFill {
      *  @param rect The rectangle to draw into.
      *  @param context The graphics context to draw into.
      **/
-    func fillRect(rect: CGRect, context: CGContext)
+    func fillPathInContext(rect: CGRect, context: CGContext)
     {
         context.saveGState();
-        context.setFillColor(self.fillColor.cgColor);
-        context.fill(rect);
-        context.restoreGState();
+
+        let bounds = context.boundingBoxOfPath;
+
+        context.clip();
+        
+        [self.fillImage.drawInRect(bounds, inContext:context)
+
+        CGContextRestoreGState(context);
     }
 
     /** @brief Draws the color into the given graphics context clipped to the current drawing path.
@@ -41,17 +55,11 @@ class CPTFillImage: CPTFill {
     }
 
     // MARK: Opacity
-
-    func isOpaque () -> Bool
-    {
-        return self.fillColor.isOpaque;
+    var isOpaque : Bool {
+        get {return self.fillImage.isOpaque }
+        set { }
     }
 
-    // MARK: Color
-    func cgColor() -> CGColor
-    {
-        return self.fillColor.cgColor;
-    }
 
 
 

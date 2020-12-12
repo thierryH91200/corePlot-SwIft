@@ -154,16 +154,22 @@ extension CPTLayer {
         super.position = newPosition;
     }
     
-    func setHidden(newHidden: Bool)
-    {
-        if ( newHidden != self.isHidden ) {
-            super.isHidden = newHidden;
-            if ( !newHidden ) {
-                self.setNeedsDisplay()
+    
+    public override var isHidden: Bool {
+        get {
+            return super.isHidden
+        }
+        set {
+            if ( newValue != self.isHidden ) {
+                super.isHidden = newValue;
+                if ( newValue == true ) {
+                    self.setNeedsDisplay()
+                }
             }
+
         }
     }
-    
+
     func setContentsScale(newContentsScale: CGFloat)
     {
         if ( self.contentsScale != newContentsScale ) {
@@ -216,3 +222,4 @@ extension CPTLayer {
 }
 
 
+@objc
