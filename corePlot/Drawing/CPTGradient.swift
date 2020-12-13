@@ -198,6 +198,22 @@ class CPTGradient: NSObject {
 //        return newInstance;
 //    }
     
+  // MARK: Opacity
+    var isOpaque: Bool     {
+        get {
+            var opaqueGradient = true
+            var list = self.elementList;
+            
+            while ( opaqueGradient == true && (list != nil )) {
+                opaqueGradient = opaqueGradient && ((list?.color.alpha)! >= CGFloat(1.0));
+                list           = list?.nextElement;
+            }
+            return opaqueGradient
+        }
+        set {}
+    }
+
+    
 
     
 }

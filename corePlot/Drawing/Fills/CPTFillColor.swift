@@ -5,24 +5,23 @@
 //  Created by thierryH24 on 10/11/2020.
 //
 
-import Cocoa
+import AppKit
 
 class CPTFillColor: CPTFill {
     
     var  fillColor = NSColor.black
     
     // MARK: Opacity
-    //    static var isOpaque: Bool = fillColor.opaque
+    var isOpaque: Bool {
+        get { return fillColor.isOpaque }
+        set { }
+    }
 
-        
     
     init(aColor : NSColor)
     {
         fillColor = aColor
     }
-    
-    
-    
     
     func fillRect(rect :CGRect, context : CGContext)
     {
@@ -40,11 +39,7 @@ class CPTFillColor: CPTFill {
         context.restoreGState();
     }
     
-    
-    
-    
     // MARK: Color
-    
     func cgColor()-> CGColor
     {
         return self.fillColor.cgColor

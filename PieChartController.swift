@@ -7,38 +7,38 @@
 
 import Cocoa
 
-class PieChartController: NSViewController , CPTPieChartDataSource{
+class PieChartController: NSViewController {
     
-
+    
     private var pieGraph : CPTXYGraph? = nil
     let dataForChart = [20.0, 30.0, 60.0]
-
-
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do view setup here.
-
+        
         // Create graph from theme
         let newGraph = CPTXYGraph(frame: CGRect())
         newGraph.applyTheme(CPTTheme(named: kCPTDarkGradientTheme))
-
+        
         let hostingView = self.view as! CPTGraphHostingView
         hostingView.hostedGraph = newGraph
-
+        
         // Paddings
         newGraph.paddingLeft   = 20.0
         newGraph.paddingRight  = 20.0
         newGraph.paddingTop    = 20.0
         newGraph.paddingBottom = 20.0
-
+        
         newGraph.axisSet = nil
-
+        
         let whiteText = CPTMutableTextStyle()
         whiteText.color = NSColor.white
-
+        
         newGraph.titleTextStyle = whiteText
         newGraph.title          = "Graph Title"
-
+        
         // Add pie chart
         let piePlot = CPTPieChart(frame: CGRect)
         piePlot.dataSource      = self
@@ -50,17 +50,17 @@ class PieChartController: NSViewController , CPTPieChartDataSource{
         piePlot.borderLineStyle = CPTLineStyle()
         piePlot.delegate        = self
         newGraph.addPlot(piePlot)
-
+        
         self.pieGraph = newGraph
     }
-
+    
     // MARK: - Plot Data Source Methods
     func numberOfRecordsForPlot(plot: CPTPlot) -> UInt
     {
         return UInt(self.dataForChart.count)
     }
-
-    func numberForPlot(plot: CPTPlot, field: UInt, recordIndex: UInt) -> AnyObject?
+    
+    func numberForPlot(plot: CPTPlot, field: UInt, recordIndex: UInt) -> Int?
     {
         if Int(recordIndex) > self.dataForChart.count {
             return nil
@@ -69,43 +69,47 @@ class PieChartController: NSViewController , CPTPieChartDataSource{
             switch CPTPieChartField(rawValue: Int(field))! {
             case .SliceWidth:
                 return (self.dataForChart)[Int(recordIndex)] as Int
-
+                
             default:
                 return recordIndex
             }
         }
     }
-
+    
     func dataLabelForPlot(plot: CPTPlot, recordIndex: UInt) -> CPTLayer?
     {
         let label = CPTTextLayer(text:"\(recordIndex)", style: <#CPTTextStyle?#>)
-
+        
         if let textStyle = label.textStyle?.mutableCopy() as? CPTMutableTextStyle {
             textStyle.color = CPTColor.lightGrayColor()
-
+            
             label.textStyle = textStyle
         }
-
+        
         return label
     }
-
+    
     func radialOffsetForPieChart(piePlot: CPTPieChart, recordIndex: UInt) -> CGFloat
     {
         var offset: CGFloat = 0.0
-
+        
         if ( recordIndex == 0 ) {
             offset = piePlot.pieRadius / 8.0
         }
-
+        
         return offset
     }
-
+    
     // MARK: - Delegate Methods
     
     func pieChart(plot: CPTPlot, sliceWasSelectedAtRecordIndex recordIndex: UInt)
     {
         self.pieGraph?.title = "Selected index: \(recordIndex)"
     }
+}
+
+extension PieChartController :CPTPieChartDataSource {
+    
 }
 
 

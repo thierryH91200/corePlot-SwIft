@@ -444,8 +444,8 @@ class CPTColor: NSObject {
 // *  @param gray The gray level (@num{0} ≤ @par{gray} ≤ @num{1}).
 // *  @return A new CPTColor instance initialized with the provided gray level.
 // **/
-//+(nonnull instancetype)colorWithGenericGray:(CGFloat)gray
-//{
+
+//+(nonnull instancetype)colorWithGenericGray(gray: CGFloat) - > CPTColor {
 //    CGFloat values[4]   = { gray, gray, gray, CPTFloat(1.0) };
 //    CGColorRef colorRef = CGColorCreate([CPTColorSpace genericRGBSpace].cgColorSpace, values);
 //    CPTColor *color     = [[self alloc] initWithCGColor:colorRef];
@@ -453,6 +453,9 @@ class CPTColor: NSObject {
 //    CGColorRelease(colorRef);
 //    return color;
 //}
+
+
+
 //
 //#if TARGET_OS_OSX
 //
@@ -638,40 +641,17 @@ class CPTColor: NSObject {
 //
 //#pragma mark -
 //#pragma mark Opacity
-//
-///// @cond
-//
-//-(BOOL)isOpaque
-//{
-//    return CGColorGetAlpha(self.cgColor) >= CPTFloat(1.0);
-//}
-//
+
+/// @cond
+
+var isOpaque : Bool {
+    get {return CGColorGetAlpha(self.cgColor) >= CGFloat(1.0) }
+    set {}
+}
+
+
 ///// @endcond
 //
-//// MARK: NSCoding
-//
-//-(void)encodeWithCoder:(nonnull NSCoder *)coder
-//{
-//#if TARGET_OS_OSX
-//    [coder encodeConditionalObject:self.nsColorCache forKey:@"CPTColor.nsColorCache"];
-//#elif TARGET_OS_SIMULATOR || TARGET_OS_IPHONE
-//    [coder encodeConditionalObject:self.uiColorCache forKey:@"CPTColor.uiColorCache"];
-//#endif
-//
-//    CGColorRef theColor = self.cgColor;
-//
-//    [coder encodeCGColorSpace:CGColorGetColorSpace(theColor) forKey:@"CPTColor.colorSpace"];
-//
-//    size_t numberOfComponents = CGColorGetNumberOfComponents(theColor);
-//    [coder encodeInt64:(int64_t)numberOfComponents forKey:@"CPTColor.numberOfComponents"];
-//
-//    const CGFloat *colorComponents = CGColorGetComponents(theColor);
-//
-//    for ( size_t i = 0; i < numberOfComponents; i++ ) {
-//        NSString *newKey = [[NSString alloc] initWithFormat:@"CPTColor.component[%zu]", i];
-//        [coder encodeCGFloat:colorComponents[i] forKey:newKey];
-//    }
-//}
 //
 ///// @endcond
 //
@@ -679,41 +659,6 @@ class CPTColor: NSObject {
 // *  @param coder An unarchiver object.
 // *  @return An object initialized from data in a given unarchiver.
 // */
-//-(nullable instancetype)initWithCoder:(nonnull NSCoder *)coder
-//{
-//    if ((self = [super init])) {
-//#if TARGET_OS_OSX
-//        NSColor *decodedNSColor = [coder decodeObjectOfClass:[NSColor class]
-//                                                      forKey:@"CPTColor.nsColorCache"];
-//        if ( decodedNSColor ) {
-//            nsColorCache = decodedNSColor;
-//        }
-//#elif TARGET_OS_SIMULATOR || TARGET_OS_IPHONE
-//        UIColor *decodedUIColor = [coder decodeObjectOfClass:[UIColor class]
-//                                                      forKey:@"CPTColor.uiColorCache"];
-//        if ( decodedUIColor ) {
-//            uiColorCache = decodedUIColor;
-//        }
-//#endif
-//        CGColorSpaceRef colorSpace = [coder newCGColorSpaceDecodeForKey:@"CPTColor.colorSpace"];
-//
-//        size_t numberOfComponents = (size_t)[coder decodeInt64ForKey:@"CPTColor.numberOfComponents"];
-//
-//        CGFloat *colorComponents = calloc(numberOfComponents, sizeof(CGFloat));
-//
-//        for ( size_t i = 0; i < numberOfComponents; i++ ) {
-//            NSString *newKey = [[NSString alloc] initWithFormat:@"CPTColor.component[%zu]", i];
-//            colorComponents[i] = [coder decodeCGFloatForKey:newKey];
-//        }
-//
-//        CGColorRef color = CGColorCreate(colorSpace, colorComponents);
-//        cgColor = color;
-//
-//        CGColorSpaceRelease(colorSpace);
-//        free(colorComponents);
-//    }
-//    return self;
-//}
 //
 //#pragma mark -
 //#pragma mark NSSecureCoding Methods
@@ -819,3 +764,5 @@ class CPTColor: NSObject {
 ///// @endcond
 //
 //@end
+
+

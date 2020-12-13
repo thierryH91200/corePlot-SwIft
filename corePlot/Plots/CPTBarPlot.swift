@@ -41,17 +41,19 @@ public class CPTBarPlot: CPTPlot {
         case barBase      ///< Bar base (used only if @link CPTBarPlot::barBasesVary barBasesVary @endlink is YES).
     };
     
-    //    public weak var dataSource : CPTBarPlotDataSource?
     
-    //    typedef NSString *CPTBarPlotBinding cpt_swift_struct;
     
-    let CPTBarPlotBindingBarLocations  = "barLocations"  ///< Bar locations.
-    let CPTBarPlotBindingBarTips       = "barTips"       ///< Bar tips.
-    let CPTBarPlotBindingBarBases      = "barBases"      ///< Bar bases.
-    let CPTBarPlotBindingBarFills      = "barFills"      ///< Bar fills.
-    let CPTBarPlotBindingBarLineStyles = "barLineStyles" ///< Bar line styles.
-    let CPTBarPlotBindingBarWidths     = "barWidths"     ///< Bar widths.
+//    let CPTBarPlotBindingBarLocations  = "barLocations"  ///< Bar locations.
+//    let CPTBarPlotBindingBarTips       = "barTips"       ///< Bar tips.
+//    let CPTBarPlotBindingBarBases      = "barBases"      ///< Bar bases.
+//    let CPTBarPlotBindingBarFills      = "barFills"      ///< Bar fills.
+//    let CPTBarPlotBindingBarLineStyles = "barLineStyles" ///< Bar line styles.
+//    let CPTBarPlotBindingBarWidths     = "barWidths"     ///< Bar widths.
+//
     
+    
+    public weak var dataSource : CPTBarPlotDataSource?
+
     var barLocations = [CGFloat]()
     var barTips  = [CGFloat]()
     var barBases  = [CGFloat]()
@@ -128,12 +130,12 @@ public class CPTBarPlot: CPTPlot {
     
     override init() {
         CPTBarPlot.exposeBinding(.CPTBarPlotBindingBarLocations)
-        CPTBarPlot.exposeBinding(NSBindingName(rawValue: CPTBarPlotBindingBarLocations))
-        CPTBarPlot.exposeBinding(NSBindingName(rawValue: CPTBarPlotBindingBarTips))
-        CPTBarPlot.exposeBinding(NSBindingName(rawValue: CPTBarPlotBindingBarBases))
-        CPTBarPlot.exposeBinding(NSBindingName(rawValue: CPTBarPlotBindingBarFills))
-        CPTBarPlot.exposeBinding(NSBindingName(rawValue: CPTBarPlotBindingBarLineStyles))
-        CPTBarPlot.exposeBinding(NSBindingName(rawValue: CPTBarPlotBindingBarWidths))
+        CPTBarPlot.exposeBinding(.CPTBarPlotBindingBarLocations)
+        CPTBarPlot.exposeBinding(.CPTBarPlotBindingBarTips)
+        CPTBarPlot.exposeBinding(.CPTBarPlotBindingBarBases)
+        CPTBarPlot.exposeBinding(.CPTBarPlotBindingBarFills)
+        CPTBarPlot.exposeBinding(.CPTBarPlotBindingBarLineStyles)
+        CPTBarPlot.exposeBinding(.CPTBarPlotBindingBarWidths)
         
     }
     

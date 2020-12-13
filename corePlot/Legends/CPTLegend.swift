@@ -44,7 +44,7 @@
     //    var swatchSize = CGSize()
     var swatchBorderLineStyle = CPTLineStyle()
     var swatchCornerRadius = CGFloat(0)
-    var swatchFill = CPTFill()
+    var swatchFill : CPTFill?
     
     var entryBorderLineStyle = CPTLineStyle()
     var entryCornerRadius = CGFloat(0)
@@ -176,7 +176,7 @@
     override init (layer: CPTLayer)
     {
         super.init(layer:layer)
-        let theLayer = CPTLegend(layer:CPTLayer)
+        let theLayer = CPTLegend(layer : CPTLayer)
         
         plots                 = theLayer.plots
         legendEntries         = theLayer.legendEntries;

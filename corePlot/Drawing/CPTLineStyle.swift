@@ -14,12 +14,11 @@ public class CPTLineStyle: NSObject {
     var lineJoin : CGLineJoin
     var miterLimit : CGFloat
     var lineWidth : CGFloat
-    var dashPattern : [Double]
+    var dashPattern : [CGFloat]
     var patternPhase: CGFloat 
     var lineColor: NSUIColor
     var lineFill : CPTFill?
     var lineGradient: CPTGradient?
-    var isOpaque = true
     
     override init()
     {
@@ -82,19 +81,16 @@ public class CPTLineStyle: NSObject {
         let dashCount = myDashPattern.count;
 
         if dashCount > 0  {
-            let sz = sizeof(Double.self)
-            var dashLengths = (Double)calloc(dashCount, sizeof(Double.self))
+            var dashLengths =  [CGFloat]()
 
-            var dashCounter = 0;
             for  currentDashLength in myDashPattern {
-                dashCounter += 1
-                dashLengths[dashCounter] = currentDashLength.cgFloatValue
+                dashLengths.append( CGFloat(currentDashLength))
             }
-
-            CGContextSetLineDash(context, self.patternPhase, dashLengths, dashCount)
+            context.setLineDash(phase: patternPhase, lengths:  [2, 2])
+//            CGContextSetLineDash(context, self.patternPhase, dashLengths, dashCount)
         }
         else {
-            CGContextSetLineDash(context, CGFloat(0.0), nil, 0)
+            context.setLineDash(phase: patternPhase, lengths:  [2, 2])
         }
         context.setStrokeColor(self.lineColor.cgColor);
     }
@@ -150,7 +146,7 @@ public class CPTLineStyle: NSObject {
 
     /// @cond
 
-    func strokePathWithGradient(gradient:  CPTGradient, context: CGContext)
+    func strokePathWithGradient(gradient:  CPTGradient?, context: CGContext)
     {
         if ( gradient != nil ) {
             let deviceRect = context.convertToDeviceSpace(CGRect(x: 0.0, y: 0.0, width: 1.0, height: 1.0));
@@ -180,26 +176,25 @@ public class CPTLineStyle: NSObject {
     }
 
     // MARK:  - Opacity
-    func isOpaque()-> Bool
-    {
-        var opaqueLine = false;
-
-        if ( self.dashPattern.count <= 1 ) {
-            if (( self.lineGradient ) != nil) {
-                opaqueLine = self.lineGradient.isoOopaque;
+    var isOpaque : Bool {
+        
+        get {
+            var opaqueLine = false;
+            
+            if ( self.dashPattern.count <= 1 ) {
+                if (( self.lineGradient ) != nil) {
+                    opaqueLine = self.lineGradient.isOpaque
+                }
+                else if (( self.lineFill ) != nil) {
+                    opaqueLine = self.lineFill!.isOpaque
+                }
+                else if ( self.lineColor ) {
+                    opaqueLine = self.lineColor.isOpaque
+                }
             }
-            else if ( self.lineFill ) {
-                opaqueLine = self.lineFill.opaque;
-            }
-            else if ( self.lineColor ) {
-                opaqueLine = self.lineColor.opaque;
-            }
+            return opaqueLine;
         }
-
-        return opaqueLine;
+        set { }
     }
-
-
-
     
 }

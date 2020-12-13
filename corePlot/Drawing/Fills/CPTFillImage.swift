@@ -9,7 +9,6 @@ import AppKit
 
 class CPTFillImage: CPTFill {
     
-    
     var fillImage : CPTImage
     
     init(anImage: CPTImage )
@@ -20,7 +19,6 @@ class CPTFillImage: CPTFill {
 
 
     override init() {
-        
     }
     
     
@@ -35,12 +33,9 @@ class CPTFillImage: CPTFill {
         context.saveGState();
 
         let bounds = context.boundingBoxOfPath;
-
         context.clip();
-        
-        [self.fillImage.drawInRect(bounds, inContext:context)
-
-        CGContextRestoreGState(context);
+        self.fillImage.drawInRect(bounds, inContext:context)
+        context.restoreGState();
     }
 
     /** @brief Draws the color into the given graphics context clipped to the current drawing path.
@@ -49,14 +44,19 @@ class CPTFillImage: CPTFill {
     override func fillPathInContext(context: CGContext)
     {
         context.saveGState();
-        context.setFillColor(self.fillColor.cgColor);
-        context.fillPath();
+        let bounds = context.boundingBoxOfPath
+        CGContextClip(context);
+        self.fillImage.drawInRect(bounds, inContext:context)
         context.restoreGState();
+
+//        contextsetFillColor(self.fillColor.cgColor)
+//        .
+//        context.fillPath();
     }
 
     // MARK: Opacity
-    var isOpaque : Bool {
-        get {return self.fillImage.isOpaque }
+    override var isOpaque : Bool {
+        get { return self.fillImage.isOpaque }
         set { }
     }
 

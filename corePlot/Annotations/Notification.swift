@@ -27,6 +27,7 @@ public extension Notification.Name {
     static let CPTGraphDidAddPlotSpaceNotification  = Notification.Name( "CPTGraphDidAddPlotSpaceNotification")
     static let CPTGraphDidRemovePlotSpaceNotification  = Notification.Name( "CPTGraphDidRemovePlotSpaceNotification")
     static let CPTGraphPlotSpaceNotificationKey  = Notification.Name( "CPTGraphPlotSpaceNotificationKey")
+    
     static let updateBalance             = Notification.Name( "updateBalance")
     static let updateAccount             = Notification.Name( "updateAccount")
 
@@ -38,10 +39,10 @@ public extension Notification.Name {
 extension NotificationCenter {
     
     // Send(Post) Notification
-    static func send(_ key: Notification.Name) {
+    static func send(_ key: Notification.Name , object :Any? = nil) {
         self.default.post(
             name: key,
-            object: nil
+            object: object
         )
     }
     
@@ -79,6 +80,12 @@ public extension NSBindingName {
     static let CPTBarPlotBindingBarFills      = NSBindingName("barFills" )    ///< Bar fills.
     static let CPTBarPlotBindingBarLineStyles = NSBindingName("barLineStyles") ///< Bar line styles.
     static let CPTBarPlotBindingBarWidths     = NSBindingName("barWidths" )    ///< Bar widths.
+    
+    // MARK: CPPIe
+    static let CPTPieChartBindingPieSliceWidthValues   = NSBindingName("sliceWidths")        ///< Pie slice widths.
+    static let CPTPieChartBindingPieSliceFills         = NSBindingName("sliceFills")       ///< Pie slice interior fills.
+    static let CPTPieChartBindingPieSliceRadialOffsets = NSBindingName("sliceRadialOffsets") ///< Pie slice radial offsets.
+
     
 }
 

@@ -98,7 +98,7 @@ extension CPTPlot {
 // *  @link CPTPlotDelegate::plot:dataLabelTouchUpAtRecordIndex: -plot:dataLabelTouchUpAtRecordIndex: @endlink or
 // *  @link CPTPlotDelegate::plot:dataLabelTouchUpAtRecordIndex:withEvent: -plot:dataLabelTouchUpAtRecordIndex:withEvent: @endlink
 // *  methods, the data labels are searched to find the index of the one containing the @par{interactionPoint}.
-// *  The delegate method will be called and this method returns @YES if the @par{interactionPoint} is within a label.
+// *  The delegatfloadNumbersForAllFieldsFromDataSourceInRecordIndexRangeffe method will be called and this method returns @YES if the @par{interactionPoint} is within a label.
 // *  This method returns @NO if the @par{interactionPoint} is too far away from all of the data labels.
 // *
 // *  If the data label being released is the same as the one that was pressed (see

@@ -275,122 +275,121 @@ extension CPTPlot {
 // *  @link CPTPlotDataSource::dataForPlot:recordIndexRange: -dataForPlot:recordIndexRange: @endlink
 // *  method and it returns valid data.
 // **/
-//-(BOOL)loadNumbersForAllFieldsFromDataSourceInRecordIndexRange:(NSRange)indexRange
-//{
-//    BOOL hasData = NO;
-//
-//    id<CPTPlotDataSource> theDataSource = self.dataSource;
-//
-//    if ( [theDataSource respondsToSelector:@selector(dataForPlot:recordIndexRange:)] ) {
-//        CPTNumericData *data = [theDataSource dataForPlot:self recordIndexRange:indexRange];
-//
-//        if ( [data isKindOfClass:[CPTNumericData class]] ) {
-//            const NSUInteger sampleCount = data.numberOfSamples;
-//            CPTNumericDataType dataType  = data.dataType;
-//
-//            if ((sampleCount > 0) && (data.numberOfDimensions == 2)) {
-//                CPTNumberArray *theShape    = data.shape;
-//                const NSUInteger rowCount   = theShape[0].unsignedIntegerValue;
-//                const NSUInteger fieldCount = theShape[1].unsignedIntegerValue;
-//
-//                if ( fieldCount > 0 ) {
-//                    // convert data type if needed
-//                    switch ( self.cachePrecision ) {
-//                        case CPTPlotCachePrecisionAuto:
-//                            if ( self.doublePrecisionCache ) {
-//                                if ( !CPTDataTypeEqualToDataType(dataType, self.doubleDataType)) {
-//                                    CPTMutableNumericData *mutableData = [data mutableCopy];
-//                                    mutableData.dataType = self.doubleDataType;
-//                                    data                 = mutableData;
-//                                }
-//                            }
-//                            else {
-//                                if ( !CPTDataTypeEqualToDataType(dataType, self.decimalDataType)) {
-//                                    CPTMutableNumericData *mutableData = [data mutableCopy];
-//                                    mutableData.dataType = self.decimalDataType;
-//                                    data                 = mutableData;
-//                                }
-//                            }
-//                            break;
-//
-//                        case CPTPlotCachePrecisionDecimal:
-//                            if ( !CPTDataTypeEqualToDataType(dataType, self.decimalDataType)) {
-//                                CPTMutableNumericData *mutableData = [data mutableCopy];
-//                                mutableData.dataType = self.decimalDataType;
-//                                data                 = mutableData;
-//                            }
-//                            break;
-//
-//                        case CPTPlotCachePrecisionDouble:
-//                            if ( !CPTDataTypeEqualToDataType(dataType, self.doubleDataType)) {
-//                                CPTMutableNumericData *mutableData = [data mutableCopy];
-//                                mutableData.dataType = self.doubleDataType;
-//                                data                 = mutableData;
-//                            }
-//                            break;
-//                    }
-//
-//                    // add the data to the cache
-//                    const NSUInteger bufferLength = rowCount * dataType.sampleBytes;
-//
-//                    switch ( data.dataOrder ) {
-//                        case CPTDataOrderRowsFirst:
-//                        {
-//                            const void *sourceEnd = (const int8_t *)(data.bytes) + data.length;
-//
-//                            for ( NSUInteger fieldNum = 0; fieldNum < fieldCount; fieldNum++ ) {
-//                                NSMutableData *tempData = [[NSMutableData alloc] initWithLength:bufferLength];
-//
-//                                if ( CPTDataTypeEqualToDataType(dataType, self.doubleDataType)) {
-//                                    const double *sourceData = [data samplePointerAtIndex:0, fieldNum];
-//                                    double *destData         = tempData.mutableBytes;
-//
-//                                    while ( sourceData < (const double *)sourceEnd ) {
-//                                        *destData++ = *sourceData;
-//                                        sourceData += fieldCount;
-//                                    }
-//                                }
-//                                else {
-//                                    const NSDecimal *sourceData = [data samplePointerAtIndex:0, fieldNum];
-//                                    NSDecimal *destData         = tempData.mutableBytes;
-//
-//                                    while ( sourceData < (const NSDecimal *)sourceEnd ) {
-//                                        *destData++ = *sourceData;
-//                                        sourceData += fieldCount;
-//                                    }
-//                                }
-//
-//                                CPTMutableNumericData *tempNumericData = [[CPTMutableNumericData alloc] initWithData:tempData
-//                                                                                                            dataType:dataType
-//                                                                                                               shape:nil];
-//
-//                                [self cacheNumbers:tempNumericData forField:fieldNum atRecordIndex:indexRange.location];
-//                            }
-//                            hasData = YES;
-//                        }
-//                        break;
-//
-//                        case CPTDataOrderColumnsFirst:
-//                            for ( NSUInteger fieldNum = 0; fieldNum < fieldCount; fieldNum++ ) {
-//                                const void *samples = [data samplePointerAtIndex:0, fieldNum];
-//                                NSData *tempData    = [[NSData alloc] initWithBytes:samples
-//                                                                             length:bufferLength];
-//
-//                                CPTMutableNumericData *tempNumericData = [[CPTMutableNumericData alloc] initWithData:tempData
-//                                                                                                            dataType:dataType
-//                                                                                                               shape:nil];
-//
-//                                [self cacheNumbers:tempNumericData forField:fieldNum atRecordIndex:indexRange.location];
-//                            }
-//                            hasData = YES;
-//                            break;
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    return hasData;
-//}
-//}
+    func loadNumbersForAllFieldsFromDataSourceInRecordIndexRange(indexRange: NSRange) -> Bool
+    {
+        var hasData = false;
+        let theDataSource = self.dataSource
+        
+        if ( [theDataSource respondsToSelector:@selector(dataForPlot:recordIndexRange:)] ) {
+            let data = theDataSource.dataForPlot(self, recordIndexRange:indexRange)
+            
+            if data is CPTNumericData  {
+                let sampleCount = data.numberOfSamples;
+                let dataType  = data.dataType;
+                
+                if ((sampleCount > 0) && (data.numberOfDimensions == 2)) {
+                    let theShape    = data.shape;
+                    let rowCount   = theShape[0]
+                    let fieldCount = theShape[1]
+                    
+                    if ( fieldCount > 0 ) {
+                        // convert data type if needed
+                        switch ( self.cachePrecision ) {
+                        case .auto:
+                            if ( self.doublePrecisionCache ) {
+                                if ( !CPTDataTypeEqualToDataType(dataType, self.doubleDataType)) {
+                                    let mutableData = data
+                                    mutableData.dataType = self.doubleDataType;
+                                    data                 = mutableData;
+                                }
+                            }
+                            else {
+                                if ( !CPTDataTypeEqualToDataType(dataType, self.decimalDataType)) {
+                                    let mutableData = data
+                                    mutableData.dataType = self.decimalDataType;
+                                    data                 = mutableData;
+                                }
+                            }
+                            break;
+                            
+                        case CPTPlotCachePrecisionDecimal:
+                            if ( !CPTDataTypeEqualToDataType(dataType, self.decimalDataType)) {
+                                CPTMutableNumericData *mutableData = [data mutableCopy];
+                                mutableData.dataType = self.decimalDataType;
+                                data                 = mutableData;
+                            }
+                            break;
+                            
+                        case CPTPlotCachePrecisionDouble:
+                            if ( !CPTDataTypeEqualToDataType(dataType, self.doubleDataType)) {
+                                CPTMutableNumericData *mutableData = [data mutableCopy];
+                                mutableData.dataType = self.doubleDataType;
+                                data                 = mutableData;
+                            }
+                            break;
+                        }
+                        
+                        // add the data to the cache
+                        const NSUInteger bufferLength = rowCount * dataType.sampleBytes;
+                        
+                        switch ( data.dataOrder ) {
+                        case CPTDataOrderRowsFirst:
+                            {
+                                const void *sourceEnd = (const int8_t *)(data.bytes) + data.length;
+                                
+                                for ( NSUInteger fieldNum = 0; fieldNum < fieldCount; fieldNum++ ) {
+                                    NSMutableData *tempData = [[NSMutableData alloc] initWithLength:bufferLength];
+                                    
+                                    if ( CPTDataTypeEqualToDataType(dataType, self.doubleDataType)) {
+                                        const double *sourceData = [data samplePointerAtIndex:0, fieldNum];
+                                        double *destData         = tempData.mutableBytes;
+                                        
+                                        while ( sourceData < (const double *)sourceEnd ) {
+                                            *destData++ = *sourceData;
+                                            sourceData += fieldCount;
+                                        }
+                                    }
+                                    else {
+                                        const NSDecimal *sourceData = [data samplePointerAtIndex:0, fieldNum];
+                                        NSDecimal *destData         = tempData.mutableBytes;
+                                        
+                                        while ( sourceData < (const NSDecimal *)sourceEnd ) {
+                                            *destData++ = *sourceData;
+                                            sourceData += fieldCount;
+                                        }
+                                    }
+                                    
+                                    CPTMutableNumericData *tempNumericData = [[CPTMutableNumericData alloc] initWithData:tempData
+                                    dataType:dataType
+                                    shape:nil];
+                                    
+                                    [self cacheNumbers:tempNumericData forField:fieldNum atRecordIndex:indexRange.location];
+                                }
+                                hasData = YES;
+                            }
+                            break;
+                            
+                        case CPTDataOrderColumnsFirst:
+                            for ( NSUInteger fieldNum = 0; fieldNum < fieldCount; fieldNum++ ) {
+                                const void *samples = [data samplePointerAtIndex:0, fieldNum];
+                                NSData *tempData    = [[NSData alloc] initWithBytes:samples
+                                length:bufferLength];
+                                
+                                CPTMutableNumericData *tempNumericData = [[CPTMutableNumericData alloc] initWithData:tempData
+                                dataType:dataType
+                                shape:nil];
+                                
+                                [self cacheNumbers:tempNumericData forField:fieldNum atRecordIndex:indexRange.location];
+                            }
+                            hasData = YES;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return hasData;
+    }
+}
 }

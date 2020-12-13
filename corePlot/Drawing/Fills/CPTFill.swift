@@ -9,7 +9,9 @@ import Cocoa
 
 public class CPTFill: NSObject  {
     
-    
+// MARK: - Init/Dealloc
+    var isOpaque = false
+
     class func fill(with aColor: CPTColor) -> Self {
         return CPTFillColor(color: aColor)
     }
