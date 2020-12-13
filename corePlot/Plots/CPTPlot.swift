@@ -194,11 +194,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
     }
     
     
-    //    @implementation CPTPlot(AbstractMethods)
-    //
-    //    #pragma mark -
     // MARK:Fields
-    
     func numberOfFields() -> Int
     {
         return 0
@@ -223,7 +219,6 @@ public class CPTPlot: CPTAnnotationHostLayer {
     }
     
     // MARK: - Data Labels
-    
     func positionLabelAnnotation(label:  CPTPlotSpaceAnnotation, forIndex: Int)
     {
     // do nothing--implementation provided by subclasses
@@ -289,6 +284,4 @@ public class CPTPlot: CPTAnnotationHostLayer {
         reloadPlotData(indexRange: indexRange)
         reloadDataLabels(indexRange: indexRange)
     }
-    
-    
 }

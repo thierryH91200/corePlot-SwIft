@@ -146,11 +146,11 @@ class CPTGradient: NSObject {
         
         if curElement == nil || (newElement.position < curElement.position)) {
             let tmpNext        = curElement;
-            CPTGradientElement newElementList = calloc(1, sizeof(CPTGradientElement));
+            var newElementList = calloc(1, sizeof(CPTGradientElement));
             if ( newElementList ) {
-                *newElementList             = *newElement;
+                newElementList             = newElement;
                 newElementList.nextElement = tmpNext;
-                self.elementList            = newElementList;
+                self.elementList           = newElementList;
             }
         }
         else {
@@ -198,6 +198,137 @@ class CPTGradient: NSObject {
 //        return newInstance;
 //    }
     
+    func fillRect(rect: CGRect, inContext context: CGContext)    {
+        
+        var myCGShading : CGShading?
+        
+        context.saveGState();
+        
+        context.clip(to: rect);
+        
+        switch ( self.gradientType ) {
+        case .axial:
+            myCGShading = self.newAxialGradientInRect(rect: rect)
+            break;
+            
+        case .radial:
+            myCGShading = self.newRadialGradientInRect(rect: rect, context:context)
+            break;
+        }
+        context.drawShading(myCGShading!);
+        context.restoreGState();
+    }
+    
+    // MARK: Private Methods
+    func newAxialGradientInRect(rect: CGRect)->CGShading
+    {
+        // First Calculate where the beginning and ending points should be
+        var startPoint = CGPoint()
+        var endPoint = CGPoint()
+        
+        if ( self.angle == CGFloat(0.0)) {
+            startPoint = CGPoint(x: rect.minX, y: rect.minY) // right of rect
+            endPoint   = CGPoint(x: rect.maxX, y: rect.minY) // left  of rect
+        }
+        else if ( self.angle == CGFloat(90.0)) {
+            startPoint = CGPoint( x: rect.minX, y: rect.minY) // bottom of rect
+            endPoint   = CGPoint( x: rect.minX, y: rect.maxY) // top    of rect
+        }
+        else { // ok, we'll do the calculations now
+            var  x = CGFloat(0)
+            var  y = CGFloat(0)
+            
+            var sinA = CGFloat(0)
+            var cosA = CGFloat(0)
+            var tanA = CGFloat(0)
+            
+            var length = CGFloat(0)
+            var deltaX = CGFloat(0)
+            var  deltaY = CGFloat(0)
+            
+            var rAngle = self.angle * CGFloat(Double.pi / 180.0); // convert the angle to radians
+            
+            if ( abs(tan(rAngle)) <= CGFloat(1.0)) { // for range [-45,45], [135,225]
+                x = rect.width
+                y = rect.height
+                
+                sinA = sin(rAngle);
+                cosA = cos(rAngle);
+                tanA = tan(rAngle);
+                
+                length = x / abs(cosA) + (y - x * abs(tanA)) * abs(sinA);
+                
+                deltaX = length * cosA / CGFloat(2.0);
+                deltaY = length * sinA / CGFloat(2.0);
+            }
+            else { // for range [45,135], [225,315]
+                x = rect.height
+                y = rect.width
+                
+                rAngle -= CGFloat(Double.pi/2)
+                
+                sinA = sin(rAngle)
+                cosA = cos(rAngle)
+                tanA = tan(rAngle)
+                
+                length = x / abs(cosA) + (y - x * abs(tanA)) * abs(sinA)
+                
+                deltaX = -length * sinA / CGFloat(2.0)
+                deltaY = length * cosA / CGFloat(2.0)
+            }
+            
+            startPoint = CGPoint(x: rect.midX - deltaX, y: rect.midY - deltaY)
+            endPoint   = CGPoint(x: rect.midX + deltaX, y: rect.midY + deltaY)
+        }
+        
+        let myCGShading = CGShading(axialSpace: (self.colorspace?.cgColorSpace)!, start: startPoint, end: endPoint, function: self.gradientFunction, extendStart: false, extendEnd: false);
+        
+        return myCGShading!;
+    }
+
+    func newRadialGradientInRect(rect: CGRect, context: CGContext)->CGShading
+    {
+        var startPoint = CGPoint()
+        var endPoint = CGPoint()
+        
+        var startRadius = CGFloat(0)
+        var endRadius = CGFloat(0)
+        var scaleX = CGFloat(0)
+        var scaleY = CGFloat(0)
+        
+        let theStartAnchor = self.startAnchor;
+        
+        startPoint = CGPoint(x: fma(rect.width, theStartAnchor.x, rect.minX),
+                             y: fma(rect.height, theStartAnchor.y, rect.minY))
+        
+        let theEndAnchor = self.endAnchor
+        
+        endPoint = CGPoint(x: fma(rect.width, theEndAnchor.x, rect.minX),
+                           y: fma(rect.height, theEndAnchor.y, rect.minY))
+        
+        startRadius = CGFloat(-1.0)
+        if rect.height > rect.width {
+            scaleX        = rect.width / rect.height
+            startPoint.x /= scaleX
+            endPoint.x   /= scaleX
+            scaleY        = CGFloat(1.0)
+            endRadius     = rect.height / CGFloat(2.0)
+        }
+        else {
+            scaleX        = CGFloat(1.0);
+            scaleY        = rect.height / rect.width
+            startPoint.y /= scaleY;
+            endPoint.y   /= scaleY;
+            endRadius     = rect.width / CGFloat(2.0)
+        }
+        
+        context.scaleBy(x: scaleX, y: scaleY)
+        
+        let myCGShading = CGShading(radialSpace: (self.colorspace?.cgColorSpace)!, start: startPoint, startRadius: startRadius, end: endPoint, endRadius: endRadius, function: self.gradientFunction, extendStart: true, extendEnd: true);
+        
+        return myCGShading!;
+    }
+
   // MARK: Opacity
     var isOpaque: Bool     {
         get {

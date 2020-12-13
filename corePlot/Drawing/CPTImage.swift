@@ -10,9 +10,9 @@ import AppKit
 class CPTImage: NSObject {
     
     enum CPTSlice : Int {
-        case topLeft = 0 ///< Top left corner
-        case top ///< Top middle
-        case topRight ///< Top right corner
+        case topLeft = 0    //< Top left corner
+        case top            //< Top middle
+        case topRight   //< Top right corner
         case left ///< Left middle
         case middle ///< Middle
         case right ///< Right middle
@@ -70,10 +70,9 @@ class CPTImage: NSObject {
 //    }
 //    
 //    // MARK: - Factory Methods
-//    
 //    init(name:String)
 //    {
-//         [self imageWithNativeImage:[CPTNativeImage imageNamed:name]];
+//        self.imageWithNativeImage:[CPTNativeImage imageNamed:name]];
 //    }
 //    
 //    /** @brief Initializes a CPTImage instance with the provided platform-native image.
@@ -112,7 +111,7 @@ class CPTImage: NSObject {
 //     **/
 //    +(nonnull instancetype)imageWithCGImage:(nullable CGImageRef)anImage
 //    {
-//    return [self imageWithCGImage:anImage scale:CPTFloat(1.0)];
+//    returnself.imageWithCGImage:anImage scale:CGFloat(1.0)];
 //    }
 //    
 //    /** @brief Creates and returns a new CPTImage instance initialized with the contents of a PNG file.
@@ -129,7 +128,6 @@ class CPTImage: NSObject {
 //    return [[self alloc] initForPNGFile:path];
 //    }
 //    
-//    #pragma mark -
 //    #pragma mark Image comparison
 //    
 //    /// @name Comparison
@@ -138,119 +136,121 @@ class CPTImage: NSObject {
 //    /** @brief Returns a boolean value that indicates whether the received is equal to the given object.
 //     *  Images are equal if they have the same @ref scale, @ref tiled, @ref tileAnchoredToContext, image size, color space, bit depth, and image data.
 //     *  @param object The object to be compared with the receiver.
-//     *  @return @YES if @par{object} is equal to the receiver, @NO otherwise.
+//     *  @return @true if @par{object} is equal to the receiver, @NO otherwise.
 //     **/
-//    -(BOOL)isEqual:(nullable id)object
-//    {
-//    if ( self == object ) {return true }
-//    
-//    else if ( [object isKindOfClass:[self class]] ) {
-//    CPTImage *otherImage = (CPTImage *)object;
-//    
-//    BOOL equalImages = (self.scale == otherImage.scale) &&
-//    (self.tiled == otherImage.tiled) &&
-//    (self.tileAnchoredToContext == otherImage.tileAnchoredToContext) &&
-//    CPTEdgeInsetsEqualToEdgeInsets(self.edgeInsets, otherImage.edgeInsets);
-//    
-//    CGImageRef selfCGImage  = self.image;
-//    CGImageRef otherCGImage = otherImage.image;
-//    
-//    CGColorSpaceRef selfColorSpace  = CGImageGetColorSpace(selfCGImage);
-//    CGColorSpaceRef otherColorSpace = CGImageGetColorSpace(otherCGImage);
-//    
-//    if ( equalImages ) {
-//    equalImages = (CGImageGetWidth(selfCGImage) == CGImageGetWidth(otherCGImage));
-//    }
-//    
-//    if ( equalImages ) {
-//    equalImages = (CGImageGetHeight(selfCGImage) == CGImageGetHeight(otherCGImage));
-//    }
-//    
-//    if ( equalImages ) {
-//    equalImages = (CGImageGetBitsPerComponent(selfCGImage) == CGImageGetBitsPerComponent(otherCGImage));
-//    }
-//    
-//    if ( equalImages ) {
-//    equalImages = (CGImageGetBitsPerPixel(selfCGImage) == CGImageGetBitsPerPixel(otherCGImage));
-//    }
-//    
-//    if ( equalImages ) {
-//    equalImages = (CGImageGetBytesPerRow(selfCGImage) == CGImageGetBytesPerRow(otherCGImage));
-//    }
-//    
-//    if ( equalImages ) {
-//    equalImages = (CGImageGetBitmapInfo(selfCGImage) == CGImageGetBitmapInfo(otherCGImage));
-//    }
-//    
-//    if ( equalImages ) {
-//    equalImages = (CGImageGetShouldInterpolate(selfCGImage) == CGImageGetShouldInterpolate(otherCGImage));
-//    }
-//    
-//    if ( equalImages ) {
-//    equalImages = (CGImageGetRenderingIntent(selfCGImage) == CGImageGetRenderingIntent(otherCGImage));
-//    }
-//    
-//    // decode array
-//    if ( equalImages ) {
-//    const CGFloat *selfDecodeArray  = CGImageGetDecode(selfCGImage);
-//    const CGFloat *otherDecodeArray = CGImageGetDecode(otherCGImage);
-//    
-//    if ( selfDecodeArray && otherDecodeArray ) {
-//    size_t numberOfComponentsSelf  = CGColorSpaceGetNumberOfComponents(selfColorSpace) * 2;
-//    size_t numberOfComponentsOther = CGColorSpaceGetNumberOfComponents(otherColorSpace) * 2;
-//    
-//    if ( numberOfComponentsSelf == numberOfComponentsOther ) {
-//    for ( size_t i = 0; i < numberOfComponentsSelf; i++ ) {
-//    if ( selfDecodeArray[i] != otherDecodeArray[i] ) {
-//    equalImages = NO;
-//    break;
-//    }
-//    }
-//    }
-//    else {
-//    equalImages = NO;
-//    }
-//    }
-//    else if ((selfDecodeArray && !otherDecodeArray) || (!selfDecodeArray && otherDecodeArray)) {
-//    equalImages = NO;
-//    }
-//    }
-//    
-//    // color space
-//    if ( equalImages ) {
-//    equalImages = (CGColorSpaceGetModel(selfColorSpace) == CGColorSpaceGetModel(otherColorSpace)) &&
-//    (CGColorSpaceGetNumberOfComponents(selfColorSpace) == CGColorSpaceGetNumberOfComponents(otherColorSpace));
-//    }
-//    
-//    // data provider
-//    if ( equalImages ) {
-//    CGDataProviderRef selfProvider  = CGImageGetDataProvider(selfCGImage);
-//    CFDataRef selfProviderData      = CGDataProviderCopyData(selfProvider);
-//    CGDataProviderRef otherProvider = CGImageGetDataProvider(otherCGImage);
-//    CFDataRef otherProviderData     = CGDataProviderCopyData(otherProvider);
-//    
-//    if ( selfProviderData && otherProviderData ) {
-//    equalImages = [(__bridge NSData *) selfProviderData isEqualToData:(__bridge NSData *)otherProviderData];
-//    }
-//    else {
-//    equalImages = (selfProviderData == otherProviderData);
-//    }
-//    
-//    if ( selfProviderData ) {
-//    CFRelease(selfProviderData);
-//    }
-//    if ( otherProviderData ) {
-//    CFRelease(otherProviderData);
-//    }
-//    }
-//    
-//    return equalImages;
-//    }
-//    else {
-//    return NO;
-//    }
-//    }
-//    
+
+
+func isEqual(object: Any) -> Bool
+{
+    guard ( self != object ) else {return true }
+    
+    else if ( [object isKindOfClass:[self class]] ) {
+        CPTImage *otherImage = (CPTImage *)object;
+        
+        BOOL equalImages = (self.scale == otherImage.scale) &&
+            (self.tiled == otherImage.tiled) &&
+            (self.tileAnchoredToContext == otherImage.tileAnchoredToContext) &&
+            CPTEdgeInsetsEqualToEdgeInsets(self.edgeInsets, otherImage.edgeInsets);
+        
+        CGImageRef selfCGImage  = self.image;
+        CGImageRef otherCGImage = otherImage.image;
+        
+        let selfColorSpace  = CGImageGetColorSpace(selfCGImage);
+        let otherColorSpace = CGImageGetColorSpace(otherCGImage);
+        
+        if ( equalImages ) {
+            equalImages = (CGImageGetWidth(selfCGImage) == CGImageGetWidth(otherCGImage));
+        }
+        
+        if ( equalImages ) {
+            equalImages = (CGImageGetHeight(selfCGImage) == CGImageGetHeight(otherCGImage));
+        }
+        
+        if ( equalImages ) {
+            equalImages = (CGImageGetBitsPerComponent(selfCGImage) == CGImageGetBitsPerComponent(otherCGImage));
+        }
+        
+        if ( equalImages ) {
+            equalImages = (CGImageGetBitsPerPixel(selfCGImage) == CGImageGetBitsPerPixel(otherCGImage));
+        }
+        
+        if ( equalImages ) {
+            equalImages = (CGImageGetBytesPerRow(selfCGImage) == CGImageGetBytesPerRow(otherCGImage));
+        }
+        
+        if ( equalImages ) {
+            equalImages = (CGImageGetBitmapInfo(selfCGImage) == CGImageGetBitmapInfo(otherCGImage));
+        }
+        
+        if ( equalImages ) {
+            equalImages = (CGImageGetShouldInterpolate(selfCGImage) == CGImageGetShouldInterpolate(otherCGImage));
+        }
+        
+        if ( equalImages ) {
+            equalImages = (CGImageGetRenderingIntent(selfCGImage) == CGImageGetRenderingIntent(otherCGImage));
+        }
+        
+        // decode array
+        if ( equalImages ) {
+            const CGFloat *selfDecodeArray  = CGImageGetDecode(selfCGImage);
+            const CGFloat *otherDecodeArray = CGImageGetDecode(otherCGImage);
+            
+            if ( selfDecodeArray && otherDecodeArray ) {
+                size_t numberOfComponentsSelf  = CGColorSpaceGetNumberOfComponents(selfColorSpace) * 2;
+                size_t numberOfComponentsOther = CGColorSpaceGetNumberOfComponents(otherColorSpace) * 2;
+                
+                if ( numberOfComponentsSelf == numberOfComponentsOther ) {
+                    for ( size_t i = 0; i < numberOfComponentsSelf; i++ ) {
+                        if ( selfDecodeArray[i] != otherDecodeArray[i] ) {
+                            equalImages = false
+                            break;
+                        }
+                    }
+                }
+                else {
+                    equalImages = false
+                }
+            }
+            else if ((selfDecodeArray && !otherDecodeArray) || (!selfDecodeArray && otherDecodeArray)) {
+                equalImages = false
+            }
+        }
+        
+        // color space
+        if ( equalImages ) {
+            equalImages = (CGColorSpaceGetModel(selfColorSpace) == CGColorSpaceGetModel(otherColorSpace)) &&
+                (CGColorSpaceGetNumberOfComponents(selfColorSpace) == CGColorSpaceGetNumberOfComponents(otherColorSpace));
+        }
+        
+        // data provider
+        if ( equalImages ) {
+            CGDataProviderRef selfProvider  = CGImageGetDataProvider(selfCGImage);
+            CFDataRef selfProviderData      = CGDataProviderCopyData(selfProvider);
+            CGDataProviderRef otherProvider = CGImageGetDataProvider(otherCGImage);
+            CFDataRef otherProviderData     = CGDataProviderCopyData(otherProvider);
+            
+            if ( selfProviderData && otherProviderData ) {
+                equalImages = [(__bridge NSData *) selfProviderData isEqualToData:(__bridge NSData *)otherProviderData];
+            }
+            else {
+                equalImages = (selfProviderData == otherProviderData);
+            }
+            
+            if ( selfProviderData ) {
+                CFRelease(selfProviderData);
+            }
+            if ( otherProviderData ) {
+                CFRelease(otherProviderData);
+            }
+        }
+        
+        return equalImages;
+    }
+    else {
+        return false
+    }
+}
+
 //    /// @}
 //    
 //    /// @cond
@@ -309,7 +309,7 @@ class CPTImage: NSObject {
 //    #if TARGET_OS_SIMULATOR || TARGET_OS_IPHONE
 //    CGFloat theScale = self.scale;
 //    
-//    if ( imageRef && (theScale > CPTFloat(0.0))) {
+//    if ( imageRef && (theScale > CGFloat(0.0))) {
 //    nativeImage = [UIImage imageWithCGImage:imageRef
 //    scale:theScale
 //    orientation:UIImageOrientationUp];
@@ -326,7 +326,7 @@ class CPTImage: NSObject {
 //    pixelsHigh:(NSInteger)imageSize.height
 //    bitsPerSample:8
 //    samplesPerPixel:4
-//    hasAlpha:YES
+//    hasAlpha:true
 //    isPlanar:NO
 //    colorSpaceName:NSCalibratedRGBColorSpace
 //    bytesPerRow:(NSInteger)imageSize.width * 4
@@ -348,7 +348,7 @@ class CPTImage: NSObject {
 //    
 //    -(void)setScale:(CGFloat)newScale
 //    {
-//    NSParameterAssert(newScale > CPTFloat(0.0));
+//    NSParameterAssert(newScale > CGFloat(0.0));
 //    
 //    if ( newScale != scale ) {
 //    scale = newScale;
@@ -416,54 +416,54 @@ class CPTImage: NSObject {
 ////    }
 ////    
 ////    // top row
-////    if ( capTop > CPTFloat(0.0)) {
-////    if ( capLeft > CPTFloat(0.0)) {
+////    if ( capTop > CGFloat(0.0)) {
+////    if ( capLeft > CGFloat(0.0)) {
 ////    CGImageRef sliceImage = CGImageCreateWithImageInRect(theImage, CPTRectMake(0.0, 0.0, capLeft, capTop));
 ////    imageSlices.slice[CPTSliceTopLeft] = sliceImage;
 ////    }
 ////    
-////    if ( centerSize.width > CPTFloat(0.0)) {
+////    if ( centerSize.width > CGFloat(0.0)) {
 ////    CGImageRef sliceImage = CGImageCreateWithImageInRect(theImage, CPTRectMake(capLeft, 0.0, centerSize.width, capTop));
 ////    imageSlices.slice[CPTSliceTop] = sliceImage;
 ////    }
 ////    
-////    if ( capRight > CPTFloat(0.0)) {
+////    if ( capRight > CGFloat(0.0)) {
 ////    CGImageRef sliceImage = CGImageCreateWithImageInRect(theImage, CPTRectMake(width - capRight, 0.0, capRight, capTop));
 ////    imageSlices.slice[CPTSliceTopRight] = sliceImage;
 ////    }
 ////    }
 ////    
 ////    // middle row
-////    if ( centerSize.height > CPTFloat(0.0)) {
-////    if ( capLeft > CPTFloat(0.0)) {
+////    if ( centerSize.height > CGFloat(0.0)) {
+////    if ( capLeft > CGFloat(0.0)) {
 ////    CGImageRef sliceImage = CGImageCreateWithImageInRect(theImage, CPTRectMake(0.0, capTop, capLeft, centerSize.height));
 ////    imageSlices.slice[CPTSliceLeft] = sliceImage;
 ////    }
 ////    
-////    if ( centerSize.width > CPTFloat(0.0)) {
+////    if ( centerSize.width > CGFloat(0.0)) {
 ////    CGImageRef sliceImage = CGImageCreateWithImageInRect(theImage, CPTRectMake(capLeft, capTop, centerSize.width, centerSize.height));
 ////    imageSlices.slice[CPTSliceMiddle] = sliceImage;
 ////    }
 ////    
-////    if ( capRight > CPTFloat(0.0)) {
+////    if ( capRight > CGFloat(0.0)) {
 ////    CGImageRef sliceImage = CGImageCreateWithImageInRect(theImage, CPTRectMake(width - capRight, capTop, capRight, centerSize.height));
 ////    imageSlices.slice[CPTSliceRight] = sliceImage;
 ////    }
 ////    }
 ////    
 ////    // bottom row
-////    if ( capBottom > CPTFloat(0.0)) {
-////    if ( capLeft > CPTFloat(0.0)) {
+////    if ( capBottom > CGFloat(0.0)) {
+////    if ( capLeft > CGFloat(0.0)) {
 ////    CGImageRef sliceImage = CGImageCreateWithImageInRect(theImage, CPTRectMake(0.0, height - capBottom, capLeft, capBottom));
 ////    imageSlices.slice[CPTSliceBottomLeft] = sliceImage;
 ////    }
 ////    
-////    if ( centerSize.width > CPTFloat(0.0)) {
+////    if ( centerSize.width > CGFloat(0.0)) {
 ////    CGImageRef sliceImage = CGImageCreateWithImageInRect(theImage, CPTRectMake(capLeft, height - capBottom, centerSize.width, capBottom));
 ////    imageSlices.slice[CPTSliceBottom] = sliceImage;
 ////    }
 ////    
-////    if ( capRight > CPTFloat(0.0)) {
+////    if ( capRight > CGFloat(0.0)) {
 ////    CGImageRef sliceImage = CGImageCreateWithImageInRect(theImage, CPTRectMake(width - capRight, height - capBottom, capRight, capBottom));
 ////    imageSlices.slice[CPTSliceBottomRight] = sliceImage;
 ////    }
@@ -477,7 +477,7 @@ class CPTImage: NSObject {
 ////    
 ////    -(void)drawImage:(nonnull CGImageRef)theImage inContext:(nonnull CGContextRef)context rect:(CGRect)rect scaleRatio:(CGFloat)scaleRatio
 ////    {
-////    if ( theImage && (rect.size.width > CPTFloat(0.0)) && (rect.size.height > CPTFloat(0.0))) {
+////    if ( theImage && (rect.size.width > CGFloat(0.0)) && (rect.size.height > CGFloat(0.0))) {
 ////    CGFloat imageScale = self.scale;
 ////    
 ////    CGContextSaveGState(context);
@@ -506,21 +506,21 @@ class CPTImage: NSObject {
 ////    
 ////    /** @brief Draws the image into the given graphics context.
 ////     *
-////     *  If the tiled property is @YES, the image is repeatedly drawn to fill the clipping region, otherwise the image is
+////     *  If the tiled property is @true, the image is repeatedly drawn to fill the clipping region, otherwise the image is
 ////     *  scaled to fit in @par{rect}.
 ////     *
 ////     *  @param rect The rectangle to draw into.
 ////     *  @param context The graphics context to draw into.
 ////     **/
-func drawInRect(rect: CGRect, inContext(context: CGContextRef)
+func drawInRect(rect: CGRect, inContext context: CGContext)
     {
-    CGImageRef theImage = self.image;
+    let theImage = self.image;
     
     // compute drawing scale
-    CGFloat lastScale    = self.lastDrawnScale;
-    CGFloat contextScale = CPTFloat(1.0);
+    let lastScale    = self.lastDrawnScale;
+    let contextScale = CGFloat(1.0)
     
-    if ( rect.size.height != CPTFloat(0.0)) {
+    if ( rect.size.height != CGFloat(0.0)) {
     CGRect deviceRect = CGContextConvertRectToDeviceSpace(context, rect);
     contextScale = deviceRect.size.height / rect.size.height;
     }
@@ -535,7 +535,7 @@ func drawInRect(rect: CGRect, inContext(context: CGContextRef)
     self.scale = theNativeImage.scale;
     #else
     NSSize imageSize   = theNativeImage.size;
-    NSRect drawingRect = NSMakeRect(0.0, 0.0, imageSize.width, imageSize.height);
+    NSRect drawingRect = NSRect(0.0, 0.0, imageSize.width, imageSize.height);
     
     theImage = [theNativeImage CGImageForProposedRect:&drawingRect
     context:[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO]
@@ -557,22 +557,22 @@ func drawInRect(rect: CGRect, inContext(context: CGContextRef)
     CPTEdgeInsets insets = self.edgeInsets;
     
     if ( CPTEdgeInsetsEqualToEdgeInsets(insets, CPTEdgeInsetsZero)) {
-    [self drawImage:theImage inContext:context rect:rect scaleRatio:scaleRatio];
+   self.drawImage:theImage inContext:context rect:rect scaleRatio:scaleRatio];
     }
     else {
     CPTImageSlices imageSlices = self.slices;
-    BOOL hasSlices             = NO;
+    BOOL hasSlices             = false
     
     for  i in   0..<9 {
     if ( imageSlices.slice[i] ) {
-    hasSlices = YES;
+    hasSlices = true;
     break;
     }
     }
     
     // create new slices if needed
     if ( !hasSlices || (contextScale != lastScale)) {
-    [self makeImageSlices];
+   self.makeImageSlices];
     imageSlices = self.slices;
     }
     
@@ -585,43 +585,43 @@ func drawInRect(rect: CGRect, inContext(context: CGContextRef)
     rect.size.height - capTop - capBottom);
     
     // top row
-    [self drawImage:imageSlices.slice[CPTSliceTopLeft]
+   self.drawImage:imageSlices.slice[CPTSliceTopLeft]
     inContext:context
     rect:CPTRectMake(0.0, rect.size.height - capTop, capLeft, capTop)
     scaleRatio:scaleRatio];
-    [self drawImage:imageSlices.slice[CPTSliceTop]
+   self.drawImage:imageSlices.slice[CPTSliceTop]
     inContext:context
     rect:CPTRectMake(capLeft, rect.size.height - capTop, centerSize.width, capTop)
     scaleRatio:scaleRatio];
-    [self drawImage:imageSlices.slice[CPTSliceTopRight]
+   self.drawImage:imageSlices.slice[CPTSliceTopRight]
     inContext:context
     rect:CPTRectMake(rect.size.width - capRight, rect.size.height - capTop, capRight, capTop)
     scaleRatio:scaleRatio];
     
     // middle row
-    [self drawImage:imageSlices.slice[CPTSliceLeft]
+   self.drawImage:imageSlices.slice[CPTSliceLeft]
     inContext:context
     rect:CPTRectMake(0.0, capBottom, capLeft, centerSize.height)
     scaleRatio:scaleRatio];
-    [self drawImage:imageSlices.slice[CPTSliceMiddle]
+   self.drawImage:imageSlices.slice[CPTSliceMiddle]
     inContext:context
     rect:CPTRectMake(capLeft, capBottom, centerSize.width, centerSize.height)
     scaleRatio:scaleRatio];
-    [self drawImage:imageSlices.slice[CPTSliceRight]
+   self.drawImage:imageSlices.slice[CPTSliceRight]
     inContext:context
     rect:CPTRectMake(rect.size.width - capRight, capBottom, capRight, centerSize.height)
     scaleRatio:scaleRatio];
     
     // bottom row
-    [self drawImage:imageSlices.slice[CPTSliceBottomLeft]
+   self.drawImage:imageSlices.slice[CPTSliceBottomLeft]
     inContext:context
     rect:CPTRectMake(0.0, 0.0, capLeft, capBottom)
     scaleRatio:scaleRatio];
-    [self drawImage:imageSlices.slice[CPTSliceBottom]
+   self.drawImage:imageSlices.slice[CPTSliceBottom]
     inContext:context
     rect:CPTRectMake(capLeft, 0.0, centerSize.width, capBottom)
     scaleRatio:scaleRatio];
-    [self drawImage:imageSlices.slice[CPTSliceBottomRight]
+   self.drawImage:imageSlices.slice[CPTSliceBottomRight]
     inContext:context
     rect:CPTRectMake(rect.size.width - capRight, 0.0, capRight, capBottom)
     scaleRatio:scaleRatio];

@@ -312,7 +312,7 @@ extension CPTPlot {
                             }
                             break;
                             
-                        case CPTPlotCachePrecisionDecimal:
+                        case .decimal:
                             if ( !CPTDataTypeEqualToDataType(dataType, self.decimalDataType)) {
                                 CPTMutableNumericData *mutableData = [data mutableCopy];
                                 mutableData.dataType = self.decimalDataType;
@@ -320,7 +320,7 @@ extension CPTPlot {
                             }
                             break;
                             
-                        case CPTPlotCachePrecisionDouble:
+                        case .double:
                             if ( !CPTDataTypeEqualToDataType(dataType, self.doubleDataType)) {
                                 CPTMutableNumericData *mutableData = [data mutableCopy];
                                 mutableData.dataType = self.doubleDataType;
@@ -337,8 +337,8 @@ extension CPTPlot {
                             {
                                 const void *sourceEnd = (const int8_t *)(data.bytes) + data.length;
                                 
-                                for ( NSUInteger fieldNum = 0; fieldNum < fieldCount; fieldNum++ ) {
-                                    NSMutableData *tempData = [[NSMutableData alloc] initWithLength:bufferLength];
+                                for fieldNum in 0..<fieldCount {
+                                    let tempData = [[NSMutableData alloc] initWithLength:bufferLength];
                                     
                                     if ( CPTDataTypeEqualToDataType(dataType, self.doubleDataType)) {
                                         const double *sourceData = [data samplePointerAtIndex:0, fieldNum];
@@ -365,7 +365,7 @@ extension CPTPlot {
                                     
                                     [self cacheNumbers:tempNumericData forField:fieldNum atRecordIndex:indexRange.location];
                                 }
-                                hasData = YES;
+                                hasData = true;
                             }
                             break;
                             
@@ -392,4 +392,4 @@ extension CPTPlot {
         return hasData;
     }
 }
-}
+

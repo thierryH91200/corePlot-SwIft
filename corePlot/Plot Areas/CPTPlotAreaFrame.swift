@@ -11,7 +11,7 @@ class CPTPlotAreaFrame: CPTBorderedLayer {
     
     var plotArea: CPTPlotArea?
     var axisSet: CPTAxisSet?
-    var plotGroup: CPTPlotGroup?
+//    var plotGroup: CPTPlotGroup?
 
     // MARK: - Init/Dealloc
 
@@ -121,9 +121,6 @@ class CPTPlotAreaFrame: CPTBorderedLayer {
 
 
     // MARK: - Accessors
-
-    /// @cond
-
     func setPlotArea(newPlotArea: CPTPlotArea )
     {
         if newPlotArea != plotArea  {
@@ -133,17 +130,16 @@ class CPTPlotAreaFrame: CPTBorderedLayer {
             if ( newPlotArea ) {
                 let theArea = newPlotArea
                 
-                self.insertSublayer(theArea, atIndex:0)
+                self.insertSublayer(theArea, at:0)
                 theArea.graph = self.graph
             }
-            
             self.setNeedsLayout()
         }
     }
     
-    -(nullable CPTAxisSet *)axisSet
+    func axisSet() ->CPTAxisSet
     {
-    return self.plotArea.axisSet;
+        return self.plotArea!.axisSet!
     }
     
     func setAxisSet(newAxisSet: CPTAxisSet)
@@ -151,14 +147,11 @@ class CPTPlotAreaFrame: CPTBorderedLayer {
         self.plotArea?.axisSet = newAxisSet;
     }
     
-    -(nullable CPTPlotGroup *)plotGroup
-    {
-    return self.plotArea.plotGroup;
-    }
-    
-    func setPlotGroup:(nullable CPTPlotGroup *)newPlotGroup
-    {
-    self.plotArea.plotGroup = newPlotGroup;
+    var plotGroup : CPTPlotGroup {
+        get {return (self.plotArea?.plotGroup)!}
+        set {
+            self.plotArea?.plotGroup = newValue
+        }
     }
     
     func setGraph(newGraph: CPTGraph )

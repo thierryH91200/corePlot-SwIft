@@ -165,15 +165,16 @@ extension CPTLayer {
             pdfContext = CGContext(consumer: dataConsumer, mediaBox: &mediaBox, nil)
         }
         
-        CPTPushCGContext(pdfContext)
+        NSUIGraphicsPushContext(pdfContext)
+//        CPTPushCGContext(pdfContext)
         
         pdfContext?.beginPage(mediaBox: &mediaBox)
         layoutAndRender(in: pdfContext)
         pdfContext?.endPage()
         pdfContext?.closePDF()
         
-        CPTPopCGContext()
-        
+//        CPTPopCGContext()
+        NSUIGraphicsPopContext()
         
         return pdfData;
     }
@@ -206,4 +207,3 @@ extension CPTLayer {
     
     
 }
-@objc @objc @objc 

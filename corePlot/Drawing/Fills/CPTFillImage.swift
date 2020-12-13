@@ -45,7 +45,7 @@ class CPTFillImage: CPTFill {
     {
         context.saveGState();
         let bounds = context.boundingBoxOfPath
-        CGContextClip(context);
+        context.clip();
         self.fillImage.drawInRect(bounds, inContext:context)
         context.restoreGState();
 

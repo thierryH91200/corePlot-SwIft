@@ -32,11 +32,11 @@ extension CPTPlot {
                 let  min = Double.infinity
                 let max = -double.infinity
                 
-                const double *doubles    = (const double *)numbers.bytes;
-                const double *lastSample = doubles + numberOfSamples;
+               let doubles    = (const double *)numbers.bytes;
+                let lastSample = doubles + numberOfSamples;
                 
                 while ( doubles < lastSample ) {
-                    double value = *doubles++;
+                    double value = doubles++;
                     
                     if ( !isnan(value)) {
                         if ( value < min ) {

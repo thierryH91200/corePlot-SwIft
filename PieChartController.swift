@@ -108,8 +108,8 @@ class PieChartController: NSViewController {
     }
 }
 
-extension PieChartController :CPTPieChartDataSource {
-    
-}
+//extension PieChartController :CPTPieChartDataSource {
+//    
+//}
 
 
