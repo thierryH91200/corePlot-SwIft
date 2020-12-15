@@ -34,11 +34,9 @@ class CPTPlotRange: NSObject {
 
 
 // MARK: Init/Dealloc
-    +(nonnull instancetype)plotRangeWithLocation:(nonnull NSNumber *)loc length:(nonnull NSNumber *)len
-{
-    return [[self alloc] initWithLocation:loc length:len];
-}
-    
+    class func plotRange(withLocation loc: NSNumber, length len: NSNumber) -> Self {
+        return self.init(location: loc, length: len)
+    }
     
 //
 //    /** @brief Creates and returns a new CPTPlotRange instance initialized with the provided location and length.
@@ -106,10 +104,7 @@ class CPTPlotRange: NSObject {
 //        return [self initWithLocation:@0.0 length:@0.0];
 //    }
 ////
-////    /// @}
-////
-////    #pragma mark -
-    //    #pragma mark Accessors
+   // MARK: - Accessors
 ////
 ////    /// @cond
 ////
@@ -430,11 +425,11 @@ class CPTPlotRange: NSObject {
             else {
                 if ( otherRange.isInfinite ) {
                     switch ( otherRange.lengthSign ) {
-                        case CPTSignPositive:
+                    case .positive:
                             result = CPTDecimalLessThanOrEqualTo(otherRange.minLimitDecimal, self.maxLimitDecimal);
                             break;
 
-                        case CPTSignNegative:
+                    case .negative:
                             result = CPTDecimalLessThanOrEqualTo(otherRange.maxLimitDecimal, self.minLimitDecimal);
                             break;
 
@@ -443,7 +438,7 @@ class CPTPlotRange: NSObject {
                     }
                 }
                 else {
-                    NSDecimal min1    = self.minLimitDecimal;
+                    let min1    = self.minLimitDecimal;
                     NSDecimal min2    = otherRange.minLimitDecimal;
                     NSDecimal minimum = CPTDecimalMax(min1, min2);
 

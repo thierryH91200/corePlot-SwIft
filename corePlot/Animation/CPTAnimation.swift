@@ -57,11 +57,13 @@ class CPTAnimation: NSObject {
     //    typedef CGFloat (*CPTAnimationTimingFunction)(CGFloat, CGFloat);
     typealias CPTAnimationTimingFunction = (CGFloat, CGFloat)-> (CGFloat)
     
-    let shared = CPTAnimation()
+    static let shared = CPTAnimation()
+    
+    
     let CPTAnimationOperationKey  = "CPTAnimationOperationKey"
     let CPTAnimationValueKey      = "CPTAnimationValueKey"
     let CPTAnimationValueClassKey = "CPTAnimationValueClassKey"
-    let CTAnimationStartedKey    = "CPTAnimationStartedKey"
+    let CTAnimationStartedKey     = "CPTAnimationStartedKey"
     let CPTAnimationFinishedKey   = "CPTAnimationFinishedKey"
     
     let kCPTAnimationFrameRate = CGFloat(1.0 / 60.0)  // 60 frames per second
@@ -87,7 +89,7 @@ class CPTAnimation: NSObject {
     }
     
     class func animate(_ object: Any, property: String, period: CPTAnimationPeriod, animationCurve: CPTAnimationCurve, delegate: CPTAnimationDelegate?) -> CPTAnimationOperation {
-        let animationOperation = CPTAnimationOperation (
+        let animationOperation = CPTAnimationOperation(
             animationPeriod: period,
             animationCurve: animationCurve,
             object: object,
@@ -288,105 +290,105 @@ class CPTAnimation: NSObject {
     func updateOnMainThreadWithParameters(parameters: CPTDictionary)
     {
         let animationOperation = parameters[CPTAnimationOperationKey]
-
-    var isCanceled = false
-
-    animationQueue.sync(execute: {
-        isCanceled = animationOperation?.isCanceled ?? false
-    })
+        
+        var isCanceled = false
+        
+        animationQueue.sync(execute: {
+            isCanceled = animationOperation?.isCanceled ?? false
+        })
         
         
         
         
-    if ( !isCanceled ) {
-    @try {
-        var valueClass = parameters[self.CPTAnimationValueClassKey];
-    if valueClass is NSNull {
-    valueClass = nil
-    }
-    
-    let delegate = animationOperation.delegate
-        
-    let started = parameters[CPTAnimationStartedKey];
-    if ( started.boolValue ) {
-    
-    
-    
-    
-    
-    if ( [delegate respondsToSelector:@selector(animationDidStart:)] ) {
-    [delegate animationDidStart:animationOperation];
-    }
-    }
-    
-    if ( [delegate respondsToSelector:@selector(animationWillUpdate:)] ) {
-    [delegate animationWillUpdate:animationOperation];
-    }
-    
-        
-    let boundSetter = animationOperation.boundSetter
-    let boundObject = animationOperation.boundObject
-    let tweenedValue = parameters[CPTAnimationValueKey]
-        
-    
-    if ( !valueClass && [tweenedValue isKindOfClass:[NSDecimalNumber class]] ) {
-    NSDecimal buffer = ((NSDecimalNumber *)tweenedValue).decimalValue;
-    
-    typedef void (*SetterType)(id, SEL, NSDecimal);
-    SetterType setterMethod = (SetterType)[boundObject methodForSelector:boundSetter];
-    setterMethod(boundObject, boundSetter, buffer);
-    }
-    else if ( valueClass && [tweenedValue isKindOfClass:[NSNumber class]] ) {
-    NSNumber *value = (NSNumber *)tweenedValue;
-    
-    typedef void (*NumberSetterType)(id, SEL, NSNumber *);
-    NumberSetterType setterMethod = (NumberSetterType)[boundObject methodForSelector:boundSetter];
-    setterMethod(boundObject, boundSetter, value);
-    }
-    else if ( [tweenedValue isKindOfClass:[CPTPlotRange class]] ) {
-    CPTPlotRange *range = (CPTPlotRange *)tweenedValue;
-    
-    typedef void (*RangeSetterType)(id, SEL, CPTPlotRange *);
-    RangeSetterType setterMethod = (RangeSetterType)[boundObject methodForSelector:boundSetter];
-    setterMethod(boundObject, boundSetter, range);
-    }
-    else {
-    // wrapped scalars and structs
-    NSValue *value = (NSValue *)tweenedValue;
-    
-    NSUInteger bufferSize = 0;
-    NSGetSizeAndAlignment(value.objCType, &bufferSize, NULL);
-    
-    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[boundObject methodSignatureForSelector:boundSetter]];
-    invocation.target   = boundObject;
-    invocation.selector = boundSetter;
-    
-    void *buffer = calloc(1, bufferSize);
-    [value getValue:buffer];
-    [invocation setArgument:buffer atIndex:2];
-    free(buffer);
-    
-    [invocation invoke];
-    }
-    
-    if ( [delegate respondsToSelector:@selector(animationDidUpdate:)] ) {
-    [delegate animationDidUpdate:animationOperation];
-    }
-    
-    NSNumber *finished = parameters[CPTAnimationFinishedKey];
-    if ( finished.boolValue ) {
-    if ( [delegate respondsToSelector:@selector(animationDidFinish:)] ) {
-    [delegate animationDidFinish:animationOperation];
-    }
-    }
-    }
-    @catch ( NSException *__unused exception ) {
-    // something went wrong; don't run this operation any more
-    dispatch_async(self.animationQueue, ^{
-    animationOperation.canceled = YES;
-    });
-    }
-    }
+        if ( !isCanceled ) {
+            @try {
+                var valueClass = parameters[self.CPTAnimationValueClassKey];
+                if valueClass is NSNull {
+                    valueClass = nil
+                }
+                
+                let delegate = animationOperation.delegate
+                
+                let started = parameters[CPTAnimationStartedKey];
+                if ( started.boolValue ) {
+                    
+                    
+                    
+                    
+                    
+                    if ( [delegate respondsToSelector:@selector(animationDidStart:)] ) {
+                        [delegate animationDidStart:animationOperation];
+                    }
+                }
+                
+                if ( [delegate respondsToSelector:@selector(animationWillUpdate:)] ) {
+                    [delegate animationWillUpdate:animationOperation];
+                }
+                
+                
+                let boundSetter = animationOperation.boundSetter
+                let boundObject = animationOperation.boundObject
+                let tweenedValue = parameters[CPTAnimationValueKey]
+                
+                
+                if ( !valueClass && [tweenedValue isKindOfClass:[NSDecimalNumber class]] ) {
+                    NSDecimal buffer = ((NSDecimalNumber *)tweenedValue).decimalValue;
+                    
+                    typedef void (*SetterType)(id, SEL, NSDecimal);
+                    SetterType setterMethod = (SetterType)[boundObject methodForSelector:boundSetter];
+                    setterMethod(boundObject, boundSetter, buffer);
+                }
+                else if ( valueClass && [tweenedValue isKindOfClass:[NSNumber class]] ) {
+                    NSNumber *value = (NSNumber *)tweenedValue;
+                    
+                    typedef void (*NumberSetterType)(id, SEL, NSNumber *);
+                    NumberSetterType setterMethod = (NumberSetterType)[boundObject methodForSelector:boundSetter];
+                    setterMethod(boundObject, boundSetter, value);
+                }
+                else if ( [tweenedValue isKindOfClass:[CPTPlotRange class]] ) {
+                    CPTPlotRange *range = (CPTPlotRange *)tweenedValue;
+                    
+                    typedef void (*RangeSetterType)(id, SEL, CPTPlotRange *);
+                    RangeSetterType setterMethod = (RangeSetterType)[boundObject methodForSelector:boundSetter];
+                    setterMethod(boundObject, boundSetter, range);
+                }
+                else {
+                    // wrapped scalars and structs
+                    NSValue *value = (NSValue *)tweenedValue;
+                    
+                    NSUInteger bufferSize = 0;
+                    NSGetSizeAndAlignment(value.objCType, &bufferSize, NULL);
+                    
+                    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[boundObject methodSignatureForSelector:boundSetter]];
+                    invocation.target   = boundObject;
+                    invocation.selector = boundSetter;
+                    
+                    void *buffer = calloc(1, bufferSize);
+                    [value getValue:buffer];
+                    [invocation setArgument:buffer atIndex:2];
+                    free(buffer);
+                    
+                    [invocation invoke];
+                }
+                
+                if ( [delegate respondsToSelector:@selector(animationDidUpdate:)] ) {
+                    [delegate animationDidUpdate:animationOperation];
+                }
+                
+                NSNumber *finished = parameters[CPTAnimationFinishedKey];
+                if ( finished.boolValue ) {
+                    if ( [delegate respondsToSelector:@selector(animationDidFinish:)] ) {
+                        [delegate animationDidFinish:animationOperation];
+                    }
+                }
+            }
+            @catch ( NSException *__unused exception ) {
+                // something went wrong; don't run this operation any more
+                dispatch_async(self.animationQueue, ^{
+                    animationOperation.canceled = YES;
+                });
+            }
+        }
     }
     
     func startTimer()
@@ -417,7 +419,7 @@ class CPTAnimation: NSObject {
     // MARK: - Timing Functions
     func timingFunction(for animationCurve: CPTAnimationCurve) -> CPTAnimationTimingFunction? {
         
-//        typealias CPTAnimationTimingFunction = (CGFloat, CGFloat)-> (CGFloat)
+        //        typealias CPTAnimationTimingFunction = (CGFloat, CGFloat)-> (CGFloat)
         
         
         var timingFunction :  CPTAnimationTimingFunction
@@ -536,6 +538,4 @@ class CPTAnimation: NSObject {
         
         return timingFunction
     }
-    
-    
 }

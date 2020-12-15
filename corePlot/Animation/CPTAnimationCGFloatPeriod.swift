@@ -9,7 +9,7 @@ import Cocoa
 
 class CPTAnimationCGFloatPeriod: CPTAnimationPeriod {
     
-    func CPTCurrentFloatValue(_ boundObject: Any, _ boundGetter: Selector) -> CGFloat {
+    func CPTCurrentFloatValue( boundObject: Any, boundGetter: Selector) -> CGFloat {
         let invocation = NSInvocation(methodSignature: boundObject.methodSignature(for: boundGetter))
         
         invocation.target = boundObject

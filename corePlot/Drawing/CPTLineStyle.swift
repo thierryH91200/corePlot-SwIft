@@ -16,7 +16,7 @@ public class CPTLineStyle: NSObject {
     var lineWidth : CGFloat
     var dashPattern : [CGFloat]
     var patternPhase: CGFloat 
-    var lineColor: NSUIColor
+    var lineColor: NSUIColor?
     var lineFill : CPTFill?
     var lineGradient: CPTGradient?
     
@@ -68,8 +68,6 @@ public class CPTLineStyle: NSObject {
 
 
     // MARK:  - Drawing
-    
-    
     func setLineStyleInContext(context: CGContext)
     {
         context.setLineCap(self.lineCap);
@@ -92,7 +90,7 @@ public class CPTLineStyle: NSObject {
         else {
             context.setLineDash(phase: patternPhase, lengths:  [2, 2])
         }
-        context.setStrokeColor(self.lineColor.cgColor);
+        context.setStrokeColor(self.lineColor!.cgColor);
     }
 
     /** @brief Stroke the current path in the given graphics context.
@@ -144,8 +142,6 @@ public class CPTLineStyle: NSObject {
         }
     }
 
-    /// @cond
-
     func strokePathWithGradient(gradient:  CPTGradient?, context: CGContext)
     {
         if ( gradient != nil ) {
@@ -179,20 +175,20 @@ public class CPTLineStyle: NSObject {
     var isOpaque : Bool {
         
         get {
-            var opaqueLine = false;
+            var isOpaqueLine = false;
             
             if ( self.dashPattern.count <= 1 ) {
                 if (( self.lineGradient ) != nil) {
-                    opaqueLine = self.lineGradient.isOpaque
+                    isOpaqueLine = ((self.lineGradient?.isOpaque) != nil)
                 }
                 else if (( self.lineFill ) != nil) {
-                    opaqueLine = self.lineFill!.isOpaque
+                    isOpaqueLine = self.lineFill!.isOpaque
                 }
                 else if ( self.lineColor ) {
-                    opaqueLine = self.lineColor.isOpaque
+                    isOpaqueLine = self.lineColor.isOpaque
                 }
             }
-            return opaqueLine;
+            return isOpaqueLine;
         }
         set { }
     }

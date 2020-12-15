@@ -237,7 +237,7 @@ extension CPTPlot {
     func numericDataForNumbers(numbers:Any?) ->CPTMutableNumericData
     {
         let mutableNumbers : CPTMutableNumericData? = nil
-        let loadedDataType :CPTNumericDataType?
+        let loadedDataType : CPTNumericDataType?
     
         if numbers is CPTNumericData  {
             mutableNumbers = numbers
@@ -251,7 +251,7 @@ extension CPTPlot {
             loadedDataType = self.doubleDataType;
             mutableNumbers = [[CPTMutableNumericData alloc] initWithData:numbers dataType:loadedDataType shape:nil];
         }
-        else if ( [numbers isKindOfClass:[NSArray class]] ) {
+        else if (numbers is Array ) {
             if (((CPTNumberArray *)numbers).count == 0 ) {
                 loadedDataType = self.doubleDataType;
             }

@@ -12,8 +12,6 @@ extension CPTLayer {
     
     // MARK: Masking
     
-    /// @cond
-    
     // default path is the rounded rect layer bounds
     func maskingPath()-> CGPath?
     {

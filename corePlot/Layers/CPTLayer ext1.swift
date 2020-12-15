@@ -77,11 +77,11 @@ extension CPTLayer {
             subLayerFrame.origin = CGPoint(x: round(leftPadding), y: round(bottomPadding));
             subLayerFrame.size   = subLayerSize;
             
-            let  excludedSublayers = self.sublayersExcludedFromAutomaticLayout()
+            let excludedSublayers = self.sublayersExcludedFromAutomaticLayout()
             
             let  layerClass is CPTLayer
-            for  subLayer in mySublayers {
-                if ( [subLayer isKindOfClass:layerClass] && !excludedSublayers.contains(subLayer ) {
+            for  subLayer in mySublayers! {
+                if ( subLayer is layerClass && !excludedSublayers.contains(subLayer ) {
                     subLayer.frame = subLayerFrame;
                 }
             }
@@ -93,9 +93,9 @@ extension CPTLayer {
     
     func sublayerMargin( left: inout CGFloat, top: inout CGFloat, right: inout CGFloat, bottom: inout CGFloat )
     {
-        left   = self.paddingLeft;
-        top    = self.paddingTop;
-        right  = self.paddingRight;
-        bottom = self.paddingBottom;
+        left   = self.paddingLeft
+        top    = self.paddingTop
+        right  = self.paddingRight
+        bottom = self.paddingBottom
     }
 }

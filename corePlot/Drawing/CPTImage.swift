@@ -145,9 +145,9 @@ func isEqual(object: Any) -> Bool
     guard ( self != object ) else {return true }
     
     else if ( [object isKindOfClass:[self class]] ) {
-        CPTImage *otherImage = (CPTImage *)object;
+        let otherImage = object as? CPTImage
         
-        BOOL equalImages = (self.scale == otherImage.scale) &&
+        var equalImages = (self.scale == otherImage.scale) &&
             (self.tiled == otherImage.tiled) &&
             (self.tileAnchoredToContext == otherImage.tileAnchoredToContext) &&
             CPTEdgeInsetsEqualToEdgeInsets(self.edgeInsets, otherImage.edgeInsets);
@@ -158,10 +158,9 @@ func isEqual(object: Any) -> Bool
         let selfColorSpace  = CGImageGetColorSpace(selfCGImage);
         let otherColorSpace = CGImageGetColorSpace(otherCGImage);
         
-        if ( equalImages ) {
-            equalImages = (CGImageGetWidth(selfCGImage) == CGImageGetWidth(otherCGImage));
+        if equalImages {
+            equalImages = (selfCGImage.width == otherCGImage.width)
         }
-        
         if ( equalImages ) {
             equalImages = (CGImageGetHeight(selfCGImage) == CGImageGetHeight(otherCGImage));
         }

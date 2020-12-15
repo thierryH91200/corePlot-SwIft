@@ -18,7 +18,7 @@ public class CPTLayer : CALayer
     var paddingBottom : CGFloat       = 0.0
     
     var masksToBorder     = false;
-    var shadow   : CPTShadow?            = nil
+    var shadow   : CPTShadow? = nil
     
     var _shadowMargin   : CGSize? = nil
     var shadowMargin : CGSize {
@@ -47,8 +47,6 @@ public class CPTLayer : CALayer
     var outerBorderPath  :CGPath?    = nil
     var innerBorderPath  :CGPath?    = nil;
     var identifier  : UUID?         = nil;
-    
-    
     
     init ( frame : CGRect) {
         
@@ -134,20 +132,6 @@ public class CPTLayer : CALayer
     }
 
     
-    //    func maskingPath() -> CGPath? {
-    //        if masksToBounds {
-    //            var path = outerBorderPath
-    //            if let path = path {
-    //                return path
-    //            }
-    //
-    //            path = CPTCreateRoundedRectPath(bounds, cornerRadius)
-    //            outerBorderPath = path
-    //            return outerBorderPath
-    //        } else {
-    //            return nil
-    //        }
-    //    }
     
     public override var cornerRadius: CGFloat {
         get {

@@ -24,7 +24,7 @@ public class CPTFill: NSObject  {
         return CPTFillImage(image: anImage)
     }
     
-    
+    // MARK: - Drawing
     func fillRect(rect :CGRect,  inContext: CGContext)
     {
         // do nothing--subclasses override to do drawing here
@@ -35,4 +35,22 @@ public class CPTFill: NSObject  {
         // do nothing--subclasses override to do drawing here
     }
     
+    // MARK: - Color
+    func cgColor() -> CGColor? {
+        // do nothing--subclasses override to describe the color
+        return nil
+    }
+    
 }
+
+
+
+//+(nonnull instancetype)fillWithColor:(nonnull CPTColor *)aColor
+//{
+//    return [[_CPTFillColor alloc] initWithColor:aColor];
+//}
+//
+//
+//class func fill(with aColor: CPTColor) -> Self {
+//    return CPTFillColor(color: aColor)
+//}

@@ -132,32 +132,32 @@ class CPTMutablePlotRange: CPTPlotRange {
     /** @brief Sets the messaged object to the intersection with another range. The sign of @ref length is unchanged.
      *  @param other The other plot range.
      **/
-    func intersectionPlotRange:(other: CPTPlotRange )
+    func intersectionPlotRange(other: CPTPlotRange )
     {
         if ( !other ) {
             return;
         }
 
-        NSDecimal min1    = self.minLimitDecimal;
-        NSDecimal min2    = other.minLimitDecimal;
-        NSDecimal minimum = CPTDecimalMax(min1, min2);
+        let min1    = self.minLimitDecimal
+        let min2    = other.minLimitDecimal;
+        let minimum = max(min1, min2);
 
-        NSDecimal max1    = self.maxLimitDecimal;
-        NSDecimal max2    = other.maxLimitDecimal;
-        NSDecimal maximum = CPTDecimalMin(max1, max2);
+        let max1    = self.maxLimitDecimal
+        let max2    = other.maxLimitDecimal
+        let maximum = min(max1, max2)
 
-        if ( ![self intersectsRange:other] ) {
+        if !self.intersectsRange(other ) {
             self.locationDecimal = CPTDecimalNaN();
             self.lengthDecimal   = CPTDecimalNaN();
         }
         else if ( self.isInfinite && other.isInfinite ) {
             switch ( self.lengthSign ) {
-                case CPTSignPositive:
-                    self.locationDecimal = minimum;
+            case .positive:
+                self.locationDecimal = CGFloat(minimum);
                     break;
 
             case .negative:
-                    self.locationDecimal = maximum;
+                self.locationDecimal = CGFloat(maximum);
                     break;
 
                 default:
@@ -166,14 +166,14 @@ class CPTMutablePlotRange: CPTPlotRange {
         }
         else if ( self.isInfinite && !other.isInfinite ) {
             switch ( self.lengthSign ) {
-                case CPTSignPositive:
-                    self.locationDecimal = minimum;
-                    self.lengthDecimal   = CPTDecimalSubtract(other.maxLimitDecimal, minimum);
+            case .positive:
+                self.locationDecimal = CGFloat(minimum);
+                self.lengthDecimal   = CGFloat(other.maxLimitDecimal - minimum)
                     break;
 
             case .negative:
-                    self.locationDecimal = maximum;
-                    self.lengthDecimal   = CPTDecimalSubtract(other.minLimitDecimal, maximum);
+                self.locationDecimal = CGFloat(maximum);
+                    self.lengthDecimal   = other.minLimitDecimal - maximum
                     break;
 
                 default:
@@ -182,14 +182,14 @@ class CPTMutablePlotRange: CPTPlotRange {
         }
         else if ( !self.isInfinite && other.isInfinite ) {
             switch ( other.lengthSign ) {
-                case CPTSignPositive:
-                    self.locationDecimal = minimum;
-                    self.lengthDecimal   = CPTDecimalSubtract(self.maxLimitDecimal, minimum);
+            case .positive:
+                self.locationDecimal = CGFloat(minimum);
+                    self.lengthDecimal   = self.maxLimitDecimal - minimum
                     break;
 
             case .negative:
-                    self.locationDecimal = maximum;
-                    self.lengthDecimal   = CPTDecimalSubtract(self.minLimitDecimal, maximum);
+                    self.locationDecimal = CGFloat(maximum)
+                    self.lengthDecimal   = self.minLimitDecimal - CGFloat(maximum
                     break;
 
                 default:
@@ -197,17 +197,17 @@ class CPTMutablePlotRange: CPTPlotRange {
             }
         }
         else if ( NSDecimalIsNotANumber(&minimum) || NSDecimalIsNotANumber(&maximum)) {
-            self.locationDecimal = CPTDecimalNaN();
-            self.lengthDecimal   = CPTDecimalNaN();
+            self.locationDecimal = CGFloat.nan
+            self.lengthDecimal   = CGFloat.nan
         }
         else {
-            if ( CPTDecimalGreaterThanOrEqualTo(self.lengthDecimal, CPTDecimalFromInteger(0))) {
-                self.locationDecimal = minimum;
-                self.lengthDecimal   = CPTDecimalSubtract(maximum, minimum);
+            if  self.lengthDecimal >= CGFloat(0) {
+                self.locationDecimal = CGFloat(minimum);
+                self.lengthDecimal   = CGFloat(maximum - minimum)
             }
             else {
-                self.locationDecimal = maximum;
-                self.lengthDecimal   = CPTDecimalSubtract(minimum, maximum);
+                self.locationDecimal = CGFloat(maximum);
+                self.lengthDecimal   = CGFloat(minimum - maximum)
             }
         }
     }
@@ -218,19 +218,18 @@ class CPTMutablePlotRange: CPTPlotRange {
      *  @param factor Factor used. A value of @num{1.0} gives no change.
      *  Less than @num{1.0} is a contraction, and greater than @num{1.0} is expansion.
      **/
-    -(void)expandRangeByFactor:(nonnull NSNumber *)factor
+    func expandRangeByFactor(factor: CGFloat )
     {
-        NSDecimal oldLength      = self.lengthDecimal;
-        NSDecimal newLength      = CPTDecimalMultiply(oldLength, factor.decimalValue);
-        NSDecimal locationOffset = CPTDecimalDivide(CPTDecimalSubtract(oldLength, newLength), CPTDecimalFromInteger(2));
-        NSDecimal newLocation    = CPTDecimalAdd(self.locationDecimal, locationOffset);
+        let oldLength      = self.lengthDecimal;
+        let newLength      = oldLength * factor.decimalValue
+        let locationOffset = ((oldLength - newLength) / (2));
+        let newLocation    = self.locationDecimal + locationOffset
 
         self.locationDecimal = newLocation;
         self.lengthDecimal   = newLength;
     }
 
-    #pragma mark -
-    #pragma mark Shifting Range
+    // MARK: Shifting Range
 
     /** @brief Moves the whole range so that the @ref location fits in other range.
      *  @param otherRange Other range.
@@ -281,25 +280,20 @@ class CPTMutablePlotRange: CPTPlotRange {
     // mark Accessors
 
 
-    func setLocation(newLocation : NSNumber )
+    func setLocation(newLocation : CGFloat )
     {
-
-        self.inValueUpdate = YES;
-
-        self.locationDecimal = newLocation.decimalValue;
-        self.locationDouble  = newLocation.doubleValue;
-
-        self.inValueUpdate = NO;
+        self.inValueUpdate = true
+        self.locationDecimal = newLocation
+        self.locationDouble  = newLocation
+        self.inValueUpdate = false
     }
 
-    func setLength:(newLength:  NSNumber )
+    func setLength(newLength:  CGFloat )
     {
-        self.inValueUpdate = YES;
-
-        self.lengthDecimal = newLength.decimalValue;
-        self.lengthDouble  = newLength.doubleValue;
-
-        self.inValueUpdate = NO;
+        self.inValueUpdate = true
+        self.lengthDecimal = newLength
+        self.lengthDouble  = newLength;
+        self.inValueUpdate = false;
     }
 
 

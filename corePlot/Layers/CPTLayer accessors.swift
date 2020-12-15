@@ -98,63 +98,12 @@ extension CPTLayer {
         }
     }
     
-    // MARK: Masking
-    
-    -(nullable CGPathRef)maskingPath
-    {
-    if ( self.masksToBounds ) {
-    CGPathRef path = self.outerBorderPath;
-    if ( path ) {
-    return path;
-    }
-    
-    path                 = CPTCreateRoundedRectPath(self.bounds, self.cornerRadius);
-    self.outerBorderPath = path;
-    CGPathRelease(path);
-    
-    return self.outerBorderPath;
-    }
-    else {
-    return NULL;
-    }
-    }
-    
-    //    func sublayerMaskingPath() -> CGPath
-    //    {
-    //        return self.innerBorderPath!;
-    //    }
-    
-    /// @endcond
-    
-    /** @brief Recursively sets the clipping path of the given graphics context to the sublayer masking paths of its superlayers.
-     *
-     *  The clipping path is built by recursively climbing the layer tree and combining the sublayer masks from
-     *  each super layer. The tree traversal stops when a layer is encountered that is not a CPTLayer.
-     *
-     *  @param context The graphics context to clip.
-     *  @param sublayer The sublayer that called this method.
-     *  @param offset The cumulative position offset between the receiver and the first layer in the recursive calling chain.
-     **/
-    
-    /** @brief Sets the clipping path of the given graphics context to mask the content.
-     *
-     *  The clipping path is built by recursively climbing the layer tree and combining the sublayer masks from
-     *  each super layer. The tree traversal stops when a layer is encountered that is not a CPTLayer.
-     *
-     *  @param context The graphics context to clip.
-     **/
-    
-    /// @cond
-    
-    
-    
     // MARK: -Accessors
     func setPosition(newPosition: CGPoint)
     {
         super.position = newPosition;
     }
-    
-    
+
     public override var isHidden: Bool {
         get {
             return super.isHidden
@@ -166,36 +115,35 @@ extension CPTLayer {
                     self.setNeedsDisplay()
                 }
             }
-
         }
     }
-
-    func setContentsScale(newContentsScale: CGFloat)
-    {
-        if ( self.contentsScale != newContentsScale ) {
-            if ( [CALayer instancesRespondToSelector:@selector(setContentsScale:)] ) {
-                super.contentsScale = newContentsScale;
-                self.setNeedsDisplay()
-                
-                for subLayer in self.sublayers  {
-                    if ( subLayer is CPTLayer ) {
-                        subLayer.contentsScale = newContentsScale;
+    
+    
+    var contentScale : CGFloat {
+        get {
+            var scale = CGFloat(1.0);
+            
+            if ( CALayer.instancesRespondToSelector(#selector(contentsScale(:))) ) {
+                scale = super.contentsScale
+            }
+            return scale;
+        }
+        set {
+            if ( self.contentsScale != newValue ) {
+                if ( CALayer instancesRespondToSelector:@selector(setContentsScale:)) {
+                    super.contentsScale = newValue;
+                    self.setNeedsDisplay()
+                    
+                    for subLayer in self.sublayers  {
+                        if ( subLayer is CPTLayer ) {
+                            subLayer.contentsScale = newValue
+                        }
                     }
                 }
             }
         }
     }
-    
-    func contentsScale()-> CGFloat
-    {
-        var scale = CGFloat(1.0);
-        
-        if ( CALayer instancesRespondToSelector:@selector(contentsScale)] ) {
-            scale = super.contentsScale;
-        }
-        return scale;
-    }
-    
+
     func setShadow(newShadow: CPTShadow)
     {
         if ( newShadow != shadow ) {
@@ -220,6 +168,3 @@ extension CPTLayer {
         }
     }
 }
-
-
-@objc

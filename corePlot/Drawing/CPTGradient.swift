@@ -81,15 +81,15 @@ class CPTGradient: NSObject {
 
     func CPTTransformHSV_RGB(components :[CGFloat] ) // H,S,B -> R,G,B
     {
-        
+        var components = components
         var R = CGFloat(0.0), G = CGFloat(0.0), B = CGFloat(0.0);
         
         let H = fmod(components[0], CGFloat(360.0)); // map to [0,360)
         let S = components[1];
         let V = components[2];
         
-        let Hi    = (Int)lrint(floor(H / CGFloat(60.0))) % 6;
-        let f = H / CGFloat(60.0) - Hi;
+        let Hi    = Int(lrint(floor(Double(H / CGFloat(60.0)))) % 6)
+        let f = H / CGFloat(60.0) - CGFloat(Hi)
         let p = V * (CGFloat(1.0) - S);
         let q = V * (CGFloat(1.0) - f * S)
         let t = V * (CGFloat(1.0) - (CGFloat(1.0) - f) * S);
@@ -144,9 +144,9 @@ class CPTGradient: NSObject {
     {
         var curElement = self.elementList
         
-        if curElement == nil || (newElement.position < curElement.position)) {
+        if curElement == nil || (newElement.position < curElement!.position) {
             let tmpNext        = curElement;
-            var newElementList = calloc(1, sizeof(CPTGradientElement));
+            var newElementList = CPTGradientElement(value: 1)
             if ( newElementList ) {
                 newElementList             = newElement;
                 newElementList.nextElement = tmpNext;
@@ -154,16 +154,16 @@ class CPTGradient: NSObject {
             }
         }
         else {
-            while ( curElement.nextElement != NULL &&
+            while ( curElement.nextElement != nil &&
                         !((curElement.position <= newElement.position) &&
-                            (newElement.position < curElement.nextElement.position))) {
+                            (newElement.position < curElement.nextElement.position)))) {
                 curElement = curElement?.nextElement;
             }
             
             let tmpNext = curElement?.nextElement;
-            curElement.nextElement              = calloc(1, sizeof(CPTGradientElement));
-            *(curElement.nextElement)           = newElement
-            curElement.nextElement.nextElement = tmpNext;
+            curElement?.nextElement        = CPTGradientElement(value: 0)
+            curElement?.nextElement       = newElement
+            curElement?.nextElement?.nextElement = tmpNext
         }
     }
     
@@ -179,24 +179,25 @@ class CPTGradient: NSObject {
 //     *  @param endingPosition The ending position (@num{0} ≤ @par{endingPosition} ≤ @num{1}).
 //     *  @return A new CPTGradient instance initialized with an axial linear gradient between the two given colors, at two given normalized positions.
 //     **/
-//    +(nonnull instancetype)gradientWithBeginningColor:(nonnull CPTColor *)begin endingColor:(nonnull CPTColor *)end beginningPosition:(CGFloat)beginningPosition endingPosition:(CGFloat)endingPosition
-//    {
-//        CPTGradient *newInstance = [[self alloc] init];
-//
-//        CPTGradientElement color1;
-//        CPTGradientElement color2;
-//
-//        color1.color = CPTRGBAColorFromCGColor(begin.cgColor);
-//        color2.color = CPTRGBAColorFromCGColor(end.cgColor);
-//
-//        color1.position = beginningPosition;
-//        color2.position = endingPosition;
-//
-//        [newInstance addElement:&color1];
-//        [newInstance addElement:&color2];
-//
-//        return newInstance;
-//    }
+    +(nonnull instancetype)gradientWithBeginningColor:(nonnull CPTColor *)begin endingColor:(nonnull CPTColor *)end beginningPosition:(CGFloat)beginningPosition endingPosition:(CGFloat)endingPosition
+    {
+        let newInstance = CPTGradient()
+
+    let color1 = CPTGradientElement()
+    let color2 = CPTGradientElement()
+        CPTGradientElement color2;
+
+        color1.color = CPTRGBAColorFromCGColor(begin.cgColor);
+        color2.color = CPTRGBAColorFromCGColor(end.cgColor);
+
+        color1.position = beginningPosition;
+        color2.position = endingPosition;
+
+        [newInstance addElement:&color1];
+        [newInstance addElement:&color2];
+
+        return newInstance;
+    }
     
     func fillRect(rect: CGRect, inContext context: CGContext)    {
         

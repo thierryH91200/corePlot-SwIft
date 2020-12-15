@@ -157,6 +157,7 @@ class CPTPlotSpace: NSObject {
         else { return false}
         return handledByDelegate;
     }
+    
     //
     //    /**
     //     *  @brief Informs the receiver that the user has
@@ -261,17 +262,7 @@ class CPTPlotSpace: NSObject {
         return handledByDelegate;
     }
     
-    #endif
-    //
-    //    /// @}
-    //
-    //    @end
-    //
     // MARK: - AbstractMethods
-    
-    //
-    //    /// @cond
-    //
     //    -(NSUInteger)numberOfCoordinates
     //    {
     //        return 0;
