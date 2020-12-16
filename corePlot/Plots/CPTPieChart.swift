@@ -87,6 +87,7 @@ public class CPTPieChart: CPTPlot {
     
     
     override init(layer: Any) {
+        
         super.init(layer: layer)
         let theLayer = layer as? CPTPieChart
         

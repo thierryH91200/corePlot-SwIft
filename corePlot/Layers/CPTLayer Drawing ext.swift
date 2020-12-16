@@ -14,16 +14,16 @@ extension CPTLayer {
     {
         guard self.isHidden == false else {return}
         
-        if let effectiveAppearance = NSView.effectiveAppearance() {
+        _ = NSApp.effectiveAppearance //{
             let oldAppearance = NSAppearance.current
             NSAppearance.current = self.graph?.hostingView?.effectiveAppearance
             
             super.display()
             NSAppearance.current = oldAppearance;
-        }
-        else {
-            super.display()
-        }
+//        }
+//        else {
+//            super.display()
+//        }
     }
     
     @objc func drawInContext(context: CGContext)
@@ -41,24 +41,14 @@ extension CPTLayer {
         
         for subLayer in self.sublayers!  {
             let sub = subLayer as! CPTLayer
-            if let setNeedsDisplayAllLayers = sub.setNeedsDisplayAllLayers() {
+//            if let setNeedsDisplayAllLayers = sub.setNeedsDisplayAllLayers() {
                 sub.setNeedsDisplayAllLayers()
-            }
-            else {
-                subLayer.setNeedsDisplay()
-            }
+//            }
+//            else {
+//                subLayer.setNeedsDisplay()
+//            }
         }
     }
-    
-    /** @brief Draws layer content into the provided graphics context.
-     *
-     *  This method replaces the CALayer @link CALayer::drawInContext: -drawInContext: @endlink method
-     *  to ensure that layer content is always drawn as vectors
-     *  and objects rather than as a cached bit-mapped image representation.
-     *  Subclasses should do all drawing here and must call @super to set up the clipping path.
-     *
-     *  @param context The graphics context to draw into.
-     **/
     
     @objc func renderAsVectorInContext(context: CGContext)
     {
@@ -81,11 +71,11 @@ extension CPTLayer {
         self.applyTransform(transform3D: self.transform, context:context)
         
         self.renderingRecursively = true;
-        if ( !self.masksToBounds ) {
+        if self.masksToBounds == false  {
             context.restoreGState()
         }
         self.renderAsVectorInContext(context: context)
-        if ( !self.masksToBounds ) {
+        if self.masksToBounds == false {
             context.restoreGState()
         }
         self.renderingRecursively = false;
@@ -93,7 +83,7 @@ extension CPTLayer {
         // render sublayers
         let sublayersCopy = self.sublayers
         for currentSublayer in sublayersCopy! {
-            var currentSublayer = currentSublayer
+            let currentSublayer = currentSublayer
             context.saveGState();
             
             // Shift origin of context to match starting coordinate of sublayer
@@ -104,7 +94,9 @@ extension CPTLayer {
             self.applyTransform(transform3D: self.sublayerTransform, context:context)
             
             if currentSublayer is CPTLayer == true {
-                currentSublayer = recursivelyRenderInContext(context: context)
+                
+                let currentSublayer = currentSublayer as! CPTLayer
+                currentSublayer.recursivelyRenderInContext(context: context)
             }
             else {
                 if ( self.masksToBounds ) {
@@ -142,7 +134,7 @@ extension CPTLayer {
     /** @brief Updates the layer layout if needed and then draws layer content and the content of all sublayers into the provided graphics context.
      *  @param context The graphics context to draw into.
      */
-    @objc func layoutAndRenderInContext(context: CGContext)
+    @objc func layoutAndRender(context: CGContext)
     {
         self.layoutIfNeeded()
         self.recursivelyRenderInContext(context: context)
@@ -151,11 +143,11 @@ extension CPTLayer {
     /** @brief Draws layer content and the content of all sublayers into a PDF document.
      *  @return PDF representation of the layer content.
      **/
-    func dataForPDFRepresentationOfLayer () -> NSData
+    func dataForPDFRepresentationOfLayer () -> Data
     {
-        var pdfData = Data()
+        let pdfData = Data()
         var dataConsumer: CGDataConsumer? = nil
-        if let data = pdfData as? CFMutableData {
+        if let data = pdfData  {
             dataConsumer = CGDataConsumer(data: data)
         }
         
@@ -165,15 +157,13 @@ extension CPTLayer {
             pdfContext = CGContext(consumer: dataConsumer, mediaBox: &mediaBox, nil)
         }
         
-        NSUIGraphicsPushContext(pdfContext)
-//        CPTPushCGContext(pdfContext)
+        NSUIGraphicsPushContext(pdfContext!)
         
         pdfContext?.beginPage(mediaBox: &mediaBox)
-        layoutAndRender(in: pdfContext)
+        layoutAndRender(context: pdfContext!)
         pdfContext?.endPage()
         pdfContext?.closePDF()
         
-//        CPTPopCGContext()
         NSUIGraphicsPopContext()
         
         return pdfData;
@@ -204,6 +194,5 @@ extension CPTLayer {
     {
         return false
     }
-    
     
 }

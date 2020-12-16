@@ -173,10 +173,11 @@
     //
     //    /// @cond
     //
-    override init (layer: CPTLayer)
+    override init (layer: Any)
     {
-        super.init(layer:layer)
-        let theLayer = CPTLegend(layer : CPTLayer)
+        super.init(layer : layer)
+        
+        let theLayer = CPTLegend(layer : layer)
         
         plots                 = theLayer.plots
         legendEntries         = theLayer.legendEntries;

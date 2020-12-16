@@ -4,6 +4,12 @@
 //
 //  Created by thierryH24 on 11/11/2020.
 //
+//==============================
+//  OK
+// 16/12/20
+//==============================
+
+
 
 import AppKit
 
@@ -54,9 +60,6 @@ class CPTAxisSet: CPTLayer {
         for theAxes in self.axes{
             theAxes.setNeedsRelabel()
         }
-
-//        theAxes.makeObjectsPerformSelector(at: #selector(setNeedsLayout))
-//        theAxes.makeObjectsPerformSelector(#selector(setNeedsRelabel))
     }
 
     // MARK: -  Axes

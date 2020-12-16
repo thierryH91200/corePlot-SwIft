@@ -5,12 +5,10 @@
 //  Created by thierryH24 on 20/11/2020.
 //
 
-import Foundation
+import AppKit
 
 
 extension CPTLayer {
-    
-
     
     @objc func setPaddingLeft(newPadding: CGFloat)
     {
@@ -44,19 +42,17 @@ extension CPTLayer {
         }
     }
     
-    
 /**     *  @brief Updates the layout of all sublayers. Sublayers fill the super layer&rsquo;s bounds minus any padding.
-     *
+    
      *  This is where we do our custom replacement for the Mac-only layout manager and autoresizing mask.
      *  Subclasses should override this method to provide a different layout of their own sublayers.
      **/
     public override func layoutSublayers()
     {
         let selfBounds = self.bounds;
+        let mySublayers = self.sublayers;
         
-        var mySublayers = self.sublayers;
-        
-        if( mySublayers!.count > 0) {
+        if (mySublayers!.count > 0) {
             
             var  leftPadding = CGFloat(0)
             var  topPadding = CGFloat(0)
@@ -79,14 +75,14 @@ extension CPTLayer {
             
             let excludedSublayers = self.sublayersExcludedFromAutomaticLayout()
             
-            let  layerClass is CPTLayer
             for  subLayer in mySublayers! {
-                if ( subLayer is layerClass && !excludedSublayers.contains(subLayer ) {
-                    subLayer.frame = subLayerFrame;
+                if ( subLayer is CPTLayer) == true && (excludedSublayers?.contains(subLayer )) == false {
+                    subLayer.frame = subLayerFrame
                 }
             }
         }
     }
+    
     @objc func sublayersExcludedFromAutomaticLayout() -> CPTSublayerSet? {
         return nil
     }

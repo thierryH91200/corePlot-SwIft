@@ -14,7 +14,7 @@ import AppKit
 
 public class CPTAxisTitle: CPTAxisLabel {
     
-    override init(layer: CPTLayer)
+    override init(layer: Any)
     {
         super.init(layer: layer)
         self.rotation = CGFloat.nan

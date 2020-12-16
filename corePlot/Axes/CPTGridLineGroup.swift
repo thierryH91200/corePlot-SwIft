@@ -9,7 +9,7 @@
 // 05/12/20
 //==============================
 
-import Cocoa
+import AppKit
 
 class CPTGridLineGroup: CPTLayer {
     
@@ -25,11 +25,11 @@ class CPTGridLineGroup: CPTLayer {
         self.needsDisplayOnBoundsChange = true
     }
     
-    override init(layer: Any?) {
+    override init(layer: Any) {
         
         super.init(layer: layer)
-        let theLayer = layer as? CPTGridLineGroup
         
+        let theLayer = layer as? CPTGridLineGroup
         axis = theLayer!.axis
         major = theLayer!.major
     }

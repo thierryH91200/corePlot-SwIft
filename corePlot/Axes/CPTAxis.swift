@@ -77,7 +77,7 @@ class CPTAxis : CPTLayer {
     //    var minorTickLabelShadow: CPTShadow
     
     // MARK:  Major Ticks
-    var majorIntervalLength = 0
+    var majorIntervalLength = CGFloat(0)
     var majorTickLength = CGFloat(0)
     var majorTickLineStyle: CPTLineStyle
     var majorTickLocations: CPTNumberSet
@@ -130,7 +130,6 @@ class CPTAxis : CPTLayer {
         title                       = ""
         attributedTitle             = NSAttributedString(string: "")
         
-        
         minorTickLocations.removeAll()
         preferredNumberOfMajorTicks = 0;
         minorTickLength             = CGFloat(3.0);
@@ -159,7 +158,7 @@ class CPTAxis : CPTLayer {
         labelingPolicy              = .fixedInterval;
         labelTextStyle              = CPTTextStyle()
         
-        var newFormatter = NumberFormatter()
+        let newFormatter = NumberFormatter()
         newFormatter.minimumIntegerDigits  = 1
         newFormatter.maximumFractionDigits = 1
         newFormatter.minimumFractionDigits = 1
@@ -198,78 +197,80 @@ class CPTAxis : CPTLayer {
         self.needsDisplayOnBoundsChange = true
     }
     
+//    required init?(coder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
+    
+    override init(layer :  Any )
+    {
+        super.init(layer: layer)
+        
+        let theLayer = CPTAxis( layer: layer)
+        
+        plotSpace                   = theLayer.plotSpace;
+        majorTickLocations          = theLayer.majorTickLocations;
+        minorTickLocations          = theLayer.minorTickLocations;
+        preferredNumberOfMajorTicks = theLayer.preferredNumberOfMajorTicks;
+        minorTickLength             = theLayer.minorTickLength;
+        majorTickLength             = theLayer.majorTickLength;
+        labelOffset                 = theLayer.labelOffset;
+        minorTickLabelOffset        = theLayer.labelOffset;
+        labelRotation               = theLayer.labelRotation;
+        minorTickLabelRotation      = theLayer.labelRotation;
+        labelAlignment              = theLayer.labelAlignment;
+        minorTickLabelAlignment     = theLayer.labelAlignment;
+        title                       = theLayer.title;
+        attributedTitle             = theLayer.attributedTitle;
+        titleOffset                 = theLayer.titleOffset;
+        axisLineStyle               = theLayer.axisLineStyle;
+        majorTickLineStyle          = theLayer.majorTickLineStyle;
+        minorTickLineStyle          = theLayer.minorTickLineStyle;
+        tickLabelDirection          = theLayer.tickLabelDirection;
+        minorTickLabelDirection     = theLayer.minorTickLabelDirection;
+        majorGridLineStyle          = theLayer.majorGridLineStyle;
+        minorGridLineStyle          = theLayer.minorGridLineStyle;
+        axisLineCapMin              = theLayer.axisLineCapMin;
+        axisLineCapMax              = theLayer.axisLineCapMax;
+        labelingOrigin              = theLayer.labelingOrigin;
+        majorIntervalLength         = theLayer.majorIntervalLength;
+        minorTicksPerInterval       = theLayer.minorTicksPerInterval;
+        coordinate                  = theLayer.coordinate;
+        labelingPolicy              = theLayer.labelingPolicy;
+        labelFormatter              = theLayer.labelFormatter;
+        minorTickLabelFormatter     = theLayer.minorTickLabelFormatter;
+        axisLabels                  = theLayer.axisLabels;
+        minorTickAxisLabels         = theLayer.minorTickAxisLabels;
+        tickDirection               = theLayer.tickDirection;
+        labelTextStyle              = theLayer.labelTextStyle;
+        minorTickLabelTextStyle     = theLayer.minorTickLabelTextStyle;
+        axisTitle                   = theLayer.axisTitle;
+        titleTextStyle              = theLayer.titleTextStyle;
+        titleRotation               = theLayer.titleRotation;
+        titleDirection              = theLayer.titleDirection;
+        titleLocation               = theLayer.titleLocation;
+        needsRelabel                = theLayer.needsRelabel;
+        labelExclusionRanges        = theLayer.labelExclusionRanges;
+        plotArea                    = theLayer.plotArea;
+        separateLayers              = theLayer.separateLayers;
+        labelShadow                 = theLayer.labelShadow;
+        minorTickLabelShadow        = theLayer.minorTickLabelShadow;
+        visibleRange                = theLayer.visibleRange;
+        visibleAxisRange            = theLayer.visibleAxisRange;
+        gridLinesRange              = theLayer.gridLinesRange;
+        alternatingBandFills        = theLayer.alternatingBandFills;
+        alternatingBandAnchor       = theLayer.alternatingBandAnchor;
+        mutableBackgroundLimitBands = theLayer.mutableBackgroundLimitBands;
+        minorGridLines              = theLayer.minorGridLines;
+        majorGridLines              = theLayer.majorGridLines;
+        pointingDeviceDownLabel     = theLayer.pointingDeviceDownLabel;
+        pointingDeviceDownTickLabel = theLayer.pointingDeviceDownTickLabel;
+        inTitleUpdate               = theLayer.inTitleUpdate;
+        labelsUpdated               = theLayer.labelsUpdated;
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
-    
-    
-    //    init(layer :  CPTAxis )
-    //    {
-    //        super.init(layer: layer)
-    //        let theLayer = CPTAxis( )
-    //
-    //        plotSpace                   = theLayer.plotSpace;
-    //        majorTickLocations          = theLayer.majorTickLocations;
-    //        minorTickLocations          = theLayer.minorTickLocations;
-    //        preferredNumberOfMajorTicks = theLayer.preferredNumberOfMajorTicks;
-    //        minorTickLength             = theLayer.minorTickLength;
-    //        majorTickLength             = theLayer.majorTickLength;
-    //        labelOffset                 = theLayer.labelOffset;
-    //        minorTickLabelOffset        = theLayer.labelOffset;
-    //        labelRotation               = theLayer.labelRotation;
-    //        minorTickLabelRotation      = theLayer.labelRotation;
-    //        labelAlignment              = theLayer.labelAlignment;
-    //        minorTickLabelAlignment     = theLayer.labelAlignment;
-    //        title                       = theLayer.title;
-    //        attributedTitle             = theLayer.attributedTitle;
-    //        titleOffset                 = theLayer.titleOffset;
-    //        axisLineStyle               = theLayer.axisLineStyle;
-    //        majorTickLineStyle          = theLayer.majorTickLineStyle;
-    //        minorTickLineStyle          = theLayer.minorTickLineStyle;
-    //        tickLabelDirection          = theLayer.tickLabelDirection;
-    //        minorTickLabelDirection     = theLayer.minorTickLabelDirection;
-    //        majorGridLineStyle          = theLayer.majorGridLineStyle;
-    //        minorGridLineStyle          = theLayer.minorGridLineStyle;
-    //        axisLineCapMin              = theLayer.axisLineCapMin;
-    //        axisLineCapMax              = theLayer.axisLineCapMax;
-    //        labelingOrigin              = theLayer.labelingOrigin;
-    //        majorIntervalLength         = theLayer.majorIntervalLength;
-    //        minorTicksPerInterval       = theLayer.minorTicksPerInterval;
-    //        coordinate                  = theLayer.coordinate;
-    //        labelingPolicy              = theLayer.labelingPolicy;
-    //        labelFormatter              = theLayer.labelFormatter;
-    //        minorTickLabelFormatter     = theLayer.minorTickLabelFormatter;
-    //        axisLabels                  = theLayer.axisLabels;
-    //        minorTickAxisLabels         = theLayer.minorTickAxisLabels;
-    //        tickDirection               = theLayer.tickDirection;
-    //        labelTextStyle              = theLayer.labelTextStyle;
-    //        minorTickLabelTextStyle     = theLayer.minorTickLabelTextStyle;
-    //        axisTitle                   = theLayer.axisTitle;
-    //        titleTextStyle              = theLayer.titleTextStyle;
-    //        titleRotation               = theLayer.titleRotation;
-    //        titleDirection              = theLayer.titleDirection;
-    //        titleLocation               = theLayer.titleLocation;
-    //        needsRelabel                = theLayer.needsRelabel;
-    //        labelExclusionRanges        = theLayer.labelExclusionRanges;
-    //        plotArea                    = theLayer.plotArea;
-    //        separateLayers              = theLayer.separateLayers;
-    //        labelShadow                 = theLayer.labelShadow;
-    //        minorTickLabelShadow        = theLayer.minorTickLabelShadow;
-    //        visibleRange                = theLayer.visibleRange;
-    //        visibleAxisRange            = theLayer.visibleAxisRange;
-    //        gridLinesRange              = theLayer.gridLinesRange;
-    //        alternatingBandFills        = theLayer.alternatingBandFills;
-    //        alternatingBandAnchor       = theLayer.alternatingBandAnchor;
-    //        mutableBackgroundLimitBands = theLayer.mutableBackgroundLimitBands;
-    //        minorGridLines              = theLayer.minorGridLines;
-    //        majorGridLines              = theLayer.majorGridLines;
-    //        pointingDeviceDownLabel     = theLayer.pointingDeviceDownLabel;
-    //        pointingDeviceDownTickLabel = theLayer.pointingDeviceDownTickLabel;
-    //        inTitleUpdate               = theLayer.inTitleUpdate;
-    //        labelsUpdated               = theLayer.labelsUpdated;
-    //   }
     
     
     // MARK: - Animation
@@ -295,22 +296,15 @@ class CPTAxis : CPTLayer {
     
     
     // MARK: -Ticks
-    
-    //    /**
-    //     *  @internal
-    //     *  @brief Generate major and minor tick locations using the fixed interval labeling policy.
-    //     *  @param newMajorLocations A new NSSet containing the major tick locations.
-    //     *  @param newMinorLocations A new NSSet containing the minor tick locations.
-    //     */
     func generateFixedIntervalMajorTickLocations(newMajorLocations: inout CGFloat, newMinorLocations: inout CGFloat)
     {
         var majorLocations = Set<CGFloat>()
         var minorLocations =  Set<CGFloat>()
         
-        let zero          = 0.0
+        let zero          = CGFloat(0.0)
         var majorInterval = self.majorIntervalLength
         
-        if majorInterval > Int(zero) {
+        if majorInterval > zero {
             let range = self.plotSpace.plotRangeForCoordinate(self.coordinate)
             
             
@@ -1026,16 +1020,6 @@ class CPTAxis : CPTLayer {
     
     
 // MARK: - Layout
-    //
-    //    /// @name Layout
-    //    /// @{
-    //
-    //    /**
-    //     *  @brief Updates the layout of all sublayers. The axes are relabeled if needed and all axis labels are repositioned.
-    //     *
-    //     *  This is where we do our custom replacement for the Mac-only layout manager and autoresizing mask.
-    //     *  Subclasses should override this method to provide a different layout of their own sublayers.
-    //     **/
     //   func layoutSublayers
     //    {
     //        if ( self.needsRelabel ) {
@@ -2327,4 +2311,23 @@ class CPTAxis : CPTLayer {
         // do nothing--subclasses must override to do their drawing
     }
 }
+
+
+//extension CGFloat{
+//    func roundDown(decimals:Int)->CGFloat{
+//        var from: CGFloat = self
+//        var to: CGFloat = 0.0
+//
+//        let decimalSize = 2.0 //you want to round for 2 digits after decimal point, change to your right value
+//        let k = pow(10.0, CGFloat(decimals)) //k here is 100
+//
+//        var cent = from*k
+//
+//        var centRound = floor(cent) //get floor (integer) value of this double.You will get 154.
+//
+//        to = centRound/k
+//        return to
+//    }
+//}
+
 

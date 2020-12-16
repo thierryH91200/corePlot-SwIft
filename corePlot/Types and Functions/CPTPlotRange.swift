@@ -409,12 +409,12 @@ class CPTPlotRange: NSObject {
                 }
                 if ( !result ) {
                     switch ( self.lengthSign ) {
-                        case CPTSignPositive:
-                            result = CPTDecimalGreaterThanOrEqualTo(otherRange.maxLimitDecimal, self.minLimitDecimal);
+                    case .positive:
+                            result = otherRange.maxLimitDecimal >= self.minLimitDecimal
                             break;
 
-                        case CPTSignNegative:
-                            result = CPTDecimalLessThanOrEqualTo(otherRange.minLimitDecimal, self.maxLimitDecimal);
+                    case .negative:
+                            result = otherRange.minLimitDecimal <= self.maxLimitDecimal
                             break;
 
                         default:
@@ -423,14 +423,14 @@ class CPTPlotRange: NSObject {
                 }
             }
             else {
-                if ( otherRange.isInfinite ) {
+                if (( otherRange?.isInfinite ) != nil) {
                     switch ( otherRange.lengthSign ) {
                     case .positive:
-                            result = CPTDecimalLessThanOrEqualTo(otherRange.minLimitDecimal, self.maxLimitDecimal);
+                        result = otherRange!.minLimitDecimal <= self.maxLimitDecimal
                             break;
 
                     case .negative:
-                            result = CPTDecimalLessThanOrEqualTo(otherRange.maxLimitDecimal, self.minLimitDecimal);
+                        result = otherRange!.maxLimitDecimal <= self.minLimitDecimal
                             break;
 
                         default:
@@ -439,14 +439,14 @@ class CPTPlotRange: NSObject {
                 }
                 else {
                     let min1    = self.minLimitDecimal;
-                    NSDecimal min2    = otherRange.minLimitDecimal;
-                    NSDecimal minimum = CPTDecimalMax(min1, min2);
+                    let min2    = otherRange!.minLimitDecimal;
+                    let minimum = max(min1, min2);
 
-                    NSDecimal max1    = self.maxLimitDecimal;
-                    NSDecimal max2    = otherRange.maxLimitDecimal;
-                    NSDecimal maximum = CPTDecimalMin(max1, max2);
+                    let max1    = self.maxLimitDecimal
+                    let max2    = otherRange!.maxLimitDecimal
+                    let maximum = min(max1, max2)
 
-                    result = CPTDecimalGreaterThanOrEqualTo(maximum, minimum);
+                    result = maximum >= minimum
                 }
             }
         }

@@ -81,8 +81,7 @@ class PieChartController: NSViewController {
         let label = CPTTextLayer(text:"\(recordIndex)", style: <#CPTTextStyle?#>)
         
         if let textStyle = label.textStyle?.mutableCopy() as? CPTMutableTextStyle {
-            textStyle.color = CPTColor.lightGrayColor()
-            
+            textStyle.color = CPTColor.lightGray
             label.textStyle = textStyle
         }
         

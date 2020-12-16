@@ -34,7 +34,7 @@ class CPTFillImage: CPTFill {
 
         let bounds = context.boundingBoxOfPath;
         context.clip();
-        self.fillImage.drawInRect(bounds, inContext:context)
+        self.fillImage.drawInRect(rect: bounds, inContext:context)
         context.restoreGState();
     }
 
@@ -46,7 +46,7 @@ class CPTFillImage: CPTFill {
         context.saveGState();
         let bounds = context.boundingBoxOfPath
         context.clip();
-        self.fillImage.drawInRect(bounds, inContext:context)
+        self.fillImage.drawInRect(rect: bounds, inContext:context)
         context.restoreGState();
 
 //        contextsetFillColor(self.fillColor.cgColor)

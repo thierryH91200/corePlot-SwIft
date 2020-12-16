@@ -93,9 +93,7 @@ extension CPTImage{
             }
         }
         
-        //    self.slices = imageSlices;
-        //    for ( NSUInteger i = 0; i < 9; i++ ) {
-        //        CGImageRelease(imageSlices.slice[i]);
+//            self.slices = imageSlices;
     }
     
 }

@@ -20,23 +20,24 @@ extension CPTPlot {
     func plotRangeForField(fieldEnum: Int )-> CPTPlotRange
     {
         if self.dataNeedsReloading == true {
-            self.reloadData]()
+            self.reloadData()
         }
-        CPTMutableNumericData *numbers = [self cachedNumbersForField:fieldEnum];
-        CPTPlotRange *range            = nil;
+        let numbers = self.cachedNumbersForField(fieldEnum)
+        let range            : CPTPlotRange?
         
         let numberOfSamples = numbers.numberOfSamples;
         
         if ( numberOfSamples > 0 ) {
             if ( self.doublePrecisionCache ) {
                 let  min = Double.infinity
-                let max = -double.infinity
+                let max = -Double.infinity
                 
                let doubles    = (const double *)numbers.bytes;
                 let lastSample = doubles + numberOfSamples;
                 
                 while ( doubles < lastSample ) {
-                    double value = doubles++;
+                    var value = doubles++;
+                    
                     
                     if ( !isnan(value)) {
                         if ( value < min ) {
@@ -60,24 +61,25 @@ extension CPTPlot {
                 let lastSample = decimals + numberOfSamples;
                 
                 while ( decimals < lastSample ) {
-                    NSDecimal value = *decimals++;
+                     value = decimals
+                    decimals += 1
                     
                     if ( !NSDecimalIsNotANumber(&value)) {
                         if value < min {
                             min = value;
                         }
-                        if value> max {
+                        if value > max {
                             max = value;
                         }
                     }
                 }
                 
                 if  max >= min {
-                    range = [CPTPlotRange plotRangeWithLocationDecimal:min ,lengthDecimal:max - min)
+                    range = CPTPlotRange( location :min ,length: max - min)
                 }
             }
         }
-        return range;
+        return range!
     }
 //
 ///** @brief Determines the smallest plot range that fully encloses the data for a particular coordinate.

@@ -296,6 +296,19 @@
 			name = "Mac Specific";
 			sourceTree = "<group>";
 		};
+		033F70382589FA3300BD7AE1 /* Layers */ = {
+			isa = PBXGroup;
+			children = (
+				037244532545FF1700B59C97 /* CPTLayer.swift */,
+				034C436525679565003FAD33 /* CPTLayer ext1.swift */,
+				03525998256C18EB00FEA155 /* CPTLayer Layout.swift */,
+				0352599C256C19A500FEA155 /* CPTLayer masking.swift */,
+				03525994256C185500FEA155 /* CPTLayer accessors.swift */,
+				030734792567BDA8008B7413 /* CPTLayer Drawing ext.swift */,
+			);
+			name = Layers;
+			sourceTree = "<group>";
+		};
 		0372442D2545FE4600B59C97 = {
 			isa = PBXGroup;
 			children = (
@@ -360,15 +373,10 @@
 		03A9CCCA255929750096853D /* Layers */ = {
 			isa = PBXGroup;
 			children = (
-				037244532545FF1700B59C97 /* CPTLayer.swift */,
-				03525994256C185500FEA155 /* CPTLayer accessors.swift */,
-				030734792567BDA8008B7413 /* CPTLayer Drawing ext.swift */,
+				033F70382589FA3300BD7AE1 /* Layers */,
 				03A9CCE12559569E0096853D /* CPTBorderedLayer.swift */,
 				032EE4FE25665B940085F4E1 /* CPTBorderLayer.swift */,
 				032EE50225665BC70085F4E1 /* CPTMaskLayer.swift */,
-				034C436525679565003FAD33 /* CPTLayer ext1.swift */,
-				03525998256C18EB00FEA155 /* CPTLayer Layout.swift */,
-				0352599C256C19A500FEA155 /* CPTLayer masking.swift */,
 			);
 			path = Layers;
 			sourceTree = "<group>";

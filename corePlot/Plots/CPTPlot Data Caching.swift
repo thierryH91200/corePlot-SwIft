@@ -93,9 +93,9 @@ extension CPTPlot {
                             
                             CPTNumericDataType dataType = (self.cachePrecision == CPTPlotCachePrecisionDecimal ? self.decimalDataType : self.doubleDataType);
                             
-                            let mutableNumbers = [[CPTMutableNumericData alloc] initWithArray:indices
+                            let mutableNumbers = CPTMutableNumericData ( initWithArray:indices,
                                                   dataType:dataType,
-                                                  shape:nil];
+                                                  shape:nil)
                             
                             self.cachedData[cacheKey] = mutableNumbers;
                             

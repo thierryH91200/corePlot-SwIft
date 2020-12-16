@@ -97,7 +97,7 @@ extension CPTPlot {
 //
 //        NSMutableData *dataBuffer = (NSMutableData *)numericData.data;
 //        dataBuffer.length -= length;
-//        }
+    //   @objc      }
 //        else {
 //        [(NSMutableArray *) data removeObjectsInRange:indexRange];
 //        }

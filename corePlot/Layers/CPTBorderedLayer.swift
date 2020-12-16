@@ -15,12 +15,12 @@ public class CPTBorderedLayer: CPTAnnotationHostLayer {
     var maximumSize = CGSize()
     
     var borderLineStyle: CPTLineStyle?
-    var  fill : CPTFill?
+    var fill : CPTFill?
     var inLayout = false
     
     var _needsDisplayOnBoundsChange  = false
     
-    init (frame :CGRect)
+    override init (frame :CGRect)
     {
         borderLineStyle = nil
         fill            = nil
@@ -29,14 +29,16 @@ public class CPTBorderedLayer: CPTAnnotationHostLayer {
         self.needsDisplayOnBoundsChange = true
     }
     
-    init( layer : CPTLayer)
-    {
-        let theLayer = CPTBorderedLayer(layer: layer)
+    override init(layer: Any) {
+        super.init(layer: layer)
         
-        borderLineStyle = theLayer.borderLineStyle
-        fill            = theLayer.fill
-        inLayout        = theLayer.inLayout
+        let theLayer = layer as? CPTBorderedLayer
+        
+        borderLineStyle = theLayer?.borderLineStyle
+        fill = theLayer?.fill
+        inLayout = ((theLayer?.inLayout) != nil)
     }
+    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -60,7 +62,7 @@ public class CPTBorderedLayer: CPTAnnotationHostLayer {
                 self.masksToBounds = true
                 
                 context.beginPath();
-                context.addPath(self.maskingPath()!)
+                context.addPath(self.maskingPath!)
                 theFill?.fillPathInContext(context: context)
                 self.masksToBounds = useMask;
             }

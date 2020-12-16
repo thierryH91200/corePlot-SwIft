@@ -36,14 +36,14 @@ class CPTPlotAreaFrame: CPTBorderedLayer {
             let newPlotArea = CPTPlotArea(frame:newFrame)
             self.plotArea = newPlotArea;
 
-            self.masksToBorder              = true
+            self.masksToBorder = true
     }
 
-    init(layer: Any)
+    override init(layer: Any)
     {
-        super.init(layer: layer as! CPTLayer)
-        let theLayer = CPTPlotAreaFrame(layer: layer)
+        super.init(layer: layer )
         
+        let theLayer = CPTPlotAreaFrame(layer: layer)
         plotArea = theLayer.plotArea
     }
     

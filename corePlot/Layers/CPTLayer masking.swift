@@ -13,23 +13,6 @@ extension CPTLayer {
     // MARK: Masking
     
     // default path is the rounded rect layer bounds
-    func maskingPath()-> CGPath?
-    {
-        if ( self.masksToBounds ) {
-            let path = self.outerBorderPath;
-            if (( path ) != nil) {
-                return path;
-            }
-            
-            path   = CPTCreateRoundedRectPath(self.bounds, self.cornerRadius);
-            self.outerBorderPath = path;
-            
-            return self.outerBorderPath;
-        }
-        else {
-            return nil;
-        }
-    }
     
     func sublayerMaskingPath() -> CGPath
     {

@@ -35,7 +35,7 @@ class CPTPlotArea: CPTAnnotationHostLayer {
     var  heightDecimal = CGFloat(0)
     
     //MARK:  Init/Dealloc
-    init(frame:CGRect)
+    override init(frame:CGRect)
     {
         super.init()
         
@@ -47,7 +47,8 @@ class CPTPlotArea: CPTAnnotationHostLayer {
         axisTitleGroup     = nil;
         fill               = nil;
         touchedPoint       = CGPoint(x:CGFloat.nan,y:  CGFloat.nan)
-        topDownLayerOrder  = nil;
+        topDownLayerOrder.removeAll()
+        
         bottomUpLayerOrder = calloc(kCPTNumberOfLayers, sizeof(CPTGraphLayerType));
         
         self.updateLayerOrder()
@@ -56,30 +57,30 @@ class CPTPlotArea: CPTAnnotationHostLayer {
         self.plotGroup = newPlotGroup;
         
         let boundsSize = self.bounds.size;
-        widthDecimal  = CPTDecimalFromCGFloat(boundsSize.width)
-        heightDecimal = CPTDecimalFromCGFloat(boundsSize.height)
+        widthDecimal  = boundsSize.width
+        heightDecimal = boundsSize.height
         
         self.needsDisplayOnBoundsChange = true;
     }
 
-    init(layer: Any)
+    override init(layer: Any)
     {
         super.init(layer:layer)
         let theLayer = CPTPlotArea(layer: layer)
-
-            minorGridLineGroup = theLayer.minorGridLineGroup;
-            majorGridLineGroup = theLayer.majorGridLineGroup;
-            axisSet            = theLayer.axisSet;
-            plotGroup          = theLayer.plotGroup;
-            axisLabelGroup     = theLayer.axisLabelGroup;
-            axisTitleGroup     = theLayer.axisTitleGroup;
-            fill               = theLayer.fill;
-            touchedPoint       = theLayer.touchedPoint;
-            topDownLayerOrder  = theLayer.topDownLayerOrder;
-            bottomUpLayerOrder = calloc(kCPTNumberOfLayers, sizeof(CPTGraphLayerType));
-            memcpy(bottomUpLayerOrder, theLayer.bottomUpLayerOrder, kCPTNumberOfLayers * sizeof(CPTGraphLayerType));
-            widthDecimal  = theLayer.widthDecimal;
-            heightDecimal = theLayer.heightDecimal;
+        
+        minorGridLineGroup = theLayer.minorGridLineGroup;
+        majorGridLineGroup = theLayer.majorGridLineGroup;
+        axisSet            = theLayer.axisSet;
+        plotGroup          = theLayer.plotGroup;
+        axisLabelGroup     = theLayer.axisLabelGroup;
+        axisTitleGroup     = theLayer.axisTitleGroup;
+        fill               = theLayer.fill;
+        touchedPoint       = theLayer.touchedPoint;
+        topDownLayerOrder  = theLayer.topDownLayerOrder;
+        bottomUpLayerOrder = calloc(kCPTNumberOfLayers, sizeof(CPTGraphLayerType));
+        memcpy(bottomUpLayerOrder, theLayer.bottomUpLayerOrder, kCPTNumberOfLayers * sizeof(CPTGraphLayerType));
+        widthDecimal  = theLayer.widthDecimal;
+        heightDecimal = theLayer.heightDecimal;
     }
     
     required init?(coder: NSCoder) {

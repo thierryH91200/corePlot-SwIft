@@ -52,7 +52,8 @@ extension CPTLayer {
                                           hasAlpha: true,
                                           isPlanar: false,
                                           colorSpaceName: .calibratedRGB,
-                                          bitmapFormat: NSAlphaFirstBitmapFormat, bytesPerRow: 0,
+                                          bitmapFormat: NSAlphaFirstBitmapFormat,
+                                          bytesPerRow: 0,
                                           bitsPerPixel: 0)
         
         
@@ -67,7 +68,7 @@ extension CPTLayer {
         context!.clear(CGRect(x: 0.0, y: 0.0, width: boundsSize.width, height: boundsSize.height))
         context!.setAllowsAntialiasing(true);
         context!.setShouldSmoothFonts(false);
-        self.layoutAndRenderInContext(context: context!)
+        self.layoutAndRender(context: context!)
         context!.flush();
         
         let image = NSImage( ) initWithSize:NSSizeFromCGSize(boundsSize)];

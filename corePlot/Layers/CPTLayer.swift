@@ -8,17 +8,103 @@ public protocol CPTLayerDelegate {
 
 public class CPTLayer : CALayer
 {
-    
     typealias CPTSublayerArray = [CALayer]
     typealias CPTSublayerSet = Set<CALayer>
     
-    var paddingLeft : CGFloat         = 0.0
-    var paddingTop   : CGFloat        = 0.0
-    var paddingRight : CGFloat        = 0.0
-    var paddingBottom : CGFloat       = 0.0
+    var graph   : CPTGraph?     = nil
     
+    var maskingPath :  CGPath? {
+        set {   }
+        get {
+            if ( self.masksToBounds ) {
+                var path = self.outerBorderPath;
+                if (( path ) != nil) {
+                    return path;
+                }
+                
+                path   = CPTPathExtensions.shared.CPTCreateRoundedRectPath(rect: self.bounds, cornerRadius: self.cornerRadius);
+                self.outerBorderPath = path;
+                return self.outerBorderPath;
+            }
+            else {
+                return nil;
+            }
+        }
+    }
+
+    
+    public override var isHidden: Bool {
+        get {
+            return super.isHidden
+        }
+        set {
+            if ( newValue != self.isHidden ) {
+                super.isHidden = newValue;
+                if ( newValue == true ) {
+                    self.setNeedsDisplay()
+                }
+            }
+        }
+    }
+
+    var _paddingLeft : CGFloat = 0.0
+    var paddingLeft : CGFloat {
+        get { return  _paddingLeft }
+        set {
+            if _paddingLeft != newValue {
+                _paddingLeft = newValue
+                setNeedsLayout()
+            }
+        }
+    }
+
+    var _paddingTop   : CGFloat        = 0.0
+    var paddingTop : CGFloat {
+        get { return  _paddingLeft }
+        set {
+            if _paddingTop != newValue {
+                _paddingTop = newValue
+                setNeedsLayout()
+            }
+        }
+    }
+
+    var _paddingRight : CGFloat        = 0.0
+    var paddingRight : CGFloat {
+        get { return  _paddingLeft }
+        set {
+            if _paddingRight != newValue {
+                _paddingRight = newValue
+                setNeedsLayout()
+            }
+        }
+    }
+
+    var _paddingBottom : CGFloat       = 0.0
+    var paddingBottom : CGFloat {
+        get { return  _paddingLeft }
+        set {
+            if _paddingBottom != newValue {
+                _paddingBottom = newValue
+                setNeedsLayout()
+            }
+        }
+    }
+
     var masksToBorder     = false;
-    var shadow   : CPTShadow? = nil
+    
+    
+    var _shadow   : CPTShadow? = nil
+    var shadow   : CPTShadow? {
+        get { return _shadow}
+        set {
+            if ( _shadow != newValue ) {
+                _shadow = newValue
+                self.setNeedsLayout()
+                self.setNeedsDisplay();
+            }
+        }
+    } 
     
     var _shadowMargin   : CGSize? = nil
     var shadowMargin : CGSize {
@@ -40,13 +126,39 @@ public class CPTLayer : CALayer
         }
     }
     
+    public override var position : CGPoint {
+        get { return super.position }
+        set {
+            super.position = newValue
+        }
+    }
+
     var renderingRecursively = false
     var useFastRendering     = false
-    var graph   : CPTGraph?     = nil
     
-    var outerBorderPath  :CGPath?    = nil
-    var innerBorderPath  :CGPath?    = nil;
-    var identifier  : UUID?         = nil;
+    var _outerBorderPath  :CGPath?   = nil
+    
+    var outerBorderPath : CGPath? {
+        get { return _outerBorderPath }
+        set {
+            if ( newValue != _outerBorderPath ) {
+                _outerBorderPath = newValue
+            }
+        }
+    }
+    
+    var _innerBorderPath  :CGPath?   = nil
+    var innerBorderPath  :CGPath?   {
+        get {return _innerBorderPath }
+        set {
+            if ( _innerBorderPath != newValue ) {
+                _innerBorderPath = newValue
+                self.mask?.setNeedsDisplay()
+            }
+        }
+    }
+
+    var identifier  : UUID?         = nil
     
     init ( frame : CGRect) {
         
@@ -62,7 +174,7 @@ public class CPTLayer : CALayer
         graph                = nil
         outerBorderPath      = nil
         innerBorderPath      = nil
-        identifier           = nil
+        self.identifier           = nil
         
         self.frame                      = frame;
         self.needsDisplayOnBoundsChange = false
@@ -70,16 +182,14 @@ public class CPTLayer : CALayer
         self.masksToBounds              = false
     }
     
-    //    init( layer: CPTLayer) {
-    //        super.init()
-    //    }
-    
     override init () {
         super.init ()
     }
     
     override init(layer: Any)
     {
+        super.init(layer: layer)
+        
         let theLayer = layer as! CPTLayer
         
         paddingLeft          = theLayer.paddingLeft
@@ -125,7 +235,7 @@ public class CPTLayer : CALayer
     
     func renderAsVector(in context: CGContext) {
         // This is where subclasses do their drawing
-        if renderingRecursively {
+        if renderingRecursively == true {
             applyMask(to: context)
         }
         shadow?.shadowIn(context:  context)

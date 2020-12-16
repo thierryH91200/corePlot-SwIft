@@ -106,7 +106,7 @@ class CPTGraph: CPTBorderedLayer {
         needsDisplayOnBoundsChange = true
     }
     
-    override init(layer : CPTLayer)
+    override init(layer : Any)
     {
         super.init(layer : layer)
         let theLayer = CPTGraph(layer: layer)

@@ -18,16 +18,20 @@ class CPTTextLayer: CPTBorderedLayer {
         get { return _attributedText }
         set { _attributedText = newValue }
     }
+    
+    
     private lazy var _textStyle = CPTTextStyle()
     override var textStyle: CPTTextStyle {
         get { return _textStyle }
         set { _textStyle = newValue }
     }
+    
     private lazy var _text = ""
     override var text: String {
         get { return _text }
         set { _text = newValue }
     }
+    
     private lazy var _maximumSize = CGSize()
     override var maximumSize: CGSize {
         get { return _maximumSize }
@@ -49,32 +53,33 @@ class CPTTextLayer: CPTBorderedLayer {
     
     
     class func textStyle(withAttributes attributes: CPTDictionary?) -> Self {
+        
         let newStyle = CPTMutableTextStyle()
-
+        
         // Font
         let styleFont = attributes?[NSAttributedString.Key.font] as? NSFont
-
+        
         if let styleFont = styleFont {
             newStyle.font = styleFont
             newStyle.fontName = styleFont.fontName
             newStyle.fontSize = styleFont.pointSize
         }
-
+        
         // Color
         let styleColor = attributes?[NSAttributedString.Key.foregroundColor] as? NSColor
-
+        
         if let styleColor = styleColor {
             newStyle.color = CPTColor(cgColor: styleColor.cgColor)
         }
-
+        
         // Text alignment and line break mode
         let paragraphStyle = attributes?[NSAttributedString.Key.paragraphStyle] as? NSParagraphStyle
-
+        
         if let paragraphStyle = paragraphStyle {
             newStyle.textAlignment = paragraphStyle.alignment as? CPTTextAlignment
             newStyle.lineBreakMode = paragraphStyle.lineBreakMode
         }
-
+        
         return newStyle
     }
     
@@ -86,18 +91,18 @@ class CPTTextLayer: CPTBorderedLayer {
      **/
     convenience init(attributedText newText: NSAttributedString) {
         let newStyle = CPTTextStyle(attributes: newText.attributes(at: 0, effectiveRange: nil))
-
+        
         self.init(text: newText.string, style: newStyle)
-            attributedText = newText
-
-            sizeToFit()
+        attributedText = newText
+        
+        sizeToFit()
     }
     
-    init(layer: Any?)
+    override init(layer: Any)
     {
-        let theLayer = layer as? CPTTextLayer
-        super.init(layer: theLayer!)
+        super.init(layer: layer)
         
+        let theLayer = layer as? CPTTextLayer
         textStyle      = theLayer!.textStyle;
         text           = theLayer!.text
         attributedText = theLayer!.attributedText;
@@ -133,7 +138,9 @@ class CPTTextLayer: CPTBorderedLayer {
             }
             else
             {
-                textSize = myText (sizeWithTextStyle:self.textStyle)
+                textSize = myText.sizeWithTextStyle(self.textStyle)
+                
+                textSize = myText.size(withTextStyle: textStyle)
             }
             
             // Add small margin

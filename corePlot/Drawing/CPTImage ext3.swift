@@ -17,7 +17,7 @@ extension CPTImage {
             
             context.saveGState();
             
-            if ( self.tiled ) {
+            if  self.isTiled == true {
                 context.clip(to: rect);
                 if ( !self.tileAnchoredToContext ) {
                     context.translateBy(x: rect.origin.x, y: rect.origin.y);

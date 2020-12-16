@@ -19,16 +19,17 @@ class CPTXYAxis: CPTAxis {
     
     // MARK: - Init/Dealloc
     
-    init(frame: newFrame)
+    init(frame: frame)
     {
-        super.init(newFrame)
+        super.init(frame)
         orthogonalPosition = 0.0;
         axisConstraints    = nil;
         self.tickDirection = CPTSign.none;
     }
     
     init(layer: Any)    {
-        super.init()
+        super.init(layer: layer)
+        
         let theLayer = CPTXYAxis()
         
         orthogonalPosition = theLayer.orthogonalPosition;

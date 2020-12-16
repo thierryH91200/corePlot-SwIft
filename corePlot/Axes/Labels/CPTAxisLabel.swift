@@ -7,8 +7,8 @@
 
 //==============================
 //  OK
+// 16/12/20
 //==============================
-
 
 import AppKit
 
@@ -28,10 +28,10 @@ public class CPTAxisLabel: NSObject {
         self.init(layer: newLayer)
     }
     
-    init(layer: CPTLayer)
+    init(layer: Any)
     {
         super.init()
-        contentLayer = layer;
+        contentLayer = layer as! CPTLayer;
         offset       = CGFloat(20.0);
         rotation     = CGFloat(0.0);
         alignment    = .center
@@ -43,6 +43,7 @@ public class CPTAxisLabel: NSObject {
         super.init()
     }
     
+    // MARK: - Layout
     func positionRelativeToViewPoint(point: CGPoint, coordinate: CPTCoordinate, direction : CPTSign)
     {
         let content = self.contentLayer

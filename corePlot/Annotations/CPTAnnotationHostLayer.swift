@@ -17,6 +17,7 @@ public class CPTAnnotationHostLayer: CPTLayer {
     typealias CPTMutableSublayerSet = Set<CALayer>
     
     var annotations = [CPTAnnotation] ()
+    var mutableAnnotations = [CPTAnnotation] ()
     var CPTSublayerSet = Set<CALayer>()
     
     
@@ -26,6 +27,18 @@ public class CPTAnnotationHostLayer: CPTLayer {
         super.init()
         annotations.removeAll()
     }
+    
+    override init(frame newFrame: CGRect) {
+        super.init(frame: newFrame)
+            mutableAnnotations = [CPTAnnotation]()
+    }
+    
+    override init(layer: Any) {
+    super.init(layer: layer)
+        let theLayer = layer as? CPTAnnotationHostLayer
+
+        mutableAnnotations = theLayer!.mutableAnnotations
+}
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -93,12 +106,6 @@ public class CPTAnnotationHostLayer: CPTLayer {
         }
     }
 
-    //    /**
-    //     *  @brief Informs the receiver that the user has
-    //     *  @if MacOnly pressed the mouse button. @endif
-    //     *  @if iOSOnly touched the screen. @endif
-    //     *
-    //     */
     override func pointingDeviceDownEvent(event: CPTNativeEvent, atPoint interactionPoint: CGPoint)-> Bool
     {
         for annotation in self.annotations  {

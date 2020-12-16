@@ -5,7 +5,14 @@
 //  Created by thierryH24 on 11/11/2020.
 //
 
-import Cocoa
+//==============================
+//  OK
+// 16/12/20
+//==============================
+
+
+
+import AppKit
 
 class CPTGridLines: CPTLayer {
     
@@ -26,11 +33,11 @@ class CPTGridLines: CPTLayer {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override init(layer: Any?)
+    override init(layer: Any)
     {
         super.init(layer:layer)
-        let theLayer = CPTGridLines(layer: layer)
         
+        let theLayer = CPTGridLines(layer: layer)
         axis  = theLayer.axis;
         major = theLayer.major
     }
@@ -53,14 +60,11 @@ class CPTGridLines: CPTLayer {
             return _axis
         }
         set {
-            
-        }
-    }
-    func setAxis(newAxis: CPTAxis)
-    {
-        if ( newAxis != axis ) {
-            axis = newAxis
-            self.setNeedsDisplay()
+            if ( newValue != _axis ) {
+                _axis = newValue
+                self.setNeedsDisplay()
+            }
+
         }
     }
     

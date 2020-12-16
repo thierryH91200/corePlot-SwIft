@@ -44,6 +44,7 @@ class CPTPlotSpace: NSObject {
         delegate              = nil;
         categoryNames         = nil;
     }
+    
     // MARK: - Categorical Data
     //
     //    /// @cond

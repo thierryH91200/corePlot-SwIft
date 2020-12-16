@@ -5,11 +5,7 @@
 //  Created by thierryH24 on 16/11/2020.
 //
 
-import AVFoundation
-
-
-
-
+import AppKit
 
 extension CPTAxis {
 
@@ -18,32 +14,36 @@ extension CPTAxis {
     func setAxisLabels(newLabels : CPTAxisLabelSet )
     {
         if ( newLabels != axisLabels ) {
-            if ( self.labelsUpdated ) {
-                axisLabels = newLabels;
+            if self.labelsUpdated == true {
+                axisLabels = newLabels
             }
             else {
-                for ( label as! CPTAxisLabel) in axisLabels  {
-//                for ( label in axisLabels ) {
+            
+                let arrayLabels = Array(axisLabels)
+                for  label in arrayLabels  {
                     label.contentLayer.removeFromSuperlayer()
                 }
 
                 axisLabels = newLabels;
 
-                let thePlotArea = self.plotArea;
+                let thePlotArea = self.plotArea
                 thePlotArea?.updateAxisSetLayersForType( layerType: .axisLabels)
 
-                if ( axisLabels ) {
-                    let axisLabelGroup = thePlotArea?.axisLabelGroup;
-                    let lastLayer      = nil;
+                if ( axisLabels.isEmpty != false ) {
+                    
+                    let axisLabelGroup = thePlotArea?.axisLabelGroup
+                    let lastLayer      : CALayer?
 
                     for label in axisLabels  {
-                        let contentLayer = label.contentLayer;
+                        let contentLayer = label.contentLayer
                         if ( contentLayer ) {
-                            if ( lastLayer ) {
-                                axisLabelGroup.insertSublayer(contentLayer, below:lastLayer)
+                            if (( lastLayer ) != nil) {
+                                axisLabelGroup?.insertSublayer(contentLayer, below:lastLayer)
                             }
                             else {
-                                axisLabelGroup.insertSublayer(contentLayer, atIndex:(thePlotArea.sublayerIndexForAxis(self, layerType:.axisLabels))
+                                
+                                let index = thePlotArea!.sublayerIndexForAxis(axis: self, layerType:.axisLabels)
+                                axisLabelGroup?.insertSublayer(contentLayer, at: UInt32(index) )
                             }
                             lastLayer = contentLayer;
                         }

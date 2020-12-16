@@ -87,7 +87,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
         CPTPlot.exposeBinding(.CPTPlotBindingDataLabels)
     }
 
-    init(frame: CGRect)
+    override init(frame: CGRect)
     {
         super.init()
         cachedData.removeAll()
@@ -120,9 +120,10 @@ public class CPTPlot: CPTAnnotationHostLayer {
     }
     
     
-    init(layer: Any)
+    override init(layer: Any)
     {
-        super.init()
+        super.init(layer: layer)
+        
         let theLayer = CPTPlot(layer: layer)
         
         cachedData           = theLayer.cachedData;
@@ -156,7 +157,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
     }
     
     
-    // MARK: Bindings
+    // MARK: - Bindings
     // MARK: - Drawing
     override func drawInContext(context: CGContext)
     {
