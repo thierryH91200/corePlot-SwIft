@@ -41,7 +41,9 @@ public class CPTPlot: CPTAnnotationHostLayer {
     public weak var dataSource : CPTPlotDataSource?
     public var delegatePlot: CPTPlotDelegate?
     
-    var title : String?
+    var _title : String?
+    
+    
     var attributedTitle : NSAttributedString?
     var plotSpace : CPTPlotSpace?
     var adjustLabelAnchors = false

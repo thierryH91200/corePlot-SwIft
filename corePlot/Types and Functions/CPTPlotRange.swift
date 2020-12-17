@@ -123,7 +123,7 @@ class CPTPlotRange: NSObject {
 ////
 ////                self.locationDouble = CPTDecimalDoubleValue(newLocation);
 ////
-////                self.inValueUpdate = NO;
+////                self.inValueUpdate = false
 ////            }
 ////        }
 ////    }
@@ -138,7 +138,7 @@ class CPTPlotRange: NSObject {
 ////
 ////                self.locationDecimal = CPTDecimalFromDouble(newLocation);
 ////
-////                self.inValueUpdate = NO;
+////                self.inValueUpdate = false
 ////            }
 ////        }
 ////    }
@@ -158,7 +158,7 @@ class CPTPlotRange: NSObject {
 ////
 ////                self.lengthDouble = CPTDecimalDoubleValue(newLength);
 ////
-////                self.inValueUpdate = NO;
+////                self.inValueUpdate = false
 ////            }
 ////        }
 ////    }
@@ -169,7 +169,7 @@ class CPTPlotRange: NSObject {
 //            lengthDouble = newLength;
 //
 //            if ( isnan(newLength)) {
-//                self.isInfinite = NO;
+//                self.isInfinite = false
 //                self.lengthSign = CPTSignNone;
 //            }
 //            else {
@@ -182,7 +182,7 @@ class CPTPlotRange: NSObject {
 //
 //                self.lengthDecimal = CPTDecimalFromDouble(newLength);
 //
-//                self.inValueUpdate = NO;
+//                self.inValueUpdate = false
 //            }
 //        }
 //    }
@@ -298,7 +298,7 @@ class CPTPlotRange: NSObject {
 //     **/
 //    -(BOOL)contains:(NSDecimal)number
 //    {
-//        BOOL result = NO;
+//        BOOL result = false
 //
 //        if ( self.isInfinite ) {
 //            switch ( self.lengthSign ) {
@@ -357,7 +357,7 @@ class CPTPlotRange: NSObject {
 //                   (self.lengthSign == otherRange.lengthSign);
 //        }
 //        else {
-//            return NO;
+//            return false
 //        }
 //    }
 //
@@ -367,7 +367,7 @@ class CPTPlotRange: NSObject {
 //     **/
 //    -(BOOL)containsRange:(nullable CPTPlotRange *)otherRange
 //    {
-//        BOOL result = NO;
+//        BOOL result = false
 //
 //        if ( otherRange ) {
 //            if ( self.isInfinite ) {
@@ -402,19 +402,19 @@ class CPTPlotRange: NSObject {
     {
         var result = false
 
-        if ( otherRange ) {
+        if (( otherRange ) != nil) {
             if ( self.isInfinite ) {
-                if ( otherRange.isInfinite ) {
-                    result = (otherRange.lengthSign == self.lengthSign);
+                if (( otherRange?.isInfinite ) != nil) {
+                    result = (otherRange?.lengthSign == self.lengthSign);
                 }
                 if ( !result ) {
                     switch ( self.lengthSign ) {
                     case .positive:
-                            result = otherRange.maxLimitDecimal >= self.minLimitDecimal
+                        result = otherRange!.maxLimitDecimal >= self.minLimitDecimal
                             break;
 
                     case .negative:
-                            result = otherRange.minLimitDecimal <= self.maxLimitDecimal
+                        result = otherRange!.minLimitDecimal <= self.maxLimitDecimal
                             break;
 
                         default:
@@ -424,7 +424,7 @@ class CPTPlotRange: NSObject {
             }
             else {
                 if (( otherRange?.isInfinite ) != nil) {
-                    switch ( otherRange.lengthSign ) {
+                    switch ( otherRange?.lengthSign ) {
                     case .positive:
                         result = otherRange!.minLimitDecimal <= self.maxLimitDecimal
                             break;
@@ -531,7 +531,7 @@ class CPTPlotRange: NSObject {
 //            return [self isEqualToRange:object];
 //        }
 //        else {
-//            return NO;
+//            return false
 //        }
 //    }
 //

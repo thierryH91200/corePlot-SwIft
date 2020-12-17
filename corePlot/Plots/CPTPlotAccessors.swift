@@ -13,9 +13,7 @@ extension CPTPlot {
     
     
     // MARK: - Accessors
-    //
-    //    /// @cond
-    //
+
     //    -(nullable CPTLayerArray *)dataLabels
     //    {
     //        return [self cachedArrayForKey:CPTPlotBindingDataLabels];
@@ -27,17 +25,24 @@ extension CPTPlot {
     //        [self setNeedsRelabel];
     //    }
     //
-    func setTitle(newTitle: String)
-    {
-        if ( newTitle != title ) {
-            title = [newTitle copy];
-            
-            if ( !self.inTitleUpdate ) {
-                self.inTitleUpdate   = YES;
-                self.attributedTitle = nil;
-                self.inTitleUpdate   = NO;
+    
+    
+    var title : String? {
+        get { return _title}
+        
+        set {
+            if ( newValue != _title ) {
+                _title = newValue
                 
-                [[NSNotificationCenter defaultCenter] postNotificationName:CPTLegendNeedsLayoutForPlotNotification object:self];
+                if ( !self.inTitleUpdate ) {
+                    self.inTitleUpdate   = true
+                    self.attributedTitle = nil;
+                    self.inTitleUpdate   = false
+                    
+                    NotificationCenter.default.post(
+                        name: .CPTLegendNeedsLayoutForPlotNotification,
+                        object:self)
+                }
             }
         }
     }
@@ -48,9 +53,9 @@ extension CPTPlot {
     //            attributedTitle = [newTitle copy];
     //
     //            if ( !self.inTitleUpdate ) {
-    //                self.inTitleUpdate = YES;
+    //                self.inTitleUpdate = true
     //                self.title         = attributedTitle.string;
-    //                self.inTitleUpdate = NO;
+    //                self.inTitleUpdate = false
     //
     //                [[NSNotificationCenter defaultCenter] postNotificationName:CPTLegendNeedsLayoutForPlotNotification object:self];
     //            }
@@ -116,7 +121,7 @@ extension CPTPlot {
     //                self.labelFormatter                = newFormatter;
     //            }
     //
-    //            self.needsRelabel = YES;
+    //            self.needsRelabel = true
     //        }
     //    }
     //

@@ -36,8 +36,7 @@ extension CPTPlot {
         if ( numbers != nil ) {
             
             let scaleType = thePlotSpace?.scaleTypeForCoordinate(coordinate: coordinate)
-            switch ( scaleType! )
-            {
+            switch ( scaleType! ) {
             
             case .linear:
                 fallthrough
@@ -73,7 +72,6 @@ extension CPTPlot {
                     self.setCachedDataType(self.decimalDataType)
                     break;
                 }
-                
                 break;
                 
             case .category:
@@ -87,18 +85,17 @@ extension CPTPlot {
                         if ( sampleCount > 0 ) {
                             var indices = NSMutableArray()
                             
-                            for (category in samples ) {
+                            for category in samples {
                                 indices.addObject(thePlotSpace, indexOfCategory:category,  forCoordinate:coordinate)
                             }
                             
-                            CPTNumericDataType dataType = (self.cachePrecision == CPTPlotCachePrecisionDecimal ? self.decimalDataType : self.doubleDataType);
+                            let dataType = (self.cachePrecision == CPTPlotCachePrecisionDecimal ? self.decimalDataType : self.doubleDataType);
                             
                             let mutableNumbers = CPTMutableNumericData ( initWithArray:indices,
                                                   dataType:dataType,
                                                   shape:nil)
                             
                             self.cachedData[cacheKey] = mutableNumbers;
-                            
                             self.cachedDataCount = sampleCount;
                         }
                         else {

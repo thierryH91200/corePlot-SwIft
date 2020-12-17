@@ -70,7 +70,7 @@ class CPTAxis : CPTLayer {
     var minorTickLabelFormatter: Formatter?
     
     //    var axisLabels: CPTAxisLabelSet
-    //    var minorTickAxisLabels : CPTAxisLabelSet
+        var minorTickAxisLabels : CPTAxisLabelSet
     //    var needsRelabel = false
     //    var labelExclusionRanges = [CPTPlotRange]()
     //    var labelShadow: CPTShadow
@@ -112,7 +112,7 @@ class CPTAxis : CPTLayer {
     var axisSet: CPTAxisSet
     
     var axisLabels: Set<CPTAxisLabel>
-    var minorTickAxisLabels : Set<Double>
+//    var minorTickAxisLabels : Set<Double>
     
     var labelExclusionRanges = [CPTPlot]()
     var labelShadow: CPTShadow?
