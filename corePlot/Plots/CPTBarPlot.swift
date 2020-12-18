@@ -921,17 +921,17 @@ public class CPTBarPlot: CPTPlot {
     //
     //        return (base + halfBarWidth >= lowerBound) && (base - halfBarWidth <= upperBound);
     //    }
-    //
-    //    -(nullable CPTFill *)barFillForIndex:(NSUInteger)idx
-    //    {
-    //        CPTFill *theBarFill = [self cachedValueForKey:CPTBarPlotBindingBarFills recordIndex:idx];
-    //
-    //        if ((theBarFill == nil) || (theBarFill == [CPTPlot nilData])) {
-    //            theBarFill = self.fill;
-    //        }
-    //
-    //        return theBarFill;
-    //    }
+    
+    func barFillForIndex(idx: Int)-> CPTFill
+        {
+        var theBarFill = self.cachedValueForKey(key: .CPTBarPlotBindingBarFills, recordIndex: idx)
+    
+            if theBarFill == nil || (theBarFill == [CPTPlot nilData] {
+                theBarFill = self.fill
+            }
+    
+            return theBarFill;
+        }
     //
     //    -(nullable CPTLineStyle *)barLineStyleForIndex:(NSUInteger)idx
     //    {
@@ -955,20 +955,20 @@ public class CPTBarPlot: CPTPlot {
     //        return theBarWidth;
     //    }
     
-    fun drawBarInContext(context: CGContextRef, recordIndex: Int)
+    func drawBarInContext(context: CGContext, recordIndex idx: Int)
     {
         // Get base and tip points
-        var basePoint = CGPOint()
+        var basePoint = CGPoint()
         var tipPoint = CGPoint()
         
-        let barExists = [self barAtRecordIndex:idx basePoint:&basePoint tipPoint:&tipPoint];
+        let barExists = self.barAtRecordIndex(idx, basePoint:&basePoint, tipPoint:&tipPoint)
         
         guard barExists == true else { return }
         
-        let width = [self barWidthForIndex:recordIndex];
+        let width = self.barWidthForIndex(recordIndex)
         
         // Return if bar is off screen
-        if ( ![self barIsVisibleWithBasePoint:basePoint width:width] ) {
+        if self.barIsVisibleWithBasePoint(basePoint, width:width ) == false {
             return;
         }
         
@@ -978,26 +978,25 @@ public class CPTBarPlot: CPTPlot {
                                               width:width)
         
         if ( path ) {
-            CGContextSaveGState(context);
+            context.saveGState();
             
-            CPTFill *theBarFill = [self barFillForIndex:idx];
-            if ( [theBarFill isKindOfClass:[CPTFill class]] ) {
-                CGContextBeginPath(context);
+            let theBarFill = self.barFillForIndex(idx)
+            if ( theBarFill is CPTFill ) {
+                context.beginPath()
                 CGContextAddPath(context, path);
-                [theBarFill fillPathInContext:context];
+                theBarFill.fillPathInContext(context)
             }
             
-            CPTLineStyle *theLineStyle = [self barLineStyleForIndex:idx];
-            if ( [theLineStyle isKindOfClass:[CPTLineStyle class]] ) {
-                CGContextBeginPath(context);
+            let theLineStyle = self.barLineStyleForIndex(idx)
+            if ( theLineStyle is CPTLineStyle ) {
+                context.beginPath();
                 CGContextAddPath(context, path);
-                [theLineStyle setLineStyleInContext:context];
-                [theLineStyle strokePathInContext:context];
+                theLineStyle.setLineStyleInContext(context)
+                theLineStyle.strokePathInContext(context)
             }
             
-            CGContextRestoreGState(context);
+            context.restoreGState();
             
-            CGPathRelease(path);
         }
     }
     //
@@ -1049,11 +1048,9 @@ public class CPTBarPlot: CPTPlot {
             return CPTPlot.needsDisplay(forKey: aKey)
         }
     }
-    //
-    //    /// @endcond
-    //
+
     //    #pragma mark -
-    //    #pragma mark Data Labels
+    // MARK: Data Labels
     //
     //    /// @cond
     //

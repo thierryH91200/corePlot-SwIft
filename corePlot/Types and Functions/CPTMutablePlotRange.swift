@@ -24,13 +24,13 @@ class CPTMutablePlotRange: CPTPlotRange {
      *  @brief The starting value of the range.
      *  @see @ref location, @ref locationDouble
      **/
-    var locationDecimal;
+    var locationDecimal= 0
 
     /** @property NSDecimal lengthDecimal
      *  @brief The length of the range.
      *  @see @ref length, @ref lengthDouble
      **/
-    @dynamic lengthDecimal;
+    var lengthDecimal = 0
 
     /** @property double locationDouble
      *  @brief The starting value of the range as a @double.
@@ -42,26 +42,24 @@ class CPTMutablePlotRange: CPTPlotRange {
      *  @brief The length of the range as a @double.
      *  @see @ref length, @ref lengthDecimal
      **/
-    @dynamic lengthDouble;
+    var lengthDouble = 0.0
 
 
 
     /** @brief Extends the range to include another range. The sign of @ref length is unchanged.
      *  @param other The other plot range.
      **/
-    func unionPlotRange(other: CPTPlotRange )
+    func unionPlotRange(other: CPTPlotRange? )
     {
-        if ( !other ) {
-            return;
-        }
+        guard ( other != nil) else  { return }
 
         let min1    = self.minLimitDecimal;
-        let min2    = other.minLimitDecimal;
-        let minimum = CPTDecimalMin(min1, min2);
+        let min2    = (other?.minLimitDecimal)!;
+        let minimum = min(min1, min2);
 
         let max1    = self.maxLimitDecimal;
-        let max2    = other.maxLimitDecimal;
-        let maximum = CPTDecimalMax(max1, max2);
+        let max2    = (other?.maxLimitDecimal)!;
+        let maximum = max(max1, max2);
 
         if ( self.isInfinite && other.isInfinite ) {
             if ( self.lengthSign == other.lengthSign ) {
@@ -132,11 +130,9 @@ class CPTMutablePlotRange: CPTPlotRange {
     /** @brief Sets the messaged object to the intersection with another range. The sign of @ref length is unchanged.
      *  @param other The other plot range.
      **/
-    func intersectionPlotRange(other: CPTPlotRange )
+    func intersectionPlotRange(other: CPTPlotRange? )
     {
-        if ( !other ) {
-            return;
-        }
+        guard ( other != nil) else { return }
 
         let min1    = self.minLimitDecimal
         let min2    = other.minLimitDecimal;
@@ -235,11 +231,9 @@ class CPTMutablePlotRange: CPTPlotRange {
      *  @param otherRange Other range.
      *  The minimum possible shift is made. The range @ref length is unchanged.
      **/
-    -(void)shiftLocationToFitInRange:(nonnull CPTPlotRange *)otherRange
+    func shiftLocationToFitInRange(otherRange: CPTPlotRange )
     {
-        NSParameterAssert(otherRange);
-
-        switch ( [otherRange compareToDecimal:self.locationDecimal] ) {
+        switch ([otherRange compareToDecimal:self.locationDecimal] ) {
             case CPTPlotRangeComparisonResultNumberBelowRange:
                 self.locationDecimal = otherRange.minLimitDecimal;
                 break;

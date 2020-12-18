@@ -7,6 +7,10 @@
 
 import AppKit
 
+import Foundation
+import CoreGraphics
+
+
 
 protocol CPTPieChartDataSource {
     
@@ -423,7 +427,7 @@ public class CPTPieChart: CPTPlot {
         let  fillClass = CPTFill()
 
         while ( currentIndex < sampleCount ) {
-            let currentWidth = self. cachedDoubleForField(CPTPieChartFieldSliceWidthNormalized, recordIndex:currentIndex)
+            let currentWidth = self.cachedDoubleForField( CPTPieChartFieldSliceWidthNormalized, recordIndex:currentIndex)
 
             if ( !isnan(currentWidth)) {
                 let radialOffset = [(NSNumber *) offsetArray[currentIndex] cgFloatValue];
@@ -492,9 +496,9 @@ public class CPTPieChart: CPTPlot {
             // no shadow for the overlay
             CGContextSetShadowWithColor(context, CGSizeZero, CGFloat(0.0), NULL);
 
-            CGMutablePathRef fillPath = CGPathCreateMutable();
+            let fillPath = CGMutablePath();
 
-            CGFloat innerRadius = self.pieInnerRadius;
+            let innerRadius = self.pieInnerRadius;
             if ( innerRadius > CGFloat(0.0)) {
                 CGPathAddArc(fillPath, NULL, centerPoint.x, centerPoint.y, self.pieRadius, CGFloat(0.0), CGFloat(2.0 * M_PI), false);
                 CGPathAddArc(fillPath, NULL, centerPoint.x, centerPoint.y, innerRadius, CGFloat(2.0 * M_PI), CGFloat(0.0), true);
@@ -503,11 +507,11 @@ public class CPTPieChart: CPTPlot {
                 CGPathMoveToPoint(fillPath, NULL, centerPoint.x, centerPoint.y);
                 CGPathAddArc(fillPath, NULL, centerPoint.x, centerPoint.y, self.pieRadius, CGFloat(0.0), CGFloat(2.0 * M_PI), false);
             }
-            CGPathCloseSubpath(fillPath);
+            fillPath.closeSubpath();
 
-            CGContextBeginPath(context);
-            CGContextAddPath(context, fillPath);
-            overlay.fillPathInContext(context)
+            context.beginPath();
+            context.addPath(fillPath);
+            overlay?.fillPathInContext(context: context)
 
         }
     }
@@ -530,78 +534,80 @@ public class CPTPieChart: CPTPlot {
         return endingAngle.isNaN ? angle : fmod(angle, CGFloat(2.0 * .pi))
     }
     
-    
-    //
-    func addSliceToPath(slicePath: CGMutablePathRef, centerPoint:CGPoint, startingAngle:CGFloat, finishingAngle:CGFloat, currentWidth:CGFloat)
+    func addSliceToPath(slicePath: CGMutablePath, center:CGPoint, startingAngle:CGFloat, finishingAngle:CGFloat, currentWidth:CGFloat)
     {
-        bool direction      = (self.sliceDirection == CPTPieDirectionClockwise) ? true : false;
-        CGFloat outerRadius = self.pieRadius;
-        CGFloat innerRadius = self.pieInnerRadius;
+        let direction      = (self.sliceDirection == CPTPieDirection.clockwise) ? true : false;
+        let outerRadius = self.pieRadius;
+        let innerRadius = self.pieInnerRadius;
 
         if ( innerRadius > CGFloat(0.0)) {
             if ( currentWidth >= CGFloat(1.0)) {
-                CGPathAddRelativeArc(slicePath, NULL, center.x, center.y, outerRadius, startingAngle, CGFloat((direction ? 2.0 : -2.0) * M_PI));
-                CGPathAddRelativeArc(slicePath, NULL, center.x, center.y, innerRadius, startingAngle, CGFloat((direction ? -2.0 : 2.0) * M_PI));
+                var angle = CGFloat((direction ? 2.0 : -2.0) * Double.pi))
+                slicePath.addArc(center: center, radius: outerRadius, startAngle: startingAngle, endAngle: startingAngle + angle, clockwise: direction)
+                angle = CGFloat((direction ? 2.0 : -2.0) * Double.pi))
+                slicePath.addArc(center: center, radius: innerRadius, startAngle: startingAngle, endAngle: startingAngle + angle, clockwise: direction)
+//                CGPathAddRelativeArc(slicePath, nil, center.x, center.y, outerRadius, startingAngle, CGFloat((direction ? 2.0 : -2.0) * M_PI));
+//                CGPathAddRelativeArc(slicePath, nil, center.x, center.y, innerRadius, startingAngle, CGFloat((direction ? -2.0 : 2.0) * M_PI));
             }
             else {
-                CGPathAddArc(slicePath, NULL, center.x, center.y, outerRadius, startingAngle, finishingAngle, direction);
-                CGPathAddArc(slicePath, NULL, center.x, center.y, innerRadius, finishingAngle, startingAngle, !direction);
+                slicePath.addArc(center: center, radius: outerRadius, startAngle: startingAngle, endAngle: startingAngle, clockwise: direction)
+                slicePath.addArc(center: center, radius: innerRadius, startAngle: finishingAngle, endAngle: startingAngle, clockwise: direction)
             }
         }
         else {
             if ( currentWidth >= CGFloat(1.0)) {
-                CGPathAddEllipseInRect(slicePath, NULL, CGRectMake(center.x - outerRadius, center.y - outerRadius, outerRadius * CGFloat(2.0), outerRadius * CGFloat(2.0)));
+                
+                let rect = CGRect(x: center.x - outerRadius, y: center.y - outerRadius, width: outerRadius * CGFloat(2.0), height: outerRadius * CGFloat(2.0))
+                slicePath.addEllipse(in: rect)
             }
             else {
-                CGPathMoveToPoint(slicePath, NULL, center.x, center.y);
-                CGPathAddArc(slicePath, NULL, center.x, center.y, outerRadius, startingAngle, finishingAngle, direction);
+                slicePath.move(to: center)
+                slicePath.addArc(center: center, radius: outerRadius, startAngle: startingAngle, endAngle: finishingAngle, clockwise: direction)
             }
         }
-        CGPathCloseSubpath(slicePath);
+        slicePath.closeSubpath();
     }
 
-    func sliceFill(for idx: Int) -> CPTFill? {
-        var currentFill = cachedValue(forKey: CPTPieChartBindingPieSliceFills, record: idx)
+    func sliceFillForIndex( idx: Int) -> CPTFill? {
+        
+        var currentFill = cachedValue(forKey: .CPTPieChartBindingPieSliceFills, record: idx)
         
         if (currentFill == nil) || (currentFill == CPTPlot.nilData()) {
             currentFill = CPTFill(color: CPTPieChart.defaultPieSliceColor(for: idx))
         }
-        
         return currentFill
     }
     
 
-//    -(void)drawSwatchForLegend:(nonnull CPTLegend *)legend atIndex:(NSUInteger)idx inRect:(CGRect)rect inContext:(nonnull CGContextRef)context
-//    {
-//        [super drawSwatchForLegend:legend atIndex:idx inRect:rect inContext:context];
-//
-//        if ( self.drawLegendSwatchDecoration ) {
-//            CPTFill *theFill           = [self sliceFillForIndex:idx];
-//            CPTLineStyle *theLineStyle = self.borderLineStyle;
-//
-//            if ( theFill || theLineStyle ) {
-//                CGFloat radius = legend.swatchCornerRadius;
-//
-//                if ( [theFill isKindOfClass:[CPTFill class]] ) {
-//                    CGContextBeginPath(context);
-//                    CPTAddRoundedRectPath(context, CPTAlignIntegralRectToUserSpace(context, rect), radius);
-//                    [theFill fillPathInContext:context];
-//                }
-//
-//                if ( theLineStyle ) {
-//                    [theLineStyle setLineStyleInContext:context];
-//                    CGContextBeginPath(context);
-//                    CPTAddRoundedRectPath(context, CPTAlignBorderedRectToUserSpace(context, rect, theLineStyle), radius);
-//                    [theLineStyle strokePathInContext:context];
-//                }
-//            }
-//        }
-//    }
-//
-//    /// @endcond
-//
-//    #pragma mark -
-//    #pragma mark Information
+    func drawSwatchForLegend(legend : CPTLegend, atIndex idx:Int, inRect rect: CGRect, inContext context: CGContext)
+    {
+        super.drawSwatchForLegend(legend: legend, atIndex:idx, inRect:rect, context:context)
+
+        if ( self.drawLegendSwatchDecoration ) {
+            let theFill           = self.sliceFillForIndex(idx: idx)
+            let theLineStyle = self.borderLineStyle;
+
+            if ( (theFill != nil) || (theLineStyle != nil) ) {
+                let radius = legend.swatchCornerRadius
+
+                if ( theFill is CPTFill ) {
+                    context.beginPath();
+                    CPTAddRoundedRectPath(context, CPTAlignIntegralRectToUserSpace(context, rect), radius);
+                    theFill?.fillPathInContext(context: context)
+                }
+
+                if (( theLineStyle ) != nil) {
+                    theLineStyle?.setLineStyleInContext(context: context)
+                    context.beginPath();
+                    CPTAddRoundedRectPath(context, CPTAlignBorderedRectToUserSpace(context, rect, theLineStyle), radius);
+                    theLineStyle?.strokePathInContext(context: context)
+                }
+            }
+        }
+    }
+
+
+    // MARK: Information
 //
 //    /** @brief Searches the pie slices for one corresponding to the given angle.
 //     *  @param angle An angle in radians.
@@ -678,34 +684,25 @@ public class CPTPieChart: CPTPlot {
 //    }
 //
 //    #pragma mark -
-//    #pragma mark Animation
-//
-//    /// @cond
-//
-//    +(BOOL)needsDisplayForKey:(nonnull NSString *)aKey
-//    {
-//        static NSSet<NSString *> *keys   = nil;
-//        static dispatch_once_t onceToken = 0;
-//
-//        dispatch_once(&onceToken, ^{
-//            keys = [NSSet setWithArray:@[@"pieRadius",
-//                                         @"pieInnerRadius",
-//                                         @"startAngle",
-//                                         @"endAngle",
-//                                         @"centerAnchor"]];
-//        });
-//
-//        if ( [keys containsObject:aKey] ) {
-//            return YES;
-//        }
-//        else {
-//            return [super needsDisplayForKey:aKey];
-//        }
-//    }
-//
-//    /// @endcond
-//
-//    #pragma mark -
+    // MARK: Animation
+    func needsDisplayForKey(aKey:String )-> Bool
+    {
+        var keys        = Set<String>()
+
+        keys.insert("pieRadius")
+        keys.insert("pieInnerRadius")
+        keys.insert("startAngle")
+        keys.insert("endAngle")
+        keys.insert("centerAnchor")
+
+        if keys.contains(aKey ) {
+            return true
+        }
+        else {
+            return CPTLayer.needsDisplay(forKey: aKey)
+        }
+    }
+
 //    #pragma mark Fields
 //
 //    /// @cond

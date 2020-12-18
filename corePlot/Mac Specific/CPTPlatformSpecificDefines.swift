@@ -26,13 +26,14 @@ extension CPTLayer {
         // Figure out the scale of pixels to points
         var scale = CGFloat(0.0)
         
-        if ( self.respondsToSelector(#selector(hostingView) ) {
+        if ( self.respondsToSelector(to: #selector(hostingView))) {
             scale = (self as? CPTGraph)?.hostingView.window.backingScaleFactor
         }
         
-        if ((scale == 0.0) && CALayer.instancesRespondToSelector(#selector(contentsScale) ) {
+        if ((scale == 0.0) && CALayer.instancesRespondToSelector(to: #selector(contentsScale))) {
             scale = self.contentsScale
         }
+        
         if ( scale == 0.0 ) {
             let myWindow = self.graph?.hostingView?.window;
             
@@ -69,12 +70,10 @@ extension CPTLayer {
         context!.setAllowsAntialiasing(true);
         context!.setShouldSmoothFonts(false);
         self.layoutAndRender(context: context!)
-        context!.flush();
+        context!.flush()
         
-        let image = NSImage( ) initWithSize:NSSizeFromCGSize(boundsSize)];
-        
-        image.addRepresentation:layerImage
-        
+        let image = NSImage(size: CGSize(boundsSize))
+        image.addRepresentation(layerImage)
         return image;
     }
 }
@@ -90,11 +89,8 @@ extension NSAttributedString {
     func drawInRect(rect: CGRect, context: CGContext)
     {
         NSUIGraphicsPushContext(context)
-        
-        self.draw( rect :NSRectFromCGRect,
-                   options:CPTStringDrawingOptions];
-                   
-                   NSUIGraphicsPopContext()
+        self.draw( rect :NSRectFromCGRect, options:CPTStringDrawingOptions)
+        NSUIGraphicsPopContext()
     }
     
     /**
@@ -104,12 +100,12 @@ extension NSAttributedString {
     {
         var rect = CGRect()
         
-        if (self.respondsToSelector(to: #@selector(boundingRectWithSize:options:context:)) {
-            rect = self.boundingRectWithSize(CGSize(10000.0, 10000.0), options:CPTStringDrawingOptions, context:nil)
+        if self.respondsToSelector(to: #selector(boundingRectWithSize( options:context:))) {
+            rect = self.boundingRectWithSize(CGSize(10000.0, 10000.0), options: CPTStringDrawingOptions, context:nil)
         }
-        else {
-        rect = self.boundingRectWithSize(CGSize(10000.0, 10000.0)
-        options:CPTStringDrawingOptions)
+        else
+        {
+            rect = self.boundingRectWithSize(CGSize(10000.0, 10000.0),  options: CPTStringDrawingOptions)
         }
         
         var textSize = rect.size
@@ -118,6 +114,8 @@ extension NSAttributedString {
         return textSize
     }
 }
+
+
 
 
 #if os(OSX)
@@ -149,4 +147,3 @@ public extension NSBezierPath {
     
 }
 #endif
-

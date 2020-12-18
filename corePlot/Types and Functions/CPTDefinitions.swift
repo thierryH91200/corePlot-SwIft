@@ -5,7 +5,7 @@
 //  Created by thierryH24 on 08/11/2020.
 //
 
-import Foundation
+import Appkit
 
 /**
  *  @brief Enumeration of numeric types
@@ -90,6 +90,10 @@ enum CPTAlignment : Int {
 }
 
 typealias CPTEdgeInsets = NSEdgeInsets
+
+let CPTStringDrawingOptions = DrawingOptions.UsesLineFragmentOrigin | DrawingOptions.UsesFontLeading |
+    DrawingOptions.truncatesLastVisibleLine
+
 
 /**
  *  @brief An array of numbers.

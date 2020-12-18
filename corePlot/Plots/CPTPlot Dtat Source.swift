@@ -155,14 +155,14 @@ extension CPTPlot {
         
         let theDataSource = self.dataSource as? CPTBarPlotDataSource
         
-        if theDataSource?.responds(to: #selector(CPTPlotDataSource.dataLabels(forPlot:recordIndexRange:)@objc )) ?? false {
+        if ((theDataSource?.responds(to: #selector(CPTPlotDataSource.dataLabels(forPlot:recordIndexRange:) ))) != nil)  {
             cacheArray(
-                theDataSource?.dataLabels(forPlot: self, recordIndexRange: indexRange),
-                forKey: CPTPlotBindingDataLabels,
-                atRecord: indexRange.location)
-        } else if theDataSource?.responds(to: #selector(CPTPlotDataSource.dataLabel(forPlot:recordIndex:))) ?? false {
+                array: (theDataSource?.dataLabels(forPlot: self, recordIndexRange: indexRange))!,
+                forKey: .CPTPlotBindingDataLabels,
+                atRecordIndex: indexRange.location)
+        } else if theDataSource?.responds(to: #selector(CPTPlotDataSource.dataLabel(forPlot:recordIndex:)))  {
             let nilObject = CPTPlot.nilData()
-            let array = [AnyHashable](repeating: 0, count: indexRange.length) as? CPTMutableLayerArray
+            let array = [CPTLayer]()
             
             
             let maxIndex = NSMaxRange(indexRange)
@@ -178,7 +178,7 @@ extension CPTPlot {
                 }
             }
             
-            cacheArray( array, forKey: CPTPlotBindingDataLabels, atRecord: indexRange.location)
+            cacheArray( array, forKey: .CPTPlotBindingDataLabels, atRecord: indexRange.location)
         }
         
         relabel(indexRange)
@@ -280,7 +280,7 @@ extension CPTPlot {
         var hasData = false;
         let theDataSource = self.dataSource
         
-        if ( [theDataSource respondsToSelector:@selector(dataForPlot:recordIndexRange:)] ) {
+        if ( theDataSource.respondsToSelector(to: #selector(dataForPlot:recordIndexRange:) ) {
             let data = theDataSource.dataForPlot(self, recordIndexRange:indexRange)
             
             if data is CPTNumericData  {
@@ -333,9 +333,9 @@ extension CPTPlot {
                         const NSUInteger bufferLength = rowCount * dataType.sampleBytes;
                         
                         switch ( data.dataOrder ) {
-                        case CPTDataOrderRowsFirst:
+                        case .rowsFirst:
                             {
-                                const void *sourceEnd = (const int8_t *)(data.bytes) + data.length;
+                                let sourceEnd = (const int8_t *)(data.bytes) + data.length;
                                 
                                 for fieldNum in 0..<fieldCount {
                                     let tempData = [[NSMutableData alloc] initWithLength:bufferLength];

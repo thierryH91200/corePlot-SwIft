@@ -222,7 +222,7 @@ func relabel()
             newLabelLayer = nil;
         }
         else {
-            newLabelLayer = [self cachedValueForKey:CPTPlotBindingDataLabels recordIndex:i];
+            newLabelLayer = self.cachedValueForKey(CPTPlotBindingDataLabels recordIndex:i)
 
             if (((newLabelLayer == nil) || (newLabelLayer == nilObject)) && plotProvidesLabels ) {
                 if ( hasAttributedFormatter ) {

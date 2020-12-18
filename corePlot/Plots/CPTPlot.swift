@@ -43,7 +43,6 @@ public class CPTPlot: CPTAnnotationHostLayer {
     
     var _title : String?
     
-    
     var attributedTitle : NSAttributedString?
     var plotSpace : CPTPlotSpace?
     var adjustLabelAnchors = false
@@ -158,6 +157,18 @@ public class CPTPlot: CPTAnnotationHostLayer {
         fatalError("init(coder:) has not been implemented")
     }
     
+    
+//    static let nilDataNilObject = { () -> <#Result#> in
+//        var nilObject = NSObject()
+//        return nilObject
+//    }()
+//
+//    class func nilData() -> Any {
+//
+//        // `dispatch_once()` call was converted to a static variable initializer
+//
+//        return nilDataNilObject
+//    }
     
     // MARK: - Bindings
     // MARK: - Drawing

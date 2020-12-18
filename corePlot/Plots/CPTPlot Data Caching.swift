@@ -455,11 +455,18 @@ extension CPTPlot {
     // *  @param idx The index of the desired data value.
     // *  @return The cached value or @nil if no data is cached for the requested key.
     // **/
-    //-(nullable id)cachedValueForKey:(nonnull NSString *)key recordIndex:(NSUInteger)idx
-    //{
-    //    return [self cachedArrayForKey:key][idx];
-    //}
-    //
+    func cachedValueForKey(key : String, recordIndex idx:Int)-> Any?
+    {
+        return cachedArray(forKey: key)?[idx]
+        
+    }
+    
+    func cachedArray(forKey key: String) -> [String]? {
+        return (cachedData)[key] as? [String]
+    }
+    
+    
+    
     ///** @brief Copies an array of arbitrary values to the cache.
     // *  @param array An array of arbitrary values to cache.
     // *  @param key The key identifying the field.
