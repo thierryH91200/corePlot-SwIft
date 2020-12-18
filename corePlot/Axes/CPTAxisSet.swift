@@ -15,9 +15,47 @@ import AppKit
 
 class CPTAxisSet: CPTLayer {
     
-//    var axes = [CPTAxis]()
-//    var borderLineStyle : CPTLineStyle?
+    var _axes =  [CPTAxis]()
+    var axes: [CPTAxis]
+    {
+        get {
+            return _axes
+        }
+        set {
+            if _axes != newValue  {
+                for axis in axes {
+                    axis.removeFromSuperlayer()
+                    axis.plotArea = nil
+                    axis.graph    = nil
+                }
+                _axes = newValue;
+                let plotArea = self.superlayer as! CPTPlotArea
+                let theGraph    = plotArea.graph;
+                for  axis in axes  {
+                    self.addSublayer( axis)
+                    axis.plotArea = plotArea
+                    axis.graph    = theGraph
+                }
+                self.setNeedsLayout()
+                self.setNeedsDisplay()
+            }
+        }
+    }
     
+    var  _borderLineStyle: CPTLineStyle?
+    var  borderLineStyle: CPTLineStyle? {
+        get {
+            return _borderLineStyle
+        }
+        set {
+            if ( newValue != borderLineStyle ) {
+                _borderLineStyle = newValue
+                self.setNeedsLayout()
+                self.setNeedsDisplay()
+            }
+        }
+    }
+
     override init(frame : CGRect)
     {
         super.init(frame: frame)
@@ -126,44 +164,4 @@ class CPTAxisSet: CPTLayer {
         return super.pointingDeviceDownEvent(event:event, atPoint:interactionPoint)
     }
 
-    var _axes =  [CPTAxis]()
-    var axes: [CPTAxis]
-    {
-        get {
-            return _axes
-        }
-        set {
-            if _axes != newValue  {
-                for axis in axes {
-                    axis.removeFromSuperlayer()
-                    axis.plotArea = nil
-                    axis.graph    = nil
-                }
-                _axes = newValue;
-                let plotArea = self.superlayer as! CPTPlotArea
-                let theGraph    = plotArea.graph;
-                for  axis in axes  {
-                    self.addSublayer( axis)
-                    axis.plotArea = plotArea
-                    axis.graph    = theGraph
-                }
-                self.setNeedsLayout()
-                self.setNeedsDisplay()
-            }
-        }
-    }
-    
-    var  _borderLineStyle: CPTLineStyle?
-    var  borderLineStyle: CPTLineStyle? {
-        get {
-            return _borderLineStyle
-        }
-        set {
-            if ( newValue != borderLineStyle ) {
-                _borderLineStyle = newValue
-                self.setNeedsLayout()
-                self.setNeedsDisplay()
-            }
-        }
-    }
 }

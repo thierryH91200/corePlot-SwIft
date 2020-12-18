@@ -7,15 +7,14 @@
 
 import Foundation
 
-typedef NS_ENUM (NSInteger, CPTDataTypeFormat) {
-    CPTUndefinedDataType = 0,        ///< Undefined
-    CPTIntegerDataType,              ///< Integer
-    CPTUnsignedIntegerDataType,      ///< Unsigned integer
-    CPTFloatingPointDataType,        ///< Floating point
-    CPTComplexFloatingPointDataType, ///< Complex floating point
-    CPTDecimalDataType               ///< NSDecimal
-};
-
+enum CPTDataTypeFormat : Int {
+    case undefined = 0 ///< Undefined
+    case integer ///< Integer
+    case unsignedInteger ///< Unsigned integer
+    case floatingPoint ///< Floating point
+    case complexFloatingPoint ///< Complex floating point
+    case decimal ///< NSDecimal
+}
 /**
  *  @brief Enumeration of memory arrangements for multi-dimensional data arrays.
  *  @see See <a href="https://en.wikipedia.org/wiki/Row-major_order">Wikipedia</a> for more information.
@@ -28,9 +27,10 @@ enum CPTDataOrder: Int {
 /**
  *  @brief Structure that describes the encoding of numeric data samples.
  **/
-typedef struct _CPTNumericDataType {
-    CPTDataTypeFormat dataTypeFormat; ///< Data type format
-    size_t            sampleBytes;    ///< Number of bytes in each sample
-    CFByteOrder       byteOrder;      ///< Byte order
+struct _CPTNumericDataType {
+var dataTypeFormat: CPTDataTypeFormat ///< Data type format
+var sampleBytes: size_t ///< Number of bytes in each sample
+var byteOrder: CFByteOrder ///< Byte order
 }
-CPTNumericDataType;
+
+typealias CPTNumericDataType = _CPTNumericDataType

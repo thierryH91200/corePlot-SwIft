@@ -107,7 +107,7 @@ class CPTPlotSpace: NSObject {
         if newCategories is Array<Any> {
             let categories = newCategories;
             
-            names[cacheKey] = [NSMutableOrderedSet orderedSetWithArray:categories];
+            names[cacheKey] = orderedSetWithArray(categories)
         }
         else {
             names.removeObjectForKey(cacheKey)
@@ -235,6 +235,8 @@ class CPTPlotSpace: NSObject {
         else { return false}
         return handledByDelegate;
     }
+    
+    
     //
     #if TARGET_OS_SIMULATOR || TARGET_OS_IPHONE
     #else

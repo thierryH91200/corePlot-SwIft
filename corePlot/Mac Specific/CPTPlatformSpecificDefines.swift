@@ -57,18 +57,15 @@ extension CPTLayer {
                                           bytesPerRow: 0,
                                           bitsPerPixel: 0)
         
-        
-        
-        
         // Setting the size communicates the dpi; enables proper scaling for Retina screens
         layerImage?.size = NSSizeFromCGSize(boundsSize);
         
         let bitmapContext = NSGraphicsContext(bitmapImageRep: layerImage!)
-        let context             = bitmapContext?.cgContext
+        let context       = bitmapContext?.cgContext
         
         context!.clear(CGRect(x: 0.0, y: 0.0, width: boundsSize.width, height: boundsSize.height))
-        context!.setAllowsAntialiasing(true);
-        context!.setShouldSmoothFonts(false);
+        context!.setAllowsAntialiasing(true)
+        context!.setShouldSmoothFonts(false)
         self.layoutAndRender(context: context!)
         context!.flush()
         

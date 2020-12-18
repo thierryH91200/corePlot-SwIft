@@ -64,7 +64,7 @@ extension CPTAxis {
     func setMinorTickAxisLabels(newLabels: CPTAxisLabelSet )
     {
         if newLabels != minorTickAxisLabels {
-            if ( self.labelsUpdated == true) {
+            if ( self.labelsUpdated == true ) {
                 minorTickAxisLabels = newLabels;
             }
             else {
@@ -84,13 +84,13 @@ extension CPTAxis {
                     for  label in minorTickAxisLabels  {
                         let contentLayer = label.contentLayer
                         if ( contentLayer ) {
-                            if ( lastLayer ) {
-                                axisLabelGroup.insertSublayer(contentLayer, below:lastLayer)
+                            if (( lastLayer ) != nil) {
+                                axisLabelGroup?.insertSublayer(contentLayer, below:lastLayer)
                             }
                             else {
                                 
                                 let index = thePlotArea?.sublayerIndexForAxis(axis: self, layerType:.axisLabels)
-                                axisLabelGroup.insertSublayer(contentLayer, atIndex:index)
+                                axisLabelGroup!.insertSublayer(contentLayer, at:UInt32(index!))
                             }
                             
                             lastLayer = contentLayer;
@@ -108,23 +108,21 @@ extension CPTAxis {
         }
     }
     
-    //    -(void)setLabelTextStyle:(nullable CPTTextStyle *)newStyle
-    //    {
-    //        if ( labelTextStyle != newStyle ) {
-    //            labelTextStyle = [newStyle copy];
-    //
-    //            Class textLayerClass = [CPTTextLayer class];
-    //            for ( CPTAxisLabel *axisLabel in self.axisLabels ) {
-    //                CPTLayer *contentLayer = axisLabel.contentLayer;
-    //                if ( [contentLayer isKindOfClass:textLayerClass] ) {
-    //                    ((CPTTextLayer *)contentLayer).textStyle = labelTextStyle;
-    //                }
-    //            }
-    //
-    //            [self updateMajorTickLabels];
-    //        }
-    //    }
-    //
+    func setLabelTextStyle(newStyle: CPTTextStyle )
+    {
+        if ( labelTextStyle != newStyle ) {
+            labelTextStyle = newStyle
+            
+            for axisLabel in self.axisLabels {
+                let contentLayer = (axisLabel.contentLayer) as! CPTTextLayer
+                if contentLayer is CPTTextLayer {
+                    contentLayer.textStyle = labelTextStyle
+                }
+            }
+            self.updateMajorTickLabels()
+        }
+    }
+    
     //    -(void)setMinorTickLabelTextStyle:(nullable CPTTextStyle *)newStyle
     //    {
     //        if ( minorTickLabelTextStyle != newStyle ) {
@@ -292,12 +290,12 @@ extension CPTAxis {
         
         if ( newLocation  != nil) {
             let location = newLocation
-            needsUpdate = titleLocation.isEqualToNumber(location)
+            needsUpdate = titleLocation == location
         }
         
         if ( needsUpdate  == true ) {
-            titleLocation = newLocation;
-            self.updateAxisTitle
+            titleLocation = newLocation!
+            self.updateAxisTitle()
         }
     }
     //
@@ -1027,7 +1025,7 @@ extension CPTAxis {
                     label.contentLayer.hidden = !isVisible
                     if ( isVisible == true) {
                         let tickBasePoint = self.viewPointForCoordinateValue(coordinateValue: label.tickLocation)
-                        label.positionRelativeToViewPoint(tickBasePoint, forCoordinate:orthogonalCoordinate, inDirection:direction)
+                        label.positionRelativeToViewPoint(point: tickBasePoint, coordinate:orthogonalCoordinate, direction:direction)
                     }
                 }
             }
@@ -1075,8 +1073,7 @@ extension CPTAxis {
     }
     
     
-    //    /**
-    //     *  @brief Update the major tick mark labels.
+    //     @brief Update the major tick mark labels.
     //     **/
     func updateMajorTickLabels()
     {
@@ -1108,7 +1105,7 @@ extension CPTAxis {
         
         for label in minorTickAxisLabels {
             let tickBasePoint = self.viewPointForCoordinateValue( coordinateValue: label.tickLocation)
-            label.positionRelative(toViewPoint: tickBasePoint, for: orthogonalCoordinate, inDirection: direction)
+            label.positionRelativeToViewPoint( point: tickBasePoint, coordinate: orthogonalCoordinate, direction: direction)
         }
     }
 }

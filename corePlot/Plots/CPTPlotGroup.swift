@@ -5,45 +5,21 @@
 //  Created by thierryH24 on 11/11/2020.
 //
 
-import Cocoa
+//==============================
+//  OK
+// 18/12/20
+//==============================
+
+
+
+import AppKit
 
 class CPTPlotGroup: CPTLayer {
 
-//    -(nullable instancetype)initWithCoder:(nonnull NSCoder *)coder
-//    {
-//        if ((self = [super initWithCoder:coder])) {
-//            // support old archives
-//            if ( [coder containsValueForKey:@"CPTPlotGroup.identifier"] ) {
-//                self.identifier = [coder decodeObjectOfClass:[NSObject class]
-//                                                      forKey:@"CPTPlotGroup.identifier"];
-//            }
-//        }
-//        return self;
-//    }
-//
-//    /// @endcond
-//
-//    #pragma mark -
-//    #pragma mark NSSecureCoding Methods
-//
-//    /// @cond
-//
-//    +(BOOL)supportsSecureCoding
-//    {
-//        return YES;
-//    }
 
-    /// @endcond
-
-//    #pragma mark -
-//    #pragma mark Organizing Plots
-//
-//    /** @brief Add a plot to this plot group.
-//     *  @param plot The plot.
-//     **/
+// MARK: - Organizing Plots
     func addPlot(plot:  CPTPlot)
     {
-
         self.addSublayer(plot)
     }
 
@@ -56,9 +32,6 @@ class CPTPlotGroup: CPTLayer {
         self.insertSublayer(plot, at: UInt32(atIndex))
     }
 
-    /** @brief Remove a plot from this plot group.
-     *  @param plot The plot to remove.
-     **/
     func removePlot(plot: CPTPlot )
     {
         if self == plot.superlayer  {
@@ -66,7 +39,7 @@ class CPTPlotGroup: CPTLayer {
         }
     }
 
-    // MARK: - Drawing
+// MARK: - Drawing
     override func display()
     {
         // nothing to draw
@@ -79,5 +52,4 @@ class CPTPlotGroup: CPTLayer {
             super.renderAsVectorInContext(context: context)
         }
     }
-
 }

@@ -29,10 +29,6 @@ class CPTGridLines: CPTLayer {
         self.needsDisplayOnBoundsChange = true;
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override init(layer: Any)
     {
         super.init(layer:layer)
@@ -42,7 +38,11 @@ class CPTGridLines: CPTLayer {
         major = theLayer.major
     }
     
-    // MARK: Drawing
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Drawing
     override func renderAsVectorInContext(context: CGContext)
     {
         guard ( self.isHidden == false) else { return }
@@ -64,9 +64,6 @@ class CPTGridLines: CPTLayer {
                 _axis = newValue
                 self.setNeedsDisplay()
             }
-
         }
     }
-    
-    
 }

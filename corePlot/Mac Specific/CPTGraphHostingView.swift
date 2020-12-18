@@ -106,7 +106,7 @@ class CPTGraphHostingView: NSView {
         }
     }
     
-//    #pragma mark Printing
+// MARK: - Printing
 //
 //    /// @cond
 //
@@ -122,11 +122,8 @@ class CPTGraphHostingView: NSView {
 //    {
 //        return self.printRect;
 //    }
-//
-//    /// @endcond
-//
-//    #pragma mark -
-//    #pragma mark Mouse handling
+    
+// MARK: -Mouse handling
 //
 //    /// @cond
 //
@@ -184,14 +181,9 @@ class CPTGraphHostingView: NSView {
 //            [self.nextResponder mouseUp:theEvent];
 //        }
 //    }
-//
-//    /// @endcond
-//
-//    #pragma mark -
-//    #pragma mark Trackpad handling
-//
-//    /// @cond
-//
+
+
+    // MARK: -Trackpad handling
 //    -(void)magnifyWithEvent:(nonnull NSEvent *)event
 //    {
 //        CPTGraph *theGraph = self.hostedGraph;

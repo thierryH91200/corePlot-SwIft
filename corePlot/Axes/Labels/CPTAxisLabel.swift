@@ -123,7 +123,6 @@ public class CPTAxisLabel: NSObject {
             switch ( coordinate ) {
             case .x:
                 // angle = 0.0;
-                
                 switch ( self.alignment ) {
                 case .bottom:
                     newPosition.y += contentFrame.size.height / CGFloat(2.0);
@@ -188,17 +187,11 @@ public class CPTAxisLabel: NSObject {
         content.position    = newPosition;
         content.pixelAlign()
     }
-    
-    /** @brief Positions the axis label between two given points.
-     *  @param firstPoint The first view point.
-     *  @param secondPoint The second view point.
-     *  @param coordinate The axis coordinate.
-     *  @param direction The offset direction.
-     **/
     func positionBetweenViewPoint(firstPoint: CGPoint, secondPoint:CGPoint, coordinate:CPTCoordinate, direction: CPTSign)
     {
-        self.positionRelativeToViewPoint ( point: CGPoint(x: (firstPoint.x + secondPoint.x) / CGFloat(2.0), y: (firstPoint.y + secondPoint.y) / CGFloat(2.0)),
-                                           coordinate:coordinate,
-                                           direction:direction)
+        self.positionRelativeToViewPoint (
+            point: CGPoint(x: (firstPoint.x + secondPoint.x) / CGFloat(2.0), y: (firstPoint.y + secondPoint.y) / CGFloat(2.0)),
+            coordinate:coordinate,
+            direction:direction)
     }    
 }

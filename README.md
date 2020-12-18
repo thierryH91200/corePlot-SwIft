@@ -48,6 +48,8 @@ corePlot/Source/Animation/CPTAnimationCGFloatPeriod
 
 # Add change 
 
+number errors = 270
+
 com 201204 : CPTXYPlotSpace
 
 com201204 : CPTAxisTitle / CPTAxisLabel

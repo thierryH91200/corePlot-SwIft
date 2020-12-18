@@ -7,17 +7,18 @@
 
 //==============================
 //  OK
+// 18/12/20
 //==============================
 
-import Cocoa
+
+import AppKit
 
 class CPTAxisLabelGroup: CPTLayer {
 
     // MARK: - Drawing
 
-    func dissplay()
+    override func display()
     {
-        // nothing to draw
     }
 
     @objc override func renderAsVectorInContext(context:  CGContext)

@@ -24,7 +24,7 @@ class CPTMutablePlotRange: CPTPlotRange {
      *  @brief The starting value of the range.
      *  @see @ref location, @ref locationDouble
      **/
-    var locationDecimal= 0
+    var locationDecimal = 0
 
     /** @property NSDecimal lengthDecimal
      *  @brief The length of the range.
@@ -36,7 +36,7 @@ class CPTMutablePlotRange: CPTPlotRange {
      *  @brief The starting value of the range as a @double.
      *  @see @ref location, @ref locationDecimal
      **/
-    var locationDouble =
+    var locationDouble = 0
 
     /** @property double lengthDouble
      *  @brief The length of the range as a @double.

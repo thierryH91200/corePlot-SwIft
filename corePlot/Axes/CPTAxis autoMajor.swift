@@ -372,7 +372,6 @@ extension CPTAxis {
                 }
             default:
                 break
-                
             }
         }
     }
@@ -479,8 +478,6 @@ extension CPTAxis {
 //
 //        return roundedNumber;
 //    }
-
-    
     
 }
 

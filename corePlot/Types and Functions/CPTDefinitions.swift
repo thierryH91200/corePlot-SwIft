@@ -5,7 +5,7 @@
 //  Created by thierryH24 on 08/11/2020.
 //
 
-import Appkit
+import AppKit
 
 /**
  *  @brief Enumeration of numeric types

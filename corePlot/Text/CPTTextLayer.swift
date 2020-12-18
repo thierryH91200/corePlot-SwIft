@@ -52,9 +52,10 @@ class CPTTextLayer: CPTBorderedLayer {
     }
     
     
-    class func textStyle(withAttributes attributes: CPTDictionary?) -> Self {
+     func textStyle(withAttributes attributes: Dictionary?) -> CPTTextStyle
+     {
         
-        let newStyle = CPTMutableTextStyle()
+        let newStyle = CPTTextStyle()
         
         // Font
         let styleFont = attributes?[NSAttributedString.Key.font] as? NSFont
@@ -182,5 +183,4 @@ class CPTTextLayer: CPTBorderedLayer {
             self.setNeedsDisplay()
         }
     }
-    
 }

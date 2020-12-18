@@ -398,9 +398,9 @@ public class CPTBarPlot: CPTPlot {
     {
         let theDataSource = self.dataSource as? CPTBarPlotDataSource
 
-        if dataSource.respondsToSelector(to:#selector(barWidthsForBarPlot:recordIndexRange:) ) {
+        if dataSource.respondsToSelector(to:#selector(barWidthsForBarPlot(recordIndexRange:) ) {
             self.cacheArray(theDataSource.barWidthsForBarPlot(self ,recordIndexRange:indexRange)
-            forKey:CPTBarPlotBindingBarWidths,
+                            forKey:.CPTBarPlotBindingBarWidths,
             atRecordIndex:indexRange.location)
         }
         else if dataSource.respondsToSelector(to:#selector(barWidthForBarPlot:recordIndex:)) {
@@ -698,13 +698,13 @@ public class CPTBarPlot: CPTPlot {
     //            double plotPoint[2];
     //            plotPoint[independentCoord] = [self cachedDoubleForField:CPTBarPlotFieldBarLocation recordIndex:idx];
     //            if ( isnan(plotPoint[independentCoord])) {
-    //                return NO;
+    //                return false
     //            }
     //
     //            // Tip point
     //            plotPoint[dependentCoord] = [self cachedDoubleForField:CPTBarPlotFieldBarTip recordIndex:idx];
     //            if ( isnan(plotPoint[dependentCoord])) {
-    //                return NO;
+    //                return false
     //            }
     //            *tipPoint = [thePlotSpace plotAreaViewPointForDoublePrecisionPlotPoint:plotPoint numberOfCoordinates:2];
     //
@@ -716,7 +716,7 @@ public class CPTBarPlot: CPTPlot {
     //                plotPoint[dependentCoord] = [self cachedDoubleForField:CPTBarPlotFieldBarBase recordIndex:idx];
     //            }
     //            if ( isnan(plotPoint[dependentCoord])) {
-    //                return NO;
+    //                return false
     //            }
     //            *basePoint = [thePlotSpace plotAreaViewPointForDoublePrecisionPlotPoint:plotPoint numberOfCoordinates:2];
     //        }
@@ -724,13 +724,13 @@ public class CPTBarPlot: CPTPlot {
     //            NSDecimal plotPoint[2];
     //            plotPoint[independentCoord] = [self cachedDecimalForField:CPTBarPlotFieldBarLocation recordIndex:idx];
     //            if ( NSDecimalIsNotANumber(&plotPoint[independentCoord])) {
-    //                return NO;
+    //                return false
     //            }
     //
     //            // Tip point
     //            plotPoint[dependentCoord] = [self cachedDecimalForField:CPTBarPlotFieldBarTip recordIndex:idx];
     //            if ( NSDecimalIsNotANumber(&plotPoint[dependentCoord])) {
-    //                return NO;
+    //                return false
     //            }
     //            *tipPoint = [thePlotSpace plotAreaViewPointForPlotPoint:plotPoint numberOfCoordinates:2];
     //
@@ -742,7 +742,7 @@ public class CPTBarPlot: CPTPlot {
     //                plotPoint[dependentCoord] = [self cachedDecimalForField:CPTBarPlotFieldBarBase recordIndex:idx];
     //            }
     //            if ( NSDecimalIsNotANumber(&plotPoint[dependentCoord])) {
-    //                return NO;
+    //                return false
     //            }
     //            *basePoint = [thePlotSpace plotAreaViewPointForPlotPoint:plotPoint numberOfCoordinates:2];
     //        }
@@ -760,7 +760,7 @@ public class CPTBarPlot: CPTPlot {
     //            tipPoint->x  += barOffsetLength;
     //        }
     //
-    //        return YES;
+    //        return true
     //    }
     //
     //    -(nullable CGMutablePathRef)newBarPathWithContext:(nullable CGContextRef)context recordIndex:(NSUInteger)recordIndex
@@ -1238,7 +1238,7 @@ public class CPTBarPlot: CPTPlot {
     //        CPTPlotArea *thePlotArea = self.plotArea;
     //
     //        if ( !theGraph || !thePlotArea || self.hidden ) {
-    //            return NO;
+    //            return false
     //        }
     //
     //        id<CPTBarPlotDelegate> theDelegate = (id<CPTBarPlotDelegate>)self.delegate;
@@ -1253,20 +1253,20 @@ public class CPTBarPlot: CPTPlot {
     //            self.pointingDeviceDownIndex = idx;
     //
     //            if ( idx != NSNotFound ) {
-    //                BOOL handled = NO;
+    //                BOOL handled = false
     //
     //                if ( [theDelegate respondsToSelector:@selector(barPlot:barTouchDownAtRecordIndex:)] ) {
-    //                    handled = YES;
+    //                    handled = true
     //                    [theDelegate barPlot:self barTouchDownAtRecordIndex:idx];
     //                }
     //
     //                if ( [theDelegate respondsToSelector:@selector(barPlot:barTouchDownAtRecordIndex:withEvent:)] ) {
-    //                    handled = YES;
+    //                    handled = true
     //                    [theDelegate barPlot:self barTouchDownAtRecordIndex:idx withEvent:event];
     //                }
     //
     //                if ( handled ) {
-    //                    return YES;
+    //                    return true
     //                }
     //            }
     //        }
@@ -1308,7 +1308,7 @@ public class CPTBarPlot: CPTPlot {
     //        CPTPlotArea *thePlotArea = self.plotArea;
     //
     //        if ( !theGraph || !thePlotArea || self.hidden ) {
-    //            return NO;
+    //            return false
     //        }
     //
     //        id<CPTBarPlotDelegate> theDelegate = (id<CPTBarPlotDelegate>)self.delegate;
@@ -1322,32 +1322,32 @@ public class CPTBarPlot: CPTPlot {
     //            NSUInteger idx        = [self dataIndexFromInteractionPoint:plotAreaPoint];
     //
     //            if ( idx != NSNotFound ) {
-    //                BOOL handled = NO;
+    //                BOOL handled = false
     //
     //                if ( [theDelegate respondsToSelector:@selector(barPlot:barTouchUpAtRecordIndex:)] ) {
-    //                    handled = YES;
+    //                    handled = true
     //                    [theDelegate barPlot:self barTouchUpAtRecordIndex:idx];
     //                }
     //
     //                if ( [theDelegate respondsToSelector:@selector(barPlot:barTouchUpAtRecordIndex:withEvent:)] ) {
-    //                    handled = YES;
+    //                    handled = true
     //                    [theDelegate barPlot:self barTouchUpAtRecordIndex:idx withEvent:event];
     //                }
     //
     //                if ( idx == selectedDownIndex ) {
     //                    if ( [theDelegate respondsToSelector:@selector(barPlot:barWasSelectedAtRecordIndex:)] ) {
-    //                        handled = YES;
+    //                        handled = true
     //                        [theDelegate barPlot:self barWasSelectedAtRecordIndex:idx];
     //                    }
     //
     //                    if ( [theDelegate respondsToSelector:@selector(barPlot:barWasSelectedAtRecordIndex:withEvent:)] ) {
-    //                        handled = YES;
+    //                        handled = true
     //                        [theDelegate barPlot:self barWasSelectedAtRecordIndex:idx withEvent:event];
     //                    }
     //                }
     //
     //                if ( handled ) {
-    //                    return YES;
+    //                    return true
     //                }
     //            }
     //        }
@@ -1355,10 +1355,8 @@ public class CPTBarPlot: CPTPlot {
     //        return [super pointingDeviceUpEvent:event atPoint:interactionPoint];
     //    }
     //
-    //    /// @}
-    //
-    //    #pragma mark -
-    //    #pragma mark Accessors
+
+    // MARK: - Accessors
     //
     //    /// @cond
     //
@@ -1419,7 +1417,9 @@ public class CPTBarPlot: CPTPlot {
         if ( lineStyle != newLineStyle ) {
             lineStyle = newLineStyle
             self.setNeedsDisplay()
-            NotificationCenter.default.post( name:.CPTLegendNeedsRedrawForPlotNotification, object:self)
+            NotificationCenter.default.post(
+                name:.CPTLegendNeedsRedrawForPlotNotification,
+                object:self)
         }
     }
     
@@ -1428,7 +1428,9 @@ public class CPTBarPlot: CPTPlot {
         if ( fill != newFill ) {
             fill = newFill;
             self.setNeedsDisplay()
-            NotificationCenter.default.post( name:.CPTLegendNeedsRedrawForPlotNotification, object:self)
+            NotificationCenter.default.post(
+                name:.CPTLegendNeedsRedrawForPlotNotification,
+                object:self)
         }
     }
     
@@ -1454,7 +1456,9 @@ public class CPTBarPlot: CPTPlot {
         if ( barCornerRadius != newCornerRadius ) {
             barCornerRadius = abs(newCornerRadius);
             self.setNeedsDisplay()
-            NotificationCenter.default.post( name:.CPTLegendNeedsRedrawForPlotNotification, object:self)
+            NotificationCenter.default.post(
+                name:.CPTLegendNeedsRedrawForPlotNotification,
+                object:self)
         }
     }
     
@@ -1463,16 +1467,18 @@ public class CPTBarPlot: CPTPlot {
         if ( barBaseCornerRadius != newCornerRadius ) {
             barBaseCornerRadius = abs(newCornerRadius)
             self.setNeedsDisplay()
-            NotificationCenter.defaultCenter.postNotificationName(.CPTLegendNeedsRedrawForPlotNotification, object:self);
+            NotificationCenter.default.post(
+                name: .CPTLegendNeedsRedrawForPlotNotification,
+                object:self);
         }
     }
     
-    func setBaseValue(newBaseValue NSNumber )
+    func setBaseValue(newBaseValue : CGFloat )
     {
-        if ( ![baseValue isEqualToNumber:newBaseValue] ) {
+        if ( baseValue != newBaseValue ) {
             baseValue = newBaseValue;
-            [self setNeedsDisplay];
-            [self setNeedsLayout];
+            self.setNeedsDisplay()
+            self.setNeedsLayout()
         }
     }
     
