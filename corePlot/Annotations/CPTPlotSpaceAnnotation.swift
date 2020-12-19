@@ -21,10 +21,10 @@ class CPTPlotSpaceAnnotation: CPTAnnotation {
         self.plotSpace       = newPlotSpace;
         self.anchorPlotPoint = newPlotPoint;
         
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(setContentNeedsLayout),
+        NotificationCenter.receive(
+            instance: self,
             name: .CoordinateMappingDidChangeNotification,
+            selector: #selector(setContentNeedsLayout),
             object: plotSpace)
     }
     
@@ -52,7 +52,9 @@ class CPTPlotSpaceAnnotation: CPTAnnotation {
                 if !plotAnchor.isEmpty {
                     // Get plot area point
                     let thePlotSpace      = self.plotSpace;
-                    let plotAreaViewAnchorPoint = thePlotSpace.plotAreaViewPointForPlotPoint(self.decimalAnchor, numberOfCoordinates:self.anchorCount)
+                    let plotAreaViewAnchorPoint = thePlotSpace.plotAreaViewPointForPlotPoint(
+                        self.decimalAnchor,
+                        numberOfCoordinates:self.anchorCount)
                     
                     var newPosition = CGPoint()
                     let theGraph    = thePlotSpace.graph

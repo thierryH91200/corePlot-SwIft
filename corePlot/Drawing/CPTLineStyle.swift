@@ -64,9 +64,7 @@ public class CPTLineStyle: NSObject {
     {
         return (MemoryLayout<T>.size * value.count)
     }
-
-
-
+    
     // MARK:  - Drawing
     func setLineStyleInContext(context: CGContext)
     {

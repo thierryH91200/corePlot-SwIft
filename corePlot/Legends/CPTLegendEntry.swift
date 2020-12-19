@@ -96,10 +96,10 @@ class CPTLegendEntry: NSObject {
         
         if (styledTitle.length > 0)  {
             if let method = styledTitle.drawInRect(rect: textRect, context:context) {
-                method()
+                method
             }
             else {
-                let theTitle = styledTitle().string;
+                var theTitle = styledTitle.string;
                 
                 if  theTitle == ""  {
                     theTitle = self.title

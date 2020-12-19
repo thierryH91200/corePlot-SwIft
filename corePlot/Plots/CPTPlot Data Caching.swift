@@ -65,11 +65,11 @@ extension CPTPlot {
                     break;
                     
                 case .double:
-                    self.setCachedDataType(self.doubleDataType)
+                    self.setCachedDataType(self.doubleDataType())
                     break;
                     
                 case .decimal:
-                    self.setCachedDataType(self.decimalDataType)
+                    self.setCachedDataType(self.decimalDataType())
                     break;
                 }
                 break;
@@ -79,14 +79,14 @@ extension CPTPlot {
                     var samples = [String]() //=  numbers;
                     
                     if ( samples is Array  ) == true {
-                        thePlotSpace?.setCategories(newCategories: samples, forCoordinate:coordinate)
+                        thePlotSpace?.setCategories(newCategories: samples, forCoordinate: coordinate)
                         
                         let sampleCount = samples.count;
                         if ( sampleCount > 0 ) {
                             var indices = NSMutableArray()
                             
                             for category in samples {
-                                indices.addObject(thePlotSpace, indexOfCategory:category,  forCoordinate:coordinate)
+                                indices.addObject(thePlotSpace, indexOfCategory:category, forCoordinate: coordinate)
                             }
                             
                             let dataType = (self.cachePrecision == CPTPlotCachePrecisionDecimal ? self.decimalDataType : self.doubleDataType);

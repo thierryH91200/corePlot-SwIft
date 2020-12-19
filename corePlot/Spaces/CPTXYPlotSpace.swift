@@ -118,7 +118,6 @@ class CPTXYPlotSpace: CPTPlotSpace {
     
     func setXRange(range: CPTPlotRange )
     {
-        
         if  range.isEqual(to: xRange)  == false {
             var constrainedRange = CPTPlotRange(location: 0, length: 0)
             
@@ -126,33 +125,33 @@ class CPTXYPlotSpace: CPTPlotSpace {
                 constrainedRange = range
             }
             else {
-                constrainedRange = self.constrainRange(existingRange: range ,toGlobalRange: self.globalXRange)!
+                constrainedRange = self.constrainRange(existingRange: range ,toGlobalRange: self.globalXRange!)!
             }
             
             let theDelegate = self.delegate;
             
-            if ( theDelegate.respondsToSelector(to:#selector(plotSpace:willChangePlotRangeTo:forCoordinate:)] ) {
-                constrainedRange = theDelegate.plotSpace(self, willChangePlotRangeTo:constrainedRange, forCoordinate:CPTCoordinateX)
+            if ( theDelegate.respondsToSelector(to:#selector(to: plotSpace:willChangePlotRangeTo:forCoordinate:) ) {
+                constrainedRange = theDelegate.plotSpace(self, willChangePlotRangeTo:constrainedRange, forCoordinate:CPTCoordinate.x)
             }
             
-            if ( ![constrainedRange isEqualToRange:xRange] ) {
+            if constrainedRange.isEqualToRange(xRange )  == false {
                 var displacement = self.lastDisplacement.x;
                 var isScrolling     = false
                 
                 if ( xRange && constrainedRange ) {
-                    isScrolling = !CPTDecimalEquals(constrainedRange.locationDecimal, xRange.locationDecimal) && CPTDecimalEquals(constrainedRange.lengthDecimal, xRange.lengthDecimal);
+                    isScrolling = (constrainedRange.locationDecimal != xRange.locationDecimal) && (constrainedRange.lengthDecimal == xRange.lengthDecimal);
                     
                     if ( isScrolling && (displacement == CGFloat(0.0))) {
-                        let heGraph    = self.graph;
-                        CPTPlotArea *plotArea = theGraph.plotAreaFrame.plotArea;
+                        let theGraph    = self.graph;
+                        let  plotArea = theGraph?.plotAreaFrame.plotArea;
                         
-                        if ( plotArea ) {
-                            NSDecimal rangeLength = constrainedRange.lengthDecimal;
+                        if (( plotArea ) != nil) {
+                            let rangeLength = constrainedRange.lengthDecimal;
                             
-                            if ( !CPTDecimalEquals(rangeLength, CPTDecimalFromInteger(0))) {
-                                NSDecimal diff = CPTDecimalDivide(CPTDecimalSubtract(constrainedRange.locationDecimal, xRange.locationDecimal), rangeLength);
+                            if ( rangeLength != 0 ) {
+                                let diff = (constrainedRange.locationDecimal - xRange.locationDecimal) / rangeLength
                                 
-                                displacement = plotArea.bounds.size.width * CPTDecimalCGFloatValue(diff);
+                                displacement = (plotArea?.bounds.size.width)! * CGFloat(diff);
                             }
                         }
                     }
@@ -160,94 +159,97 @@ class CPTXYPlotSpace: CPTPlotSpace {
                 
                 xRange = constrainedRange
                 
-                NotificationCenter.defaultCenter.post(name:.CPTPlotSpaceCoordinateMappingDidChangeNotification,
-                                                      object:self,
-                                                      userInfo: {
-                                                        CPTPlotSpaceCoordinateKey: CPTCoordinateX,
-                                                        CPTPlotSpaceScrollingKey: isScrolling,
-                                                        CPTPlotSpaceDisplacementKey: displacement })
+                var userInfo  =   [String: Any]()
+                userInfo[CPTPlotSpaceCoordinateKey] = CPTCoordinate.x.rawValue
+                userInfo[CPTPlotSpaceScrollingKey] = isScrolling
+                userInfo[CPTPlotSpaceDisplacementKey] = displacement
+                NotificationCenter.send(
+                    name:     .CPTPlotSpaceCoordinateMappingDidChangeNotification,
+                    object:   self,
+                    userInfo: userInfo )
                 
                 
-                if ( [theDelegate respondsToSelector(to: #selector(plotSpace:didChangePlotRangeForCoordinate:)] ) {
-                    theDelegate.plotSpace(self, didChangePlotRangeForCoordinate:CPTCoordinateX);
+                if ( theDelegate.respondsToSelector(to: #selector(plotSpace.didChangePlotRangeForCoordinate:))) {
+                    theDelegate?.plotSpace(space: self, didChangePlotRangeForCoordinate:CPTCoordinate.x)
                 }
                 
                 let theGraph = self.graph;
                 if (( theGraph ) != nil) {
-                    NotificationCenter.default.post(
+                    NotificationCenter.send(
                         name: .CPTGraphNeedsRedrawNotification,
                         object:theGraph)
                 }
             }
         }
     }
+
     //
     func setYRange(range: CPTPlotRange )
-        {
-    
+    {
         if  range.isEqual(yRange )   == false{
             var  constrainedRange = CPTPlotRange(location: 0, length: 0)
-    
-                if ( self.allowsMomentumY ) {
-                    constrainedRange = range;
-                }
-                else {
-                    constrainedRange = [self constrainRange:range toGlobalRange:self.globalYRange];
-                }
-    
-                let theDelegate = self.delegate;
-                if ( [theDelegate respondsToSelector:@selector(plotSpace:willChangePlotRangeTo:forCoordinate:)] ) {
-                    constrainedRange = [theDelegate plotSpace:self willChangePlotRangeTo:constrainedRange forCoordinate:CPTCoordinateY];
-                }
-    
+            
+            if ( self.allowsMomentumY ) {
+                constrainedRange = range;
+            }
+            else {
+                constrainedRange = self.constrainRange(existingRange: range, toGlobalRange:self.globalYRange!)!
+            }
+            
+            let theDelegate = self.delegate;
+            if ( theDelegate.respondsToSelector( to: #selector( plotSpace.willChangePlotRangeForCoordinate:))) {
+                constrainedRange = (theDelegate?.plotSpace(space: self, newRange:constrainedRange, coordinate:CPTCoordinate.y))!
+            }
+            
             if constrainedRange.isEqualToRange(yRange ) == false  {
-                    let displacement = self.lastDisplacement.y
-                    var isScrolling     = false
-    
-                    if ( yRange && constrainedRange ) {
-                        isScrolling = constrainedRange.location == yRange.locationDecimal &&                             constrainedRange.length  == yRange.length
-    
-                        if ( isScrolling && (displacement == CGFloat(0.0))) {
-                            let theGraph    = self.graph;
-                            CPTPlotArea *plotArea = theGraph.plotAreaFrame.plotArea;
-    
-                            if ( plotArea ) {
-                                NSDecimal rangeLength = constrainedRange.lengthDecimal;
-    
-                                if ( !CPTDecimalEquals(rangeLength, CPTDecimalFromInteger(0))) {
-                                    NSDecimal diff = CPTDecimalDivide(CPTDecimalSubtract(constrainedRange.locationDecimal, yRange.locationDecimal), rangeLength);
-    
-                                    displacement = plotArea.bounds.size.height * CPTDecimalCGFloatValue(diff);
-                                }
+                var displacement = self.lastDisplacement.y
+                var isScrolling     = false
+                
+                if ( yRange && constrainedRange ) {
+                    isScrolling = constrainedRange.location == yRange.locationDecimal && constrainedRange.length  == yRange.length
+                    
+                    if ( isScrolling == true && (displacement == CGFloat(0.0))) {
+                        let theGraph    = self.graph;
+                        let plotArea = theGraph?.plotAreaFrame.plotArea;
+                        
+                        if (( plotArea ) != nil) {
+                            let rangeLength = constrainedRange.lengthDecimal;
+                            
+                            if ( rangeLength != CGFloat(0)) {
+                                let diff = (constrainedRange.locationDecimal - yRange.locationDecimal) / rangeLength
+                                displacement = (plotArea?.bounds.size.height)! * CGFloat(diff)
                             }
                         }
                     }
-    
-                    yRange = constrainedRange
-    
-                    NotificationCenter.default.post(
-                        name:.CPTPlotSpaceCoordinateMappingDidChangeNotification,
+                }
+                
+                yRange = constrainedRange
+                
+                var userInfo  =   [String: Any]()
+                userInfo[CPTPlotSpaceCoordinateKey] = CPTCoordinate.y.rawValue
+                userInfo[CPTPlotSpaceScrollingKey] = isScrolling
+                userInfo[CPTPlotSpaceDisplacementKey] = displacement
+
+                NotificationCenter.send(
+                    name:.CPTPlotSpaceCoordinateMappingDidChangeNotification,
                     object:self,
-            userInfo:@{ CPTPlotSpaceCoordinateKey: @(CPTCoordinateY),
-            CPTPlotSpaceScrollingKey: @(isScrolling),
-            CPTPlotSpaceDisplacementKey: @(displacement) }
-                    ];
-    
-                    if ( [theDelegate respondsToSelector:@selector(plotSpace:didChangePlotRangeForCoordinate:)] ) {
-                        [theDelegate plotSpace:self didChangePlotRangeForCoordinate:CPTCoordinateY];
-                    }
-    
-                    let theGraph = self.graph;
-                    if ( theGraph  != nil) {
-                        NotificationCenter.default.post(
-                            name:.CPTGraphNeedsRedrawNotification,
-                            object:theGraph)
-                    }
+                    userInfo:userInfo )
+                
+                if ( theDelegate.respondsToSelector(to: #selector( plotSpace.didChangePlotRangeForCoordinate:) ) {
+                    theDelegate?.plotSpace(space: self, didChangePlotRangeForCoordinate:CPTCoordinate.y)
+                }
+                
+                let theGraph = self.graph;
+                if ( theGraph  != nil) {
+                    NotificationCenter.send(
+                        name:.CPTGraphNeedsRedrawNotification,
+                        object:theGraph)
                 }
             }
         }
-    
-    func constrainRange(existingRange: CPTPlotRange, toGlobalRange globalRange: CPTPlotRange)-> CPTPlotRange?
+    }
+                    
+    func constrainRange(existingRange: CPTPlotRange?, toGlobalRange globalRange: CPTPlotRange?)-> CPTPlotRange?
     {
         if ( !globalRange ) {
             return existingRange;
@@ -258,14 +260,14 @@ class CPTXYPlotSpace: CPTPlotSpace {
         
         let theGlobalRange = globalRange;
         
-        if ( existingRange.lengthDecimal >= theGlobalRange.lengthDecima) {
+        if ( existingRange?.lengthDecimal >= theGlobalRange?.lengthDecimal) {
             return theGlobalRange
         }
         else {
             let newRange = existingRange
-            [newRange shiftEndToFitInRange:theGlobalRange];
-            [newRange shiftLocationToFitInRange:theGlobalRange];
-            return newRange;
+            newRange.shiftEndToFitInRange(theGlobalRange)
+            newRange.shiftLocationToFitInRange(theGlobalRange)
+            return newRange
         }
     }
     //
@@ -531,7 +533,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //        }
     //    }
     //
-        -(void)scaleToFitEntirePlots:(nullable CPTPlotArray *)plots
+    func scaleToFitEntirePlots(plots: [ CPTPlot] )
         {
             if ( plots.count == 0 ) {
                 return;
@@ -555,7 +557,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
             }
     
             // Set range
-            NSDecimal zero = CPTDecimalFromInteger(0);
+            let zero = Int(0);
     
             if ( unionXRange ) {
                 if ( CPTDecimalEquals(unionXRange.lengthDecimal, zero)) {
@@ -573,16 +575,20 @@ class CPTXYPlotSpace: CPTPlotSpace {
     
     func setXScaleType(newScaleType: CPTScaleType)
     {
+
+        var userInfo  =   [String: Int]()
+        userInfo[CPTPlotSpaceCoordinateKey] = CPTCoordinate.x.rawValue
+        
         if ( newScaleType != xScaleType ) {
             xScaleType = newScaleType;
             
             NotificationCenter.default.post(
                 name:.CPTPlotSpaceCoordinateMappingDidChangeNotification,
                 object:self,
-                userInfo:@{ CPTPlotSpaceCoordinateKey: @(CPTCoordinateX) })
+                userInfo: userInfo )
             
             let theGraph = self.graph;
-            if ( theGraph ) {
+            if (( theGraph ) != nil) {
                 NotificationCenter.default.post(
                     name: .CPTGraphNeedsRedrawNotification,
                     object:theGraph)
@@ -590,15 +596,19 @@ class CPTXYPlotSpace: CPTPlotSpace {
         }
     }
     
-    func setYScaleType(CPTScaleType: newScaleType )
+    func setYScaleType( newScaleType : CPTScaleType  )
     {
+        
+        var userInfo  =   [String: Int]()
+        userInfo[CPTPlotSpaceCoordinateKey] = CPTCoordinate.y.rawValue
+
         if ( newScaleType != yScaleType ) {
             yScaleType = newScaleType;
             
             NotificationCenter.default.post(
                 name:.CPTPlotSpaceCoordinateMappingDidChangeNotification,
                 object:self,
-                userInfo:@{ CPTPlotSpaceCoordinateKey: @(CPTCoordinateY) })
+                userInfo: userInfo)
             
             let theGraph = self.graph;
             if (( theGraph ) != nil) {
@@ -608,37 +618,22 @@ class CPTXYPlotSpace: CPTPlotSpace {
             }
         }
     }
-    //
-    //    /// @endcond
-    //
-    //    #pragma mark -
-    //    #pragma mark Point Conversion (private utilities)
-    //
-    //    /// @cond
-    //
-    //    // Linear
-    func viewCoordinateForViewLength(viewLength: CGFloat, range: CPTPlotRange, plotCoordinateValue plotCoord: CGFloat) -> CGFloat
-        {
-            if ( !range ) {
-                return CGFloat(0.0);
-            }
-    
-            var factor = (plotCoord - range.locationDecimal) / range.lengthDecimal
-    
-        if factor.isNaN {
-                factor = 0
-            }
-    
-            let viewCoordinate = viewLength * factor
-    
-            return viewCoordinate
-        }
-    
-    func viewCoordinatefforViewLength( viewLength: CGFloat, linearPlotRange range: CPTPlotRange, doublePrecisionPlotCoordinateValue plotCoord: Double) -> CGFloat {
 
+    // MARK: - Point Conversion (private utilities)
+    func viewCoordinateForViewLength(viewLength: CGFloat, range: CPTPlotRange?, plotCoordinateValue plotCoord: CGFloat) -> CGFloat
+    {
+        guard range != nil else { return CGFloat(0.0)}
+        
+        var factor = (plotCoord - range!.locationDecimal) / range!.lengthDecimal
+        if factor.isNaN {
+            factor = 0
+        }
+        let viewCoordinate = viewLength * factor
+        return viewCoordinate
+    }
     
-    
-            if ( !range || (range.lengthDouble == 0.0)) {
+    func viewCoordinatefforViewLength( viewLength: CGFloat, linearPlotRange range: CPTPlotRange?, doublePrecisionPlotCoordinateValue plotCoord: Double) -> CGFloat {
+        if ( (range == nil) || (range!.lengthDouble == 0.0)) {
                 return CGFloat(0.0);
             }
             return viewLength * (CGFloat)((plotCoord - range.locationDouble) / range.lengthDouble);
@@ -733,18 +728,11 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //        return CPTInverseLogModulus(coordinate);
     //    }
     //
-    //    /// @endcond
-    //
-    //    #pragma mark -
-    //    #pragma mark Point Conversion
-    //
-    //    /// @cond
-    //
-    //    -(NSUInteger)numberOfCoordinates
-    //    {
-    //        return 2;
-    //    }
-    //
+    // MARK: - Point Conversion
+    override func numberOfCoordinates()-> Int
+    {
+        return 2
+    }
                     //    // Plot area view point for plot point
     override func plotAreaViewPointForPlotPoint(plotPoint:  CPTNumberArray) -> CGPoint
     {
@@ -766,23 +754,23 @@ class CPTXYPlotSpace: CPTPlotSpace {
             fallthrough
         case .category:
             viewPoint.x = self.viewCoordinateForViewLength(
-                plotArea?.widthDecimal,
-                linearPlotRange:self.xRange,
-                plotCoordinateValue:plotPoint[CPTCoordinate.x.rawValue]);
+                viewLength          : plotArea!.widthDecimal,
+                range               : self.xRange,
+                plotCoordinateValue : plotPoint[CPTCoordinate.x.rawValue])
             break;
             
         case .log:
             viewPoint.x = self.viewCoordinateForViewLength(
-                layerSize.width,
-                logPlotRange:self.xRange.doublePrecision
-                PlotCoordinateValue:plotPoint[CPTCoordinate.x.rawValue])
+                viewLength         : layerSize.width,
+                range              :self.xRange,
+                plotCoordinateValue:plotPoint[CPTCoordinate.x.rawValue])
             break;
             
         case .logModulus:
             viewPoint.x = self.viewCoordinateForViewLength(
-                layerSize.width,
-                logModulusPlotRange: self.xRange,
-                doublePrecision PlotCoordinateValue: plotPoint[CPTCoordinate.x])
+                viewLength         : layerSize.width,
+                range              : self.xRange,
+                plotCoordinateValue: plotPoint[CPTCoordinate.x.rawValue])
             break;
             
         default:

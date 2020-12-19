@@ -50,7 +50,7 @@ extension CPTPlot {
                 }
                 
                 if ( max >= min ) {
-                    range = [CPTPlotRange plotRangeWithLocation:@(min) length:@(max - min)];
+                    range = [CPTPlotRange plotRangeWithLocation:@(min) length:max - min);
                 }
             }
             else {
@@ -143,22 +143,21 @@ extension CPTPlot {
 //    return unionRange;
 //}
 //
-//#pragma mark -
-//#pragma mark Data Labels
+    // MARK: -  Data Labels
 //
 ///**
 // *  @brief Marks the receiver as needing to update all data labels before the content is next drawn.
 // *  @see @link CPTPlot::relabelIndexRange: -relabelIndexRange: @endlink
 // **/
-//-(void)setNeedsRelabel
-//{
-//    self.labelIndexRange = NSMakeRange(0, self.cachedDataCount);
-//    self.needsRelabel    = YES;
-//}
-//
-///**
-// *  @brief Updates the data labels in the labelIndexRange.
-// **/
+    func setNeedsRelabel()
+    {
+        self.labelIndexRange = NSRange(location: 0, length: self.cachedDataCount);
+        self.needsRelabel    = true
+    }
+    
+/**
+ *  @brief Updates the data labels in the labelIndexRange.
+ **/
 func relabel()
 {
     guard self.needsRelabel == true else { return }
@@ -166,8 +165,8 @@ func relabel()
     self.needsRelabel = false
 
     let  nullObject         = [NSNull null];
-    Class nullClass       = [NSNull class];
-    Class annotationClass = [CPTAnnotation class];
+//    Class nullClass       = [NSNull class];
+//    Class annotationClass = [CPTAnnotation class];
 
     let dataLabelTextStyle = self.labelTextStyle;
     let dataLabelFormatter  = self.labelFormatter;
@@ -212,7 +211,7 @@ func relabel()
     id nilObject         = [CPTPlot nilData];
 
     CPTMutableNumericData *labelFieldDataCache = [self cachedNumbersForField:self.labelField];
-    CPTShadow *theShadow                       = self.labelShadow;
+    let theShadow                       = self.labelShadow;
 
     for i in indexRange.location..<maxIndex {
         let dataValue = labelFieldDataCache (sampleValue:i)
@@ -291,11 +290,11 @@ func relabel()
 // *  @param indexRange The index range needing update.
 // *  @see setNeedsRelabel()
 // **/
-//-(void)relabelIndexRange:(NSRange)indexRange
-//{
-//    self.labelIndexRange = indexRange;
-//    self.needsRelabel    = YES;
-//}
+    func relabelIndexRange(indexRange: NSRange)
+{
+    self.labelIndexRange = indexRange;
+    self.needsRelabel    = true;
+}
 
 
     func updateContentAnchorForLabel(label: CPTPlotSpaceAnnotation )
@@ -323,11 +322,6 @@ func relabel()
         }
     }
     
-    //
-    ///**
-    // *  @brief Repositions all existing label annotations.
-    // **/
-    
     func repositionAllLabelAnnotations()
     {
         let annotations = self.labelAnnotations;
@@ -342,5 +336,4 @@ func relabel()
             }
         }
     }
-    
 }

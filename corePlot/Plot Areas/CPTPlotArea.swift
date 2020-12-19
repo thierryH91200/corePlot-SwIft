@@ -11,7 +11,6 @@ class CPTPlotArea: CPTAnnotationHostLayer {
     
     let kCPTNumberOfLayers = 6; // number of primary layers to arrange
 
-    
     var touchedPoint = CGPoint(x: 0,y: 0)
     var bottomUpLayerOrder : CPTGraphLayerType?
     
@@ -77,6 +76,7 @@ class CPTPlotArea: CPTAnnotationHostLayer {
         fill               = theLayer.fill;
         touchedPoint       = theLayer.touchedPoint;
         topDownLayerOrder  = theLayer.topDownLayerOrder;
+        
         bottomUpLayerOrder = calloc(kCPTNumberOfLayers, sizeof(CPTGraphLayerType));
         memcpy(bottomUpLayerOrder, theLayer.bottomUpLayerOrder, kCPTNumberOfLayers * sizeof(CPTGraphLayerType));
         widthDecimal  = theLayer.widthDecimal;
@@ -100,18 +100,17 @@ class CPTPlotArea: CPTAnnotationHostLayer {
 
         let maskPath = self.maskingPath;
 
-        if ( maskPath ) {
+        if (( maskPath ) != nil) {
             context.beginPath();
-            CGContextAddPath(context, maskPath);
+            context.addPath(maskPath!);
             context.clip();
         }
 
         self.fill?.fillRect(rect: self.bounds, inContext:context)
-
         let theAxes = self.axisSet?.axes
 
         for axis in theAxes! {
-            axis.drawBackgroundBandsInContext(context)
+            axis.drawBackgroundBandsInContext(context: context)
         }
         for axis in theAxes {
             axis.drawBackgroundLimitsInContext(context)
@@ -121,16 +120,7 @@ class CPTPlotArea: CPTAnnotationHostLayer {
         self.masksToBounds = useMask
     }
 
-
-
-
-
-//
-//    #pragma mark -
-//    #pragma mark Layer ordering
-//
-//    /// @cond
-//
+    // MARK: -  Layer ordering
     func updateLayerOrder()
     {
         let buLayerOrder = self.bottomUpLayerOrder;
@@ -139,14 +129,14 @@ class CPTPlotArea: CPTAnnotationHostLayer {
             *(buLayerOrder++) = (CPTGraphLayerType)i;
         }
         
-        CPTNumberArray *tdLayerOrder = self.topDownLayerOrder;
+        let tdLayerOrder = self.topDownLayerOrder;
         
         if ( tdLayerOrder ) {
             buLayerOrder = self.bottomUpLayerOrder;
             
-            for ( NSUInteger layerIndex = 0; layerIndex < tdLayerOrder.count; layerIndex++ ) {
-                CPTGraphLayerType layerType = (CPTGraphLayerType)tdLayerOrder[layerIndex].intValue;
-                NSUInteger i                = kCPTNumberOfLayers - layerIndex - 1;
+            for (  layerIndex in 0..<tdLayerOrder.count ) {
+                let layerType = (CPTGraphLayerType)tdLayerOrder[layerIndex].intValue;
+                let i  = kCPTNumberOfLayers - layerIndex - 1;
                 while ( buLayerOrder[i] != layerType ) {
                     if ( i == 0 ) {
                         break;
@@ -169,52 +159,52 @@ class CPTPlotArea: CPTAnnotationHostLayer {
         self.plotGroup          = self.plotGroup;
         self.axisLabelGroup     = self.axisLabelGroup;
         self.axisTitleGroup     = self.axisTitleGroup;
-        self.updatingLayers     = NO;
+        self.updatingLayers     = false
     }
 
     func layerType()->indexForLayerType
     {
         let buLayerOrder = self.bottomUpLayerOrder;
-        Int idx                    = 0
+        var idx    = 0
 
-        for ( size_t i = 0; i < kCPTNumberOfLayers; i++ ) {
+        for  i in 0..<kCPTNumberOfLayers {
             if ( buLayerOrder[i] == layerType ) {
                 break;
             }
             switch ( buLayerOrder[i] ) {
-                case CPTGraphLayerTypeMinorGridLines:
-                    if ( self.minorGridLineGroup ) {
-                        idx++;
+            case .minorGridLines:
+                if (( self.minorGridLineGroup ) != nil) {
+                        idx += 1
                     }
                     break;
 
-                case CPTGraphLayerTypeMajorGridLines:
-                    if ( self.majorGridLineGroup ) {
-                        idx++;
+            case .majorGridLines:
+                if (( self.majorGridLineGroup ) != nil) {
+                        idx += 1
                     }
                     break;
 
-                case CPTGraphLayerTypeAxisLines:
-                    if ( self.axisSet ) {
-                        idx++;
+            case .axisLines:
+                if (( self.axisSet ) != nil) {
+                        idx += 1
                     }
                     break;
 
-                case CPTGraphLayerTypePlots:
-                    if ( self.plotGroup ) {
-                        idx++;
+            case .plots:
+                if (( self.plotGroup ) != nil) {
+                        idx += 1
                     }
                     break;
 
-                case CPTGraphLayerTypeAxisLabels:
-                    if ( self.axisLabelGroup ) {
-                        idx++;
+            case .labels:
+                if (( self.axisLabelGroup ) != nil) {
+                        idx += 1
                     }
                     break;
 
-                case CPTGraphLayerTypeAxisTitles:
-                    if ( self.axisTitleGroup ) {
-                        idx++;
+            case .titles:
+                if (( self.axisTitleGroup ) != nil) {
+                        idx += 1
                     }
                     break;
             }
@@ -232,7 +222,7 @@ class CPTPlotArea: CPTAnnotationHostLayer {
     func updateAxisSetLayersForType(layerType: CPTGraphLayerType)
     {
         var needsLayer = false
-        var theAxisSet = self.axisSet
+        let theAxisSet = self.axisSet
         
         for axis in theAxisSet!.axes {
             switch ( layerType ) {
@@ -400,7 +390,7 @@ class CPTPlotArea: CPTAnnotationHostLayer {
 //        CPTGraph *theGraph = self.graph;
 //
 //        if ( !theGraph || self.hidden ) {
-//            return NO;
+//            return false
 //        }
 //
 //        id<CPTPlotAreaDelegate> theDelegate = (id<CPTPlotAreaDelegate>)self.delegate;
@@ -422,7 +412,7 @@ class CPTPlotArea: CPTAnnotationHostLayer {
 //                    [theDelegate plotAreaTouchDown:self withEvent:event];
 //                }
 //
-//                return NO; // don't block other events in the responder chain
+//                return false // don't block other events in the responder chain
 //            }
 //        }
 //
@@ -452,7 +442,7 @@ class CPTPlotArea: CPTAnnotationHostLayer {
 //        CPTGraph *theGraph = self.graph;
 //
 //        if ( !theGraph || self.hidden ) {
-//            return NO;
+//            return false
 //        }
 //
 //        CGPoint lastPoint = self.touchedPoint;
@@ -487,7 +477,7 @@ class CPTPlotArea: CPTAnnotationHostLayer {
 //                        [theDelegate plotAreaWasSelected:self withEvent:event];
 //                    }
 //
-//                    return NO; // don't block other events in the responder chain
+//                    return false // don't block other events in the responder chain
 //                }
 //            }
 //        }
@@ -530,7 +520,7 @@ class CPTPlotArea: CPTAnnotationHostLayer {
 //                CPTGridLineGroup *gridLines = newGridLines;
 //
 //                gridLines.plotArea = self;
-//                gridLines.major    = NO;
+//                gridLines.major    = false
 //                [self insertSublayer:gridLines atIndex:[self indexForLayerType:CPTGraphLayerTypeMinorGridLines]];
 //            }
 //            [self setNeedsLayout];

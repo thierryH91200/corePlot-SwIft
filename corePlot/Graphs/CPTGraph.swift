@@ -14,7 +14,7 @@ enum CPTGraphLayerType : Int {
     case plots          ///< Plots.
     case axisLabels     ///< Axis labels.
     case axisTitles      ///< Axis titles.
-};
+}
 
 public class CPTGraph: CPTBorderedLayer {
     

@@ -26,6 +26,11 @@ protocol CPTPlotSpaceDelegate: NSObject {
 
 class CPTPlotSpace: NSObject {
     
+    let CPTPlotSpaceCoordinateKey   = "CPTPlotSpaceCoordinateKey";
+    let CPTPlotSpaceScrollingKey    = "CPTPlotSpaceScrollingKey";
+    let CPTPlotSpaceDisplacementKey = "CPTPlotSpaceDisplacementKey";
+
+    
     var categoryNames : Dictionary<Int, String >? = [:]
     weak var delegate : CPTPlotSpaceDelegate?
     var identifier : UUID?
@@ -416,9 +421,7 @@ class CPTPlotSpace: NSObject {
     //     *  @param coordinate The axis coordinate.
     //     **/
     func scaleToFitPlots( plots: [CPTPlot]?, for coordinate: CPTCoordinate) {
-        if plots?.count == 0 {
-            return
-        }
+        guard plots?.count != 0 else { return }
         
         // Determine union of ranges
         var unionRange: CPTMutablePlotRange? = nil
@@ -437,7 +440,7 @@ class CPTPlotSpace: NSObject {
         
         // Set range
         if let unionRange = unionRange {
-            if CPTDecimalEquals(unionRange.lengthDecimal, CPTDecimalFromInteger(0)) {
+            if unionRange.lengthDecimal == Int(0) {
                 unionRange.union(plotRange(for: coordinate))
             }
             setPlotRange(unionRange, for: coordinate)
@@ -492,4 +495,4 @@ class CPTPlotSpace: NSObject {
     }
 
 
-    }
+    

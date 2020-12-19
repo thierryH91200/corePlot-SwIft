@@ -34,9 +34,9 @@ class CPTPlotRange: NSObject {
 
 
 // MARK: Init/Dealloc
-    class func plotRange(withLocation loc: NSNumber, length len: NSNumber) -> Self {
-        return self.init(location: loc, length: len)
-    }
+//    class func plotRange(withLocation loc: NSNumber, length len: NSNumber) -> Self {
+//        return self.init(location: loc, length: len)
+//    }
     
 //
 //    /** @brief Creates and returns a new CPTPlotRange instance initialized with the provided location and length.
@@ -103,9 +103,9 @@ class CPTPlotRange: NSObject {
 //    {
 //        return [self initWithLocation:@0.0 length:@0.0];
 //    }
-////
+
    // MARK: - Accessors
-////
+
 ////    /// @cond
 ////
 ////    -(NSNumber *)location
@@ -285,12 +285,8 @@ class CPTPlotRange: NSObject {
 //        }
 //    }
 //
-//    /// @endcond
-//
-//    #pragma mark -
-//
-//    #pragma mark -
-//    #pragma mark Checking Containership
+
+    // MARK: -  Checking Containership
 //
 //    /** @brief Determines whether a given number is inside the range.
 //     *  @param number The number to check.
@@ -348,18 +344,18 @@ class CPTPlotRange: NSObject {
 //     *  @param otherRange The range to check.
 //     *  @return @YES if the ranges both have the same location and length.
 //     **/
-//    -(BOOL)isEqualToRange:(nullable CPTPlotRange *)otherRange
-//    {
-//        if ( otherRange ) {
-//            return CPTDecimalEquals(self.locationDecimal, otherRange.locationDecimal) &&
-//                   CPTDecimalEquals(self.lengthDecimal, otherRange.lengthDecimal) &&
-//                   (self.isInfinite == otherRange.isInfinite) &&
-//                   (self.lengthSign == otherRange.lengthSign);
-//        }
-//        else {
-//            return false
-//        }
-//    }
+    func isEqualToRange(otherRange: CPTPlotRange? )-> Bool
+    {
+        if (( otherRange ) != nil) {
+            return self.locationDecimal == otherRange?.locationDecimal &&
+                self.lengthDecimal == otherRange?.lengthDecimal &&
+                self.isInfinite == otherRange?.isInfinite &&
+                self.lengthSign == otherRange?.lengthSign
+        }
+        else {
+            return false
+        }
+    }
 //
 //    /** @brief Determines whether the receiver entirely contains another range.
 //     *  @param otherRange The range to check.

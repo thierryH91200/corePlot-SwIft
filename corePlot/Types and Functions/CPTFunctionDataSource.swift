@@ -7,39 +7,23 @@
 
 import AppKit
 
-class CPTFunctionDataSource<CPTPlotDataSource> {
+class CPTFunctionDataSource: NSObject <CPTPlotDataSource> {
+
+//    typedef double (*CPTDataSourceFunction)(double);
+//    static void *CPTFunctionDataSourceKVOContext = (void *)&CPTFunctionDataSourceKVOContext;
+
 
     
-//    /** @property nullable CPTDataSourceFunction dataSourceFunction
-//     *  @brief The function used to generate plot data.
-//     **/
-//    @synthesize dataSourceFunction;
-//
-//    /** @property nullable CPTDataSourceBlock dataSourceBlock
-//     *  @brief The Objective-C block used to generate plot data.
-//     **/
-//    @synthesize dataSourceBlock;
-//
-//    /** @property nonnull CPTPlot *dataPlot
-//     *  @brief The plot that will display the function values. Must be an instance of CPTScatterPlot.
-//     **/
-//    @synthesize dataPlot;
-//
-//    /** @property CGFloat resolution
-//     *  @brief The maximum number of pixels between data points on the plot. Default is @num{1.0}.
-//     **/
-//    @synthesize resolution;
-//
-//    /** @property nullable CPTPlotRange *dataRange
-//     *  @brief The maximum range of x-values that will be plotted. If @nil (the default), the function will be plotted for all visible x-values.
-//     **/
-//    @synthesize dataRange;
-//
-//    @synthesize cachedStep;
-//    @synthesize cachedCount;
-//    @synthesize dataCount;
-//    @synthesize cachedPlotRange;
-//
+    var  dataSourceFunction: CPTDataSourceFunction
+    var dataSourceBlock : CPTDataSourceBlock?
+    var dataPlot : CPTPlot?
+    var dataRange:  CPTPlotRange?
+
+    var cachedStep = 0.0
+    var cachedCount = 0
+    var dataCount = 0;
+    var cachedPlotRange : CPTMutablePlotRange
+
     
     
 // MARK: - Init/Dealloc
@@ -71,12 +55,11 @@ class CPTFunctionDataSource<CPTPlotDataSource> {
 //     **/
     init(plot: CPTPlot , withFunction function: CPTDataSourceFunction)
     {
-        if ((self = [self initForPlot:plot])) {
-            dataSourceFunction = function;
-
-            plot.dataSource = self
-        }
+        self.init(plot:plot)
+        dataSourceFunction = function
+        plot.dataSource = self
     }
+    
 //
 //    /** @brief Initializes a newly allocated CPTFunctionDataSource object with the provided block and plot.
 //     *  @param plot The plot that will display the function values.
@@ -93,9 +76,6 @@ class CPTFunctionDataSource<CPTPlotDataSource> {
 //        }
 //        return self;
 //    }
-//
-//    /// @cond
-//
     init(plot: CPTPlot )
     {
         super.init()
@@ -111,18 +91,18 @@ class CPTFunctionDataSource<CPTPlotDataSource> {
             
             plot.cachePrecision = CPTPlotCachePrecisionDouble;
             
-        NotificationCenter.defaultCenter.receive(
+        NotificationCenter.receive(
             instance: self,
-            selector:#selector(plotBoundsChanged),
             name:.CPTLayerBoundsDidChangeNotification,
-            selector:plot)
+            selector:#selector(plotBoundsChanged),
+            object:plot)
         
         plot.addObserver(
             self,
              forKeyPath:  "plotSpace",
-             options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld | NSKeyValueObservingOptionInitial,
+            options: NSKeyValueObservingOptions.new | NSKeyValueObservingOptions.old | NSKeyValueObservingOptions.initial,
              context:CPTFunctionDataSourceKVOContext)
-        }
+        
     }
 
 
@@ -138,77 +118,69 @@ class CPTFunctionDataSource<CPTPlotDataSource> {
 //    /// @endcond
 //
 //    #pragma mark -
-//    #pragma mark Accessors
-//
-//    /// @cond
-//
-//    -(void)setResolution:(CGFloat)newResolution
-//    {
-//        NSParameterAssert(newResolution > CGFloat(0.0));
-//
-//        if ( newResolution != resolution ) {
-//            resolution = newResolution;
-//
-//            self.cachedCount     = 0;
-//            self.cachedPlotRange = nil;
-//
-//            [self plotBoundsChanged];
-//        }
-//    }
-//
-//    -(void)setDataRange:(nullable CPTPlotRange *)newRange
-//    {
-//        if ( newRange != dataRange ) {
-//            dataRange = newRange;
-//
-//            if ( ![dataRange containsRange:self.cachedPlotRange] ) {
-//                self.cachedCount     = 0;
-//                self.cachedPlotRange = nil;
-//
-//                [self plotBoundsChanged];
-//            }
-//        }
-//    }
-//
-//    /// @endcond
-//
-//    #pragma mark -
-//    #pragma mark Notifications
+// MARK: - Accessors
+    var _resolution = CGFloat(0)
+    var resolution : CGFloat {
+        get { return _resolution   }
+        set {
+            if ( newValue != _resolution ) {
+                _resolution = newValue;
+                self.cachedCount     = 0
+                self.cachedPlotRange = nil;
+                
+                self.plotBoundsChanged()
+            }
+        }
+    }
+
+    func setDataRange(newRange: CPTPlotRange )
+    {
+        if ( newRange != dataRange ) {
+            dataRange = newRange;
+
+            if dataRange.containsRange(self.cachedPlotRange ) == false {
+                self.cachedCount     = 0;
+                self.cachedPlotRange = nil;
+
+                [self plotBoundsChanged];
+            }
+        }
+    }
+
+// MARK: - Notifications
 //
 //    /// @cond
 //
 //    /** @internal
 //     *  @brief Reloads the plot with more closely spaced data points when needed.
 //     **/
-//    -(void)plotBoundsChanged
-//    {
-//        CPTPlot *plot = self.dataPlot;
-//
-//        if ( plot ) {
-//            CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)plot.plotSpace;
-//
-//            if ( plotSpace ) {
-//                CGFloat width = plot.bounds.size.width;
-//                if ( width > CGFloat(0.0)) {
-//                    NSUInteger count = (NSUInteger)lrint(ceil(width / self.resolution)) + 1;
-//
-//                    if ( count > self.cachedCount ) {
-//                        self.dataCount   = count;
-//                        self.cachedCount = count;
-//
-//                        self.cachedStep = plotSpace.xRange.lengthDouble / count;
-//
-//                        [plot reloadData];
-//                    }
-//                }
-//                else {
-//                    self.dataCount   = 0;
-//                    self.cachedCount = 0;
-//                    self.cachedStep  = 0.0;
-//                }
-//            }
-//        }
-//    }
+    @objc func plotBoundsChanged()
+    {
+        let plot = self.dataPlot;
+        
+        if (( plot ) != nil) {
+            let plotSpace = plot?.plotSpace
+            
+            if (( plotSpace ) != nil) {
+                let width = plot?.bounds.size.width
+                if ( width! > CGFloat(0.0)) {
+                    let count = Int(lrint(ceil(Double(CGFloat(width!) / self.resolution))) + 1)
+                    
+                    if ( count > self.cachedCount ) {
+                        self.dataCount   = count;
+                        self.cachedCount = count;
+                        self.cachedStep = Double(plotSpace.xRange.lengthDouble / count);
+                        plot?.reloadData()
+                    }
+                }
+                else {
+                    self.dataCount   = 0;
+                    self.cachedCount = 0;
+                    self.cachedStep  = 0.0;
+                }
+            }
+        }
+    }
 //
 //    /** @internal
 //     *  @brief Adds new data points as needed while scrolling.
@@ -290,15 +262,11 @@ class CPTFunctionDataSource<CPTPlotDataSource> {
 //            }
 //        }
 //    }
-//
-//    /// @endcond
-//
-//    #pragma mark -
-//    #pragma mark KVO Methods
-//
-//    /// @cond
-//
-//func observeValueForKeyPath(keyPath: String, ofObject object: Any, change:(NSDictionary<NSString *, CPTPlotSpace *> *)change context:(nullable void *)
+
+    
+    // MARK: - KVO Methods
+
+    func observeValueForKeyPath(keyPath: String, ofObject object: Any, change:(NSDictionary<NSString *, CPTPlotSpace *> *)change context:(nullable void *)
                                 
     func hello()
     {
@@ -328,22 +296,14 @@ class CPTFunctionDataSource<CPTPlotDataSource> {
             super.observeValueForKeyPath(keyPath, ofObject:object, change:change, context:context)
         }
     }
-//
-//    /// @endcond
-//
-//    #pragma mark -
-//    #pragma mark CPTScatterPlotDataSource Methods
-//
-//    /// @cond
-//
+    // MARK: - CPTScatterPlotDataSource Methods
 func numberOfRecordsForPlot(plot: CPTPlot )-> Int
 {
     var count = 0;
     
-    if ( [plot isEqual:self.dataPlot] ) {
-        count = self.dataCount;
+    if plot.isEqual(self.dataPlot ) {
+        count = self.dataCount
     }
-    
     return count;
 }
 

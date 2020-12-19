@@ -369,7 +369,7 @@ extension CPTPlot {
                             }
                             break;
                             
-                        case CPTDataOrderColumnsFirst:
+                        case .columnsFirst:
                             for ( NSUInteger fieldNum = 0; fieldNum < fieldCount; fieldNum++ ) {
                                 const void *samples = [data samplePointerAtIndex:0, fieldNum];
                                 NSData *tempData    = [[NSData alloc] initWithBytes:samples

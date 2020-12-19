@@ -58,6 +58,7 @@
 		03384E4A255D12A4003C5BD3 /* CPTMutableLineStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03384E49255D12A4003C5BD3 /* CPTMutableLineStyle.swift */; };
 		033BF56B2572D1DF003ECB08 /* CPTAnimationTimingFunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 033BF56A2572D1DF003ECB08 /* CPTAnimationTimingFunction.swift */; };
 		03411EC725646EA300CE639F /* CPTImage ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03411EC625646EA300CE639F /* CPTImage ext.swift */; };
+		03432FF0258E576A0034FE12 /* CPTTextStylePlatformSpecific.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03432FEF258E576A0034FE12 /* CPTTextStylePlatformSpecific.swift */; };
 		034C436625679565003FAD33 /* CPTLayer ext1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034C436525679565003FAD33 /* CPTLayer ext1.swift */; };
 		034D8D43257E8C7D0040151E /* CPTAxis autoMajor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034D8D42257E8C7D0040151E /* CPTAxis autoMajor.swift */; };
 		03525995256C185500FEA155 /* CPTLayer accessors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03525994256C185500FEA155 /* CPTLayer accessors.swift */; };
@@ -175,6 +176,7 @@
 		03384E49255D12A4003C5BD3 /* CPTMutableLineStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTMutableLineStyle.swift; sourceTree = "<group>"; };
 		033BF56A2572D1DF003ECB08 /* CPTAnimationTimingFunction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTAnimationTimingFunction.swift; sourceTree = "<group>"; };
 		03411EC625646EA300CE639F /* CPTImage ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTImage ext.swift"; sourceTree = "<group>"; };
+		03432FEF258E576A0034FE12 /* CPTTextStylePlatformSpecific.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTTextStylePlatformSpecific.swift; sourceTree = "<group>"; };
 		034C436525679565003FAD33 /* CPTLayer ext1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTLayer ext1.swift"; sourceTree = "<group>"; };
 		034D8D42257E8C7D0040151E /* CPTAxis autoMajor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTAxis autoMajor.swift"; sourceTree = "<group>"; };
 		03525994256C185500FEA155 /* CPTLayer accessors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTLayer accessors.swift"; sourceTree = "<group>"; };
@@ -264,6 +266,7 @@
 		032573BF2582751C00B79E3B /* Mac Specific */ = {
 			isa = PBXGroup;
 			children = (
+				03432FEF258E576A0034FE12 /* CPTTextStylePlatformSpecific.swift */,
 			);
 			name = "Mac Specific";
 			path = Legends;
@@ -786,6 +789,7 @@
 				0332628525738C0E00224856 /* CPTAnimationPlotRangePeriod.swift in Sources */,
 				0320B014255C8CA400D32BF9 /* CPTPlot.swift in Sources */,
 				03A9CCEA255957510096853D /* CPTLayerAnnotation.swift in Sources */,
+				03432FF0258E576A0034FE12 /* CPTTextStylePlatformSpecific.swift in Sources */,
 				0320B008255C8A2800D32BF9 /* CPTLimitBand.swift in Sources */,
 				03A9CD032559AA410096853D /* CPTFillImage.swift in Sources */,
 				0332627525738B1D00224856 /* CPTAnimationCGSizePeriod.swift in Sources */,

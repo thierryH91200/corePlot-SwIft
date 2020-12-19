@@ -91,8 +91,7 @@ enum CPTAlignment : Int {
 
 typealias CPTEdgeInsets = NSEdgeInsets
 
-let CPTStringDrawingOptions = DrawingOptions.UsesLineFragmentOrigin | DrawingOptions.UsesFontLeading |
-    DrawingOptions.truncatesLastVisibleLine
+let CPTStringDrawingOptions : [NSString.DrawingOptions] = [.usesLineFragmentOrigin , .usesFontLeading , .truncatesLastVisibleLine]
 
 
 /**

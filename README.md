@@ -35,6 +35,14 @@ corePlot/Source/Animation/CPTAnimationCGFloatPeriod
 
 ## class CPTColor
 
+## KVO
+https://nalexn.github.io/kvo-guide-for-key-value-observing/
+CPTFunctionDataSource/observeValueForKeyPath
+
+
+Swift has inherited the support for the KVO from Objective-C, but unlike the latter, KVO is disabled in Swift classes by default.
+
+
 ## class CPTMutablePlotRange
 
 // https://izziswift.com/what-is-the-swift-equivalent-of-respondstoselector/
@@ -58,11 +66,11 @@ func pointingDeviceDownEven(event: CPTNativeEvent, atPoint interactionPoint:CGPo
     if ( numbers ) {
     
     
-    
-    
 
 
 # Add change 
+
+
 
 number errors = 270
 

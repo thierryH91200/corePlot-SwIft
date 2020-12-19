@@ -13,7 +13,7 @@
 //    }
 //}
 
-import Cocoa
+import AppKit
 
 enum CPTLineCapType: Int {
     case none     ///< No line cap.
@@ -137,7 +137,6 @@ class CPTLineCap: NSObject {
         return lineCap
     }
     
-    
     func diamondPlotLineCap()-> CPTLineCap {
         let lineCap = CPTLineCap()
         
@@ -187,8 +186,7 @@ class CPTLineCap: NSObject {
         lineCap.customLineCapPath = aPath
         return lineCap;
     }
-    
-    
+
     func newLineCapPath() ->CGPath
     {
         var dx = CGFloat(0)
@@ -297,9 +295,6 @@ class CPTLineCap: NSObject {
                 
                 var scaleTransform = CGAffineTransform.identity.scaledBy(x: dx1, y: dy1);
                 scaleTransform = scaleTransform.concatenating(CGAffineTransform(translationX: -halfSize.width, y: -halfSize.height))
-                
-                
-                
                 
                 CGPathAddPath(lineCapPath, &scaleTransform, customPath);
             }

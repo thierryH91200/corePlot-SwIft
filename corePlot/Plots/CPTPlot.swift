@@ -47,14 +47,11 @@ public class CPTPlot: CPTAnnotationHostLayer {
     var plotSpace : CPTPlotSpace?
     var adjustLabelAnchors = false
     
-    var showLabels = false
     var labelOffset = CGFloat (0)
     
-    var labelRotation = CGFloat(0)
     var labelField : CPTTextStyle?
     var labelTextStyle: CPTTextStyle?
     var labelFormatter = Formatter()
-    var labelShadow : CPTShadow?
     
     var dataNeedsReloading = false
 //    var cachedData :  Dictionary<String, Any> = [:]
@@ -68,19 +65,64 @@ public class CPTPlot: CPTAnnotationHostLayer {
     //    var dataLabels = [CPTLayer]()
     var drawLegendSwatchDecoration = false
     
-    var pointingDeviceDownLabelIndex = 0 ;
+    var pointingDeviceDownLabelIndex = 0
     var cachedDataCount = 0
-    var inTitleUpdate = false ;
+    var inTitleUpdate = false
     
     var cachePrecision = CPTPlotCachePrecision.auto
     
     var fieldIdentifiers = [Int]()
     
-    enum CPTPlotCachePrecision: Int {
+    var _labelRotation = CGFloat(0)
+    var labelRotation : CGFloat {
+        get { return _labelRotation  }
+        set {
+            if ( newValue != _labelRotation ) {
+                _labelRotation = newValue
+                
+                for  label in self.labelAnnotations  {
+                    label.rotation = labelRotation;
+                    self.updateContentAnchorForLabel(label: label as! CPTPlotSpaceAnnotation)
+                }
+            }
+        }
+    }
+
+    var _labelShadow : CPTShadow?
+    var labelShadow : CPTShadow {
+        get { return _labelShadow!}
+        set {
+            if ( newValue != _labelShadow ) {
+                _labelShadow = newValue;
+    
+                for label in self.labelAnnotations  {
+                    label.contentLayer?.shadow = labelShadow
+                }
+            }
+        }
+    }
+
+    var _showLabels = false
+    var showLabels : Bool {
+        get {return _showLabels}
+        set {
+            if ( newValue != _showLabels ) {
+                _showLabels = newValue;
+                if  _showLabels == true {
+                    self.setNeedsLayout()
+                }
+                //                self.needsRelabel()
+            }
+        }
+    }
+    
+    enum _CPTPlotCachePrecision: Int {
         case auto
         case double
         case decimal
     }
+    typealias CPTPlotCachePrecision = _CPTPlotCachePrecision
+
     
     override init()
     {

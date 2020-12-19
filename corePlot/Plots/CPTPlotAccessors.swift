@@ -63,132 +63,89 @@ extension CPTPlot {
                 }
             }
         }
-    //
-    //    -(void)setDataSource:(nullable id<CPTPlotDataSource>)newSource
-    //    {
-    //        if ( newSource != dataSource ) {
-    //            dataSource = newSource;
-    //            [self setDataNeedsReloading];
-    //        }
-    //    }
-    //
-    //    -(void)setDataNeedsReloading:(BOOL)newDataNeedsReloading
-    //    {
-    //        if ( newDataNeedsReloading != dataNeedsReloading ) {
-    //            dataNeedsReloading = newDataNeedsReloading;
-    //            if ( dataNeedsReloading ) {
-    //                [self setNeedsDisplay];
-    //            }
-    //        }
-    //    }
-    //
-    //    -(nullable CPTPlotArea *)plotArea
-    //    {
-    //        CPTGraph *theGraph = self.graph;
-    //
-    //        return theGraph.plotAreaFrame.plotArea;
-    //    }
-    //
-    //    -(void)setNeedsRelabel:(BOOL)newNeedsRelabel
-    //    {
-    //        if ( newNeedsRelabel != needsRelabel ) {
-    //            needsRelabel = newNeedsRelabel;
-    //            if ( needsRelabel ) {
-    //                [self setNeedsLayout];
-    //            }
-    //        }
-    //    }
-    //
-    //    -(void)setShowLabels:(BOOL)newShowLabels
-    //    {
-    //        if ( newShowLabels != showLabels ) {
-    //            showLabels = newShowLabels;
-    //            if ( showLabels ) {
-    //                [self setNeedsLayout];
-    //            }
-    //            [self setNeedsRelabel];
-    //        }
-    //    }
-    //
-    //    -(void)setLabelTextStyle:(nullable CPTTextStyle *)newStyle
-    //    {
-    //        if ( newStyle != labelTextStyle ) {
-    //            labelTextStyle = [newStyle copy];
-    //
-    //            if ( labelTextStyle && !self.labelFormatter ) {
-    //                NSNumberFormatter *newFormatter = [[NSNumberFormatter alloc] init];
-    //                newFormatter.minimumIntegerDigits  = 1;
-    //                newFormatter.maximumFractionDigits = 1;
-    //                newFormatter.minimumFractionDigits = 1;
-    //                self.labelFormatter                = newFormatter;
-    //            }
-    //
-    //            self.needsRelabel = true
-    //        }
-    //    }
-    //
-    //    -(void)setLabelOffset:(CGFloat)newOffset
-    //    {
-    //        if ( newOffset != labelOffset ) {
-    //            labelOffset = newOffset;
-    //            [self repositionAllLabelAnnotations];
-    //        }
-    //    }
-    //
-    //    -(void)setLabelRotation:(CGFloat)newRotation
-    //    {
-    //        if ( newRotation != labelRotation ) {
-    //            labelRotation = newRotation;
-    //
-    //            Class annotationClass = [CPTAnnotation class];
-    //            for ( CPTPlotSpaceAnnotation *label in self.labelAnnotations ) {
-    //                if ( [label isKindOfClass:annotationClass] ) {
-    //                    label.rotation = labelRotation;
-    //                    [self updateContentAnchorForLabel:label];
-    //                }
-    //            }
-    //        }
-    //    }
-    //
+    
+//    func setDataSource(newSource: CPTPlotDataSource)
+//        {
+//            if ( newSource != dataSource ) {
+//                dataSource = newSource;
+//                self.setDataNeedsReloading()
+//            }
+//        }
+    
+    func setDataNeedsReloading(newDataNeedsReloading: Bool)
+        {
+            if ( newDataNeedsReloading != dataNeedsReloading ) {
+                dataNeedsReloading = newDataNeedsReloading;
+                if ( dataNeedsReloading ) {
+                    self.setNeedsDisplay()
+                }
+            }
+        }
+    
+        func plotArea() -> CPTPlotArea
+        {
+            let theGraph = self.graph
+            return theGraph!.plotAreaFrame.plotArea!
+        }
+    
+    
+    func setNeedsRelabel(newNeedsRelabel: Bool)
+    {
+        if ( newNeedsRelabel != needsRelabel ) {
+            needsRelabel = newNeedsRelabel;
+            if ( needsRelabel ) {
+                self.setNeedsLayout()
+            }
+        }
+    }
+    
+    func setLabelTextStyle(newStyle: CPTTextStyle)
+    {
+        if ( newStyle != labelTextStyle ) {
+            labelTextStyle = newStyle
+            
+            if ( labelTextStyle != nil)  {
+                let newFormatter = NumberFormatter()
+                newFormatter.minimumIntegerDigits  = 1
+                newFormatter.maximumFractionDigits = 1
+                newFormatter.minimumFractionDigits = 1
+                self.labelFormatter    = newFormatter
+            }
+            self.needsRelabel = true
+        }
+    }
+    
+    func setLabelOffset(newOffset: CGFloat)
+    {
+        if ( newOffset != labelOffset ) {
+            labelOffset = newOffset;
+            self.repositionAllLabelAnnotations()
+        }
+    }
+    
     func setLabel(_ newTickLabelFormatter: Formatter?) {
         if newTickLabelFormatter != labelFormatter {
             labelFormatter = newTickLabelFormatter!
             needsRelabel = true
         }
     }
-    
-    
-//        -(void)setLabelShadow:(nullable CPTShadow *)newLabelShadow
-//        {
-//            if ( newLabelShadow != labelShadow ) {
-//                labelShadow = newLabelShadow;
-//    
-//                Class annotationClass = [CPTAnnotation class];
-//                for ( CPTAnnotation *label in self.labelAnnotations ) {
-//                    if ( [label isKindOfClass:annotationClass] ) {
-//                        label.contentLayer.shadow = labelShadow;
-//                    }
-//                }
-//            }
-//        }
-    
-    
+
     func setCachePrecision(_ newPrecision: CPTPlotCachePrecision) {
-    if newPrecision != cachePrecision {
-        cachePrecision = newPrecision
-        switch cachePrecision {
-        case .auto:
+        if newPrecision != cachePrecision {
+            cachePrecision = newPrecision
+            switch newPrecision {
+            case .auto:
                 // don't change data already in the cache
                 break
-        case .double:
-                setCachedData(doubleDataType)
-        case .decimal:
-                setCachedData(decimalDataType)
+            case .double:
+                setCachedDataType(doubleDataType())
+            case .decimal:
+                setCachedDataType(decimalDataType())
             default:
                 break
+            }
         }
     }
-}
     
     func setAlignsPointsToPixels(newAlignsPointsToPixels : Bool){
         if ( newAlignsPointsToPixels != alignsPointsToPixels ) {
