@@ -330,7 +330,9 @@ public class CPTLayer : CALayer
                 self.outerBorderPath = nil
                 self.innerBorderPath = nil
                 
-                NotificationCenter.default.post(name: .CPTLayerBoundsDidChangeNotification , object:self)
+                NotificationCenter.send(
+                    name: .CPTLayerBoundsDidChangeNotification ,
+                    object:self)
             }
         }
     }

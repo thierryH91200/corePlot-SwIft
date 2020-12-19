@@ -16,9 +16,7 @@ enum CPTGraphLayerType : Int {
     case axisTitles      ///< Axis titles.
 };
 
-
-
-class CPTGraph: CPTBorderedLayer {
+public class CPTGraph: CPTBorderedLayer {
     
     // MARK: Title
     

@@ -494,8 +494,6 @@
             selector:#selector(legendNeedsReloadEntries(_:)))
     }
     
-    
-    
     //
     //    /** @brief Add a plot to the legend at the given index in the plot array.
     //     *  @param plot The plot.
@@ -562,32 +560,31 @@
     //     *  @param plot The plot to remove.
     //     **/
     func removePlot(plot: CPTPlot)
-        {
+    {
         if ( self.plots.contains(plot) ) {
-//                [self.plots removeObjectIdenticalTo:plot];
+            //                [self.plots removeObjectIdenticalTo:plot];
             self.removeLegendEntriesForPlot(plot: plot)
-                self.layoutChanged = true
-    
-    
+            self.layoutChanged = true
+            
             NotificationCenter.remove(
                 instance: self,
                 name: .CPTLegendNeedsRedrawForPlotNotification,
-                object:plot)
+                object: plot)
             
             NotificationCenter.remove(
                 instance: self,
                 name: .CPTLegendNeedsLayoutForPlotNotification,
-                object:plot)
+                object: plot)
             
             NotificationCenter.remove(
                 instance: self,
                 name: .CPTLegendNeedsReloadEntriesForPlotNotification,
-                object:plot)
-            }
-            else {
-                print("CPTException format:@Tried to remove CPTPlot which did not exist.")
-            }
+                object: plot)
         }
+        else {
+            print("CPTException format:@Tried to remove CPTPlot which did not exist.")
+        }
+    }
     //
     //    /** @brief Remove a plot from the legend.
     //     *  @param identifier The identifier of the plot to remove.
@@ -597,15 +594,15 @@
         let plotToRemove = self.plotWithIdentifier(identifier: identifier)
         
         if (( plotToRemove ) != nil) {
-            self.plots.removeObjectIdenticalTo(plotToRemove)
+//            self.plots.removeObjectIdenticalTo(plotToRemove)
+            self.plots.removeObject(plotToRemove!)
             self.removeLegendEntriesForPlot(plot: plotToRemove!)
             self.layoutChanged = true
             
-            
             NotificationCenter.remove(
                 instance: self,
-                name:.CPTLegendNeedsRedrawForPlotNotification,
-                object:plotToRemove)
+                name: .CPTLegendNeedsRedrawForPlotNotification,
+                object: plotToRemove)
             
             NotificationCenter.remove(
                 instance: self,

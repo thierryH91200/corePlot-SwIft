@@ -98,7 +98,7 @@ let CPTStringDrawingOptions = DrawingOptions.UsesLineFragmentOrigin | DrawingOpt
 /**
  *  @brief An array of numbers.
  **/
-typealias CPTNumberArray = [NSNumber]
+typealias CPTNumberArray = [CGFloat]
 typealias CPTMutableNumberArray = [NSNumber]
 typealias CPTNumberSet = Set<NSNumber>
 typealias CPTFloatSet = Set<CGFloat>

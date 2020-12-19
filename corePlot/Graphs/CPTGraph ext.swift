@@ -264,34 +264,28 @@ extension CPTGraph {
             selector:#selector(plotSpaceMappingDidChange(_:)),
             object:space)
         
-        NotificationCenter.default.post(
-            self,
+        NotificationCenter.send(
             name: .CPTGraphDidAddPlotSpaceNotification,
             object: self)
     }
     
-  
-    
-    
-    
-    
     /** @brief Remove a plot space from the graph.
      *  @param plotSpace The plot space.
      **/
-    func removePlotSpace(plotSpace: CPTPlotSpace )
+    func removePlotSpace(plotSpace: CPTPlotSpace? )
     {
-        if ( plotSpace ) {
+        if (( plotSpace ) != nil) {
             let thePlotSpace = plotSpace
             
-            if self.plotSpaces.contains(thePlotSpace ) {
+            if self.plotSpaces.contains(thePlotSpace! ) {
                 NotificationCenter.remove(
                     instance: self,
-                    name: .CPTPlotSpaceCoordinateMappingDidChangeNotification,
+                    name: Notification.Name.CPTPlotSpaceCoordinateMappingDidChangeNotification,
                     object:thePlotSpace)
                 
                 // Remove space
-                thePlotSpace.graph = nil
-                self.plotSpaces.remove(thePlotSpace)
+                thePlotSpace?.graph = nil
+                self.plotSpaces.removeObject(thePlotSpace!)
                 
                 // Update axes that referenced space
                 for axis in self.axisSet().axes {
@@ -299,10 +293,12 @@ extension CPTGraph {
                         axis.plotSpace = nil
                     }
                 }
-                
+                let user = Notification.Name.CPTPlotSpaceCoordinateMappingDidChangeNotification.rawValue
+                let userInfo = [user: thePlotSpace as Any]
                 NotificationCenter.send(
-                    .CPTGraphDidRemovePlotSpaceNotification)
-                
+                    name: .CPTGraphDidRemovePlotSpaceNotification,
+                    object:self,
+                    userInfo: userInfo)
             }
             else {
                 print("Tried to remove CPTPlotSpace which did not exist.")
@@ -314,7 +310,7 @@ extension CPTGraph {
     
     /// @cond
     
-    @objc func plotSpaceMappingDidChange(_ notif: NSNotification )
+    @objc func plotSpaceMappingDidChange(_ notif: Notification )
     {
         let plotSpace        = notif.object as! CPTPlotSpace
         var backgroundBandsNeedRedraw = false;
@@ -485,9 +481,9 @@ extension CPTGraph {
         }
     }
     
-//    func topDownLayerOrder() -> CPTNumberArray? {
-//        return plotAreaFrame.plotArea.topDownLayerOrder()
-//    }
+    //    func topDownLayerOrder() -> CPTNumberArray? {
+    //        return plotAreaFrame.plotArea.topDownLayerOrder()
+    //    }
     
     func setTopDownLayerOrder(_ newArray: [CGFloat]?) {
         plotAreaFrame.plotArea?.topDownLayerOrder = newArray!
@@ -943,29 +939,50 @@ extension CPTGraph {
             return super.scrollWheelEvent(event :event, fromPoint:fromPoint, toPoint:toPoint)
         }
     }
-
-
-//    #pragma mark -
-//
-//    @implementation CPTGraph(AbstractFactoryMethods)
-//
-//    /** @brief Creates a new plot space for the graph.
-//     *  @return A new plot space.
-//     **/
-//    -(nullable CPTPlotSpace *)newPlotSpace
-//    {
-//        return nil;
-//    }
-//
-//    /** @brief Creates a new axis set for the graph.
-//     *  @return A new axis set.
-//     **/
-//    -(nullable CPTAxisSet *)newAxisSet
-//    {
-//        return nil;
-//    }
-//
-//    @end
-
-//}
+    
+    
+    //    #pragma mark -
+    //
+    //    @implementation CPTGraph(AbstractFactoryMethods)
+    //
+    //    /** @brief Creates a new plot space for the graph.
+    //     *  @return A new plot space.
+    //     **/
+    //    -(nullable CPTPlotSpace *)newPlotSpace
+    //    {
+    //        return nil;
+    //    }
+    //
+    //    /** @brief Creates a new axis set for the graph.
+    //     *  @return A new axis set.
+    //     **/
+    //    -(nullable CPTAxisSet *)newAxisSet
+    //    {
+    //        return nil;
+    //    }
+    //
+    //    @end
+    
+    //}
 }
+
+extension Array where Element: Equatable {
+  
+  mutating func removeEqualItems(_ item: Element) {
+    self = self.filter { (currentItem: Element) -> Bool in
+      return currentItem != item
+    }
+  }
+
+  mutating func removeObject(_ item: Element) {
+    guard var currentItem = self.first else { return }
+    var index = 0
+    while currentItem != item {
+      index += 1
+      currentItem = self[index]
+    }
+    self.remove(at: index)
+  }
+  
+}
+

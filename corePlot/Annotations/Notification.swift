@@ -19,7 +19,7 @@ public extension Notification.Name {
 
     static let CPTPlotSpaceCoordinateMappingDidChangeNotification =  Notification.Name( "CPTPlotSpaceCoordinateMappingDidChangeNotification")
 
-    static let CPTLayerBoundsDidChangeNotification           = Notification.Name( "CPTLayerBoundsDidChangeNotification")
+    static let CPTLayerBoundsDidChangeNotification     = Notification.Name( "CPTLayerBoundsDidChangeNotification")
     static let CoordinateMappingDidChangeNotification  = Notification.Name( "CoordinateMappingDidChangeNotification")
     static let boundsDidChange  = Notification.Name( "boundsDidChange")
     
@@ -33,16 +33,16 @@ public extension Notification.Name {
 
     static let selectionDidChangeTable   = NSTableView.selectionDidChangeNotification
     static let selectionDidChangeOutLine = NSOutlineView.selectionDidChangeNotification
-//    static let selectionDidChangeComboBox = NSComboBox.selectionDidChangeNotification
 }
 
 extension NotificationCenter {
     
     // Send(Post) Notification
-    static func send(_ key: Notification.Name , object :Any? = nil) {
+    static func send( name: Notification.Name , object :Any? = nil, userInfo : [AnyHashable : Any]? = nil ) {
         self.default.post(
-            name: key,
-            object: object
+            name: name,
+            object: object,
+            userInfo : userInfo
         )
     }
     
@@ -65,7 +65,6 @@ extension NotificationCenter {
         )
     }
 }
-
 
 public extension NSBindingName {
     

@@ -27,11 +27,11 @@ class CPTLayerAnnotation: CPTAnnotation {
         yConstraints = nil
         self.setConstraints()
         
-        NotificationCenter.default.addObserver(
-            self,
-             selector:#selector(positionContentLayer),
-             name: .CPTLayerBoundsDidChangeNotification,
-               object:newAnchorLayer)
+        NotificationCenter.receive(
+            instance: self,
+            name: .CPTLayerBoundsDidChangeNotification,
+            selector:#selector(positionContentLayer),
+            object:newAnchorLayer)
     }
 
     @objc override func positionContentLayer()   {

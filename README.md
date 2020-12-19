@@ -20,6 +20,8 @@ https://github.com/core-plot/core-plot
 
 Core Plot is a 2D plotting framework for macOS, iOS, and tvOS. It is highly customizable and capable of drawing many types of plots. See the Example Graphs wiki page and the example applications for examples of some of its capabilities.
 
+https://i.stack.imgur.com/3pKlb.png
+
 
 
 # problem encountered
@@ -35,6 +37,16 @@ corePlot/Source/Animation/CPTAnimationCGFloatPeriod
 
 ## class CPTMutablePlotRange
 
+// https://izziswift.com/what-is-the-swift-equivalent-of-respondstoselector/
+func pointingDeviceDownEven(event: CPTNativeEvent, atPoint interactionPoint:CGPoint)-> Bool
+{
+    let theDelegate = self.delegate
+    guard let handledByDelegate = theDelegate?.plotSpace(space: self, shouldHandlePointingDeviceDownEvent: event, atPoint: interactionPoint)
+    else { return false}
+    return handledByDelegate;
+}
+
+
 
 -(void)cacheNumbers:(nullable id)numbers forField:(NSUInteger)fieldEnum
 {
@@ -44,6 +56,10 @@ corePlot/Source/Animation/CPTAnimationCGFloatPeriod
     CPTPlotSpace *thePlotSpace = self.plotSpace;
 
     if ( numbers ) {
+    
+    
+    
+    
 
 
 # Add change 

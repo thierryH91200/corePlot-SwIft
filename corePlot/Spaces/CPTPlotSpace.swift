@@ -24,7 +24,6 @@ protocol CPTPlotSpaceDelegate: NSObject {
     func plotSpace(space: CPTPlotSpace, shouldHandleScrollWheelEvent event: CPTNativeEvent, fromPoint:CGPoint, toPoint:CGPoint)-> Bool
 }
 
-
 class CPTPlotSpace: NSObject {
     
     var categoryNames : Dictionary<Int, String >? = [:]
@@ -46,14 +45,6 @@ class CPTPlotSpace: NSObject {
     }
     
     // MARK: - Categorical Data
-    //
-    //    /// @cond
-    //
-    //    /** @internal
-    //     *  @brief Gets the ordered set of categories for the given coordinate, creating it if necessary.
-    //     *  @param coordinate The axis coordinate.
-    //     *  @return The ordered set of categories for the given coordinate.
-    //     */
     func orderedSet(for coordinate: CPTCoordinate) -> [String] {
         var names = categoryNames
         
@@ -96,7 +87,7 @@ class CPTPlotSpace: NSObject {
     {
         let names = self.categoryNames;
         
-        if ( !names ) {
+        if ( (names == nil) ) {
             names = [String]()
             
             self.categoryNames = names;
@@ -114,8 +105,14 @@ class CPTPlotSpace: NSObject {
         }
     }
     //
+    
+    func removeObject(list: [CPTPlotSpace], element: CPTPlotSpace) {
+        var list = list
+        list = list.filter { $0 !== element }
+    }
+    
     //    /**
-    //     *  @brief Remove all categories for every coordinate.
+    // brief Remove all categories for every coordinate.
     //     */
     func removeAllCategories()
     {
@@ -266,10 +263,10 @@ class CPTPlotSpace: NSObject {
     }
     
     // MARK: - AbstractMethods
-    //    -(NSUInteger)numberOfCoordinates
-    //    {
-    //        return 0;
-    //    }
+    func numberOfCoordinates()->Int
+    {
+        return 0
+    }
     //
     //    /// @endcond
     //
@@ -277,24 +274,20 @@ class CPTPlotSpace: NSObject {
     //     *  @param plotPoint An array of data point coordinates (as NSNumber values).
     //     *  @return The drawing coordinates of the data point.
     //     **/
-    //    -(CGPoint)plotAreaViewPointForPlotPoint:(nonnull CPTNumberArray *cpt_unused)plotPoint
-    //    {
-    //        NSParameterAssert(plotPoint.count == self.numberOfCoordinates);
-    //
-    //        return CGPointZero;
-    //    }
+    func plotAreaViewPointForPlotPoint(plotPoint:  CPTNumberArray)->CGPoint
+    {
+        return CGPoint()
+    }
     //
     //    /** @brief Converts a data point to plot area drawing coordinates.
     //     *  @param plotPoint A c-style array of data point coordinates (as NSDecimal structs).
     //     *  @param count The number of coordinate values in the @par{plotPoint} array.
     //     *  @return The drawing coordinates of the data point.
     //     **/
-    //    -(CGPoint)plotAreaViewPointForPlotPoint:(nonnull NSDecimal *__unused)plotPoint numberOfCoordinates:(NSUInteger cpt_unused)count
-    //    {
-    //        NSParameterAssert(count == self.numberOfCoordinates);
-    //
-    //        return CGPointZero;
-    //    }
+    func plotAreaViewPointForPlotPoint(plotPoint:   [CGFloat], numberOfCoordinates:Int)->CGPoint
+    {
+        return CGPoint()
+    }
     //
     //    /** @brief Converts a data point to plot area drawing coordinates.
     //     *  @param plotPoint A c-style array of data point coordinates (as @double values).
@@ -387,11 +380,11 @@ class CPTPlotSpace: NSObject {
     //     *  @param coordinate The axis coordinate.
     //     *  @return The range of values.
     //     **/
-    //    -(nullable CPTPlotRange *)plotRangeForCoordinate:(CPTCoordinate __unused)coordinate
-    //    {
-    //        return nil;
-    //    }
-    //
+    func plotRangeForCoordinate(coordinate: CPTCoordinate )->CPTPlotRange?
+    {
+        return nil
+    }
+    
     //    /** @brief Sets the scale type for a given coordinate.
     //     *  @param newType The new scale type.
     //     *  @param coordinate The axis coordinate.
@@ -422,7 +415,7 @@ class CPTPlotSpace: NSObject {
     //     *  @param plots An array of the plots that have to fit in the visible area.
     //     *  @param coordinate The axis coordinate.
     //     **/
-    func scale(toFitPlots plots: CPTPlotArray?, for coordinate: CPTCoordinate) {
+    func scaleToFitPlots( plots: [CPTPlot]?, for coordinate: CPTCoordinate) {
         if plots?.count == 0 {
             return
         }
@@ -432,9 +425,8 @@ class CPTPlotSpace: NSObject {
         
         if let plots = plots {
             for plot in plots {
-                guard let plot = plot as? CPTPlot else {
-                    continue
-                }
+                guard let plot = plot as? CPTPlot else { continue }
+                
                 let currentRange = plot.plotRange(for: coordinate)
                 if unionRange == nil {
                     unionRange = currentRange
@@ -451,7 +443,7 @@ class CPTPlotSpace: NSObject {
             setPlotRange(unionRange, for: coordinate)
         }
     }
-
+    
     //
     //    /** @brief Scales the plot ranges so that the plots just fit in the visible space.
     //     *  @param plots An array of the plots that have to fit in the visible area.
@@ -494,10 +486,10 @@ class CPTPlotSpace: NSObject {
     //     *  @param interactionScale The scaling factor. One (@num{1}) gives no scaling.
     //     *  @param interactionPoint The plot area view point about which the scaling occurs.
     //     **/
-    //    -(void)scaleBy:(CGFloat __unused)interactionScale aboutPoint:(CGPoint __unused)interactionPoint
-    //    {
-    //    }
-    //
+    func scale(by interactionScale: CGFloat, aboutPoint interactionPoint: CGPoint) {
+    }
     
-}
+    }
 
+
+    }

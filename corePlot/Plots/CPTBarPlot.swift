@@ -52,7 +52,7 @@ public class CPTBarPlot: CPTPlot {
 //
     
     
-    public weak var dataSource : CPTBarPlotDataSource?
+    weak public var dataSource : CPTBarPlotDataSource?
 
     var barLocations = [CGFloat]()
     var barTips  = [CGFloat]()
@@ -158,11 +158,12 @@ public class CPTBarPlot: CPTPlot {
         self.reloadBarWidths(indexRange: indexRange)
         
         // Legend
-        let theDataSource = self.dataSource as? CPTBarPlotDataSource
+        let theDataSource = self.dataSource //as? CPTBarPlotDataSource
         
         if let legendTitleForBarPlot = theDataSource?.legendTitleForBarPlot {
             _ = legendTitleForBarPlot(self, indexRange.length)
-            NotificationCenter.send( .CPTLegendNeedsRedrawForPlotNotification)
+            NotificationCenter.send(
+                name: .CPTLegendNeedsRedrawForPlotNotification)
         }
     }
     
@@ -320,13 +321,15 @@ public class CPTBarPlot: CPTPlot {
             }
             
             self.cacheArray(array: array,
-            forKey:CPTBarPlotBindingBarFills,
+                            forKey: .CPTBarPlotBindingBarFills,
             atRecordIndex:indexRange.location)
         }
         
         // Legend
         if ( needsLegendUpdate ) {
-            NotificationCenter.default.post(name: .CPTLegendNeedsRedrawForPlotNotification, object:self)
+            NotificationCenter.send (
+                name: .CPTLegendNeedsRedrawForPlotNotification,
+                object:self)
             self.setNeedsDisplay()
         }
     }
@@ -343,8 +346,8 @@ public class CPTBarPlot: CPTPlot {
     func reloadBarLineStyles(indexRange: NSRange)
     {
         let theDataSource = self.dataSource as? CPTBarPlotDataSource
-        var needsLegendUpdate = false
         
+        var needsLegendUpdate = false
         if let barLineStylesForBarPlot = theDataSource?.barLineStylesForBarPlot {
         
             needsLegendUpdate = true
@@ -372,13 +375,15 @@ public class CPTBarPlot: CPTPlot {
             }
             
             self.cacheArray(array: array,
-                            forKey:CPTBarPlotBindingBarLineStyles,
+                            forKey:.CPTBarPlotBindingBarLineStyles,
                             atRecordIndex:indexRange.location)
         }
         
         // Legend
-        if ( needsLegendUpdate ) {
-            NotificationCenter.default.post(name: .CPTLegendNeedsRedrawForPlotNotification ,object:self)
+        if needsLegendUpdate == true {
+            NotificationCenter.send(
+                name: .CPTLegendNeedsRedrawForPlotNotification ,
+                object:self)
         }
         self.setNeedsDisplay()
     }
@@ -1417,7 +1422,7 @@ public class CPTBarPlot: CPTPlot {
         if ( lineStyle != newLineStyle ) {
             lineStyle = newLineStyle
             self.setNeedsDisplay()
-            NotificationCenter.default.post(
+            NotificationCenter.send(
                 name:.CPTLegendNeedsRedrawForPlotNotification,
                 object:self)
         }
@@ -1428,7 +1433,7 @@ public class CPTBarPlot: CPTPlot {
         if ( fill != newFill ) {
             fill = newFill;
             self.setNeedsDisplay()
-            NotificationCenter.default.post(
+            NotificationCenter.send(
                 name:.CPTLegendNeedsRedrawForPlotNotification,
                 object:self)
         }
@@ -1456,7 +1461,7 @@ public class CPTBarPlot: CPTPlot {
         if ( barCornerRadius != newCornerRadius ) {
             barCornerRadius = abs(newCornerRadius);
             self.setNeedsDisplay()
-            NotificationCenter.default.post(
+            NotificationCenter.send(
                 name:.CPTLegendNeedsRedrawForPlotNotification,
                 object:self)
         }
@@ -1467,9 +1472,9 @@ public class CPTBarPlot: CPTPlot {
         if ( barBaseCornerRadius != newCornerRadius ) {
             barBaseCornerRadius = abs(newCornerRadius)
             self.setNeedsDisplay()
-            NotificationCenter.default.post(
+            NotificationCenter.send(
                 name: .CPTLegendNeedsRedrawForPlotNotification,
-                object:self);
+                object:self)
         }
     }
     

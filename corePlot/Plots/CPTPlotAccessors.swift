@@ -47,20 +47,22 @@ extension CPTPlot {
         }
     }
     //
-    //    -(void)setAttributedTitle:(nullable NSAttributedString *)newTitle
-    //    {
-    //        if ( newTitle != attributedTitle ) {
-    //            attributedTitle = [newTitle copy];
-    //
-    //            if ( !self.inTitleUpdate ) {
-    //                self.inTitleUpdate = true
-    //                self.title         = attributedTitle.string;
-    //                self.inTitleUpdate = false
-    //
-    //                [[NSNotificationCenter defaultCenter] postNotificationName:CPTLegendNeedsLayoutForPlotNotification object:self];
-    //            }
-    //        }
-    //    }
+    func setAttributedTitle(newTitle: NSAttributedString )
+        {
+            if ( newTitle != attributedTitle ) {
+                attributedTitle = newTitle 
+    
+                if ( !self.inTitleUpdate ) {
+                    self.inTitleUpdate = true
+                    self.title         = attributedTitle?.string;
+                    self.inTitleUpdate = false
+    
+                    NotificationCenter.default.post(
+                        name: .CPTLegendNeedsLayoutForPlotNotification,
+                        object:self)
+                }
+            }
+        }
     //
     //    -(void)setDataSource:(nullable id<CPTPlotDataSource>)newSource
     //    {

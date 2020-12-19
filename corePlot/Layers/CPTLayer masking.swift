@@ -40,7 +40,7 @@ extension CPTLayer {
         
         let theGraph = graph
         if let theGraph = theGraph {
-            NotificationCenter.default.post(
+            NotificationCenter.send(
                 name: .CPTGraphNeedsRedrawNotification,
                 object: theGraph)
         }
@@ -52,7 +52,7 @@ extension CPTLayer {
         let theGraph = graph
         
         if let theGraph = theGraph {
-            NotificationCenter.default.post(
+            NotificationCenter.send(
                 name: .CPTGraphNeedsRedrawNotification,
                 object: theGraph)
         }

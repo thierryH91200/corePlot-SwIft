@@ -7,7 +7,7 @@
 
 import AppKit
 
-class CPTAxis : CPTLayer {
+public class CPTAxis : CPTLayer {
     
     enum CPTAxisLabelingPolicy: Int  {
         case none              ///< No labels provided; user sets labels and tick locations.

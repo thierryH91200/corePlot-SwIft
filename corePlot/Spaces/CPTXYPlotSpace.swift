@@ -126,12 +126,12 @@ class CPTXYPlotSpace: CPTPlotSpace {
                 constrainedRange = range
             }
             else {
-                constrainedRange = self.constrainRange(range ,toGlobalRange:self.globalXRange)
+                constrainedRange = self.constrainRange(existingRange: range ,toGlobalRange: self.globalXRange)!
             }
             
             let theDelegate = self.delegate;
             
-            if ( [theDelegate respondsToSelector:@selector(plotSpace:willChangePlotRangeTo:forCoordinate:)] ) {
+            if ( theDelegate.respondsToSelector(to:#selector(plotSpace:willChangePlotRangeTo:forCoordinate:)] ) {
                 constrainedRange = theDelegate.plotSpace(self, willChangePlotRangeTo:constrainedRange, forCoordinate:CPTCoordinateX)
             }
             
@@ -142,7 +142,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
                 if ( xRange && constrainedRange ) {
                     isScrolling = !CPTDecimalEquals(constrainedRange.locationDecimal, xRange.locationDecimal) && CPTDecimalEquals(constrainedRange.lengthDecimal, xRange.lengthDecimal);
                     
-                    if ( isScrolling && (displacement == CPTFloat(0.0))) {
+                    if ( isScrolling && (displacement == CGFloat(0.0))) {
                         let heGraph    = self.graph;
                         CPTPlotArea *plotArea = theGraph.plotAreaFrame.plotArea;
                         
@@ -172,78 +172,81 @@ class CPTXYPlotSpace: CPTPlotSpace {
                     theDelegate.plotSpace(self, didChangePlotRangeForCoordinate:CPTCoordinateX);
                 }
                 
-                CPTGraph *theGraph = self.graph;
-                if ( theGraph ) {
-                    NotificationCenter.defaultCenter.post(.CPTGraphNeedsRedrawNotification,  object:theGraph)
+                let theGraph = self.graph;
+                if (( theGraph ) != nil) {
+                    NotificationCenter.default.post(
+                        name: .CPTGraphNeedsRedrawNotification,
+                        object:theGraph)
                 }
             }
         }
     }
     //
-    //    -(void)setYRange:(nonnull CPTPlotRange *)range
-    //    {
-    //        NSParameterAssert(range);
-    //
-    //        if ( ![range isEqualToRange:yRange] ) {
-    //            CPTPlotRange *constrainedRange;
-    //
-    //            if ( self.allowsMomentumY ) {
-    //                constrainedRange = range;
-    //            }
-    //            else {
-    //                constrainedRange = [self constrainRange:range toGlobalRange:self.globalYRange];
-    //            }
-    //
-    //            id<CPTPlotSpaceDelegate> theDelegate = self.delegate;
-    //            if ( [theDelegate respondsToSelector:@selector(plotSpace:willChangePlotRangeTo:forCoordinate:)] ) {
-    //                constrainedRange = [theDelegate plotSpace:self willChangePlotRangeTo:constrainedRange forCoordinate:CPTCoordinateY];
-    //            }
-    //
-    //            if ( ![constrainedRange isEqualToRange:yRange] ) {
-    //                CGFloat displacement = self.lastDisplacement.y;
-    //                BOOL isScrolling     = NO;
-    //
-    //                if ( yRange && constrainedRange ) {
-    //                    isScrolling = !CPTDecimalEquals(constrainedRange.locationDecimal, yRange.locationDecimal) && CPTDecimalEquals(constrainedRange.lengthDecimal, yRange.lengthDecimal);
-    //
-    //                    if ( isScrolling && (displacement == CPTFloat(0.0))) {
-    //                        CPTGraph *theGraph    = self.graph;
-    //                        CPTPlotArea *plotArea = theGraph.plotAreaFrame.plotArea;
-    //
-    //                        if ( plotArea ) {
-    //                            NSDecimal rangeLength = constrainedRange.lengthDecimal;
-    //
-    //                            if ( !CPTDecimalEquals(rangeLength, CPTDecimalFromInteger(0))) {
-    //                                NSDecimal diff = CPTDecimalDivide(CPTDecimalSubtract(constrainedRange.locationDecimal, yRange.locationDecimal), rangeLength);
-    //
-    //                                displacement = plotArea.bounds.size.height * CPTDecimalCGFloatValue(diff);
-    //                            }
-    //                        }
-    //                    }
-    //                }
-    //
-    //                yRange = [constrainedRange copy];
-    //
-    //                [[NSNotificationCenter defaultCenter] postNotificationName:CPTPlotSpaceCoordinateMappingDidChangeNotification
-    //                                                                    object:self
-    //                                                                  userInfo:@{ CPTPlotSpaceCoordinateKey: @(CPTCoordinateY),
-    //                                                                              CPTPlotSpaceScrollingKey: @(isScrolling),
-    //                                                                              CPTPlotSpaceDisplacementKey: @(displacement) }
-    //                ];
-    //
-    //                if ( [theDelegate respondsToSelector:@selector(plotSpace:didChangePlotRangeForCoordinate:)] ) {
-    //                    [theDelegate plotSpace:self didChangePlotRangeForCoordinate:CPTCoordinateY];
-    //                }
-    //
-    //                CPTGraph *theGraph = self.graph;
-    //                if ( theGraph ) {
-    //                    [[NSNotificationCenter defaultCenter] postNotificationName:CPTGraphNeedsRedrawNotification
-    //                                                                        object:theGraph];
-    //                }
-    //            }
-    //        }
-    //    }
-    //
+    func setYRange(range: CPTPlotRange )
+        {
+    
+        if  range.isEqual(yRange )   == false{
+            var  constrainedRange = CPTPlotRange(location: 0, length: 0)
+    
+                if ( self.allowsMomentumY ) {
+                    constrainedRange = range;
+                }
+                else {
+                    constrainedRange = [self constrainRange:range toGlobalRange:self.globalYRange];
+                }
+    
+                let theDelegate = self.delegate;
+                if ( [theDelegate respondsToSelector:@selector(plotSpace:willChangePlotRangeTo:forCoordinate:)] ) {
+                    constrainedRange = [theDelegate plotSpace:self willChangePlotRangeTo:constrainedRange forCoordinate:CPTCoordinateY];
+                }
+    
+            if constrainedRange.isEqualToRange(yRange ) == false  {
+                    let displacement = self.lastDisplacement.y
+                    var isScrolling     = false
+    
+                    if ( yRange && constrainedRange ) {
+                        isScrolling = constrainedRange.location == yRange.locationDecimal &&                             constrainedRange.length  == yRange.length
+    
+                        if ( isScrolling && (displacement == CGFloat(0.0))) {
+                            let theGraph    = self.graph;
+                            CPTPlotArea *plotArea = theGraph.plotAreaFrame.plotArea;
+    
+                            if ( plotArea ) {
+                                NSDecimal rangeLength = constrainedRange.lengthDecimal;
+    
+                                if ( !CPTDecimalEquals(rangeLength, CPTDecimalFromInteger(0))) {
+                                    NSDecimal diff = CPTDecimalDivide(CPTDecimalSubtract(constrainedRange.locationDecimal, yRange.locationDecimal), rangeLength);
+    
+                                    displacement = plotArea.bounds.size.height * CPTDecimalCGFloatValue(diff);
+                                }
+                            }
+                        }
+                    }
+    
+                    yRange = constrainedRange
+    
+                    NotificationCenter.default.post(
+                        name:.CPTPlotSpaceCoordinateMappingDidChangeNotification,
+                    object:self,
+            userInfo:@{ CPTPlotSpaceCoordinateKey: @(CPTCoordinateY),
+            CPTPlotSpaceScrollingKey: @(isScrolling),
+            CPTPlotSpaceDisplacementKey: @(displacement) }
+                    ];
+    
+                    if ( [theDelegate respondsToSelector:@selector(plotSpace:didChangePlotRangeForCoordinate:)] ) {
+                        [theDelegate plotSpace:self didChangePlotRangeForCoordinate:CPTCoordinateY];
+                    }
+    
+                    let theGraph = self.graph;
+                    if ( theGraph  != nil) {
+                        NotificationCenter.default.post(
+                            name:.CPTGraphNeedsRedrawNotification,
+                            object:theGraph)
+                    }
+                }
+            }
+        }
+    
     func constrainRange(existingRange: CPTPlotRange, toGlobalRange globalRange: CPTPlotRange)-> CPTPlotRange?
     {
         if ( !globalRange ) {
@@ -296,7 +299,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //
     //        CPTMutablePlotRange *newRange = [oldRange mutableCopy];
     //
-    //        CGFloat bounceDelay = CPTFloat(0.0);
+    //        CGFloat bounceDelay = CGFloat(0.0);
     //        NSDecimal zero      = CPTDecimalFromInteger(0);
     //        BOOL hasShift       = !CPTDecimalEquals(shift, zero);
     //
@@ -338,12 +341,12 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //                            speed -= brakingDelay * acceleration;
     //
     //                            // slow down quickly
-    //                            while ( momentumTime > CPTFloat(0.1)) {
-    //                                acceleration *= CPTFloat(2.0);
-    //                                momentumTime  = speed / (CPTFloat(2.0) * acceleration);
+    //                            while ( momentumTime > CGFloat(0.1)) {
+    //                                acceleration *= CGFloat(2.0);
+    //                                momentumTime  = speed / (CGFloat(2.0) * acceleration);
     //                            }
     //
-    //                            CGFloat distanceTraveled = speed * momentumTime - CPTFloat(0.5) * acceleration * momentumTime * momentumTime;
+    //                            CGFloat distanceTraveled = speed * momentumTime - CGFloat(0.5) * acceleration * momentumTime * momentumTime;
     //                            CGFloat brakingLength    = globalPoint - distanceTraveled;
     //
     //                            CGPoint brakingPoint = CGPointZero;
@@ -372,11 +375,11 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //                    }
     //                    else {
     //                        // momentum started outside the global range
-    //                        brakingDelay = CPTFloat(0.0);
+    //                        brakingDelay = CGFloat(0.0);
     //
     //                        // slow down quickly
-    //                        while ( momentumTime > CPTFloat(0.1)) {
-    //                            momentumTime *= CPTFloat(0.5);
+    //                        while ( momentumTime > CGFloat(0.1)) {
+    //                            momentumTime *= CGFloat(0.5);
     //
     //                            shift = CPTDecimalDivide(shift, CPTDecimalFromInteger(2));
     //                        }
@@ -455,16 +458,16 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //    {
     //        CGFloat root = CPTNAN;
     //
-    //        CGFloat discriminant = sqrt(b * b - CPTFloat(4.0) * a * c);
+    //        CGFloat discriminant = sqrt(b * b - CGFloat(4.0) * a * c);
     //
-    //        CGFloat root1 = (-b + discriminant) / (CPTFloat(2.0) * a);
-    //        CGFloat root2 = (-b - discriminant) / (CPTFloat(2.0) * a);
+    //        CGFloat root1 = (-b + discriminant) / (CGFloat(2.0) * a);
+    //        CGFloat root2 = (-b - discriminant) / (CGFloat(2.0) * a);
     //
     //        if ( !isnan(root1) && !isnan(root2)) {
-    //            if ( root1 >= CPTFloat(0.0)) {
+    //            if ( root1 >= CGFloat(0.0)) {
     //                root = root1;
     //            }
-    //            if ((root2 >= CPTFloat(0.0)) && (isnan(root) || (root2 < root))) {
+    //            if ((root2 >= CGFloat(0.0)) && (isnan(root) || (root2 < root))) {
     //                root = root2;
     //            }
     //        }
@@ -528,81 +531,83 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //        }
     //    }
     //
-    //    -(void)scaleToFitEntirePlots:(nullable CPTPlotArray *)plots
-    //    {
-    //        if ( plots.count == 0 ) {
-    //            return;
-    //        }
-    //
-    //        // Determine union of ranges
-    //        CPTMutablePlotRange *unionXRange = nil;
-    //        CPTMutablePlotRange *unionYRange = nil;
-    //
-    //        for ( CPTPlot *plot in plots ) {
-    //            CPTPlotRange *currentXRange = [plot plotRangeEnclosingCoordinate:CPTCoordinateX];
-    //            CPTPlotRange *currentYRange = [plot plotRangeEnclosingCoordinate:CPTCoordinateY];
-    //            if ( !unionXRange ) {
-    //                unionXRange = [currentXRange mutableCopy];
-    //            }
-    //            if ( !unionYRange ) {
-    //                unionYRange = [currentYRange mutableCopy];
-    //            }
-    //            [unionXRange unionPlotRange:currentXRange];
-    //            [unionYRange unionPlotRange:currentYRange];
-    //        }
-    //
-    //        // Set range
-    //        NSDecimal zero = CPTDecimalFromInteger(0);
-    //
-    //        if ( unionXRange ) {
-    //            if ( CPTDecimalEquals(unionXRange.lengthDecimal, zero)) {
-    //                [unionXRange unionPlotRange:self.xRange];
-    //            }
-    //            self.xRange = unionXRange;
-    //        }
-    //        if ( unionYRange ) {
-    //            if ( CPTDecimalEquals(unionYRange.lengthDecimal, zero)) {
-    //                [unionYRange unionPlotRange:self.yRange];
-    //            }
-    //            self.yRange = unionYRange;
-    //        }
-    //    }
-    //
-    //    -(void)setXScaleType:(CPTScaleType)newScaleType
-    //    {
-    //        if ( newScaleType != xScaleType ) {
-    //            xScaleType = newScaleType;
-    //
-    //            [[NSNotificationCenter defaultCenter] postNotificationName:CPTPlotSpaceCoordinateMappingDidChangeNotification
-    //                                                                object:self
-    //                                                              userInfo:@{ CPTPlotSpaceCoordinateKey: @(CPTCoordinateX) }
-    //            ];
-    //
-    //            CPTGraph *theGraph = self.graph;
-    //            if ( theGraph ) {
-    //                [[NSNotificationCenter defaultCenter] postNotificationName:CPTGraphNeedsRedrawNotification
-    //                                                                    object:theGraph];
-    //            }
-    //        }
-    //    }
-    //
-    //    -(void)setYScaleType:(CPTScaleType)newScaleType
-    //    {
-    //        if ( newScaleType != yScaleType ) {
-    //            yScaleType = newScaleType;
-    //
-    //            [[NSNotificationCenter defaultCenter] postNotificationName:CPTPlotSpaceCoordinateMappingDidChangeNotification
-    //                                                                object:self
-    //                                                              userInfo:@{ CPTPlotSpaceCoordinateKey: @(CPTCoordinateY) }
-    //            ];
-    //
-    //            CPTGraph *theGraph = self.graph;
-    //            if ( theGraph ) {
-    //                [[NSNotificationCenter defaultCenter] postNotificationName:CPTGraphNeedsRedrawNotification
-    //                                                                    object:theGraph];
-    //            }
-    //        }
-    //    }
+        -(void)scaleToFitEntirePlots:(nullable CPTPlotArray *)plots
+        {
+            if ( plots.count == 0 ) {
+                return;
+            }
+    
+            // Determine union of ranges
+            CPTMutablePlotRange *unionXRange = nil;
+            CPTMutablePlotRange *unionYRange = nil;
+    
+            for ( CPTPlot *plot in plots ) {
+                CPTPlotRange *currentXRange = [plot plotRangeEnclosingCoordinate:CPTCoordinateX];
+                CPTPlotRange *currentYRange = [plot plotRangeEnclosingCoordinate:CPTCoordinateY];
+                if ( !unionXRange ) {
+                    unionXRange = [currentXRange mutableCopy];
+                }
+                if ( !unionYRange ) {
+                    unionYRange = [currentYRange mutableCopy];
+                }
+                [unionXRange unionPlotRange:currentXRange];
+                [unionYRange unionPlotRange:currentYRange];
+            }
+    
+            // Set range
+            NSDecimal zero = CPTDecimalFromInteger(0);
+    
+            if ( unionXRange ) {
+                if ( CPTDecimalEquals(unionXRange.lengthDecimal, zero)) {
+                    [unionXRange unionPlotRange:self.xRange];
+                }
+                self.xRange = unionXRange;
+            }
+            if ( unionYRange ) {
+                if ( CPTDecimalEquals(unionYRange.lengthDecimal, zero)) {
+                    [unionYRange unionPlotRange:self.yRange];
+                }
+                self.yRange = unionYRange;
+            }
+        }
+    
+    func setXScaleType(newScaleType: CPTScaleType)
+    {
+        if ( newScaleType != xScaleType ) {
+            xScaleType = newScaleType;
+            
+            NotificationCenter.default.post(
+                name:.CPTPlotSpaceCoordinateMappingDidChangeNotification,
+                object:self,
+                userInfo:@{ CPTPlotSpaceCoordinateKey: @(CPTCoordinateX) })
+            
+            let theGraph = self.graph;
+            if ( theGraph ) {
+                NotificationCenter.default.post(
+                    name: .CPTGraphNeedsRedrawNotification,
+                    object:theGraph)
+            }
+        }
+    }
+    
+    func setYScaleType(CPTScaleType: newScaleType )
+    {
+        if ( newScaleType != yScaleType ) {
+            yScaleType = newScaleType;
+            
+            NotificationCenter.default.post(
+                name:.CPTPlotSpaceCoordinateMappingDidChangeNotification,
+                object:self,
+                userInfo:@{ CPTPlotSpaceCoordinateKey: @(CPTCoordinateY) })
+            
+            let theGraph = self.graph;
+            if (( theGraph ) != nil) {
+                NotificationCenter.default.post(
+                    name:.CPTGraphNeedsRedrawNotification,
+                    object:theGraph)
+            }
+        }
+    }
     //
     //    /// @endcond
     //
@@ -612,31 +617,33 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //    /// @cond
     //
     //    // Linear
-    //    -(CGFloat)viewCoordinateForViewLength:(NSDecimal)viewLength linearPlotRange:(nonnull CPTPlotRange *)range plotCoordinateValue:(NSDecimal)plotCoord
-    //    {
-    //        if ( !range ) {
-    //            return CPTFloat(0.0);
-    //        }
-    //
-    //        NSDecimal factor = CPTDecimalDivide(CPTDecimalSubtract(plotCoord, range.locationDecimal), range.lengthDecimal);
-    //
-    //        if ( NSDecimalIsNotANumber(&factor)) {
-    //            factor = CPTDecimalFromInteger(0);
-    //        }
-    //
-    //        NSDecimal viewCoordinate = CPTDecimalMultiply(viewLength, factor);
-    //
-    //        return CPTDecimalCGFloatValue(viewCoordinate);
-    //    }
-    //
-    //    -(CGFloat)viewCoordinateForViewLength:(CGFloat)viewLength linearPlotRange:(nonnull CPTPlotRange *)range doublePrecisionPlotCoordinateValue:(double)plotCoord
-    //    {
-    //        if ( !range || (range.lengthDouble == 0.0)) {
-    //            return CPTFloat(0.0);
-    //        }
-    //        return viewLength * (CGFloat)((plotCoord - range.locationDouble) / range.lengthDouble);
-    //    }
-    //
+    func viewCoordinateForViewLength(viewLength: CGFloat, range: CPTPlotRange, plotCoordinateValue plotCoord: CGFloat) -> CGFloat
+        {
+            if ( !range ) {
+                return CGFloat(0.0);
+            }
+    
+            var factor = (plotCoord - range.locationDecimal) / range.lengthDecimal
+    
+        if factor.isNaN {
+                factor = 0
+            }
+    
+            let viewCoordinate = viewLength * factor
+    
+            return viewCoordinate
+        }
+    
+    func viewCoordinatefforViewLength( viewLength: CGFloat, linearPlotRange range: CPTPlotRange, doublePrecisionPlotCoordinateValue plotCoord: Double) -> CGFloat {
+
+    
+    
+            if ( !range || (range.lengthDouble == 0.0)) {
+                return CGFloat(0.0);
+            }
+            return viewLength * (CGFloat)((plotCoord - range.locationDouble) / range.lengthDouble);
+        }
+    
     //    -(NSDecimal)plotCoordinateForViewLength:(NSDecimal)viewLength linearPlotRange:(nonnull CPTPlotRange *)range boundsLength:(NSDecimal)boundsLength
     //    {
     //        const NSDecimal zero = CPTDecimalFromInteger(0);
@@ -659,7 +666,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //
     //    -(double)doublePrecisionPlotCoordinateForViewLength:(CGFloat)viewLength linearPlotRange:(nonnull CPTPlotRange *)range boundsLength:(CGFloat)boundsLength
     //    {
-    //        if ( boundsLength == CPTFloat(0.0)) {
+    //        if ( boundsLength == CGFloat(0.0)) {
     //            return 0.0;
     //        }
     //
@@ -675,7 +682,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //    -(CGFloat)viewCoordinateForViewLength:(CGFloat)viewLength logPlotRange:(nonnull CPTPlotRange *)range doublePrecisionPlotCoordinateValue:(double)plotCoord
     //    {
     //        if ((range.minLimitDouble <= 0.0) || (range.maxLimitDouble <= 0.0) || (plotCoord <= 0.0)) {
-    //            return CPTFloat(0.0);
+    //            return CGFloat(0.0);
     //        }
     //
     //        double logLoc   = log10(range.locationDouble);
@@ -687,7 +694,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //
     //    -(double)doublePrecisionPlotCoordinateForViewLength:(CGFloat)viewLength logPlotRange:(nonnull CPTPlotRange *)range boundsLength:(CGFloat)boundsLength
     //    {
-    //        if ( boundsLength == CPTFloat(0.0)) {
+    //        if ( boundsLength == CGFloat(0.0)) {
     //            return 0.0;
     //        }
     //
@@ -703,7 +710,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //    -(CGFloat)viewCoordinateForViewLength:(CGFloat)viewLength logModulusPlotRange:(nonnull CPTPlotRange *)range doublePrecisionPlotCoordinateValue:(double)plotCoord
     //    {
     //        if ( !range ) {
-    //            return CPTFloat(0.0);
+    //            return CGFloat(0.0);
     //        }
     //
     //        double logLoc   = CPTLogModulus(range.locationDouble);
@@ -715,7 +722,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //
     //    -(double)doublePrecisionPlotCoordinateForViewLength:(CGFloat)viewLength logModulusPlotRange:(nonnull CPTPlotRange *)range boundsLength:(CGFloat)boundsLength
     //    {
-    //        if ( boundsLength == CPTFloat(0.0)) {
+    //        if ( boundsLength == CGFloat(0.0)) {
     //            return 0.0;
     //        }
     //
@@ -739,16 +746,16 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //    }
     //
                     //    // Plot area view point for plot point
-    func plotAreaViewPointForPlotPoint(plotPoint:  CPTNumberArray) -> CGPoint
+    override func plotAreaViewPointForPlotPoint(plotPoint:  CPTNumberArray) -> CGPoint
     {
-        var viewPoint = super.plotAreaViewPointForPlotPoint(plotPoint)
+        var viewPoint = super.plotAreaViewPointForPlotPoint(plotPoint: plotPoint)
         
-        let  layerSize = CGSize()
+        var  layerSize = CGSize()
         let theGraph    = self.graph;
         let plotArea = theGraph?.plotAreaFrame.plotArea
         
-        if ( plotArea ) {
-            layerSize = plotArea.bounds.size;
+        if (( plotArea ) != nil) {
+            layerSize = (plotArea?.bounds.size)!
         }
         else {
             return viewPoint;
@@ -756,18 +763,26 @@ class CPTXYPlotSpace: CPTPlotSpace {
         
         switch ( self.xScaleType ) {
         case .linear:
+            fallthrough
         case .category:
-            viewPoint.x = [self viewCoordinateForViewLength:plotArea.widthDecimal linearPlotRange:self.xRange plotCoordinateValue:plotPoint[CPTCoordinateX].decimalValue];
+            viewPoint.x = self.viewCoordinateForViewLength(
+                plotArea?.widthDecimal,
+                linearPlotRange:self.xRange,
+                plotCoordinateValue:plotPoint[CPTCoordinate.x.rawValue]);
             break;
             
         case .log:
-            {
-                viewPoint.x = [self viewCoordinateForViewLength:layerSize.width logPlotRange:self.xRange doublePrecisionPlotCoordinateValue:plotPoint[CPTCoordinateX].doubleValue];
-            }
+            viewPoint.x = self.viewCoordinateForViewLength(
+                layerSize.width,
+                logPlotRange:self.xRange.doublePrecision
+                PlotCoordinateValue:plotPoint[CPTCoordinate.x.rawValue])
             break;
             
         case .logModulus:
-                viewPoint.x = [self viewCoordinateForViewLength:layerSize.width logModulusPlotRange:self.xRange doublePrecisionPlotCoordinateValue:plotPoint[CPTCoordinateX].doubleValue];
+            viewPoint.x = self.viewCoordinateForViewLength(
+                layerSize.width,
+                logModulusPlotRange: self.xRange,
+                doublePrecision PlotCoordinateValue: plotPoint[CPTCoordinate.x])
             break;
             
         default:
@@ -776,8 +791,9 @@ class CPTXYPlotSpace: CPTPlotSpace {
         
         switch ( self.yScaleType ) {
         case .linear:
+            fallthrough
         case .category:
-            viewPoint.y = [self viewCoordinateForViewLength:plotArea.heightDecimal linearPlotRange:self.yRange plotCoordinateValue:plotPoint[CPTCoordinateY].decimalValue];
+            viewPoint.y = self.viewCoordinateForViewLength(plotArea.heightDecimal, linearPlotRange:self.yRange, plotCoordinateValue:plotPoint[CPTCoordinate.y]);
             
         case .log:
             viewPoint.y = [self viewCoordinateForViewLength:layerSize.height logPlotRange:self.yRange doublePrecisionPlotCoordinateValue:plotPoint[CPTCoordinateY].doubleValue]
@@ -1141,7 +1157,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //        CPTGraph *theGraph    = self.graph;
     //        CPTPlotArea *plotArea = theGraph.plotAreaFrame.plotArea;
     //
-    //        if ( !plotArea || (interactionScale <= CPTFloat(1.e-6))) {
+    //        if ( !plotArea || (interactionScale <= CGFloat(1.e-6))) {
     //            return;
     //        }
     //        if ( ![plotArea containsPoint:plotAreaPoint] ) {
@@ -1207,12 +1223,12 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //
     //        BOOL oldMomentum = self.allowsMomentumX;
     //
-    //        self.allowsMomentumX = NO;
+    //        self.allowsMomentumX = false
     //        self.xRange          = newRangeX;
     //        self.allowsMomentumX = oldMomentum;
     //
     //        oldMomentum          = self.allowsMomentumY;
-    //        self.allowsMomentumY = NO;
+    //        self.allowsMomentumY = false
     //        self.yRange          = newRangeY;
     //        self.allowsMomentumY = oldMomentum;
     //    }
@@ -1246,7 +1262,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //     **/
     //    -(BOOL)pointingDeviceDownEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
     //    {
-    //        self.isDragging = NO;
+    //        self.isDragging = false
     //
     //        BOOL handledByDelegate = [super pointingDeviceDownEvent:event atPoint:interactionPoint];
     //
@@ -1258,7 +1274,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //        CPTPlotArea *plotArea = theGraph.plotAreaFrame.plotArea;
     //
     //        if ( !self.allowsUserInteraction || !plotArea ) {
-    //            return NO;
+    //            return false
     //        }
     //
     //        CGPoint pointInPlotArea = [theGraph convertPoint:interactionPoint toLayer:plotArea];
@@ -1280,7 +1296,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //            return YES;
     //        }
     //
-    //        return NO;
+    //        return false
     //    }
     //
     //    /**
@@ -1313,21 +1329,21 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //        CPTPlotArea *plotArea = theGraph.plotAreaFrame.plotArea;
     //
     //        if ( !self.allowsUserInteraction || !plotArea ) {
-    //            return NO;
+    //            return false
     //        }
     //
     //        if ( self.isDragging ) {
-    //            self.isDragging = NO;
+    //            self.isDragging = false
     //
-    //            CGFloat acceleration = CPTFloat(0.0);
-    //            CGFloat speed        = CPTFloat(0.0);
-    //            CGFloat momentumTime = CPTFloat(0.0);
+    //            CGFloat acceleration = CGFloat(0.0);
+    //            CGFloat speed        = CGFloat(0.0);
+    //            CGFloat momentumTime = CGFloat(0.0);
     //
     //            NSDecimal shiftX = CPTDecimalFromInteger(0);
     //            NSDecimal shiftY = CPTDecimalFromInteger(0);
     //
-    //            CGFloat scaleX = CPTFloat(0.0);
-    //            CGFloat scaleY = CPTFloat(0.0);
+    //            CGFloat scaleX = CGFloat(0.0);
+    //            CGFloat scaleY = CGFloat(0.0);
     //
     //            if ( self.allowsMomentum ) {
     //                NSTimeInterval deltaT     = event.timestamp - self.lastDragTime;
@@ -1338,10 +1354,10 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //                    CGPoint displacement    = self.lastDisplacement;
     //
     //                    acceleration = self.momentumAcceleration;
-    //                    speed        = sqrt(displacement.x * displacement.x + displacement.y * displacement.y) / CPTFloat(lastDeltaT);
-    //                    momentumTime = speed / (CPTFloat(2.0) * acceleration);
-    //                    CGFloat distanceTraveled = speed * momentumTime - CPTFloat(0.5) * acceleration * momentumTime * momentumTime;
-    //                    distanceTraveled = MAX(distanceTraveled, CPTFloat(0.0));
+    //                    speed        = sqrt(displacement.x * displacement.x + displacement.y * displacement.y) / CGFloat(lastDeltaT);
+    //                    momentumTime = speed / (CGFloat(2.0) * acceleration);
+    //                    CGFloat distanceTraveled = speed * momentumTime - CGFloat(0.5) * acceleration * momentumTime * momentumTime;
+    //                    distanceTraveled = MAX(distanceTraveled, CGFloat(0.0));
     //
     //                    CGFloat theta = atan2(displacement.y, displacement.x);
     //                    scaleX = cos(theta);
@@ -1378,7 +1394,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //            return YES;
     //        }
     //
-    //        return NO;
+    //        return false
     //    }
     //
     //    /**
@@ -1412,7 +1428,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //        CPTPlotArea *plotArea = theGraph.plotAreaFrame.plotArea;
     //
     //        if ( !self.allowsUserInteraction || !plotArea ) {
-    //            return NO;
+    //            return false
     //        }
     //
     //        CGPoint lastDraggedPoint = self.lastDragPoint;
@@ -1469,7 +1485,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //            return YES;
     //        }
     //
-    //        return NO;
+    //        return false
     //    }
     //
     //    /// @cond
@@ -1494,7 +1510,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //
     //                        newRange.locationDecimal = CPTDecimalSubtract(newRange.locationDecimal, CPTDecimalMultiply(shift, CPTDecimalAbs(diff)));
     //
-    //                        *displacement = *displacement * (CPTFloat(1.0) - ABS(CPTDecimalCGFloatValue(diff)));
+    //                        *displacement = *displacement * (CGFloat(1.0) - ABS(CPTDecimalCGFloatValue(diff)));
     //                    }
     //                }
     //            }
@@ -1538,7 +1554,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //        CPTPlotArea *plotArea = theGraph.plotAreaFrame.plotArea;
     //
     //        if ( !self.allowsUserInteraction || !plotArea ) {
-    //            return NO;
+    //            return false
     //        }
     //
     //        CGPoint fromPointInPlotArea = [theGraph convertPoint:fromPoint toLayer:plotArea];
@@ -1588,7 +1604,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //     **/
     //    -(void)cancelAnimations
     //    {
-    //        self.isDragging = NO;
+    //        self.isDragging = false
     //        for ( CPTAnimationOperation *op in self.animations ) {
     //            [[CPTAnimation sharedInstance] removeAnimationOperation:op];
     //        }

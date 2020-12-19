@@ -98,7 +98,7 @@ extension CPTPlot {
 //        NSMutableData *dataBuffer = (NSMutableData *)numericData.data;
 //        dataBuffer.length -= length;
     //   @objc      }
-//        else {
+    //        else@objc  {
 //        [(NSMutableArray *) data removeObjectsInRange:indexRange];
 //        }
 //        }
@@ -141,7 +141,7 @@ extension CPTPlot {
         // *  @brief Reload all data labels from the data source immediately.
     func reloadDataLabels()
     {
-        self.cachedData.removeValue (forKey: .CPTPlotBindingDataLabels)
+        self.ca@objc @objc chedData.removeValue (forKey: .CPTPlotBindingDataLabels)
         self.reloadDataLabels( indexRange: NSRange(location: 0, length: self.cachedDataCount))
     }
     
@@ -363,7 +363,7 @@ extension CPTPlot {
                                     dataType:dataType
                                     shape:nil];
                                     
-                                    [self cacheNumbers:tempNumericData forField:fieldNum atRecordIndex:indexRange.location];
+                                    [self.cacheNumbers:tempNumericData forField:fieldNum atRecordIndex:indexRange.location];
                                 }
                                 hasData = true;
                             }

@@ -8,8 +8,8 @@
 import Cocoa
 
 class CPTDarkGradientTheme: CPTXYTheme {
+    
     let kCPTDarkGradientTheme = "Dark Gradients"
-
     
     func name() -> String {
         return kCPTDarkGradientTheme
@@ -34,7 +34,7 @@ class CPTDarkGradientTheme: CPTXYTheme {
         gradient.angle     = CGFloat(90.0)
         plotAreaFrame.fill = CPTFill(fillWithGradient:gradient)
 
-        let borderLineStyle = CPTMutableLineStyle(lineStyle)
+        let borderLineStyle = CPTLineStyle()
 
         borderLineStyle.lineColor = CPTColor.colorWithGenericGray(CGFloat(0.2))
         borderLineStyle.lineWidth = CGFloat(4.0);
@@ -43,47 +43,45 @@ class CPTDarkGradientTheme: CPTXYTheme {
         plotAreaFrame.cornerRadius    = CGFloat(10.0);
     }
 //
-    -(void)applyThemeToAxisSet:(nonnull CPTAxisSet *)axisSet
+    override func applyThemeToAxisSet(axisSet: CPTAxisSet )
     {
-        CPTMutableLineStyle *majorLineStyle = [CPTMutableLineStyle lineStyle];
-
-        majorLineStyle.lineCap   = kCGLineCapSquare;
+        let majorLineStyle = CPTLineStyle()
+        
+        majorLineStyle.lineCap   = CGLineCap.square
         majorLineStyle.lineColor = [CPTColor colorWithGenericGray:CGFloat(0.5)];
-        majorLineStyle.lineWidth = CGFloat(2.0);
-
-        CPTMutableLineStyle *minorLineStyle = [CPTMutableLineStyle lineStyle];
-
-        minorLineStyle.lineCap   = kCGLineCapSquare;
-        minorLineStyle.lineColor = [CPTColor darkGrayColor];
+        majorLineStyle.lineWidth = CGFloat(2.0)
+        
+        let minorLineStyle = CPTLineStyle()
+        
+        minorLineStyle.lineCap   = CGLineCap.square;
+        minorLineStyle.lineColor = NSColor.darkGray
         minorLineStyle.lineWidth = CGFloat(1.0);
-
-        CPTMutableTextStyle *whiteTextStyle = [[CPTMutableTextStyle alloc] init];
-
-        whiteTextStyle.color    = [CPTColor whiteColor];
+        
+        let whiteTextStyle = CPTTextStyle()
+        
+        whiteTextStyle.color    = NSColor.white
         whiteTextStyle.fontSize = CGFloat(14.0);
-
-        CPTMutableTextStyle *whiteMinorTickTextStyle = [[CPTMutableTextStyle alloc] init];
-
-        whiteMinorTickTextStyle.color    = [CPTColor whiteColor];
+        
+        let whiteMinorTickTextStyle = CPTTextStyle()
+        
+        whiteMinorTickTextStyle.color    = NSColor.white
         whiteMinorTickTextStyle.fontSize = CGFloat(12.0);
-
-        for ( CPTXYAxis *axis in axisSet.axes ) {
-            axis.labelingPolicy          = CPTAxisLabelingPolicyFixedInterval;
-            axis.majorIntervalLength     = @0.5;
-            axis.orthogonalPosition      = @0.0;
-            axis.tickDirection           = CPTSignNone;
+        
+        for  axis in axisSet.axes {
+            axis.labelingPolicy          = labelingPolicyFixedInterval;
+            axis.majorIntervalLength     = 0.5
+            axis.orthogonalPosition      = 0.0
+            axis.tickDirection           = CPTSign.none
             axis.minorTicksPerInterval   = 4;
-            axis.majorTickLineStyle      = majorLineStyle;
-            axis.minorTickLineStyle      = minorLineStyle;
-            axis.axisLineStyle           = majorLineStyle;
-            axis.majorTickLength         = CGFloat(7.0);
-            axis.minorTickLength         = CGFloat(5.0);
-            axis.labelTextStyle          = whiteTextStyle;
+            axis.majorTickLineStyle      = majorLineStyle
+            axis.minorTickLineStyle      = minorLineStyle
+            axis.axisLineStyle           = majorLineStyle
+            axis.majorTickLength         = CGFloat(7.0)
+            axis.minorTickLength         = CGFloat(5.0)
+            axis.labelTextStyle          = whiteTextStyle
             axis.minorTickLabelTextStyle = whiteMinorTickTextStyle;
             axis.titleTextStyle          = whiteTextStyle;
         }
     }
-
-
-
+    
 }

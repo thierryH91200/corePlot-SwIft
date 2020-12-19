@@ -23,7 +23,7 @@ extension CPTPlot {
     // **/
     
     
-    func cacheNumbers(numbers : Any?, fieldEnum: Int)
+    func cacheNumbers(numbers : Any?, forField fieldEnum: Int)
     {
         var cacheKey = fieldEnum
         
@@ -234,7 +234,7 @@ extension CPTPlot {
     func numericDataForNumbers(numbers:Any?) ->CPTMutableNumericData
     {
         let mutableNumbers : CPTMutableNumericData? = nil
-        let loadedDataType : CPTNumericDataType?
+        var loadedDataType : CPTNumericDataType?
     
         if numbers is CPTNumericData  {
             mutableNumbers = numbers
@@ -264,7 +264,6 @@ extension CPTPlot {
         else {
             print("NSException raise:CPTException format:@Unsupported number array format")
         }
-    
         return mutableNumbers;
     }
     

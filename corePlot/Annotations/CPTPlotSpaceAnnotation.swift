@@ -13,44 +13,33 @@ class CPTPlotSpaceAnnotation: CPTAnnotation {
     var anchorCount = 0
     var anchorPlotPoint = [CGFloat]()
     var plotSpace = CPTPlotSpace()
-    //
-    //
-    //    /** @property nullable CPTNumberArray *anchorPlotPoint
-    //     *  @brief An array of NSDecimalNumber objects giving the anchor plot coordinates.
-    //     **/
-    //    @synthesize anchorPlotPoint;
-    //
-    //    /** @property nonnull CPTPlotSpace *plotSpace
-    //     *  @brief The plot space which the anchor is defined in.
-    //     **/
-    //    @synthesize plotSpace;
-    //
     
     // MARK: - Init/Dealloc
-    init(newPlotSpace: CPTPlotSpace, newPlotPoint: [CGFloat])
+    convenience init(newPlotSpace: CPTPlotSpace, newPlotPoint: [CGFloat])
     {
-        
-        super.init()
-        plotSpace            = newPlotSpace;
+        self.init()
+        self.plotSpace       = newPlotSpace;
         self.anchorPlotPoint = newPlotPoint;
         
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(setContentNeedsLayout),
-                                               name: .CoordinateMappingDidChangeNotification,
-                                               object:plotSpace)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(setContentNeedsLayout),
+            name: .CoordinateMappingDidChangeNotification,
+            object: plotSpace)
     }
     
     override init() {
         super.init()
         
-        self.init( newPlotSpace: CPTPlotSpace(), newPlotPoint:anchorPlotPoint.removeAll())
+        let plotSpace = CPTPlotSpace()
+        self.init( newPlotSpace: plotSpace, newPlotPoint: [])
     }
     
     // MARK: Layout
-       @objc func setContentNeedsLayout()
-        {
-            self.contentLayer?.superlayer?.setNeedsLayout()
-        }
+    @objc func setContentNeedsLayout()
+    {
+        self.contentLayer?.superlayer?.setNeedsLayout()
+    }
     
     override func positionContentLayer()
     {
@@ -68,7 +57,7 @@ class CPTPlotSpaceAnnotation: CPTAnnotation {
                     var newPosition = CGPoint()
                     let theGraph    = thePlotSpace.graph
                     let plotArea = theGraph?.plotAreaFrame.plotArea
-                    if ( plotArea ) {
+                    if (( plotArea ) != nil) {
                         newPosition = plotArea.convertPoin(plotAreaViewAnchorPoint, toLayer:hostLayer)
                     }
                     else {

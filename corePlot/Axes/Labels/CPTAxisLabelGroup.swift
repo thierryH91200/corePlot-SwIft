@@ -16,7 +16,6 @@ import AppKit
 class CPTAxisLabelGroup: CPTLayer {
 
     // MARK: - Drawing
-
     override func display()
     {
     }
@@ -30,5 +29,4 @@ class CPTAxisLabelGroup: CPTLayer {
     {
         // do nothing--axis is responsible for positioning its labels
     }
-
 }

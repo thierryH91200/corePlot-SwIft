@@ -7,30 +7,28 @@
 
 import Cocoa
 
-class CPTXYAxis: CPTAxis {
+public class CPTXYAxis: CPTAxis {
 
 
 //    typedef CGPoint (*CPTAlignPointFunction)(__nonnull CGContextRef, CGPoint);
 
-    
-    
     var orthogonalPosition = CGFloat(0)
     var axisConstraints : CPTConstraints?
     
     // MARK: - Init/Dealloc
     
-    init(frame: frame)
+    override init(frame: CGRect)
     {
-        super.init(frame)
+        super.init(frame: frame)
         orthogonalPosition = 0.0;
         axisConstraints    = nil;
         self.tickDirection = CPTSign.none;
     }
     
-    init(layer: Any)    {
+    override init(layer: Any)    {
         super.init(layer: layer)
         
-        let theLayer = CPTXYAxis()
+        let theLayer = CPTXYAxis(layer: layer)
         
         orthogonalPosition = theLayer.orthogonalPosition;
         axisConstraints    = theLayer.axisConstraints;
@@ -40,66 +38,54 @@ class CPTXYAxis: CPTAxis {
         fatalError("init(coder:) has not been implemented")
     }
     
-    //
-//    /// @endcond
-//
-//    #pragma mark -
-//    #pragma mark NSCoding Methods
-//
-//    /// @cond
-//
-//    -(void)enco
-//    /// @endcond
-//
-//    #pragma mark -
-//    #pragma mark Coordinate Transforms
-//
-//    /// @cond
-//
-//    -(void)orthogonalCoordinateViewLowerBound:(nonnull CGFloat *)lower upperBound:(nonnull CGFloat *)upper
-//    {
-//        CPTCoordinate orthogonalCoordinate = CPTOrthogonalCoordinate(self.coordinate);
-//        CPTXYPlotSpace *xyPlotSpace        = (CPTXYPlotSpace *)self.plotSpace;
-//        CPTPlotRange *orthogonalRange      = [xyPlotSpace plotRangeForCoordinate:orthogonalCoordinate];
-//
-//        NSAssert(orthogonalRange != nil, @"The orthogonalRange was nil in orthogonalCoordinateViewLowerBound:upperBound:");
-//
-//        CGPoint lowerBoundPoint = [self viewPointForOrthogonalCoordinate:orthogonalRange.location axisCoordinate:@0];
-//        CGPoint upperBoundPoint = [self viewPointForOrthogonalCoordinate:orthogonalRange.end axisCoordinate:@0];
-//
-//        switch ( self.coordinate ) {
-//            case CPTCoordinateX:
-//                *lower = lowerBoundPoint.y;
-//                *upper = upperBoundPoint.y;
-//                break;
-//
-//            case CPTCoordinateY:
-//                *lower = lowerBoundPoint.x;
-//                *upper = upperBoundPoint.x;
-//                break;
-//
-//            default:
-//                *lower = CPTNAN;
-//                *upper = CPTNAN;
-//                break;
-//        }
-//    }
-//
-//    -(CGPoint)viewPointForOrthogonalCoordinate:(nullable NSNumber *)orthogonalCoord axisCoordinate:(nullable NSNumber *)coordinateValue
-//    {
-//        CPTCoordinate myCoordinate         = self.coordinate;
-//        CPTCoordinate orthogonalCoordinate = CPTOrthogonalCoordinate(myCoordinate);
-//
-//        NSDecimal plotPoint[2];
-//
-//        plotPoint[myCoordinate]         = coordinateValue.decimalValue;
-//        plotPoint[orthogonalCoordinate] = orthogonalCoord.decimalValue;
-//
-//        CPTPlotArea *thePlotArea = self.plotArea;
-//
-//        return [self convertPoint:[self.plotSpace plotAreaViewPointForPlotPoint:plotPoint numberOfCoordinates:2] fromLayer:thePlotArea];
-//    }
-//
+// MARK: - Coordinate Transforms
+
+    func orthogonalCoordinateViewLowerBound(lower: CGFloat, upper: CGFloat)
+    {
+        var lower = lower
+        var upper = upper
+        let orthogonalCoordinate = CPTUtilities.shared.CPTOrthogonalCoordinate(self.coordinate);
+        let xyPlotSpace        = self.plotSpace
+        let orthogonalRange = xyPlotSpace?.plotRangeForCoordinate(coordinate: orthogonalCoordinate)
+
+
+        let lowerBoundPoint = self.viewPointForOrthogonalCoordinate(orthogonalCoord: orthogonalRange?.location, axisCoordinate:0)
+        let upperBoundPoint = self.viewPointForOrthogonalCoordinate(orthogonalCoord: orthogonalRange?.end, axisCoordinate:0)
+
+        switch ( self.coordinate ) {
+        case CPTCoordinate.x:
+                lower = lowerBoundPoint.y;
+                upper = upperBoundPoint.y;
+                break;
+
+        case CPTCoordinate.y:
+                lower = lowerBoundPoint.x;
+                upper = upperBoundPoint.x;
+                break;
+
+            default:
+                lower = CGFloat.nan
+                upper = CGFloat.nan
+                break;
+        }
+    }
+
+    func viewPointForOrthogonalCoordinate( orthogonalCoord: CGFloat?, axisCoordinate coordinateValue: CGFloat?) -> CGPoint {
+        let myCoordinate = coordinate
+        let orthogonalCoordinate = CPTUtilities.shared.CPTOrthogonalCoordinate(myCoordinate)
+        
+        var plotPoint = [CGFloat]()
+        
+        plotPoint.append(coordinateValue!)
+        plotPoint.append(orthogonalCoord!)
+        
+        let thePlotArea = plotArea
+        
+        return convertPoint(plotSpace.plotAreaViewPointForPlotPoint( plotPoint, numberOfCoordinates: 2), from: thePlotArea)
+    }
+    
+    
+    
 //    -(CGPoint)viewPointForCoordinateValue:(nullable NSNumber *)coordinateValue
 //    {
 //        CGPoint point = [self viewPointForOrthogonalCoordinate:self.orthogonalPosition
