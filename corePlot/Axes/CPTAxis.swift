@@ -31,7 +31,7 @@ public class CPTAxis : CPTLayer {
     var defaultTitleLocation = 0
     
     // MARK: -
-    var axisLineStyle = CPTLineStyle()
+    var axisLineStyle : CPTLineStyle?
     
     // MARK: Axis.m
     var needsRelabel = false
@@ -196,10 +196,6 @@ public class CPTAxis : CPTLayer {
         self.needsDisplayOnBoundsChange = true
     }
     
-//    required init?(coder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-    
     override init(layer :  Any )
     {
         super.init(layer: layer)
@@ -271,7 +267,6 @@ public class CPTAxis : CPTLayer {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
     // MARK: - Animation
     func needsDisplayForKey(aKey:String )-> Bool
     {
@@ -291,30 +286,28 @@ public class CPTAxis : CPTLayer {
             return CPTLayer.needsDisplay(forKey: aKey)
         }
     }
-    
-    
-    
-    // MARK: -Ticks
-    func generateFixedIntervalMajorTickLocations(newMajorLocations: inout CGFloat, newMinorLocations: inout CGFloat)
+
+    // MARK: - Ticks
+    func generateFixedIntervalMajorTickLocations(newMajorLocations: inout Set<CGFloat>, newMinorLocations: inout Set<CGFloat>)
     {
         var majorLocations = Set<CGFloat>()
-        var minorLocations =  Set<CGFloat>()
+        var minorLocations = Set<CGFloat>()
         
         let zero          = CGFloat(0.0)
         var majorInterval = self.majorIntervalLength
         
         if majorInterval > zero {
-            let range = self.plotSpace.plotRangeForCoordinate(self.coordinate)
+            let range = self.plotSpace?.plotRangeForCoordinate(coordinate: self.coordinate)
             
             
-            if ( range ) {
+            if (( range ) != nil) {
                 let theVisibleRange = self.visibleRange
                 if (theVisibleRange != nil)  {
                     range.intersectionPlotRange(theVisibleRange)
                 }
                 
-                let rangeMin = range.minLimitDecimal;
-                let rangeMax = range.maxLimitDecimal;
+                let rangeMin = CGFloat(range!.minLimitDecimal)
+                let rangeMax = CGFloat(range!.maxLimitDecimal)
                 
                 var minorInterval = CGFloat(0.0)
                 let minorTickCount = self.minorTicksPerInterval;
@@ -326,20 +319,20 @@ public class CPTAxis : CPTLayer {
                 }
                 
                 // Set starting coord--should be the smallest value >= rangeMin that is a whole multiple of majorInterval away from the labelingOrigin
-                let origin = self.labelingOrigin.decimalValue;
-                let  coord  = (rangeMin - origin) / majorInterval
+                let origin = CGFloat(truncating: self.labelingOrigin)
+                var  coord  = ( rangeMin - origin) / majorInterval
                 NSDecimalRound(&coord, &coord, 0, NSRoundUp);
                 coord = (coord * majorInterval) + origin
                 
                 // Set minor ticks between the starting point and rangeMin
                 if ( minorTickCount > 0 ) {
-                    let minorCoord = coord - minorInterval
+                    var minorCoord = coord - minorInterval
                     
                     for  minorTickIndex in 0..<Int(minorTickCount)  {
                         if minorCoord < rangeMin {
                             break
                         }
-                        minorLocations.addObject(NSDecimalNumber decimalNumberWithDecimal:minorCoord]];
+                        minorLocations.insert(minorCoord)
                             minorCoord = minorCoord - minorInterval
                         }
                 }
@@ -347,7 +340,7 @@ public class CPTAxis : CPTLayer {
                 // Set tick locations
                 while ( coord < rangeMax) {
                     // Major tick
-                    //                    majorLocations.addObject(NSDecimalNumber decimalNumberWithDecimal:coord]];
+                    majorLocations.insert(coord)
                     
                     // Minor ticks
                     if ( minorTickCount > 0 ) {
@@ -357,12 +350,11 @@ public class CPTAxis : CPTLayer {
                             if minorCoord > rangeMax {
                                 break
                             }
-                            minorLocations.addObject( NSDecimalNumber decimalNumberWithDecimal:minorCoord]];
-                                                      minorCoord = CPTDecimalAdd(minorCoord, minorInterval)
+                            minorLocations.insert(minorCoord)
+                            minorCoord = (minorCoord + minorInterval)
                         }
                     }
-                    
-                    coord = CPTDecimalAdd(coord, majorInterval);
+                    coord = coord + majorInterval
                 }
             }
         }
@@ -502,9 +494,8 @@ public class CPTAxis : CPTLayer {
             return allLocations;
         }
     }
-    //
-    //    /// @endcond
-    //
+    
+    
     //    /** @brief Removes any major ticks falling inside the label exclusion ranges from the set of tick locations.
     //     *  @param allLocations A set of major tick locations.
     //     *  @return The filtered set.
@@ -769,12 +760,10 @@ public class CPTAxis : CPTLayer {
     //    Updates the axis labels.
     func relabel()
     {
-        if ( !self.needsRelabel ) {
-            return;
-        }
-        if ( (self.plotSpace == nil) != nil) {
-            return;
-        }
+        guard self.needsRelabel == true else { return }
+        guard self.plotSpace != nil else  { return }
+        
+        
         let theDelegate = self.delegate;
         
         if ( [theDelegate respondsToSelector:@selector(axisShouldRelabel:)] && ![theDelegate axisShouldRelabel:self] ) {
@@ -824,17 +813,17 @@ public class CPTAxis : CPTLayer {
             
         case .provided:
             
-            let labeledRange = self.plotSpace.plotRangeForCoordinate(self.coordinate)
+            let labeledRange = self.plotSpace?.plotRangeForCoordinate(coordinate: self.coordinate)
                 let theVisibleRange     = self.visibleRange;
-                if ( theVisibleRange ) {
-                    [labeledRange intersectionPlotRange:theVisibleRange];
+            if (( theVisibleRange ) != nil) {
+                    labeledRange.intersectionPlotRange(theVisibleRange)
                 }
                 
-                [self updateAxisLabelsAtLocations:self.majorTickLocations
-                inRange:labeledRange
-                useMajorAxisLabels:true];
+            self.updateAxisLabelsAtLocations(self.majorTickLocations,
+                inRange:labeledRange,
+                useMajorAxisLabel:true)
                 
-            self.updateAxisLabelsAtLocations:self.minorTickLocations,
+            self.updateAxisLabelsAtLocations(self.minorTickLocations,
                 inRange:labeledRange,
                 useMajorAxisLabels:false)
             
@@ -845,20 +834,20 @@ public class CPTAxis : CPTLayer {
                                               inRange:nil,
                                               useMajorAxisLabels:true)
             
-            [self updateAxisLabelsAtLocations:self.minorTickLocations
-                inRange:nil
-                useMajorAxisLabels:false];
+            self.updateAxisLabelsAtLocations(self.minorTickLocations,
+                inRange:nil,
+                useMajorAxisLabels:false)
                 break;
         }
         
         self.needsRelabel = false
         if ( self.alternatingBandFills.count > 0 ) {
-            let thePlotArea = self.plotArea;
+            let thePlotArea = self.plotArea
             thePlotArea?.setNeedsDisplay()
         }
         
-        if ( [theDelegate respondsToSelector:@selector(axisDidRelabel:)] ) {
-            [theDelegate axisDidRelabel:self];
+        if ( [theDelegate.respondsToSelector:@selector(axisDidRelabel:)] ) {
+            theDelegate.axisDidRelabel(self)
         }
     }
     
@@ -1030,11 +1019,9 @@ public class CPTAxis : CPTLayer {
     //        }
     //        [self updateAxisTitle];
     //    }
-    //
-    //    /// @}
-    //
-    //    #pragma mark -
-    //    #pragma mark Background Bands
+
+
+    // MARK: -  Background Bands
     //
     //    /** @brief Add a background limit band.
     //     *  @param limitBand The new limit band.
@@ -1070,20 +1057,16 @@ public class CPTAxis : CPTLayer {
     //
     //    /** @brief Remove all background limit bands.
     //    **/
-    //   func removeAllBackgroundLimitBands
-    //    {
-    //        [self.mutableBackgroundLimitBands removeAllObjects];
-    //
-    //        CPTPlotArea *thePlotArea = self.plotArea;
-    //
-    //        [thePlotArea setNeedsDisplay];
-    //    }
-    //
-    //    #pragma mark -
-    //    #pragma mark Responder Chain and User Interaction
-    //
-    //    /// @name User Interaction
-    //    /// @{
+    func removeAllBackgroundLimitBands()
+    {
+        self.mutableBackgroundLimitBands.removeAllObjects()
+        let thePlotArea = self.plotArea;
+        thePlotArea?.setNeedsDisplay()
+    }
+    
+    
+    
+    // MARK: -  Responder Chain and User Interaction
     //
     //    /**
     //     *  @brief Informs the receiver that the user has

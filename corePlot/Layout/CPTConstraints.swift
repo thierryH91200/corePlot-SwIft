@@ -11,18 +11,16 @@ class CPTConstraints: NSObject {
     
     //MARK: Factory methods
     class func constraint(withLowerOffset newOffset: CGFloat) -> Self {
-        return CPTConstraintsFixed(lowerOffset: newOffset)
+        return CPTConstraints(lowerOffset: newOffset) as! Self
     }
 
     class func constraint(withUpperOffset newOffset: CGFloat) -> Self {
-        return CPTConstraintsFixed(upperOffset: newOffset)
+        return CPTConstraints(upperOffset: newOffset) as! Self
     }
 
     class func constraint(withRelativeOffset newOffset: CGFloat) -> Self {
-        return CPTConstraintsRelative.shared.initWithRelativeOffset(newOffset: newOffset)
+        return CPTConstraints(relativeOffset: newOffset) as! Self
     }
-    
-    
     
     //MARK: Init/Dealloc
     init( lowerOffset : CGFloat)

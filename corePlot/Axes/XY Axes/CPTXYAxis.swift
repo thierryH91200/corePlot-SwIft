@@ -86,217 +86,213 @@ public class CPTXYAxis: CPTAxis {
     
     
     
-//    -(CGPoint)viewPointForCoordinateValue:(nullable NSNumber *)coordinateValue
-//    {
-//        CGPoint point = [self viewPointForOrthogonalCoordinate:self.orthogonalPosition
-//                                                axisCoordinate:coordinateValue];
-//
-//        CPTConstraints *theAxisConstraints = self.axisConstraints;
-//
-//        if ( theAxisConstraints ) {
-//            CGFloat lb, ub;
-//            [self orthogonalCoordinateViewLowerBound:&lb upperBound:&ub];
-//            CGFloat constrainedPosition = [theAxisConstraints positionForLowerBound:lb upperBound:ub];
-//
-//            switch ( self.coordinate ) {
-//                case CPTCoordinateX:
-//                    point.y = constrainedPosition;
-//                    break;
-//
-//                case CPTCoordinateY:
-//                    point.x = constrainedPosition;
-//                    break;
-//
-//                default:
-//                    break;
-//            }
-//        }
-//
-//        if ( isnan(point.x) || isnan(point.y)) {
-//            NSLog(@"[CPTXYAxis viewPointForCoordinateValue:%@] was %@", coordinateValue, CPTStringFromPoint(point));
-//
-//            if ( isnan(point.x)) {
-//                point.x = CPTFloat(0.0);
-//            }
-//            if ( isnan(point.y)) {
-//                point.y = CPTFloat(0.0);
-//            }
-//        }
-//
-//        return point;
-//    }
-//
+    override func viewPointForCoordinateValue(coordinateValue: CGFloat )-> CGPoint
+    {
+        var point = self.viewPointForOrthogonalCoordinate(orthogonalCoord: self.orthogonalPosition,
+                                                          axisCoordinate:coordinateValue)
+        
+        let theAxisConstraints = self.axisConstraints
+        
+        if (( theAxisConstraints ) != nil) {
+            var lowerBound = CGFloat(0)
+            var upperBound = CGFloat(0);
+            self.orthogonalCoordinateViewLowerBound(lower: lowerBound ,upper: upperBound)
+            let constrainedPosition = theAxisConstraints!.positionFor(lowerBound: lowerBound, upperBound: upperBound)
+                
+                switch ( self.coordinate ) {
+                case CPTCoordinate.x:
+                point.y = constrainedPosition;
+                break;
+                
+                case CPTCoordinate.y:
+                point.x = constrainedPosition;
+                break;
+                
+                default:
+                break;
+                }
+        }
+        
+        if point.x.isNaN || point.y.isNaN {
+            print("[CPTXYAxis viewPointForCoordinateValue:%@] was %@", coordinateValue, CPTStringFromPoint(point));
+            
+            if point.x.isNaN {
+                point.x = CGFloat(0.0);
+            }
+            if point.y.isNaN {
+                point.y = CGFloat(0.0);
+            }
+        }
+        
+        return point;
+    }
+
 // MARK: Drawing
-//
-//    -(void)drawTicksInContext:(nonnull CGContextRef)context atLocations:(nullable CPTNumberSet *)locations withLength:(CGFloat)length inRange:(nullable CPTPlotRange *)labeledRange isMajor:(BOOL)major
-//    {
-//        CPTLineStyle *lineStyle = (major ? self.majorTickLineStyle : self.minorTickLineStyle);
-//
-//        if ( !lineStyle ) {
-//            return;
-//        }
-//
-//        CGFloat lineWidth = lineStyle.lineWidth;
-//
-//        CPTAlignPointFunction alignmentFunction = NULL;
-//
-//        if ((self.contentsScale > CPTFloat(1.0)) && (round(lineWidth) == lineWidth)) {
-//            alignmentFunction = CPTAlignIntegralPointToUserSpace;
-//        }
-//        else {
-//            alignmentFunction = CPTAlignPointToUserSpace;
-//        }
-//
-//        [lineStyle setLineStyleInContext:context];
-//        CGContextBeginPath(context);
-//
-//        for ( NSDecimalNumber *tickLocation in locations ) {
-//            if ( labeledRange && ![labeledRange containsNumber:tickLocation] ) {
-//                continue;
-//            }
-//
-//            // Tick end points
-//            CGPoint baseViewPoint  = [self viewPointForCoordinateValue:tickLocation];
-//            CGPoint startViewPoint = baseViewPoint;
-//            CGPoint endViewPoint   = baseViewPoint;
-//
-//            CGFloat startFactor = CPTFloat(0.0);
-//            CGFloat endFactor   = CPTFloat(0.0);
-//            switch ( self.tickDirection ) {
-//                case CPTSignPositive:
-//                    endFactor = CPTFloat(1.0);
-//                    break;
-//
-//                case CPTSignNegative:
-//                    endFactor = CPTFloat(-1.0);
-//                    break;
-//
-//                case CPTSignNone:
-//                    startFactor = CPTFloat(-0.5);
-//                    endFactor   = CPTFloat(0.5);
-//                    break;
-//            }
-//
-//            switch ( self.coordinate ) {
-//                case CPTCoordinateX:
-//                    startViewPoint.y += length * startFactor;
-//                    endViewPoint.y   += length * endFactor;
-//                    break;
-//
-//                case CPTCoordinateY:
-//                    startViewPoint.x += length * startFactor;
-//                    endViewPoint.x   += length * endFactor;
-//                    break;
-//
-//                default:
-//                    NSLog(@"Invalid coordinate in [CPTXYAxis drawTicksInContext:]");
-//            }
-//
-//            startViewPoint = alignmentFunction(context, startViewPoint);
-//            endViewPoint   = alignmentFunction(context, endViewPoint);
-//
-//            // Add tick line
-//            CGContextMoveToPoint(context, startViewPoint.x, startViewPoint.y);
-//            CGContextAddLineToPoint(context, endViewPoint.x, endViewPoint.y);
-//        }
-//        // Stroke tick line
-//        [lineStyle strokePathInContext:context];
-//    }
-//
-//    -(void)renderAsVectorInContext:(nonnull CGContextRef)context
-//    {
-//        if ( self.hidden ) {
-//            return;
-//        }
-//
-//        [super renderAsVectorInContext:context];
-//
-//        [self relabel];
-//
-//        CPTPlotRange *thePlotRange    = [self.plotSpace plotRangeForCoordinate:self.coordinate];
-//        CPTMutablePlotRange *range    = [thePlotRange mutableCopy];
-//        CPTPlotRange *theVisibleRange = self.visibleRange;
-//
-//        if ( theVisibleRange ) {
-//            [range intersectionPlotRange:theVisibleRange];
-//        }
-//
-//        CPTMutablePlotRange *labeledRange = nil;
-//
-//        switch ( self.labelingPolicy ) {
-//            case CPTAxisLabelingPolicyNone:
-//            case CPTAxisLabelingPolicyLocationsProvided:
-//                labeledRange = range;
-//                break;
-//
-//            default:
-//                break;
-//        }
-//
-//        // Ticks
-//        [self drawTicksInContext:context atLocations:self.minorTickLocations withLength:self.minorTickLength inRange:labeledRange isMajor:NO];
-//        [self drawTicksInContext:context atLocations:self.majorTickLocations withLength:self.majorTickLength inRange:labeledRange isMajor:YES];
-//
-//        // Axis Line
-//        CPTLineStyle *theLineStyle = self.axisLineStyle;
-//        CPTLineCap *minCap         = self.axisLineCapMin;
-//        CPTLineCap *maxCap         = self.axisLineCapMax;
-//
-//        if ( theLineStyle || minCap || maxCap ) {
-//            // If there is a separate axis range given then restrict the axis to that range, overriding the visible range
-//            // given for grid lines and ticks.
-//            CPTPlotRange *theVisibleAxisRange = self.visibleAxisRange;
-//            if ( theVisibleAxisRange ) {
-//                range = [theVisibleAxisRange mutableCopy];
-//            }
-//            CPTAlignPointFunction alignmentFunction = CPTAlignPointToUserSpace;
-//            if ( theLineStyle ) {
-//                CGFloat lineWidth = theLineStyle.lineWidth;
-//                if ((self.contentsScale > CPTFloat(1.0)) && (round(lineWidth) == lineWidth)) {
-//                    alignmentFunction = CPTAlignIntegralPointToUserSpace;
-//                }
-//
-//                CGPoint startViewPoint = alignmentFunction(context, [self viewPointForCoordinateValue:range.location]);
-//                CGPoint endViewPoint   = alignmentFunction(context, [self viewPointForCoordinateValue:range.end]);
-//                [theLineStyle setLineStyleInContext:context];
-//                CGContextBeginPath(context);
-//                CGContextMoveToPoint(context, startViewPoint.x, startViewPoint.y);
-//                CGContextAddLineToPoint(context, endViewPoint.x, endViewPoint.y);
-//                [theLineStyle strokePathInContext:context];
-//            }
-//
-//            CGPoint axisDirection = CGPointZero;
-//            if ( minCap || maxCap ) {
-//                switch ( self.coordinate ) {
-//                    case CPTCoordinateX:
-//                        axisDirection = (range.lengthDouble >= 0.0) ? CPTPointMake(1.0, 0.0) : CPTPointMake(-1.0, 0.0);
-//                        break;
-//
-//                    case CPTCoordinateY:
-//                        axisDirection = (range.lengthDouble >= 0.0) ? CPTPointMake(0.0, 1.0) : CPTPointMake(0.0, -1.0);
-//                        break;
-//
-//                    default:
-//                        break;
-//                }
-//            }
-//
-//            if ( minCap ) {
-//                CGPoint viewPoint = alignmentFunction(context, [self viewPointForCoordinateValue:range.minLimit]);
-//                [minCap renderAsVectorInContext:context atPoint:viewPoint inDirection:CPTPointMake(-axisDirection.x, -axisDirection.y)];
-//            }
-//
-//            if ( maxCap ) {
-//                CGPoint viewPoint = alignmentFunction(context, [self viewPointForCoordinateValue:range.maxLimit]);
-//                [maxCap renderAsVectorInContext:context atPoint:viewPoint inDirection:axisDirection];
-//            }
-//        }
-//    }
-//
+
+    func drawTicksInContext(context: CGContextRef, atLocations locations: CPTNumberSet, withLength length:CGFloat, inRange labeledRange: CPTPlotRange, isMajor major:Bool)
+    {
+        let lineStyle = (major ? self.majorTickLineStyle : self.minorTickLineStyle)
+
+        if ( !lineStyle ) {
+            return;
+        }
+
+        let lineWidth = lineStyle.lineWidth;
+
+        CPTAlignPointFunction alignmentFunction = NULL;
+
+        if ((self.contentsScale > CGFloat(1.0)) && (round(lineWidth) == lineWidth)) {
+            alignmentFunction = CPTAlignIntegralPointToUserSpace;
+        }
+        else {
+            alignmentFunction = CPTAlignPointToUserSpace;
+        }
+
+        lineStyle.setLineStyleInContext(context)
+        CGContextBeginPath(context);
+
+        for  tickLocation in locations {
+            if labeledRange && labeledRange.containsNumber(tickLocation) == false {
+                continue;
+            }
+
+            // Tick end points
+            let baseViewPoint  = self.viewPointForCoordinateValue(tickLocation)
+            let startViewPoint = baseViewPoint
+            let endViewPoint   = baseViewPoint
+
+            var startFactor = CGFloat(0.0);
+            var endFactor   = CGFloat(0.0);
+            switch ( self.tickDirection ) {
+            case .positive:
+                    endFactor = CGFloat(1.0);
+                    break;
+
+            case .negative:
+                    endFactor = CGFloat(-1.0);
+                    break;
+
+            case .none:
+                    startFactor = CGFloat(-0.5);
+                    endFactor   = CGFloat(0.5);
+                    break;
+            }
+
+            switch ( self.coordinate ) {
+            case CPTCoordinate.x:
+                    startViewPoint.y += length * startFactor;
+                    endViewPoint.y   += length * endFactor;
+                    break;
+
+            case CPTCoordinate.y:
+                    startViewPoint.x += length * startFactor;
+                    endViewPoint.x   += length * endFactor;
+                    break;
+
+                default:
+                    print("Invalid coordinate in [CPTXYAxis drawTicksInContext:]")
+            }
+
+            startViewPoint = alignmentFunction(context, startViewPoint);
+            endViewPoint   = alignmentFunction(context, endViewPoint);
+
+            // Add tick line
+            CGContextMoveToPoint(context, startViewPoint.x, startViewPoint.y);
+            CGContextAddLineToPoint(context, endViewPoint.x, endViewPoint.y);
+        }
+        // Stroke tick line
+        lineStyle.strokePathInContext(context)
+    }
+
+    override func renderAsVectorInContext(context: CGContext)
+    {
+        guard self.isHidden == false else { return }
+        
+        super.renderAsVectorInContext(context: context)
+        
+        self.relabel()
+        
+        let thePlotRange    = self.plotSpace?.plotRangeForCoordinate(coordinate: self.coordinate)
+        var range    = thePlotRange
+        let theVisibleRange = self.visibleRange;
+        
+        if (( theVisibleRange ) != nil) {
+            range.intersectionPlotRange(theVisibleRange)
+        }
+        
+        let labeledRange : CPTMutablePlotRange?
+        
+        switch ( self.labelingPolicy ) {
+        case .none:
+            fallthrough
+        case .provided:
+            labeledRange = range;
+            break;
+            
+        default:
+            break;
+        }
+        
+        // Ticks
+        self.drawTicksInContext(context, atLocations:self.minorTickLocations, withLength:self.minorTickLength, inRange:labeledRange, isMajor:false)
+        self.drawTicksInContext(context, atLocations:self.majorTickLocations, withLength:self.majorTickLength, inRange:labeledRange, isMajor:true)
+        
+        // Axis Line
+        let theLineStyle = self.axisLineStyle
+        let minCap: CPTLineCap?         = self.axisLineCapMin
+        let maxCap: CPTLineCap?        = self.axisLineCapMax
+        
+        if ( (theLineStyle != nil) || (minCap != nil) || (maxCap != nil) ) {
+            // If there is a separate axis range given then restrict the axis to that range, overriding the visible range
+            // given for grid lines and ticks.
+            let theVisibleAxisRange = self.visibleAxisRange;
+            if (( theVisibleAxisRange ) != nil) {
+                range = theVisibleAxisRange
+                
+            }
+            let alignmentFunction : CPTAlignPointFunction = CPTUtilities.shared.CPTAlignPointToUserSpace
+            if ( theLineStyle ) {
+                let lineWidth = theLineStyle?.lineWidth;
+                if ((self.contentsScale > CGFloat(1.0)) && (round(lineWidth) == lineWidth)) {
+                    alignmentFunction = CPTAlignIntegralPointToUserSpace;
+                }
+                
+                let startViewPoint = alignmentFunction(context, self.viewPointForCoordinateValue(range.location))
+                let endViewPoint   = alignmentFunction(context, self.viewPointForCoordinateValue(range.end))
+                theLineStyle?.setLineStyleInContext(context: context)
+                context.beginPath();
+                CGContextMoveToPoint(context, startViewPoint.x, startViewPoint.y);
+                CGContextAddLineToPoint(context, endViewPoint.x, endViewPoint.y);
+                theLineStyle?.strokePathInContext(context: context)
+            }
+            
+            var axisDirection = CGPoint()
+            if ( (minCap != nil) || (maxCap != nil) ) {
+                switch ( self.coordinate ) {
+                case CPTCoordinate.x:
+                    axisDirection = (range!.lengthDouble >= 0.0) ? CGPoint(x: 1.0, y: 0.0) : CGPoint(x: -1.0, y: 0.0)
+                    
+                case CPTCoordinate.y:
+                    axisDirection = (range!.lengthDouble >= 0.0) ? CGPoint(x: 0.0, y: 1.0) : CGPoint(x: 0.0, y: -1.0);
+                    
+                default:
+                    break;
+                }
+            }
+            
+            if (( minCap ) != nil) {
+                let viewPoint = alignmentFunction(context, self.viewPointForCoordinateValue(range.minLimit))
+                minCap.renderAsVectorInContext(context, atPoint:viewPoint, inDirection:CGPoint(-axisDirection.x, -axisDirection.y))
+            }
+            
+            if (( maxCap ) != nil) {
+                let viewPoint = alignmentFunction(context, self.viewPointForCoordinateValue(range.maxLimit))
+                maxCap.renderAsVectorInContext(context, atPoint:viewPoint, inDirection:axisDirection)
+            }
+        }
+    }
+
 // MARK: - Grid Lines
-//
-//    /// @cond
-//
     override func drawGridLinesInContext(context:  CGContext, isMajor: Bool)
     {
         let lineStyle = isMajor ? self.majorGridLineStyle : self.minorGridLineStyle
@@ -312,16 +308,15 @@ public class CPTXYAxis: CPTAxis {
             let orthogonalCoordinate   = CPTOrthogonalCoordinate(selfCoordinate);
             let orthogonalRange = thePlotSpace.plotRangeForCoordinate(orthogonalCoordinate)
             let theGridLineRange       = self.gridLinesRange;
-            let labeledRange    = CPTMutablePlotRange()
+            let labeledRange    = CPTMutablePlotRange(location: 0, length: 0)
 
             switch ( self.labelingPolicy ) {
             case .none:
-                break
-            case .locationsProvided:
+            case .provided:
                 
-                    let labeledRange = self.plotSpace.plotRangeForCoordinate(self.coordinate)
+                let labeledRange = self.plotSpace?.plotRangeForCoordinate(coordinate: self.coordinate)
                     let theVisibleRange = self.visibleRange
-                    if ( theVisibleRange ) {
+                if (( theVisibleRange ) != nil) {
                         labeledRange.intersectionPlotRange(theVisibleRange)
                     }
                 
@@ -331,8 +326,8 @@ public class CPTXYAxis: CPTAxis {
                     break;
             }
 
-            if ( theGridLineRange ) {
-                orthogonalRange.intersectionPlotRange(heGridLineRange)
+            if (( theGridLineRange ) != nil) {
+                orthogonalRange.intersectionPlotRange(theGridLineRange)
             }
 
             let thePlotArea = self.plotArea;
@@ -340,11 +335,11 @@ public class CPTXYAxis: CPTAxis {
             var endPlotPoint = [CGFloat]()
             startPlotPoint[orthogonalCoordinate] = orthogonalRange.locationDecimal;
             endPlotPoint[orthogonalCoordinate]   = orthogonalRange.endDecimal;
-            let originTransformed = self.convertPoint(self.bounds.origin, fromLayer:thePlotArea)
+            let originTransformed = self.convert(self.bounds.origin, from:thePlotArea)
 
-            let lineWidth = lineStyle.lineWidth;
+            let lineWidth = lineStyle?.lineWidth;
 
-            CPTAlignPointFunction alignmentFunction = nil;
+            let alignmentFunction : CPTUtilities.shared.CPTAlignPointFunction?
             if ((self.contentsScale > CGFloat(1.0)) && (round(lineWidth) == lineWidth)) {
                 alignmentFunction = CPTAlignIntegralPointToUserSpace;
             }
@@ -357,7 +352,7 @@ public class CPTXYAxis: CPTAxis {
             for location in locations {
                 let locationDecimal = location.decimalValue;
 
-                if ( labeledRange && !labeledRange.contains(locationDecimal ) {
+                if ( labeledRange && !labeledRange.contains(locationDecimal )) {
                     continue;
                 }
 
@@ -365,12 +360,12 @@ public class CPTXYAxis: CPTAxis {
                 endPlotPoint[selfCoordinate]   = locationDecimal;
 
                 // Start point
-                let startViewPoint = [thePlotSpace plotAreaViewPointForPlotPoint:startPlotPoint numberOfCoordinates:2];
+                let startViewPoint = thePlotSpace.plotAreaViewPointForPlotPoint(plotPoint: startPlotPoint, numberOfCoordinates:2)
                 startViewPoint.x += originTransformed.x;
                 startViewPoint.y += originTransformed.y;
 
                 // End point
-                var endViewPoint = thePlotSpace.plotAreaViewPoint(forPlotPoint: endPlotPoint, numberOfCoordinates: 2)
+                var endViewPoint = thePlotSpace.plotAreaViewPointForPlotPoint( plotPoint: endPlotPoint, numberOfCoordinates: 2)
                 endViewPoint.x += originTransformed.x
                 endViewPoint.y += originTransformed.y
                 
@@ -385,18 +380,12 @@ public class CPTXYAxis: CPTAxis {
             }
 
             // Stroke grid lines
-            lineStyle.setLineStyleInContext(context)
-            lineStyle.strokePathInContext(context)
+            lineStyle?.setLineStyleInContext(context: context)
+            lineStyle?.strokePathInContext(context: context)
         }
     }
-
-
-    
     
     // MARK: Background Bands
-//
-//    /// @cond
-//
 //    -(NSUInteger)initialBandIndexForSortedLocations:(CPTNumberArray *)sortedLocations inRange:(CPTMutablePlotRange *)range
 //    {
 //        NSUInteger bandIndex = 0;

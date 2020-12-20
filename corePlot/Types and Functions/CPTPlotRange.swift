@@ -8,6 +8,13 @@
 import Cocoa
 
 class CPTPlotRange: NSObject {
+    
+    enum CPTPlotRangeComparisonResultNumber : Int {
+        case belowRange ///< Number is below the range.
+        case inRange ///< Number is in the range.
+        case aboveRange ///< Number is above the range.
+        case undefined ///< Number is undefined (e.g., @NAN).
+    }
 
     var location : NSNumber = 0.0
     var length: NSNumber = 0.0
@@ -330,16 +337,16 @@ class CPTPlotRange: NSObject {
 //     *  @param number The number to check.
 //     *  @return @YES if @ref location ≤ @par{number} ≤ @ref end.
 //     **/
-//    -(BOOL)containsNumber:(nullable NSNumber *)number
-//    {
-//        if ( [number isKindOfClass:[NSDecimalNumber class]] ) {
-//            return [self contains:number.decimalValue];
-//        }
-//        else {
-//            return [self containsDouble:number.doubleValue];
-//        }
-//    }
-//
+    func containsNumber(number: Any)->Bool
+    {
+        if (number is CGFloat ) {
+            return self.contains(number as! CGFloat)
+        }
+        else {
+            return self.contains(number as! Double)
+        }
+    }
+
 //    /** @brief Determines whether a given range is equal to the range of the receiver.
 //     *  @param otherRange The range to check.
 //     *  @return @YES if the ranges both have the same location and length.

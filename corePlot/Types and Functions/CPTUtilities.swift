@@ -11,8 +11,9 @@ class CPTUtilities : NSObject {
     
     static let shared = CPTUtilities()
     
-    //#pragma mark -
-    //#pragma mark Convert NSDecimal to primitive types
+    typealias CPTAlignPointFunction = ((CGContext, CGPoint) -> CGPoint)?
+    
+    // MARK: - Convert NSDecimal to primitive types
     //
     ///**
     // *  @brief Converts an @ref NSDecimal value to an 8-bit integer.
@@ -867,23 +868,23 @@ class CPTUtilities : NSObject {
     func CPTOrthogonalCoordinate(_ coord: CPTCoordinate) -> CPTCoordinate {
         return (coord == CPTCoordinate.x ? CPTCoordinate.y : CPTCoordinate.x)
     }
-    //
-    //#pragma mark -
+  //
+
     // MARK: Quartz pixel-alignment functions
-    //    func CPTAlignPointToUserSpace(_ context: CGContext, _ point: CGPoint) -> CGPoint {
-    //        var point = point
-    //        // Compute the coordinates of the point in device space.
-    //        point = context.convertToDeviceSpace(point)
-    //
-    //        // Ensure that coordinates are at exactly the corner
-    //        // of a device pixel.
-    //        point.x = CGFloat(round(Double(point.x - CGFloat(0.5))) + CGFloat(0.5))
-    //        point.y = ceil(point.y) - CGFloat(0.5)
-    //
-    //        // Convert the device aligned coordinate back to user space.
-    //        return context.convertToUserSpace(point)
-    //    }
-    //
+        func CPTAlignPointToUserSpace(_ context: CGContext, _ point: CGPoint) -> CGPoint {
+            var point = point
+            // Compute the coordinates of the point in device space.
+            point = context.convertToDeviceSpace(point)
+    
+            // Ensure that coordinates are at exactly the corner
+            // of a device pixel.
+            point.x = CGFloat(round(CGFloat(point.x - CGFloat(0.5))) + CGFloat(0.5))
+            point.y = ceil(point.y) - CGFloat(0.5)
+    
+            // Convert the device aligned coordinate back to user space.
+            return context.convertToUserSpace(point)
+        }
+    
     
     func CPTAlignSizeToUserSpace(_ context: CGContext, _ size: CGSize) -> CGSize {
         var size = size

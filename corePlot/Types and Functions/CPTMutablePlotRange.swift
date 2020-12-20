@@ -61,8 +61,8 @@ class CPTMutablePlotRange: CPTPlotRange {
         let max2    = (other?.maxLimitDecimal)!;
         let maximum = max(max1, max2);
 
-        if ( self.isInfinite && other.isInfinite ) {
-            if ( self.lengthSign == other.lengthSign ) {
+        if ( self.isInfinite && other!.isInfinite ) {
+            if ( self.lengthSign == other?.lengthSign ) {
                 switch ( self.lengthSign ) {
                 case .positive:
                         self.locationDecimal = minimum;
@@ -77,11 +77,11 @@ class CPTMutablePlotRange: CPTPlotRange {
                 }
             }
             else {
-                self.locationDouble = -HUGE_VAL;
+                self.locationDouble = -CGFloat.infinity;
                 self.lengthDouble   = CGFloat.infinity  // HUGE_VAL;
             }
         }
-        else if ( self.isInfinite && !other.isInfinite ) {
+        else if ( self.isInfinite && !other!.isInfinite ) {
             switch ( self.lengthSign ) {
             case .positive:
                     self.locationDecimal = minimum;
@@ -95,16 +95,16 @@ class CPTMutablePlotRange: CPTPlotRange {
                     break;
             }
         }
-        else if ( !self.isInfinite && other.isInfinite ) {
+        else if ( !self.isInfinite && other?.isInfinite ) {
             switch ( other.lengthSign ) {
             case .positive:
                     self.locationDecimal = minimum;
-                    self.lengthDouble    = HUGE_VAL;
+                    self.lengthDouble    = CGFloat.infinity;
                     break;
 
             case .negative:
                     self.locationDecimal = maximum;
-                    self.lengthDouble    = -HUGE_VAL;
+                    self.lengthDouble    = -CGFloat.infinity;
                     break;
 
                 default:
@@ -116,13 +116,13 @@ class CPTMutablePlotRange: CPTPlotRange {
             self.lengthDecimal   = CPTDecimalNaN();
         }
         else {
-            if ( CPTDecimalGreaterThanOrEqualTo(self.lengthDecimal, CPTDecimalFromInteger(0))) {
+            if self.lengthDecimal >= Int(0) {
                 self.locationDecimal = minimum;
-                self.lengthDecimal   = CPTDecimalSubtract(maximum, minimum);
+                self.lengthDecimal   = maximum - minimum
             }
             else {
                 self.locationDecimal = maximum;
-                self.lengthDecimal   = CPTDecimalSubtract(minimum, maximum);
+                self.lengthDecimal   = (minimum - maximum);
             }
         }
     }
@@ -135,18 +135,18 @@ class CPTMutablePlotRange: CPTPlotRange {
         guard ( other != nil) else { return }
 
         let min1    = self.minLimitDecimal
-        let min2    = other.minLimitDecimal;
+        let min2    = other?.minLimitDecimal;
         let minimum = max(min1, min2);
 
         let max1    = self.maxLimitDecimal
-        let max2    = other.maxLimitDecimal
+        let max2    = other?.maxLimitDecimal
         let maximum = min(max1, max2)
 
-        if !self.intersectsRange(other ) {
+        if !self.intersectsRange(otherRange: other ) {
             self.locationDecimal = CPTDecimalNaN();
             self.lengthDecimal   = CPTDecimalNaN();
         }
-        else if ( self.isInfinite && other.isInfinite ) {
+        else if ( self.isInfinite && other?.isInfinite ) {
             switch ( self.lengthSign ) {
             case .positive:
                 self.locationDecimal = CGFloat(minimum);
@@ -160,7 +160,7 @@ class CPTMutablePlotRange: CPTPlotRange {
                     break;
             }
         }
-        else if ( self.isInfinite && !other.isInfinite ) {
+        else if ( self.isInfinite && !other!.isInfinite ) {
             switch ( self.lengthSign ) {
             case .positive:
                 self.locationDecimal = CGFloat(minimum);
@@ -176,8 +176,8 @@ class CPTMutablePlotRange: CPTPlotRange {
                     break;
             }
         }
-        else if ( !self.isInfinite && other.isInfinite ) {
-            switch ( other.lengthSign ) {
+        else if ( !self.isInfinite && ((other?.isInfinite) != nil) ) {
+            switch ( other?.lengthSign ) {
             case .positive:
                 self.locationDecimal = CGFloat(minimum);
                     self.lengthDecimal   = self.maxLimitDecimal - minimum
@@ -185,7 +185,7 @@ class CPTMutablePlotRange: CPTPlotRange {
 
             case .negative:
                     self.locationDecimal = CGFloat(maximum)
-                    self.lengthDecimal   = self.minLimitDecimal - CGFloat(maximum
+                    self.lengthDecimal   = self.minLimitDecimal - CGFloat(maximum)
                     break;
 
                 default:
@@ -216,7 +216,7 @@ class CPTMutablePlotRange: CPTPlotRange {
      **/
     func expandRangeByFactor(factor: CGFloat )
     {
-        let oldLength      = self.lengthDecimal;
+        let oldLength      = self.lengthDecimal
         let newLength      = oldLength * factor.decimalValue
         let locationOffset = ((oldLength - newLength) / (2));
         let newLocation    = self.locationDecimal + locationOffset
@@ -233,7 +233,7 @@ class CPTMutablePlotRange: CPTPlotRange {
      **/
     func shiftLocationToFitInRange(otherRange: CPTPlotRange )
     {
-        switch ([otherRange compareToDecimal:self.locationDecimal] ) {
+        switch otherRange.compareToDecimal(self.locationDecimal ) {
             case CPTPlotRangeComparisonResultNumberBelowRange:
                 self.locationDecimal = otherRange.minLimitDecimal;
                 break;
@@ -252,25 +252,18 @@ class CPTMutablePlotRange: CPTPlotRange {
      *  @param otherRange Other range.
      *  The minimum possible shift is made. The range @ref length is unchanged.
      **/
-    -(void)shiftEndToFitInRange:(nonnull CPTPlotRange *)otherRange
-    {
-        NSParameterAssert(otherRange);
+    func shiftEndToFit(in otherRange: CPTPlotRange) {
 
-        switch ( [otherRange compareToDecimal:self.endDecimal] ) {
-            case CPTPlotRangeComparisonResultNumberBelowRange:
-                self.locationDecimal = CPTDecimalSubtract(otherRange.minLimitDecimal, self.lengthDecimal);
-                break;
-
-            case CPTPlotRangeComparisonResultNumberAboveRange:
-                self.locationDecimal = CPTDecimalSubtract(otherRange.maxLimitDecimal, self.lengthDecimal);
-                break;
-
-            default:
-                // in range--do nothing
-                break;
-        }
+    switch otherRange.compare(toDecimal: endDecimal) {
+    case .numberBelowRange:
+            locationDecimal = CPTDecimalSubtract(otherRange.minLimitDecimal, lengthDecimal)
+    case .numberAboveRange:
+            locationDecimal = CPTDecimalSubtract(otherRange.maxLimitDecimal, lengthDecimal)
+        default:
+            // in range--do nothing
+            break
     }
-
+}
     // mark Accessors
 
 
