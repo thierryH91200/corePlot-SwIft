@@ -52,7 +52,7 @@ public class CPTBarPlot: CPTPlot {
 //
     
     
-    weak public var dataSource : CPTBarPlotDataSource?
+    weak public var barDataSource : CPTBarPlotDataSource?
 
     var barLocations = [CGFloat]()
     var barTips  = [CGFloat]()
@@ -158,7 +158,7 @@ public class CPTBarPlot: CPTPlot {
         self.reloadBarWidths(indexRange: indexRange)
         
         // Legend
-        let theDataSource = self.dataSource //as? CPTBarPlotDataSource
+        let theDataSource = self.barDataSource //as? CPTBarPlotDataSource
         
         if let legendTitleForBarPlot = theDataSource?.legendTitleForBarPlot {
             _ = legendTitleForBarPlot(self, indexRange.length)
@@ -410,7 +410,7 @@ public class CPTBarPlot: CPTPlot {
         }
         else if dataSource.respondsToSelector(to:#selector(barWidthForBarPlot:recordIndex:)) {
             let nilObject                 = [CPTPlot nilData]
-            var array = Array[CGFloat]()
+            var array = [CGFloat]()
             
             let maxIndex          = NSMaxRange(indexRange);
             
@@ -437,7 +437,7 @@ public class CPTBarPlot: CPTPlot {
         var length = CGFloat(0)
         
         if ( self.barWidthsAreInViewCoordinates ) {
-            length = CPTDecimalCGFloatValue(decimalLength)
+            length = CGFloat(decimalLength)
         }
         else {
             let coord : CPTCoordinate   = self.barsAreHorizontal == true ? CPTCoordinate.y : CPTCoordinate.x
@@ -465,8 +465,8 @@ public class CPTBarPlot: CPTPlot {
                 break;
             }
             
-            let originPoint    = thePlotSpace.plotAreaViewPointForPlotPoint(originPlotPoint, numberOfCoordinates:2)
-            let displacedPoint = thePlotSpace.plotAreaViewPointForPlotPoint(displacedPlotPoint, numberOfCoordinates:2)
+            let originPoint    = thePlotSpace.plotAreaViewPointForPlotPoint(plotPoint: originPlotPoint, numberOfCoordinates:2)
+            let displacedPoint = thePlotSpace.plotAreaViewPointForPlotPoint(plotPoint: displacedPlotPoint, numberOfCoordinates:2)
             
             switch ( coord ) {
             case .x:
@@ -481,6 +481,7 @@ public class CPTBarPlot: CPTPlot {
         }
         return length;
     }
+    
     //
     //    -(double)doubleLengthInPlotCoordinates:(NSDecimal)decimalLength
     //    {

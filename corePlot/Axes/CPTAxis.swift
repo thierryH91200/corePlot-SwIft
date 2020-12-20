@@ -288,7 +288,7 @@ public class CPTAxis : CPTLayer {
     }
 
     // MARK: - Ticks
-    func generateFixedIntervalMajorTickLocations(newMajorLocations: inout Set<CGFloat>, newMinorLocations: inout Set<CGFloat>)
+    func generateFixedInterval(newMajorLocations: inout Set<CGFloat>, newMinorLocations: inout Set<CGFloat>)
     {
         var majorLocations = Set<CGFloat>()
         var minorLocations = Set<CGFloat>()
@@ -344,7 +344,7 @@ public class CPTAxis : CPTLayer {
                     
                     // Minor ticks
                     if ( minorTickCount > 0 ) {
-                        let minorCoord = coord + minorInterval
+                        var minorCoord = coord + minorInterval
                         
                         for minorTickIndex in  0..<Int(minorTickCount) {
                             if minorCoord > rangeMax {
@@ -766,26 +766,26 @@ public class CPTAxis : CPTLayer {
         
         let theDelegate = self.delegate;
         
-        if ( [theDelegate respondsToSelector:@selector(axisShouldRelabel:)] && ![theDelegate axisShouldRelabel:self] ) {
+        if ( theDelegate.respondsToSelector(#selector(axisShouldRelabel:)] && ![theDelegate axisShouldRelabel:self] ) {
             self.needsRelabel = false
             return;
         }
         
-        var newMajorLocations = 0
-        var newMinorLocations = 0
+        var newMajorLocations = Set<CGFloat>()
+        var newMinorLocations = Set<CGFloat>()
         
         switch ( self.labelingPolicy ) {
         case .none:
+            fallthrough
         case .provided:
             // Locations are set by user
             break;
             
         case .fixedInterval:
-            [self generateFixedIntervalMajorTickLocations:&newMajorLocations minorTickLocations:&newMinorLocations];
-            break;
+            self.generateFixedInterval(newMajorLocations:&newMajorLocations, newMinorLocations:&newMinorLocations)
             
         case .automatic:
-            [self autoGenerateMajorTickLocations:&newMajorLocations minorTickLocations:&newMinorLocations];
+            self.autoGenerateMajorTickLocations(newMajorLocations: &newMajorLocations, minorTickLocations:&newMinorLocations)
             break;
             
         case .divisions:

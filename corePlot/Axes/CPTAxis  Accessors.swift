@@ -994,9 +994,9 @@ extension CPTAxis {
     func updateCustomTickLabels()
     {
         //        let range = NSRange(location: 0,length: 0) //self.plotSpace.plotRangeForCoordinate(self.coordinate)
-        let range = self.plotSpace.plotRangeForCoordinate(self.coordinate)
+        let range = self.plotSpace?.plotRangeForCoordinate(coordinate: self.coordinate)
         
-        if ( range ) {
+        if (( range ) != nil) {
             let theVisibleRange = self.visibleRange;
             if (( theVisibleRange ) != nil) {
                 range.intersectionPlotRange(theVisibleRange)

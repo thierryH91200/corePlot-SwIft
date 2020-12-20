@@ -40,17 +40,17 @@ public class CPTXYAxis: CPTAxis {
     
 // MARK: - Coordinate Transforms
 
-    func orthogonalCoordinateViewLowerBound(lower: CGFloat, upper: CGFloat)
+    func orthogonalCoordinateViewLowerBound(lower: inout CGFloat, upper: inout CGFloat)
     {
-        var lower = lower
-        var upper = upper
-        let orthogonalCoordinate = CPTUtilities.shared.CPTOrthogonalCoordinate(self.coordinate);
+//        var lower = lower
+//        var upper = upper
+        let orthogonalCoordinate = CPTUtilities.shared.CPTOrthogonalCoordinate(self.coordinate)
         let xyPlotSpace        = self.plotSpace
         let orthogonalRange = xyPlotSpace?.plotRangeForCoordinate(coordinate: orthogonalCoordinate)
 
 
-        let lowerBoundPoint = self.viewPointForOrthogonalCoordinate(orthogonalCoord: orthogonalRange?.location, axisCoordinate:0)
-        let upperBoundPoint = self.viewPointForOrthogonalCoordinate(orthogonalCoord: orthogonalRange?.end, axisCoordinate:0)
+        let lowerBoundPoint = self.viewPointForOrthogonalCoordinate(orthogonalCoord: CGFloat(truncating: orthogonalRange!.location), axisCoordinate:0)
+        let upperBoundPoint = self.viewPointForOrthogonalCoordinate(orthogonalCoord: CGFloat(truncating: orthogonalRange!.end), axisCoordinate:0)
 
         switch ( self.coordinate ) {
         case CPTCoordinate.x:
@@ -70,21 +70,20 @@ public class CPTXYAxis: CPTAxis {
         }
     }
 
-    func viewPointForOrthogonalCoordinate( orthogonalCoord: CGFloat?, axisCoordinate coordinateValue: CGFloat?) -> CGPoint {
+    func viewPointForOrthogonalCoordinate( orthogonalCoord: CGFloat, axisCoordinate coordinateValue: CGFloat) -> CGPoint {
+        
         let myCoordinate = coordinate
         let orthogonalCoordinate = CPTUtilities.shared.CPTOrthogonalCoordinate(myCoordinate)
         
         var plotPoint = [CGFloat]()
         
-        plotPoint.append(coordinateValue!)
-        plotPoint.append(orthogonalCoord!)
+        plotPoint.insert(coordinateValue,at: myCoordinate.rawValue)
+        plotPoint.insert(orthogonalCoord, at: orthogonalCoordinate.rawValue)
         
         let thePlotArea = plotArea
-        
-        return convertPoint(plotSpace.plotAreaViewPointForPlotPoint( plotPoint, numberOfCoordinates: 2), from: thePlotArea)
+        let point = plotSpace?.plotAreaViewPointForPlotPoint( plotPoint: plotPoint, numberOfCoordinates: 2)
+        return convert(point!,  from: thePlotArea)
     }
-    
-    
     
     override func viewPointForCoordinateValue(coordinateValue: CGFloat )-> CGPoint
     {
@@ -96,7 +95,7 @@ public class CPTXYAxis: CPTAxis {
         if (( theAxisConstraints ) != nil) {
             var lowerBound = CGFloat(0)
             var upperBound = CGFloat(0);
-            self.orthogonalCoordinateViewLowerBound(lower: lowerBound ,upper: upperBound)
+            self.orthogonalCoordinateViewLowerBound(lower: &lowerBound ,upper: &upperBound)
             let constrainedPosition = theAxisConstraints!.positionFor(lowerBound: lowerBound, upperBound: upperBound)
                 
                 switch ( self.coordinate ) {
@@ -114,7 +113,7 @@ public class CPTXYAxis: CPTAxis {
         }
         
         if point.x.isNaN || point.y.isNaN {
-            print("[CPTXYAxis viewPointForCoordinateValue:%@] was %@", coordinateValue, CPTStringFromPoint(point));
+            print("[CPTXYAxis viewPointForCoordinateValue:%@] was %@", coordinateValue, CPTUtilities.shared.CPTStringFromPoint(point))
             
             if point.x.isNaN {
                 point.x = CGFloat(0.0);
@@ -129,17 +128,12 @@ public class CPTXYAxis: CPTAxis {
 
 // MARK: Drawing
 
-    func drawTicksInContext(context: CGContextRef, atLocations locations: CPTNumberSet, withLength length:CGFloat, inRange labeledRange: CPTPlotRange, isMajor major:Bool)
+    func drawTicksInContext(context: CGContext, atLocations locations: CPTNumberSet, withLength length:CGFloat, inRange labeledRange: CPTPlotRange, isMajor major:Bool)
     {
         let lineStyle = (major ? self.majorTickLineStyle : self.minorTickLineStyle)
 
-        if ( !lineStyle ) {
-            return;
-        }
-
         let lineWidth = lineStyle.lineWidth;
-
-        CPTAlignPointFunction alignmentFunction = NULL;
+        let alignmentFunction : CPTAlignPointFunction = nil
 
         if ((self.contentsScale > CGFloat(1.0)) && (round(lineWidth) == lineWidth)) {
             alignmentFunction = CPTAlignIntegralPointToUserSpace;
@@ -148,18 +142,18 @@ public class CPTXYAxis: CPTAxis {
             alignmentFunction = CPTAlignPointToUserSpace;
         }
 
-        lineStyle.setLineStyleInContext(context)
-        CGContextBeginPath(context);
+        lineStyle.setLineStyleInContext(context: context)
+        context.beginPath();
 
         for  tickLocation in locations {
-            if labeledRange && labeledRange.containsNumber(tickLocation) == false {
+            if labeledRange && labeledRange.containsNumber(number: tickLocation) == false {
                 continue;
             }
 
             // Tick end points
-            let baseViewPoint  = self.viewPointForCoordinateValue(tickLocation)
-            let startViewPoint = baseViewPoint
-            let endViewPoint   = baseViewPoint
+            let baseViewPoint  = self.viewPointForCoordinateValue(coordinateValue: CGFloat(truncating: tickLocation))
+            var startViewPoint = baseViewPoint
+            var endViewPoint   = baseViewPoint
 
             var startFactor = CGFloat(0.0);
             var endFactor   = CGFloat(0.0);
@@ -197,11 +191,11 @@ public class CPTXYAxis: CPTAxis {
             endViewPoint   = alignmentFunction(context, endViewPoint);
 
             // Add tick line
-            CGContextMoveToPoint(context, startViewPoint.x, startViewPoint.y);
-            CGContextAddLineToPoint(context, endViewPoint.x, endViewPoint.y);
+            context.move(to: startViewPoint)
+            context.addLine(to: endViewPoint)
         }
         // Stroke tick line
-        lineStyle.strokePathInContext(context)
+        lineStyle.strokePathInContext(context: context)
     }
 
     override func renderAsVectorInContext(context: CGContext)

@@ -240,8 +240,7 @@ class CPTUtilities : NSObject {
     //    return [NSDecimalNumber decimalNumberWithDecimal:decimalNumber].stringValue;
     //}
     //
-    //#pragma mark -
-    //#pragma mark Convert primitive types to NSDecimal
+    // MARK: - Convert primitive types to NSDecimal
     //
     ///**
     // *  @brief Converts an 8-bit integer value to an @ref NSDecimal.
@@ -596,7 +595,7 @@ class CPTUtilities : NSObject {
     //}
     //
 
-    //#pragma mark NSDecimal arithmetic
+    // MARK: - NSDecimal arithmetic
     //
     ///**
     // *  @brief Adds two @ref NSDecimal structs together.
@@ -797,8 +796,7 @@ class CPTUtilities : NSObject {
     //    }
     //}
     //
-    //#pragma mark -
-    //#pragma mark Ranges
+    // MARK: - Ranges
     //
     ///**
     // *  @brief Expands an NSRange by the given amount.
@@ -975,11 +973,10 @@ class CPTUtilities : NSObject {
     // *  @param point The point.
     // *  @return A string with the format <code> {x, y}</code>.
     // **/
-    //    NSString *__nonnull CPTStringFromPoint(CGPoint point)
-    //    {
-    //        return [NSString stringWithFormat:@"{%g, %g}", (double)point.x, (double)point.y];
-    //    }
-    
+    func CPTStringFromPoint(_ point: CGPoint) -> String {
+        return String(format: "{%g, %g}", Double(point.x), Double(point.y))
+    }
+
     ///** @brief Creates a string representation of the given size.
     // *  @param size The size.
     // *  @return A string with the format <code> {width, height}</code>.

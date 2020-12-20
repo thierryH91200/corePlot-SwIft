@@ -334,11 +334,11 @@ public class CPTPieChart: CPTPlot {
     //    /**
     //     *  @brief Reload all slice offsets from the data source immediately.
     //     **/
-    //    -(void)reloadRadialOffsets
-    //    {
-    //        [self reloadRadialOffsetsInIndexRange:NSRange(0, self.cachedDataCount))
-    //    }
-    //
+        func reloadRadialOffsets()
+        {
+            self.reloadRadialOffsetsInIndexRange(indexRange: NSRange(0, self.cachedDataCount))
+        }
+    
     //    /** @brief Reload slice offsets in the given index range from the data source immediately.
     //     *  @param indexRange The index range to load.
     //     **/

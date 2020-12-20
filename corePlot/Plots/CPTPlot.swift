@@ -36,12 +36,36 @@ import AppKit
 
 public class CPTPlot: CPTAnnotationHostLayer {
     
+    var cachedData: [String : Any] = [:]
+//    var cachedData = NSMutableDictionary()
+
+    
 //    let CPTPlotBindingDataLabels = "dataLabels"
     
     public weak var dataSource : CPTPlotDataSource?
     public var delegatePlot: CPTPlotDelegate?
     
     var _title : String?
+    var title : String? {
+        get { return _title}
+        
+        set {
+            if ( newValue != _title ) {
+                _title = newValue
+                
+                if self.inTitleUpdate == false {
+                    self.inTitleUpdate   = true
+                    self.attributedTitle = nil;
+                    self.inTitleUpdate   = false
+                    
+                    NotificationCenter.send(
+                        name: .CPTLegendNeedsLayoutForPlotNotification,
+                        object:self)
+                }
+            }
+        }
+    }
+
     
     var attributedTitle : NSAttributedString?
     var plotSpace : CPTPlotSpace?
@@ -55,7 +79,6 @@ public class CPTPlot: CPTAnnotationHostLayer {
     
     var dataNeedsReloading = false
 //    var cachedData :  Dictionary<String, Any> = [:]
-    var cachedData = NSMutableDictionary()
     
     var needsRelabel = false
     var labelIndexRange = NSRange()
@@ -133,7 +156,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
     override init(frame: CGRect)
     {
         super.init()
-        cachedData.removeAll()
+        cachedData  = [:]
         cachedDataCount      = 0;
         cachePrecision       = .auto
         dataSource           = nil;
@@ -262,7 +285,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
      **/
     func fieldIdentifiersForCoordinate( coord: CPTCoordinate ) ->[CGFloat]
     {
-    return []
+        return []
     }
     
     /** @brief The coordinate value that corresponds to a particular field identifier.

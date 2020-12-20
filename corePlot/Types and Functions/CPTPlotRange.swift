@@ -32,9 +32,9 @@ class CPTPlotRange: NSObject {
     var minLimitDecimal = 0.0;
     var midPointDecimal = 0.0
     var maxLimitDecimal = 0.0
-    var minLimitDouble = 0.0
-    var midPointDouble = 0.0;
-    var maxLimitDouble = 0.0
+    var minLimitDouble = CGFloat(0.0)
+    var midPointDouble = CGFloat(0.0)
+    var maxLimitDouble = CGFloat(0.0)
 
     var  isInfinite = true
     var  lengthSign  = CPTSign.positive
@@ -60,8 +60,6 @@ class CPTPlotRange: NSObject {
 ////     *  @param loc The starting location of the range.
 ////     *  @param len The length of the range.
 ////     *  @return The initialized CPTPlotRange object.
-////     **/
-//
 //
     init(location: CGFloat, length:CGFloat)
     {
@@ -82,8 +80,6 @@ class CPTPlotRange: NSObject {
         }
     }
 
-
-////
 ////    /** @brief Initializes a newly allocated CPTPlotRange object with the provided location and length.
 ////     *  @param loc The starting location of the range.
 ////     *  @param len The length of the range.
@@ -112,9 +108,6 @@ class CPTPlotRange: NSObject {
 //    }
 
    // MARK: - Accessors
-
-////    /// @cond
-////
 ////    -(NSNumber *)location
 ////    {
 ////        return [NSDecimalNumber decimalNumberWithDecimal:self.locationDecimal];

@@ -76,7 +76,7 @@ extension CPTPlot {
                 
             case .category:
                 
-                    var samples = [String]() //=  numbers;
+                    var samples = [String]()
                     
                     if ( samples is Array  ) == true {
                         thePlotSpace?.setCategories(newCategories: samples, forCoordinate: coordinate)
@@ -244,7 +244,7 @@ extension CPTPlot {
                 mutableNumbers.dataType = self.doubleDataType;
             }
         }
-        else if numbers is NSData {
+        else if numbers is Data {
             loadedDataType = self.doubleDataType;
             mutableNumbers = [[CPTMutableNumericData alloc] initWithData:numbers dataType:loadedDataType shape:nil];
         }

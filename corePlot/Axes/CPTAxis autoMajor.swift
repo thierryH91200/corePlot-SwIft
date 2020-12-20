@@ -15,18 +15,18 @@ extension CPTAxis {
         var majorLocations = Set<CGFloat>()
         var minorLocations = Set<CGFloat>()
         
-        var range = self.plotSpace.plotRangeForCoordinate(self.coordinate)
+        var range = self.plotSpace?.plotRangeForCoordinate(coordinate: self.coordinate)
         
-        if ( range ) {
+        if (( range ) != nil) {
             var theVisibleRange = self.visibleRange;
             if (( theVisibleRange ) != nil) {
                 range.intersectionPlotRange(theVisibleRange)
             }
             
-            if ( range.lengthDouble != 0.0 ) {
+            if ( range?.lengthDouble != 0.0 ) {
                 var zero     = 0
-                let rangeMin = range.minLimitDecimal;
-                let rangeMax = range.maxLimitDecimal;
+                let rangeMin = range?.minLimitDecimal
+                let rangeMax = range?.maxLimitDecimal
                 
                 var majorTickCount = self.preferredNumberOfMajorTicks;
                 
@@ -47,22 +47,22 @@ extension CPTAxis {
                     minorInterval = CGFloat(zero)
                 }
                 
-                let coord = rangeMin
+                let coord = CGFloat(rangeMin!)
                 
                 // Set tick locations
                 while (coord >= rangeMax) {
                     // Major tick
-                    majorLocations.addObject(NSDecimalNumber decimalNumberWithDecimal:coord]];
+                    majorLocations.insert(coord)
                     
                     // Minor ticks
                     if ( minorTickCount > 0 ) {
-                        let minorCoord = coord + minorInterval
+                        var minorCoord = coord + minorInterval
                         
                         for minorTickIndex in 0..<Int(minorTickCount) {
                             if minorCoord > rangeMax {
                                 break
                             }
-                            minorLocations.addObject(:[NSDecimalNumber decimalNumberWithDecimal:minorCoord]])
+                            minorLocations.insert(minorCoord)
                             minorCoord = minorCoord + minorInterval
                         }
                     }
@@ -87,7 +87,7 @@ extension CPTAxis {
         var minorLocations = CPTFloatSet()
         
         // Get plot range
-        var range    = self.plotSpace.plotRangeForCoordinate(coordinate)
+        var range    = self.plotSpace?.plotRangeForCoordinate(coordinate: coordinate)
         var theVisibleRange = self.visibleRange;
         
         if (theVisibleRange != nil)  {
@@ -105,7 +105,7 @@ extension CPTAxis {
             
         case .log:
             // supported scale type--check range
-            if ((range.minLimitDouble <= 0.0) || (range.maxLimitDouble <= 0.0)) {
+            if ((range!.minLimitDouble <= 0.0) || (range?.maxLimitDouble <= 0.0)) {
                 valid = false
             }
             break;
@@ -129,10 +129,10 @@ extension CPTAxis {
         // Cache some values
         var numTicks   = self.preferredNumberOfMajorTicks;
         let minorTicks = self.minorTicksPerInterval + 1;
-        let length         = fabs(range.lengthDouble);
+        let length         = abs(range!.lengthDouble);
         
         // Filter troublesome values and return empty sets
-        if ((length != 0.0) && !isinf(length)) {
+        if ((length != 0.0) && length.isInfinite == false) {
             switch ( scaleType ) {
             case .linear:
                 
@@ -176,8 +176,8 @@ extension CPTAxis {
                 }
                 
                 // Calculate actual range limit
-                let minLimit = range.minLimitDecimal;
-                let maxLimit = range.maxLimitDecimal
+                let minLimit = range?.minLimitDecimal;
+                let maxLimit = range?.maxLimitDecimal
                 
                 // Determine the initial and final major indexes for the actual visible range
                 var initialIndex = CGFloat(minLimit / majorInterval)
@@ -217,8 +217,8 @@ extension CPTAxis {
                 break;
                 
             case .log:
-                let minLimit = range.minLimitDouble;
-                let maxLimit = range.maxLimitDouble;
+                let minLimit = range?.minLimitDouble;
+                let maxLimit = range?.maxLimitDouble;
                 
                 if ((minLimit > 0.0) && (maxLimit > 0.0)) {
                     // Determine interval value
@@ -267,12 +267,12 @@ extension CPTAxis {
                 
             case .logModulus:
                 
-                let minLimit = range.minLimitDouble;
-                let maxLimit = range.maxLimitDouble;
+                let minLimit = range?.minLimitDouble;
+                let maxLimit = range?.maxLimitDouble;
                 
                 // Determine interval value
-                let modMinLimit = CPTLogModulus(minLimit);
-                let modMaxLimit = CPTLogModulus(maxLimit);
+                let modMinLimit = CPTLogModulus(value: minLimit!);
+                let modMaxLimit = CPTLogModulus(value: maxLimit!);
                 
                 let multiplier = pow(10.0, floor(log10(length)));
                 multiplier = (multiplier < 1.0) ? multiplier : 1.0;
@@ -375,7 +375,6 @@ extension CPTAxis {
             }
         }
     }
-    
     
     func  CPTLogModulus(value: Double )-> Double
     {

@@ -13,7 +13,7 @@ extension CPTPlot {
     
     
     // MARK: - Accessors
-
+    
     //    -(nullable CPTLayerArray *)dataLabels
     //    {
     //        return [self cachedArrayForKey:CPTPlotBindingDataLabels];
@@ -27,68 +27,40 @@ extension CPTPlot {
     //
     
     
-    var title : String? {
-        get { return _title}
-        
-        set {
-            if ( newValue != _title ) {
-                _title = newValue
+    //
+    func setAttributedTitle(newTitle: NSAttributedString )
+    {
+        if ( newTitle != attributedTitle ) {
+            attributedTitle = newTitle
+            
+            if ( !self.inTitleUpdate == false) {
+                self.inTitleUpdate = true
+                self.title         = attributedTitle?.string;
+                self.inTitleUpdate = false
                 
-                if ( !self.inTitleUpdate ) {
-                    self.inTitleUpdate   = true
-                    self.attributedTitle = nil;
-                    self.inTitleUpdate   = false
-                    
-                    NotificationCenter.default.post(
-                        name: .CPTLegendNeedsLayoutForPlotNotification,
-                        object:self)
-                }
+                NotificationCenter.send(
+                    name: .CPTLegendNeedsLayoutForPlotNotification,
+                    object:self)
             }
         }
     }
-    //
-    func setAttributedTitle(newTitle: NSAttributedString )
-        {
-            if ( newTitle != attributedTitle ) {
-                attributedTitle = newTitle 
-    
-                if ( !self.inTitleUpdate ) {
-                    self.inTitleUpdate = true
-                    self.title         = attributedTitle?.string;
-                    self.inTitleUpdate = false
-    
-                    NotificationCenter.default.post(
-                        name: .CPTLegendNeedsLayoutForPlotNotification,
-                        object:self)
-                }
-            }
-        }
-    
-//    func setDataSource(newSource: CPTPlotDataSource)
-//        {
-//            if ( newSource != dataSource ) {
-//                dataSource = newSource;
-//                self.setDataNeedsReloading()
-//            }
-//        }
     
     func setDataNeedsReloading(newDataNeedsReloading: Bool)
-        {
-            if ( newDataNeedsReloading != dataNeedsReloading ) {
-                dataNeedsReloading = newDataNeedsReloading;
-                if ( dataNeedsReloading ) {
-                    self.setNeedsDisplay()
-                }
+    {
+        if ( newDataNeedsReloading != dataNeedsReloading ) {
+            dataNeedsReloading = newDataNeedsReloading;
+            if ( dataNeedsReloading ) {
+                self.setNeedsDisplay()
             }
         }
+    }
     
-        func plotArea() -> CPTPlotArea
-        {
-            let theGraph = self.graph
-            return theGraph!.plotAreaFrame.plotArea!
-        }
-    
-    
+    func plotArea() -> CPTPlotArea?
+    {
+        let theGraph = self.graph
+        return theGraph!.plotAreaFrame.plotArea!
+    }
+
     func setNeedsRelabel(newNeedsRelabel: Bool)
     {
         if ( newNeedsRelabel != needsRelabel ) {
@@ -129,7 +101,7 @@ extension CPTPlot {
             needsRelabel = true
         }
     }
-
+    
     func setCachePrecision(_ newPrecision: CPTPlotCachePrecision) {
         if newPrecision != cachePrecision {
             cachePrecision = newPrecision
@@ -165,7 +137,7 @@ extension CPTPlot {
                     self.setNeedsDisplay()
                 }
             }
-
+            
         }
     }
 }
