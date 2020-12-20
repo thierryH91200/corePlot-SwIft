@@ -619,10 +619,11 @@ class CPTXYPlotSpace: CPTPlotSpace {
     }
 
     // MARK: - Point Conversion (private utilities)
-    // Linear
-    func viewCoordinateForViewLength(viewLength: CGFloat,
-                                     linearPlotRange range: CPTPlotRange?,
-                                     plotCoordinateValue plotCoord: CGFloat) -> CGFloat
+    //
+    // MARK: Linear
+    func viewCoordinateForViewLength( viewLength: CGFloat,
+                                      linearPlotRange range: CPTPlotRange?,
+                                      plotCoordinateValue plotCoord: CGFloat) -> CGFloat
     {
         guard range != nil else { return CGFloat(0.0)}
         
@@ -634,21 +635,28 @@ class CPTXYPlotSpace: CPTPlotSpace {
         return viewCoordinate
     }
     
-    func viewCoordinatefforViewLength( viewLength: CGFloat,
-                                       linearPlotRange range: CPTPlotRange?,
-                                       doublePrecisionPlotCoordinateValue plotCoord: CGFloat) -> CGFloat {
+    // MARK: - Log
+    // Log (only one version since there are no transcendental functions for NSDecimal)
+    func viewCoordinateForViewLength( viewLength: CGFloat,
+                                      logPlotRange range: CPTPlotRange?,
+                                      plotCoordinateValue plotCoord: CGFloat) -> CGFloat {
         
-        if ( (range == nil) || (range!.lengthDouble == 0.0)) {
+        if ((range!.minLimitDouble <= 0.0) || (range!.maxLimitDouble <= 0.0) || (plotCoord <= 0.0)) {
             return CGFloat(0.0);
         }
-        let mul =  CGFloat(plotCoord) - CGFloat(range!.locationDouble)
-        return (viewLength * mul) / CGFloat(range!.lengthDouble)
+
+        let logLoc   = log10(range!.locationDouble);
+        let logCoord = log10(plotCoord);
+        let logEnd   = log10(range!.endDouble);
+
+        return viewLength * (CGFloat)((logCoord - logLoc) / (CGFloat(logEnd) - logLoc));
     }
     
-    // Log-modulus (only one version since there are no transcendental functions for NSDecimal)
+    // MARK: - Log-modulus
+    //(only one version since there are no transcendental functions for NSDecimal)
     func viewCoordinateForViewLength( viewLength: CGFloat,
                                       logModulusPlotRange range: CPTPlotRange?,
-                                      doublePrecisionPlotCoordinateValue plotCoord: CGFloat) -> CGFloat
+                                      plotCoordinateValue plotCoord : CGFloat) -> CGFloat
     {
         guard range != nil else { return CGFloat(0.0)}
 
@@ -656,7 +664,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
         let logCoord = CPTUtilities.shared.CPTLogModulus(Double(plotCoord))
         let logEnd   = CPTUtilities.shared.CPTLogModulus(Double(range!.endDouble))
         
-        return viewLength * (CGFloat)((logCoord - logLoc) / (logEnd - logLoc));
+        return viewLength * (CGFloat)((logCoord - logLoc) / (logEnd - logLoc))
     }
     
 
@@ -759,7 +767,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
     {
         var viewPoint = super.plotAreaViewPointForPlotPoint(plotPoint: plotPoint)
         
-        var  layerSize = CGSize()
+        var layerSize = CGSize()
         let theGraph    = self.graph;
         let plotArea = theGraph?.plotAreaFrame.plotArea
         
@@ -783,14 +791,14 @@ class CPTXYPlotSpace: CPTPlotSpace {
         case .log:
             viewPoint.x = self.viewCoordinateForViewLength(
                 viewLength         : layerSize.width,
-                logPlotRange       :self.xRange,
-                plotCoordinateValue:plotPoint[CPTCoordinate.x.rawValue])
+                logPlotRange       : self.xRange,
+                plotCoordinateValue: plotPoint[CPTCoordinate.x.rawValue])
             break;
             
         case .logModulus:
             viewPoint.x = self.viewCoordinateForViewLength(
                 viewLength         : layerSize.width,
-                logModulusPlotRange              : self.xRange,
+                logModulusPlotRange: self.xRange,
                 plotCoordinateValue: plotPoint[CPTCoordinate.x.rawValue])
             break;
             
@@ -803,7 +811,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
             fallthrough
         case .category:
             viewPoint.y = self.viewCoordinateForViewLength(
-                viewLength   : plotArea?.heightDecimal,
+                viewLength   : plotArea!.heightDecimal,
                 linearPlotRange: self.yRange,
                 plotCoordinateValue:plotPoint[CPTCoordinate.y.rawValue])
             
@@ -840,7 +848,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
         else {
             return viewPoint;
         }
-        
+    
         switch ( self.xScaleType ) {
         case .linear:
             fallthrough
@@ -875,7 +883,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
             fallthrough
         case .category:
             viewPoint.y = self.viewCoordinateForViewLength(
-                viewLength: plotArea.heightDecimal,
+                viewLength: plotArea!.heightDecimal,
                 linearPlotRange:self.yRange,
                 plotCoordinateValue:plotPoint[CPTCoordinate.y.rawValue])
             
@@ -896,7 +904,6 @@ class CPTXYPlotSpace: CPTPlotSpace {
         default:
             print("NSException raise:CPTException format:@Scale type not supported in CPTXYPlotSpace")
         }
-        
         return viewPoint;
     }
     
