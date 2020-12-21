@@ -73,7 +73,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
     
     var labelOffset = CGFloat (0)
     
-    var labelField : CPTTextStyle?
+    var labelField : Int
     var labelTextStyle: CPTTextStyle?
     var labelFormatter = Formatter()
     

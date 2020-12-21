@@ -7,11 +7,6 @@
 
 import AppKit
 
-import Foundation
-import CoreGraphics
-
-
-
 protocol CPTPieChartDataSource {
     
     func sliceFillsForPieChart( pieChart: CPTPieChart, recordIndexRange:NSRange) -> [CPTFill]
@@ -55,6 +50,7 @@ public class CPTPieChart: CPTPlot {
     var endAngle: CGFloat
     var sliceDirection =  CPTPieDirection.clockwise
     var centerAnchor: CGPoint
+    var pointingDeviceDownIndex :Int?
     
     
     // @name Drawing
@@ -82,10 +78,10 @@ public class CPTPieChart: CPTPlot {
         borderLineStyle = nil
         overlayFill = nil
         labelRotationRelativeToRadius = false
-        pointingDeviceDownIndex = NSNotFound
+        pointingDeviceDownIndex = nil
         
         labelOffset = CGFloat(10.0)
-        labelField = CPTPieChartField.sliceWidth
+        labelField = CPTPieChartField.sliceWidth.rawValue
     }
     
     
@@ -130,10 +126,13 @@ public class CPTPieChart: CPTPlot {
         self.reloadRadialOffsetsInIndexRange(indexRange:indexRange)
         
         // Legend
-        let theDataSource = self.dataSource;
         
-        if ( [theDataSource respondsToSelector:@selector(legendTitleForPieChart:recordIndex:)] ) {
-            NotificationCenter.default.post(
+        var theDataSource = dataSource as? CPTPieChartDataSource?
+//        weak var theDataSource = dataSource as? CPTPieChartDataSource?
+//        let theDataSource = self.dataSource;
+        
+        if theDataSource.respondsToSelector(to: #selector(legendTitleForPieChart:recordIndex:)) {
+            NotificationCenter.send(
                 name: .CPTLegendNeedsRedrawForPlotNotification,
                 object:self)
         }
@@ -144,18 +143,20 @@ public class CPTPieChart: CPTPlot {
         super.reloadPlotDataInIndexRange(indexRange)
         
         if self.loadNumbersForAllFieldsFromDataSourceInRecordIndexRange(indexRange: indexRange) == false {
-            let theDataSource = self.dataSource;
-            
+            var theDataSource = dataSource as? CPTPieChartDataSource?
+
             // Pie slice widths
             if ( theDataSource != nil ) {
                 // Grab all values from the data source
-                let rawSliceValues = self.numbersFromDataSourceForField ( CPTPieChartFiel.sliceWidth,
+                let rawSliceValues = self.numbersFromDataSourceForField ( CPTPieChartField.sliceWidth,
                                                                           recordIndexRange:indexRange)
                 
-                self.cacheNumbers(rawSliceValues, forField: CPTPieChartField.sliceWidth.rawValue, atRecordIndex: indexRange.location)
+                self.cacheNumbers(rawSliceValues,
+                                  forField: CPTPieChartField.sliceWidth.rawValue,
+                                  atRecordIndex: indexRange.location)
             }
             else {
-                self.cacheNumbers(numbers: nil, fieldEnum: CPTPieChartField.sliceWidth.rawValue)
+                self.cacheNumbers(numbers: nil, forField: CPTPieChartField.sliceWidth.rawValue)
             }
         }
         
@@ -269,7 +270,7 @@ public class CPTPieChart: CPTPlot {
     //        }
     //
     //        // Labels
-    //        id<CPTPlotDataSource> theDataSource = self.dataSource;
+//    var theDataSource = dataSource as? CPTPieChartDataSource?
     //
     //        [self relabelIndexRange:NSMakeRange(0, [theDataSource numberOfRecordsForPlot:self]))
     //    }
@@ -289,14 +290,14 @@ public class CPTPieChart: CPTPlot {
     //     **/
     func reloadSliceFillsInIndexRange(indexRange: NSRange)
     {
-        let theDataSource = self.dataSource
+        var theDataSource = dataSource as? CPTPieChartDataSource?
         var needsLegendUpdate = false
         
         if ( theDataSource.respondsToSelector(to: #selector(sliceFillsForPieChart:recordIndexRange:) ) {
                     needsLegendUpdate = true
         
             
-            let test = theDataSource.sliceFillsForPieChart(self, recordIndexRange:indexRange)
+            let test = theDataSource?.sliceFillsForPieChart(pieChart: self, recordIndexRange:indexRange)
             self.cacheArray(test,
                             forKey:.CPTPieChartBindingPieSliceFills,
                         atRecordIndex:indexRange.location)
@@ -336,7 +337,7 @@ public class CPTPieChart: CPTPlot {
     //     **/
         func reloadRadialOffsets()
         {
-            self.reloadRadialOffsetsInIndexRange(indexRange: NSRange(0, self.cachedDataCount))
+            self.reloadRadialOffsetsInIndexRange(indexRange: NSRange(location: 0, length: self.cachedDataCount))
         }
     
     //    /** @brief Reload slice offsets in the given index range from the data source immediately.
@@ -344,16 +345,19 @@ public class CPTPieChart: CPTPlot {
     //     **/
     func reloadRadialOffsetsInIndexRange(indexRange: NSRange)
     {
-        let theDataSource = self.dataSource;
-        
-        if theDataSource.respondsToSelector(to: #selector(radialOffsetsForPieChart:recordIndexRange:) ) {
+        var theDataSource = dataSource as? CPTPieChartDataSource?
+
+        if theDataSource.respondsToSelector(to: #selector(CPTMutablePlotRange:recordIndexRange:) ) {
             
-            self.cacheArray(theDataSource, radialOffsetsForPieChart:self,
+            self.cacheArray( theDataSource,
+                             radialOffsetsForPieChart:self,
                             recordIndexRange:indexRange,
-                            forKey: .CPTPieChartBindingPieSliceRadialOffsets,
-                            atRecordIndex:indexRange.location)
+                            forKey          : .CPTPieChartBindingPieSliceRadialOffsets,
+                            atRecordIndex   :indexRange.location)
         }
         else if ( theDataSource.respondsToSelector( to: #selector(radialOffsetForPieChart:recordIndex:) ) {
+
+
             let array = [CGFloat]()
             let maxIndex          = NSMaxRange(indexRange);
             
@@ -804,7 +808,7 @@ public class CPTPieChart: CPTPlot {
     //    {
     //        NSString *legendTitle = nil;
     //
-    //        id<CPTPieChartDataSource> theDataSource = (id<CPTPieChartDataSource>)self.dataSource;
+//    var theDataSource = dataSource as? CPTPieChartDataSource?
     //
     //        if ( [theDataSource respondsToSelector:@selector(legendTitleForPieChart:recordIndex:)] ) {
     //            legendTitle = [theDataSource legendTitleForPieChart:self recordIndex:idx)
@@ -839,8 +843,7 @@ public class CPTPieChart: CPTPlot {
     //
     //    /// @endcond
     //
-    //    #pragma mark -
-    //    #pragma mark Responder Chain and User interaction
+    // MARK: - Responder Chain and User interaction
     //
     //    /// @cond
     //

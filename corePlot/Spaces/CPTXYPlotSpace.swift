@@ -540,12 +540,12 @@ class CPTXYPlotSpace: CPTPlotSpace {
             }
     
             // Determine union of ranges
-            CPTMutablePlotRange *unionXRange = nil;
-            CPTMutablePlotRange *unionYRange = nil;
+            var unionXRange = [CPTPlotRange]()
+            var unionYRange = [CPTPlotRange]()
     
-            for ( CPTPlot *plot in plots ) {
-                CPTPlotRange *currentXRange = [plot plotRangeEnclosingCoordinate:CPTCoordinateX];
-                CPTPlotRange *currentYRange = [plot plotRangeEnclosingCoordinate:CPTCoordinateY];
+            for  plot in plots {
+                let currentXRange = plot.plotRangeEnclosingCoordinate(CPTCoordinate.x);
+                let currentYRange = [plot plotRangeEnclosingCoordinate:CPTCoordinateY];
                 if ( !unionXRange ) {
                     unionXRange = [currentXRange mutableCopy];
                 }
@@ -558,9 +558,8 @@ class CPTXYPlotSpace: CPTPlotSpace {
     
             // Set range
             let zero = Int(0);
-    
             if ( unionXRange ) {
-                if ( CPTDecimalEquals(unionXRange.lengthDecimal, zero)) {
+                if  unionXRange.lengthDecimal == zero {
                     [unionXRange unionPlotRange:self.xRange];
                 }
                 self.xRange = unionXRange;
@@ -620,6 +619,8 @@ class CPTXYPlotSpace: CPTPlotSpace {
 
     // MARK: - Point Conversion (private utilities)
     //
+    
+    
     // MARK: Linear
     func viewCoordinateForViewLength( viewLength: CGFloat,
                                       linearPlotRange range: CPTPlotRange?,
@@ -702,20 +703,6 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //        return coordinate;
     //    }
     //
-    //    // Log (only one version since there are no transcendental functions for NSDecimal)
-    //    -(CGFloat)viewCoordinateForViewLength:(CGFloat)viewLength logPlotRange:(nonnull CPTPlotRange *)range doublePrecisionPlotCoordinateValue:(double)plotCoord
-    //    {
-    //        if ((range.minLimitDouble <= 0.0) || (range.maxLimitDouble <= 0.0) || (plotCoord <= 0.0)) {
-    //            return CGFloat(0.0);
-    //        }
-    //
-    //        double logLoc   = log10(range.locationDouble);
-    //        double logCoord = log10(plotCoord);
-    //        double logEnd   = log10(range.endDouble);
-    //
-    //        return viewLength * (CGFloat)((logCoord - logLoc) / (logEnd - logLoc));
-    //    }
-    //
     //    -(double)doublePrecisionPlotCoordinateForViewLength:(CGFloat)viewLength logPlotRange:(nonnull CPTPlotRange *)range boundsLength:(CGFloat)boundsLength
     //    {
     //        if ( boundsLength == CGFloat(0.0)) {
@@ -730,19 +717,6 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //        return pow(10.0, coordinate);
     //    }
     //
-    //    // Log-modulus (only one version since there are no transcendental functions for NSDecimal)
-    //    -(CGFloat)viewCoordinateForViewLength:(CGFloat)viewLength logModulusPlotRange:(nonnull CPTPlotRange *)range doublePrecisionPlotCoordinateValue:(double)plotCoord
-    //    {
-    //        if ( !range ) {
-    //            return CGFloat(0.0);
-    //        }
-    //
-    //        double logLoc   = CPTLogModulus(range.locationDouble);
-    //        double logCoord = CPTLogModulus(plotCoord);
-    //        double logEnd   = CPTLogModulus(range.endDouble);
-    //
-    //        return viewLength * (CGFloat)((logCoord - logLoc) / (logEnd - logLoc));
-    //    }
     //
     //    -(double)doublePrecisionPlotCoordinateForViewLength:(CGFloat)viewLength logModulusPlotRange:(nonnull CPTPlotRange *)range boundsLength:(CGFloat)boundsLength
     //    {
@@ -833,16 +807,16 @@ class CPTXYPlotSpace: CPTPlotSpace {
         
         return viewPoint;
     }
-    //
+
     override func plotAreaViewPointForPlotPoint(plotPoint: [CGFloat] , numberOfCoordinates count: Int)-> CGPoint
     {
         var viewPoint = super.plotAreaViewPointForPlotPoint(plotPoint: plotPoint, numberOfCoordinates: count)
         
         var layerSize = CGSize()
-        let theGraph    = self.graph;
-        let plotArea = theGraph?.plotAreaFrame.plotArea
+        let theGraph  = self.graph;
+        let plotArea  = theGraph?.plotAreaFrame.plotArea
         
-        if (( plotArea ) != nil) {
+        if ( plotArea  != nil) {
             layerSize = plotArea!.bounds.size;
         }
         else {
@@ -961,178 +935,191 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //        return viewPoint;
     //    }
     //
-    //    // Plot point for view point
-    //    -(nullable CPTNumberArray *)plotPointForPlotAreaViewPoint:(CGPoint)point
-    //    {
-    //        CPTMutableNumberArray *plotPoint = [[super plotPointForPlotAreaViewPoint:point] mutableCopy];
-    //
-    //        CGSize boundsSize;
-    //        CPTGraph *theGraph    = self.graph;
-    //        CPTPlotArea *plotArea = theGraph.plotAreaFrame.plotArea;
-    //
-    //        if ( plotArea ) {
-    //            boundsSize = plotArea.bounds.size;
-    //        }
-    //        else {
-    //            return @[@0, @0];
-    //        }
-    //
-    //        if ( !plotPoint ) {
-    //            plotPoint = [NSMutableArray arrayWithCapacity:self.numberOfCoordinates];
-    //        }
-    //
-    //        switch ( self.xScaleType ) {
-    //            case CPTScaleTypeLinear:
-    //            case CPTScaleTypeCategory:
-    //                plotPoint[CPTCoordinateX] = [NSDecimalNumber decimalNumberWithDecimal:[self plotCoordinateForViewLength:CPTDecimalFromCGFloat(point.x)
-    //                                                                                                        linearPlotRange:self.xRange
-    //                                                                                                           boundsLength:plotArea.widthDecimal]];
-    //                break;
-    //
-    //            case CPTScaleTypeLog:
-    //                plotPoint[CPTCoordinateX] = @([self doublePrecisionPlotCoordinateForViewLength:point.x logPlotRange:self.xRange boundsLength:boundsSize.width]);
-    //                break;
-    //
-    //            case CPTScaleTypeLogModulus:
-    //                plotPoint[CPTCoordinateX] = @([self doublePrecisionPlotCoordinateForViewLength:point.x logModulusPlotRange:self.xRange boundsLength:boundsSize.width]);
-    //                break;
-    //
-    //            default:
-    //                [NSException raise:CPTException format:@"Scale type not supported in CPTXYPlotSpace"];
-    //        }
-    //
-    //        switch ( self.yScaleType ) {
-    //            case CPTScaleTypeLinear:
-    //            case CPTScaleTypeCategory:
-    //                plotPoint[CPTCoordinateY] = [NSDecimalNumber decimalNumberWithDecimal:[self plotCoordinateForViewLength:CPTDecimalFromCGFloat(point.y)
-    //                                                                                                        linearPlotRange:self.yRange
-    //                                                                                                           boundsLength:plotArea.heightDecimal]];
-    //                break;
-    //
-    //            case CPTScaleTypeLog:
-    //                plotPoint[CPTCoordinateY] = @([self doublePrecisionPlotCoordinateForViewLength:point.y logPlotRange:self.yRange boundsLength:boundsSize.height]);
-    //                break;
-    //
-    //            case CPTScaleTypeLogModulus:
-    //                plotPoint[CPTCoordinateY] = @([self doublePrecisionPlotCoordinateForViewLength:point.y logModulusPlotRange:self.yRange boundsLength:boundsSize.height]);
-    //                break;
-    //
-    //            default:
-    //                [NSException raise:CPTException format:@"Scale type not supported in CPTXYPlotSpace"];
-    //        }
-    //
-    //        return plotPoint;
-    //    }
-    //
-    //    -(void)plotPoint:(nonnull NSDecimal *)plotPoint numberOfCoordinates:(NSUInteger)count forPlotAreaViewPoint:(CGPoint)point
-    //    {
-    //        [super plotPoint:plotPoint numberOfCoordinates:count forPlotAreaViewPoint:point];
-    //
-    //        CGSize boundsSize;
-    //        CPTGraph *theGraph    = self.graph;
-    //        CPTPlotArea *plotArea = theGraph.plotAreaFrame.plotArea;
-    //
-    //        if ( plotArea ) {
-    //            boundsSize = plotArea.bounds.size;
-    //        }
-    //        else {
-    //            NSDecimal zero = CPTDecimalFromInteger(0);
-    //            plotPoint[CPTCoordinateX] = zero;
-    //            plotPoint[CPTCoordinateY] = zero;
-    //            return;
-    //        }
-    //
-    //        switch ( self.xScaleType ) {
-    //            case CPTScaleTypeLinear:
-    //            case CPTScaleTypeCategory:
-    //                plotPoint[CPTCoordinateX] = [self plotCoordinateForViewLength:CPTDecimalFromCGFloat(point.x) linearPlotRange:self.xRange boundsLength:plotArea.widthDecimal];
-    //                break;
-    //
-    //            case CPTScaleTypeLog:
-    //                plotPoint[CPTCoordinateX] = CPTDecimalFromDouble([self doublePrecisionPlotCoordinateForViewLength:point.x logPlotRange:self.xRange boundsLength:boundsSize.width]);
-    //                break;
-    //
-    //            case CPTScaleTypeLogModulus:
-    //                plotPoint[CPTCoordinateX] = CPTDecimalFromDouble([self doublePrecisionPlotCoordinateForViewLength:point.x logModulusPlotRange:self.xRange boundsLength:boundsSize.width]);
-    //                break;
-    //
-    //            default:
-    //                [NSException raise:CPTException format:@"Scale type not supported in CPTXYPlotSpace"];
-    //        }
-    //
-    //        switch ( self.yScaleType ) {
-    //            case CPTScaleTypeLinear:
-    //            case CPTScaleTypeCategory:
-    //                plotPoint[CPTCoordinateY] = [self plotCoordinateForViewLength:CPTDecimalFromCGFloat(point.y) linearPlotRange:self.yRange boundsLength:plotArea.heightDecimal];
-    //                break;
-    //
-    //            case CPTScaleTypeLog:
-    //                plotPoint[CPTCoordinateY] = CPTDecimalFromDouble([self doublePrecisionPlotCoordinateForViewLength:point.y logPlotRange:self.yRange boundsLength:boundsSize.height]);
-    //                break;
-    //
-    //            case CPTScaleTypeLogModulus:
-    //                plotPoint[CPTCoordinateY] = CPTDecimalFromDouble([self doublePrecisionPlotCoordinateForViewLength:point.y logModulusPlotRange:self.yRange boundsLength:boundsSize.height]);
-    //                break;
-    //
-    //            default:
-    //                [NSException raise:CPTException format:@"Scale type not supported in CPTXYPlotSpace"];
-    //        }
-    //    }
-    //
-    //    -(void)doublePrecisionPlotPoint:(nonnull double *)plotPoint numberOfCoordinates:(NSUInteger)count forPlotAreaViewPoint:(CGPoint)point
-    //    {
-    //        [super doublePrecisionPlotPoint:plotPoint numberOfCoordinates:count forPlotAreaViewPoint:point];
-    //
-    //        CGSize boundsSize;
-    //        CPTGraph *theGraph    = self.graph;
-    //        CPTPlotArea *plotArea = theGraph.plotAreaFrame.plotArea;
-    //
-    //        if ( plotArea ) {
-    //            boundsSize = plotArea.bounds.size;
-    //        }
-    //        else {
-    //            plotPoint[CPTCoordinateX] = 0.0;
-    //            plotPoint[CPTCoordinateY] = 0.0;
-    //            return;
-    //        }
-    //
-    //        switch ( self.xScaleType ) {
-    //            case CPTScaleTypeLinear:
-    //            case CPTScaleTypeCategory:
-    //                plotPoint[CPTCoordinateX] = [self doublePrecisionPlotCoordinateForViewLength:point.x linearPlotRange:self.xRange boundsLength:boundsSize.width];
-    //                break;
-    //
-    //            case CPTScaleTypeLog:
-    //                plotPoint[CPTCoordinateX] = [self doublePrecisionPlotCoordinateForViewLength:point.x logPlotRange:self.xRange boundsLength:boundsSize.width];
-    //                break;
-    //
-    //            case CPTScaleTypeLogModulus:
-    //                plotPoint[CPTCoordinateX] = [self doublePrecisionPlotCoordinateForViewLength:point.x logModulusPlotRange:self.xRange boundsLength:boundsSize.width];
-    //                break;
-    //
-    //            default:
-    //                [NSException raise:CPTException format:@"Scale type not supported in CPTXYPlotSpace"];
-    //        }
-    //
-    //        switch ( self.yScaleType ) {
-    //            case CPTScaleTypeLinear:
-    //            case CPTScaleTypeCategory:
-    //                plotPoint[CPTCoordinateY] = [self doublePrecisionPlotCoordinateForViewLength:point.y linearPlotRange:self.yRange boundsLength:boundsSize.height];
-    //                break;
-    //
-    //            case CPTScaleTypeLog:
-    //                plotPoint[CPTCoordinateY] = [self doublePrecisionPlotCoordinateForViewLength:point.y logPlotRange:self.yRange boundsLength:boundsSize.height];
-    //                break;
-    //
-    //            case CPTScaleTypeLogModulus:
-    //                plotPoint[CPTCoordinateY] = [self doublePrecisionPlotCoordinateForViewLength:point.y logModulusPlotRange:self.yRange boundsLength:boundsSize.height];
-    //                break;
-    //
-    //            default:
-    //                [NSException raise:CPTException format:@"Scale type not supported in CPTXYPlotSpace"];
-    //        }
-    //    }
-    //
+        // Plot point for view point
+    override func plotPointForPlotAreaViewPoint(point : CGPoint)-> CPTNumberArray
+    {
+        var plotPoint = super.plotPointForPlotAreaViewPoint(point: point)
+        
+        var boundsSize = CGSize()
+        let theGraph    = self.graph;
+        let plotArea = theGraph?.plotAreaFrame.plotArea;
+        
+        if (( plotArea ) != nil) {
+            boundsSize = plotArea!.bounds.size;
+        }
+        else {
+            return [0, 0]
+        }
+        
+        if ( (plotPoint == nil) ) {
+            plotPoint = [ CGFloat]()
+        }
+        
+        switch ( self.xScaleType ) {
+        case .linear:
+            fallthrough
+        case .category:
+            plotPoint[CPTCoordinate.x.rawValue] = decimalNumberWithDecimal(
+                self plotCoordinateForViewLength(
+            (CPTDecimalFromCGFloat(point.x),
+                linearPlotRange:self.xRange,
+                boundsLength:plotArea.widthDecima)
+                
+                case .log:
+                plotPoint[CPTCoordinateX] = @([self doublePrecisionPlotCoordinateForViewLength:point.x logPlotRange:self.xRange boundsLength:boundsSize.width]);
+                break;
+                
+                case .logModulus:
+                plotPoint[CPTCoordinateX] = @([self doublePrecisionPlotCoordinateForViewLength:point.x logModulusPlotRange:self.xRange boundsLength:boundsSize.width]);
+                
+                default:
+                [NSException raise:CPTException format:@"Scale type not supported in CPTXYPlotSpace"];
+        }
+        
+        switch ( self.yScaleType ) {
+        case .linear:
+            fallthrough
+        case .category:
+            plotPoint[CPTCoordinate.y.rawValue] =
+                decimalNumberWithDecimal(
+                    boundsSize,
+                    self.plotCoordinateForViewLength(
+                        CGFloat(point.y),
+                         linearPlotRange:self.yRange,
+                       boundsLength:plotArea.heightDecimal))
+    
+            
+        case .log:
+            plotPoint?[CPTCoordinate.y.rawValue] =
+                self.doublePrecisionPlotCoordinateForViewLength(
+                    point.y,
+                    logPlotRange:self.yRange,
+                    boundsLength:boundsSize.height);
+            break;
+            
+        case .logModulus:
+            plotPoint[CPTCoordinate.y.rawValue] =
+                self.doublePrecisionPlotCoordinateForViewLength(
+                    point.y,
+                    logModulusPlotRange:self.yRange,
+                    boundsLength:boundsSize.height)
+            break;
+            
+        default:
+            print("NSException raise:CPTException format:Scale type not supported in CPTXYPlotSpace")
+        }
+        return plotPoint!;
+    }
+    
+//        -(void)plotPoint:(nonnull NSDecimal *)plotPoint numberOfCoordinates:(NSUInteger)count forPlotAreaViewPoint:(CGPoint)point
+//        {
+//            [super plotPoint:plotPoint numberOfCoordinates:count forPlotAreaViewPoint:point];
+//
+//            CGSize boundsSize;
+//            CPTGraph *theGraph    = self.graph;
+//            CPTPlotArea *plotArea = theGraph.plotAreaFrame.plotArea;
+//
+//            if ( plotArea ) {
+//                boundsSize = plotArea.bounds.size;
+//            }
+//            else {
+//                NSDecimal zero = CPTDecimalFromInteger(0);
+//                plotPoint[CPTCoordinateX] = zero;
+//                plotPoint[CPTCoordinateY] = zero;
+//                return;
+//            }
+//
+//            switch ( self.xScaleType ) {
+//                case CPTScaleTypeLinear:
+//                case CPTScaleTypeCategory:
+//                    plotPoint[CPTCoordinateX] = [self plotCoordinateForViewLength:CPTDecimalFromCGFloat(point.x) linearPlotRange:self.xRange boundsLength:plotArea.widthDecimal];
+//                    break;
+//
+//                case CPTScaleTypeLog:
+//                    plotPoint[CPTCoordinateX] = CPTDecimalFromDouble([self doublePrecisionPlotCoordinateForViewLength:point.x logPlotRange:self.xRange boundsLength:boundsSize.width]);
+//                    break;
+//
+//                case CPTScaleTypeLogModulus:
+//                    plotPoint[CPTCoordinateX] = CPTDecimalFromDouble([self doublePrecisionPlotCoordinateForViewLength:point.x logModulusPlotRange:self.xRange boundsLength:boundsSize.width]);
+//                    break;
+//
+//                default:
+//                    [NSException raise:CPTException format:@"Scale type not supported in CPTXYPlotSpace"];
+//            }
+//
+//            switch ( self.yScaleType ) {
+//                case CPTScaleTypeLinear:
+//                case CPTScaleTypeCategory:
+//                    plotPoint[CPTCoordinateY] = [self plotCoordinateForViewLength:CPTDecimalFromCGFloat(point.y) linearPlotRange:self.yRange boundsLength:plotArea.heightDecimal];
+//                    break;
+//
+//                case CPTScaleTypeLog:
+//                    plotPoint[CPTCoordinateY] = CPTDecimalFromDouble([self doublePrecisionPlotCoordinateForViewLength:point.y logPlotRange:self.yRange boundsLength:boundsSize.height]);
+//                    break;
+//
+//                case CPTScaleTypeLogModulus:
+//                    plotPoint[CPTCoordinateY] = CPTDecimalFromDouble([self doublePrecisionPlotCoordinateForViewLength:point.y logModulusPlotRange:self.yRange boundsLength:boundsSize.height]);
+//                    break;
+//
+//                default:
+//                    [NSException raise:CPTException format:@"Scale type not supported in CPTXYPlotSpace"];
+//            }
+//        }
+//
+//        -(void)doublePrecisionPlotPoint:(nonnull double *)plotPoint numberOfCoordinates:(NSUInteger)count forPlotAreaViewPoint:(CGPoint)point
+//        {
+//            [super doublePrecisionPlotPoint:plotPoint numberOfCoordinates:count forPlotAreaViewPoint:point];
+//
+//            CGSize boundsSize;
+//            CPTGraph *theGraph    = self.graph;
+//            CPTPlotArea *plotArea = theGraph.plotAreaFrame.plotArea;
+//
+//            if ( plotArea ) {
+//                boundsSize = plotArea.bounds.size;
+//            }
+//            else {
+//                plotPoint[CPTCoordinateX] = 0.0;
+//                plotPoint[CPTCoordinateY] = 0.0;
+//                return;
+//            }
+//
+//            switch ( self.xScaleType ) {
+//                case CPTScaleTypeLinear:
+//                case CPTScaleTypeCategory:
+//                    plotPoint[CPTCoordinateX] = [self doublePrecisionPlotCoordinateForViewLength:point.x linearPlotRange:self.xRange boundsLength:boundsSize.width];
+//                    break;
+//
+//                case CPTScaleTypeLog:
+//                    plotPoint[CPTCoordinateX] = [self doublePrecisionPlotCoordinateForViewLength:point.x logPlotRange:self.xRange boundsLength:boundsSize.width];
+//                    break;
+//
+//                case CPTScaleTypeLogModulus:
+//                    plotPoint[CPTCoordinateX] = [self doublePrecisionPlotCoordinateForViewLength:point.x logModulusPlotRange:self.xRange boundsLength:boundsSize.width];
+//                    break;
+//
+//                default:
+//                    [NSException raise:CPTException format:@"Scale type not supported in CPTXYPlotSpace"];
+//            }
+//
+//            switch ( self.yScaleType ) {
+//                case CPTScaleTypeLinear:
+//                case CPTScaleTypeCategory:
+//                    plotPoint[CPTCoordinateY] = [self doublePrecisionPlotCoordinateForViewLength:point.y linearPlotRange:self.yRange boundsLength:boundsSize.height];
+//                    break;
+//
+//                case CPTScaleTypeLog:
+//                    plotPoint[CPTCoordinateY] = [self doublePrecisionPlotCoordinateForViewLength:point.y logPlotRange:self.yRange boundsLength:boundsSize.height];
+//                    break;
+//
+//                case CPTScaleTypeLogModulus:
+//                    plotPoint[CPTCoordinateY] = [self doublePrecisionPlotCoordinateForViewLength:point.y logModulusPlotRange:self.yRange boundsLength:boundsSize.height];
+//                    break;
+//
+//                default:
+//                    [NSException raise:CPTException format:@"Scale type not supported in CPTXYPlotSpace"];
+//            }
+//        }
+//    //
     //    // Plot area view point for event
     //    -(CGPoint)plotAreaViewPointForEvent:(nonnull CPTNativeEvent *)event
     //    {

@@ -440,8 +440,8 @@ public class CPTBarPlot: CPTPlot {
             length = CGFloat(decimalLength)
         }
         else {
-            let coord : CPTCoordinate   = self.barsAreHorizontal == true ? CPTCoordinate.y : CPTCoordinate.x
-            let thePlotSpace = self.plotSpace as! CPTXYPlotSpace
+            let coord              = self.barsAreHorizontal == true ? CPTCoordinate.y : CPTCoordinate.x
+            let thePlotSpace       = self.plotSpace as! CPTXYPlotSpace
             let xLocation          = thePlotSpace.xRange.locationDecimal;
             let yLocation          = thePlotSpace.yRange.locationDecimal;
             
@@ -535,8 +535,9 @@ public class CPTBarPlot: CPTPlot {
     //
     //    /// @endcond
     //
-    //    #pragma mark -
-    //    #pragma mark Data Ranges
+    
+    
+    // MARK: -  Data Ranges
     //
     //    /// @cond
     //
@@ -641,10 +642,7 @@ public class CPTBarPlot: CPTPlot {
     //        return range;
     //    }
     //
-    //    #pragma mark -
-    //    #pragma mark Drawing
-    //
-    //    /// @cond
+    // MARK: - Drawing
     //
     //    func renderAsVectorInContext:(nonnull CGContextRef)context
     //    {

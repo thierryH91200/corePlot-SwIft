@@ -55,7 +55,7 @@ extension CPTPlot {
             }
             else {
                 let min = [NSDecimalNumber maximumDecimalNumber].decimalValue;
-                NSDecimal max = [NSDecimalNumber minimumDecimalNumber].decimalValue;
+                let max = [NSDecimalNumber minimumDecimalNumber].decimalValue;
                 
                 let decimals   = (const NSDecimal *)numbers.bytes;
                 let lastSample = decimals + numberOfSamples;
@@ -64,7 +64,7 @@ extension CPTPlot {
                      value = decimals
                     decimals += 1
                     
-                    if ( !NSDecimalIsNotANumber(&value)) {
+                    if ( !value.isNaN) {
                         if value < min {
                             min = value;
                         }
@@ -92,15 +92,15 @@ extension CPTPlot {
         
         guard ( fields.count != 0 ) else { return nil }
         
-        let unionRange : CPTMutablePlotRange?
+        var unionRange : CPTMutablePlotRange?
         
         for field in fields  {
-            let currentRange = self.plotRangeForField(field.unsignedIntegerValue)
-            if ( !unionRange == false) {
-                unionRange = currentRange
+            let currentRange = self.plotRangeForField(fieldEnum: Int(field))
+            if ( (unionRange == nil) ) {
+                unionRange = currentRange as? CPTMutablePlotRange
             }
             else {
-                unionRangeunionPlotRange(self, plotRangeForField:field.unsignedIntegerValue)
+                unionRange?.unionPlotRange(self, plotRangeForField(fieldEnum: Int(field)))
             }
         }
         
@@ -111,38 +111,34 @@ extension CPTPlot {
 // *  @param fieldEnum The field enumerator identifying the field.
 // *  @return The plot range enclosing the data.
 // **/
-//-(nullable CPTPlotRange *)plotRangeEnclosingField:(NSUInteger)fieldEnum
-//{
-//    return [self plotRangeForField:fieldEnum];
-//}
-//
+    func plotRangeEnclosingField(fieldEnum: Int)-> CPTPlotRange?
+    {
+        return self.plotRangeForField(fieldEnum: fieldEnum)
+    }
+
 ///** @brief Determines the smallest plot range that fully encloses the entire plot for a particular coordinate.
 // *  @param coord The coordinate identifier.
 // *  @return The plot range enclosing the data.
 // **/
-//-(nullable CPTPlotRange *)plotRangeEnclosingCoordinate:(CPTCoordinate)coord
-//{
-//    CPTNumberArray *fields = [self fieldIdentifiersForCoordinate:coord];
-//
-//    if ( fields.count == 0 ) {
-//        return nil;
-//    }
-//
-//    CPTMutablePlotRange *unionRange = nil;
-//
-//    for ( NSNumber *field in fields ) {
-//        CPTPlotRange *currentRange = [self plotRangeEnclosingField:field.unsignedIntegerValue];
-//        if ( !unionRange ) {
-//            unionRange = [currentRange mutableCopy];
-//        }
-//        else {
-//            [unionRange unionPlotRange:[self plotRangeEnclosingField:field.unsignedIntegerValue]];
-//        }
-//    }
-//
-//    return unionRange;
-//}
-//
+    func plotRangeEnclosingCoordinate(coord: CPTCoordinate)-> CPTPlotRange?
+    {
+        var fields = self.fieldIdentifiersForCoordinate(coord: coord)
+        guard fields.isEmpty == false else  { return nil }
+        
+        var unionRange = [CPTPlotRange]()
+        
+        for field in fields {
+            let currentRange = self.plotRangeEnclosingField(fieldEnum: Int(field))
+            if  unionRange.isEmpty == false  {
+                unionRange = currentRange
+            }
+            else {
+                unionRange.unionPlotRange(self.plotRangeEnclosingField(fieldEnum: Int(field)))
+            }
+        }
+        return unionRange;
+    }
+
     // MARK: -  Data Labels
 //
 ///**

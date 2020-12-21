@@ -310,10 +310,10 @@ class CPTPlotSpace: NSObject {
     //     *  @param point The drawing coordinates of the data point.
     //     *  @return An array of data point coordinates (as NSNumber values).
     //     **/
-    //    -(nullable CPTNumberArray *)plotPointForPlotAreaViewPoint:(CGPoint __unused)point
-    //    {
-    //        return nil;
-    //    }
+    func plotPointForPlotAreaViewPoint(point: CGPoint ) -> CPTNumberArray?
+    {
+        return nil
+    }
     //
     //    /** @brief Converts a point given in plot area drawing coordinates to the data coordinate space.
     //     *  @param plotPoint A c-style array of data point coordinates (as NSDecimal structs).
