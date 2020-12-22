@@ -1,4 +1,4 @@
-# corePlot-SwIft
+# corePlot-Swift
 
 work in progress
 

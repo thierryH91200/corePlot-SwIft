@@ -1044,27 +1044,25 @@ public class CPTAxis : CPTLayer {
     //    /** @brief Remove a background limit band.
     //     *  @param limitBand The limit band to be removed.
     //     **/
-    //   func removeBackgroundLimitBand:(nullable CPTLimitBand *)limitBand
-    //    {
-    //        if ( limitBand ) {
-    //            CPTLimitBand *band = limitBand;
-    //            [self.mutableBackgroundLimitBands removeObject:band];
-    //
-    //            CPTPlotArea *thePlotArea = self.plotArea;
-    //            [thePlotArea setNeedsDisplay];
-    //        }
-    //    }
-    //
-    //    /** @brief Remove all background limit bands.
-    //    **/
+    func removeBackgroundLimitBand(limitBand: CPTLimitBand? )
+    {
+        if (( limitBand ) != nil) {
+            let band = limitBand;
+            self.mutableBackgroundLimitBands.removeObject(band!)
+            
+            let thePlotArea = self.plotArea;
+            thePlotArea?.setNeedsDisplay()
+        }
+    }
+
+    /** @brief Remove all background limit bands.
+    **/
     func removeAllBackgroundLimitBands()
     {
-        self.mutableBackgroundLimitBands.removeAllObjects()
+        self.mutableBackgroundLimitBands.removeAll()
         let thePlotArea = self.plotArea;
         thePlotArea?.setNeedsDisplay()
     }
-    
-    
     
     // MARK: -  Responder Chain and User Interaction
     //

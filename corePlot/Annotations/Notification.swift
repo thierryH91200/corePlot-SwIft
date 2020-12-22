@@ -80,12 +80,10 @@ public extension NSBindingName {
     static let CPTBarPlotBindingBarLineStyles = NSBindingName("barLineStyles") ///< Bar line styles.
     static let CPTBarPlotBindingBarWidths     = NSBindingName("barWidths" )    ///< Bar widths.
     
-    // MARK: CPPIe
-    static let CPTPieChartBindingPieSliceWidthValues   = NSBindingName("sliceWidths")        ///< Pie slice widths.
-    static let CPTPieChartBindingPieSliceFills         = NSBindingName("sliceFills")       ///< Pie slice interior fills.
-    static let CPTPieChartBindingPieSliceRadialOffsets = NSBindingName("sliceRadialOffsets") ///< Pie slice radial offsets.
-
-    
+    // MARK: CPTPie
+    static let PieSliceWidthValues   = NSBindingName("sliceWidths")        ///< Pie slice widths.
+    static let PieSliceFills         = NSBindingName("sliceFills")       ///< Pie slice interior fills.
+    static let PieSliceRadialOffsets = NSBindingName("sliceRadialOffsets") ///< Pie slice radial offsets.
 }
 
 

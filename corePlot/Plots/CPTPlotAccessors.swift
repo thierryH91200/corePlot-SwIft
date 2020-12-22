@@ -58,7 +58,7 @@ extension CPTPlot {
     func plotArea() -> CPTPlotArea?
     {
         let theGraph = self.graph
-        return theGraph!.plotAreaFrame.plotArea!
+        return theGraph?.plotAreaFrame.plotArea!
     }
 
     func setNeedsRelabel(newNeedsRelabel: Bool)

@@ -7,14 +7,14 @@
 
 import AppKit
 
-protocol CPTPieChartDataSource {
+@objc protocol CPTPieChartDataSource : NSObjectProtocol {
     
-    func sliceFillsForPieChart( pieChart: CPTPieChart, recordIndexRange:NSRange) -> [CPTFill]
-    func sliceFillForPieChart(pieChart: CPTPieChart, idx : Int) -> CPTFill
-    func radialOffsetsForPieChart(pieChart:  CPTPieChart, indexRange:NSRange) -> [CGFloat]
-    func radialOffsetForPieChart( pieChart: CPTPieChart, idx:Int) -> CGFloat
-    func legendTitleForPieChart(pieChart:  CPTPieChart, idx: Int)-> String
-    func attributedLegendTitleForPieChart(pieChart:  CPTPieChart, idx :Int)-> NSAttributedString
+    @objc optional  func sliceFillsForPieChart( pieChart: CPTPieChart, recordIndexRange:NSRange) -> [CPTFill]
+    @objc optional func sliceFillForPieChart(pieChart: CPTPieChart, idx : Int) -> CPTFill
+    @objc optional func radialOffsetsForPieChart(pieChart:  CPTPieChart, indexRange:NSRange) -> [CGFloat]
+    @objc optional func radialOffsetForPieChart( pieChart: CPTPieChart, idx:Int) -> CGFloat
+    @objc optional func legendTitleForPieChart(pieChart:  CPTPieChart, idx: Int)-> String
+    @objc optional func attributedLegendTitleForPieChart(pieChart:  CPTPieChart, idx :Int)-> NSAttributedString
 }
 
 
@@ -43,6 +43,9 @@ public class CPTPieChart: CPTPlot {
         case sliceWidthNormalized ///< Pie slice width normalized [0, 1].
         case sliceWidthSum ///< Cumulative sum of pie slice widths.
     }
+    
+    var theDataSource : CPTPieChartDataSource?
+
     
     var pieRadius: CGFloat
     var pieInnerRadius : CGFloat
@@ -82,6 +85,9 @@ public class CPTPieChart: CPTPlot {
         
         labelOffset = CGFloat(10.0)
         labelField = CPTPieChartField.sliceWidth.rawValue
+        
+        theDataSource = dataSource as? CPTPieChartDataSource
+
     }
     
     
@@ -100,6 +106,9 @@ public class CPTPieChart: CPTPlot {
         overlayFill = theLayer!.overlayFill
         labelRotationRelativeToRadius = ((theLayer?.labelRotationRelativeToRadius) != nil)
         pointingDeviceDownIndex = NSNotFound
+        
+        theDataSource = dataSource as? CPTPieChartDataSource
+
     }
     
     required init?(coder: NSCoder) {
@@ -115,7 +124,7 @@ public class CPTPieChart: CPTPlot {
             object:self)
     }
     
-    func reloadDataInIndexRange(indexRange: NSRange)
+    override func reloadDataInIndexRange(indexRange: NSRange)
     {
         super.reloadDataInIndexRange(indexRange: indexRange)
         
@@ -126,15 +135,13 @@ public class CPTPieChart: CPTPlot {
         self.reloadRadialOffsetsInIndexRange(indexRange:indexRange)
         
         // Legend
-        
-        var theDataSource = dataSource as? CPTPieChartDataSource?
-//        weak var theDataSource = dataSource as? CPTPieChartDataSource?
-//        let theDataSource = self.dataSource;
-        
-        if theDataSource.respondsToSelector(to: #selector(legendTitleForPieChart:recordIndex:)) {
-            NotificationCenter.send(
-                name: .CPTLegendNeedsRedrawForPlotNotification,
-                object:self)
+        if let theDataSource = theDataSource {
+            if let _ = theDataSource.legendTitleForPieChart {
+
+                NotificationCenter.send(
+                    name: .CPTLegendNeedsRedrawForPlotNotification,
+                    object:self)
+            }
         }
     }
     
@@ -280,65 +287,62 @@ public class CPTPieChart: CPTPlot {
     //    /**
     //     *  @brief Reload all slice fills from the data source immediately.
     //     **/
-    //    -(void)reloadSliceFills
-    //    {
-    //        [self reloadSliceFillsInIndexRange:NSMakeRange(0, self.cachedDataCount))
-    //    }
-    //
+        func reloadSliceFills()
+        {
+            self.reloadSliceFillsInIndexRange(indexRange: NSRange(location: 0, length: self.cachedDataCount))
+        }
+    
     //    /** @brief Reload slice fills in the given index range from the data source immediately.
     //     *  @param indexRange The index range to load.
     //     **/
     func reloadSliceFillsInIndexRange(indexRange: NSRange)
     {
-        var theDataSource = dataSource as? CPTPieChartDataSource?
         var needsLegendUpdate = false
         
         if ( theDataSource.respondsToSelector(to: #selector(sliceFillsForPieChart:recordIndexRange:) ) {
-                    needsLegendUpdate = true
-        
+            needsLegendUpdate = true
+            
             
             let test = theDataSource?.sliceFillsForPieChart(pieChart: self, recordIndexRange:indexRange)
             self.cacheArray(test,
                             forKey:.CPTPieChartBindingPieSliceFills,
-                        atRecordIndex:indexRange.location)
-                }
-        //        else if ( [theDataSource respondsToSelector:@selector(sliceFillForPieChart:recordIndex:)] ) {
-        //            needsLegendUpdate = true
-        //
-        //            id nilObject               = [CPTPlot nilData)
-        //                CPTMutableFillArray *array = [[NSMutableArray alloc] initWithCapacity:indexRange.length)
-        //                var maxIndex        = NSMaxRange(indexRange);
-        //
-        //                for ( NSUInteger idx = indexRange.location; idx < maxIndex; idx++ ) {
-        //                CPTFill *dataSourceFill = [theDataSource sliceFillForPieChart:self recordIndex:idx)
-        //                if ( dataSourceFill ) {
-        //                [array addObject:dataSourceFill)
-        //                }
-        //                else {
-        //                [array addObject:nilObject)
-        //                }
-        //                }
-        //
-        //                [self cacheArray:array forKey:CPTPieChartBindingPieSliceFills atRecordIndex:indexRange.location)
-        //                }
-        //
-        //                // Legend
-        //                if ( needsLegendUpdate ) {
-        //                NotificationCenter.default.send(
-        //                name:.CPTLegendNeedsRedrawForPlotNotification,
-        //                object:self)
-        //                }
-        //
-        //                [self setNeedsDisplay)
-    }
-    //
-    //    /**
-    //     *  @brief Reload all slice offsets from the data source immediately.
-    //     **/
-        func reloadRadialOffsets()
-        {
-            self.reloadRadialOffsetsInIndexRange(indexRange: NSRange(location: 0, length: self.cachedDataCount))
+                            atRecordIndex:indexRange.location)
         }
+        else if ( theDataSource.respondsToSelector(to: #selector(sliceFillForPieChart:recordIndex:)] ) {
+            needsLegendUpdate = true
+            
+            let nilObject               = (CPTPlot nilData)
+            let array = [Any]()
+            var maxIndex        = NSMaxRange(indexRange);
+            
+            for idx in indexRange.location..<maxIndex {
+                let dataSourceFill = theDataSource?.sliceFillForPieChart(pieChart: self,idx:idx)
+                if ( dataSourceFill ) {
+                    array.append(dataSourceFill)
+                }
+                else {
+                    array.append(nilObject)
+                }
+            }
+            
+            [self cacheArray:array forKey:CPTPieChartBindingPieSliceFills atRecordIndex:indexRange.location)
+        }
+        
+        // Legend
+        if needsLegendUpdate == true {
+            NotificationCenter.send(
+                name:.CPTLegendNeedsRedrawForPlotNotification,
+                object:self)
+        }
+        
+        self.setNeedsDisplay()
+    }
+        
+    //     *  @brief Reload all slice offsets from the data source immediately.
+    func reloadRadialOffsets()
+    {
+        self.reloadRadialOffsetsInIndexRange(indexRange: NSRange(location: 0, length: self.cachedDataCount))
+    }
     
     //    /** @brief Reload slice offsets in the given index range from the data source immediately.
     //     *  @param indexRange The index range to load.
@@ -347,13 +351,13 @@ public class CPTPieChart: CPTPlot {
     {
         var theDataSource = dataSource as? CPTPieChartDataSource?
 
-        if theDataSource.respondsToSelector(to: #selector(CPTMutablePlotRange:recordIndexRange:) ) {
+        if theDataSource.respondsToSelector(to: #selector(radialOffsetsForPieChart:recordIndexRange:) ) {
             
             self.cacheArray( theDataSource,
                              radialOffsetsForPieChart:self,
-                            recordIndexRange:indexRange,
-                            forKey          : .CPTPieChartBindingPieSliceRadialOffsets,
-                            atRecordIndex   :indexRange.location)
+                             recordIndexRange:indexRange,
+                             forKey          : NSBindingName.PieSliceRadialOffsets.rawValue,
+                             atRecordIndex   :indexRange.location)
         }
         else if ( theDataSource.respondsToSelector( to: #selector(radialOffsetForPieChart:recordIndex:) ) {
 
@@ -366,12 +370,14 @@ public class CPTPieChart: CPTPlot {
                 array.append(offset)
             }
             
-            self.cacheArray(array: array, forKey: .CPTPieChartBindingPieSliceRadialOffsets, atRecordIndex:indexRange.location)
+            self.cacheArray(array: array,
+                            forKey: NSBindingName.PieSliceRadialOffsets.rawValue,
+                            atRecordIndex:indexRange.location)
         }
         
         self.setNeedsDisplay()
     }
-    //
+
     // MARK: Drawing
     override func renderAsVectorInContext(context: CGContext)
     {
@@ -379,27 +385,27 @@ public class CPTPieChart: CPTPlot {
         
         let sampleCount = self.cachedDataCount;
         
-        if ( sampleCount == 0 ) {
+        if  sampleCount == 0 {
             return;
         }
         
-        let thePlotArea = self.plotArea
-        
-        if ( !thePlotArea ) {
-            return;
+        let thePlotArea = self.plotArea()
+        if ( (thePlotArea == nil) ) {
+            return
         }
         
         super.renderAsVectorInContext(context: context)
         
         context.beginTransparencyLayer(auxiliaryInfo: nil);
         
-        let plotAreaBounds = thePlotArea.bounds;
-        let anchor        = self.centerAnchor;
-        let centerPoint   = CGPoint(plotAreaBounds.origin.x + plotAreaBounds.size.width * anchor.x,
-                                    plotAreaBounds.origin.y + plotAreaBounds.size.height * anchor.y);
+        let plotAreaBounds = thePlotArea?.bounds
+        let anchor        = self.centerAnchor
         
-        centerPoint = self.convertPoint(centerPoint, fromLayer:thePlotArea)
-        if self.alignsPointsToPixels( ) {
+        var centerPoint   = CGPoint(x: (plotAreaBounds?.origin.x)! + (plotAreaBounds?.size.width)! * anchor.x,
+                                    y: (plotAreaBounds?.origin.y)! + (plotAreaBounds?.size.height)! * anchor.y);
+        
+        centerPoint = self.convert(centerPoint, from:thePlotArea)
+        if self.alignsPointsToPixels == true {
             centerPoint = CPTAlignPointToUserSpace(context, centerPoint);
         }
         
@@ -410,7 +416,7 @@ public class CPTPieChart: CPTPlot {
         var overlay          = self.overlayFill
         
         var hasNonZeroOffsets      = false;
-        var offsetArray = self.cachedArrayForKey(CPTPieChartBindingPieSliceRadialOffsets)
+        var offsetArray = self.cachedArrayForKey(NSBindingName.CPTPieChartBindingPieSliceRadialOffsets.rawValue)
         
         for  offset in offsetArray {
             if offset  != CGFloat(0.0) {
@@ -421,10 +427,13 @@ public class CPTPieChart: CPTPlot {
         
         var bounds = CGRect()
         
-        if ( overlay && hasNonZeroOffsets ) {
-            let radius = self.pieRadius + borderStyle?.lineWidth * CGFloat(0.5);
+        if ( (overlay != nil) && hasNonZeroOffsets ) {
+            let radius = self.pieRadius + borderStyle!.lineWidth * CGFloat(0.5);
             
-            bounds = CGRect(centerPoint.x - radius, centerPoint.y - radius, radius * CGFloat(2.0), radius * CGFloat(2.0));
+            bounds = CGRect(x: centerPoint.x - radius,
+                            y: centerPoint.y - radius,
+                            width: radius * CGFloat(2.0),
+                            height: radius * CGFloat(2.0));
         }
         else {
             bounds = CGRect()
@@ -434,26 +443,26 @@ public class CPTPieChart: CPTPlot {
         let  fillClass = CPTFill()
         
         while ( currentIndex < sampleCount ) {
-            let currentWidth = self.cachedDoubleForField( CPTPieChartFieldSliceWidthNormalized, recordIndex:currentIndex)
+            let currentWidth = self.cachedDoubleForField( CPTPieChartFieldSliceWidthNormalized , recordIndex:currentIndex)
             
             if ( !isnan(currentWidth)) {
-                let radialOffset = [(NSNumber *) offsetArray[currentIndex] cgFloatValue
+                let radialOffset = offsetArray[currentIndex]
                     
                     // draw slice
                     context.saveGState();
                 
-                let startingAngle  = self.radiansForPieSliceValue(startingWidth);
+                let startingAngle  = self.radiansForPieSliceValue(startingWidth)
                 let finishingAngle = self.radiansForPieSliceValue(startingWidth + currentWidth)
                 
                 let xOffset = CGFloat(0.0);
                 let yOffset = CGFloat(0.0);
-                let center  = centerPoint;
+                var center  = centerPoint;
                 if ( radialOffset != CGFloat(0.0)) {
                     let medianAngle = CGFloat(0.5) * (startingAngle + finishingAngle);
                     xOffset = cos(medianAngle) * radialOffset;
                     yOffset = sin(medianAngle) * radialOffset;
                     
-                    center = CGPoint(centerPoint.x + xOffset, centerPoint.y + yOffset);
+                    center = CGPoint(x: centerPoint.x + xOffset, y: centerPoint.y + yOffset);
                     
                     if ( self.alignsPointsToPixels ) {
                         center = CPTAlignPointToUserSpace(context, center);
@@ -479,40 +488,40 @@ public class CPTPieChart: CPTPlot {
                 }
                 
                 // draw overlay for exploded pie charts
-                if ( overlay && hasNonZeroOffsets ) {
+                if ( (overlay != nil) && hasNonZeroOffsets == true) {
                     context.saveGState();
                     
                     context.addPath(slicePath);
                     context.clip();
-                    [overlay fillRect:CGRectOffset(bounds, xOffset, yOffset) inContext:context
+                    overlay?.fillRect( rect: bounds.offsetBy(dx: xOffset, dy: yOffset), inContext:context)
                         
-                        CGContextRestoreGState(context);
+                    context.restoreGState();
                 }
                 
-                CGContextRestoreGState(context);
+                context.restoreGState();
                 
                 startingWidth += currentWidth;
             }
-            currentIndex++;
+            currentIndex += 1
         }
         
-        CGContextEndTransparencyLayer(context);
+        context.endTransparencyLayer();
         
         // draw overlay all at once if not exploded
-        if ( overlay && !hasNonZeroOffsets ) {
+        if ( (overlay != nil) && !hasNonZeroOffsets ) {
             // no shadow for the overlay
-            CGContextSetShadowWithColor(context, CGSizeZero, CGFloat(0.0), NULL);
+            context.setShadow(offset: CGSize(), blur: CGFloat(0.0), color: nil);
             
             let fillPath = CGMutablePath();
             
             let innerRadius = self.pieInnerRadius;
             if ( innerRadius > CGFloat(0.0)) {
-                CGPathAddArc(fillPath, NULL, centerPoint.x, centerPoint.y, self.pieRadius, CGFloat(0.0), CGFloat(2.0 * M_PI), false);
-                CGPathAddArc(fillPath, NULL, centerPoint.x, centerPoint.y, innerRadius, CGFloat(2.0 * M_PI), CGFloat(0.0), true);
+                CGPathAddArc(fillPath, nil, centerPoint.x, centerPoint.y, self.pieRadius, CGFloat(0.0), CGFloat(2.0 * M_PI), false);
+                CGPathAddArc(fillPath, nil, centerPoint.x, centerPoint.y, innerRadius, CGFloat(2.0 * M_PI), CGFloat(0.0), true);
             }
             else {
-                CGPathMoveToPoint(fillPath, NULL, centerPoint.x, centerPoint.y);
-                CGPathAddArc(fillPath, NULL, centerPoint.x, centerPoint.y, self.pieRadius, CGFloat(0.0), CGFloat(2.0 * M_PI), false);
+                CGPathMoveToPoint(fillPath, nil, centerPoint.x, centerPoint.y);
+                CGPathAddArc(fillPath, nil, centerPoint.x, centerPoint.y, self.pieRadius, CGFloat(0.0), CGFloat(2.0 * M_PI), false);
             }
             fillPath.closeSubpath();
             
@@ -543,15 +552,15 @@ public class CPTPieChart: CPTPlot {
     
     func addSliceToPath(slicePath: CGMutablePath, center:CGPoint, startingAngle:CGFloat, finishingAngle:CGFloat, currentWidth:CGFloat)
     {
-        let direction      = (self.sliceDirection == CPTPieDirection.clockwise) ? true : false;
+        let direction   = (self.sliceDirection == CPTPieDirection.clockwise) ? true : false;
         let outerRadius = self.pieRadius;
         let innerRadius = self.pieInnerRadius;
         
         if ( innerRadius > CGFloat(0.0)) {
             if ( currentWidth >= CGFloat(1.0)) {
-                var angle = CGFloat((direction ? 2.0 : -2.0) * Double.pi))
+                var angle = CGFloat((direction ? 2.0 : -2.0) * Double.pi)
                 slicePath.addArc(center: center, radius: outerRadius, startAngle: startingAngle, endAngle: startingAngle + angle, clockwise: direction)
-                angle = CGFloat((direction ? 2.0 : -2.0) * Double.pi))
+                angle = CGFloat((direction ? 2.0 : -2.0) * Double.pi)
                 slicePath.addArc(center: center, radius: innerRadius, startAngle: startingAngle, endAngle: startingAngle + angle, clockwise: direction)
                 //                CGPathAddRelativeArc(slicePath, nil, center.x, center.y, outerRadius, startingAngle, CGFloat((direction ? 2.0 : -2.0) * M_PI));
                 //                CGPathAddRelativeArc(slicePath, nil, center.x, center.y, innerRadius, startingAngle, CGFloat((direction ? -2.0 : 2.0) * M_PI));
@@ -710,10 +719,8 @@ public class CPTPieChart: CPTPlot {
         }
     }
     
-    //    #pragma mark Fields
-    //
-    //    /// @cond
-    //
+    // MARK: - Fields
+
     //    -(NSUInteger)numberOfFields
     //    {
     //        return 1;
@@ -726,8 +733,7 @@ public class CPTPieChart: CPTPlot {
     //
     //    /// @endcond
     //
-    //    #pragma mark -
-    //    #pragma mark Data Labels
+    // MARK: -  Data Labels
     //
     //    /// @cond
     //
@@ -784,11 +790,8 @@ public class CPTPieChart: CPTPlot {
     //
     //    /// @endcond
     //
-    //    #pragma mark -
-    //    #pragma mark Legends
-    //
-    //    /// @cond
-    //
+    // MARK: - Legends
+
     //    /** @internal
     //     *  @brief The number of legend entries provided by this plot.
     //     *  @return The number of legend entries.
@@ -842,7 +845,7 @@ public class CPTPieChart: CPTPlot {
     //    }
     //
     //    /// @endcond
-    //
+    
     // MARK: - Responder Chain and User interaction
     //
     //    /// @cond
@@ -1192,34 +1195,34 @@ public class CPTPieChart: CPTPlot {
     //  MARK: - Accessors
     func sliceWidths() -> [CGFloat]
     {
-        return self.cachedNumbers( ForField: .CPTPieChartFieldSliceWidth )
+        return self.cachedNumbers( forField: CPTPieChartField.sliceWidth )
     }
     
     func setSliceWidths(newSliceWidths:  [CGFloat] )
     {
-        self.cacheNumbers(newSliceWidths, forField: .CPTPieChartFieldSliceWidth)
+        self.cacheNumbers(numbers: newSliceWidths, forField: CPTPieChartField.sliceWidth)
         self.updateNormalizedData()
     }
     
     func sliceFills() -> [CPTFill]
     {
-        return [self.cachedArray(forKey: .CPTPieChartBindingPieSliceFills)
+        return [self.cachedArray(forKey: NSBindingName.PieSliceFills)
         }
     
     func setSliceFills(newSliceFills: [CPTFill] )
     {
-        self.cacheArray( newSliceFills,forKey:.CPTPieChartBindingPieSliceFills)
+        self.cacheArray( newSliceFills,forKey: NSBindingName.PieSliceFills)
                         self.setNeedsDisplay()
     }
     
     func sliceRadialOffsets() -> [CGFloat]
     {
-        return self.cachedArray( forKey:.CPTPieChartBindingPieSliceRadialOffsets)
+        return self.cachedArray( forKey: NSBindingName.PieSliceRadialOffsets.rawValue)
     }
     
     func setSliceRadialOffsets(newSliceRadialOffsets: [CGFloat])
     {
-        self.cacheArray(newSliceRadialOffsets, forKey: .CPTPieChartBindingPieSliceRadialOffsets)
+        self.cacheArray(newSliceRadialOffsets, forKey: NSBindingName.PieSliceRadialOffsets.rawValue)
         self.setNeedsDisplay()
         self.setNeedsLayout()
     }

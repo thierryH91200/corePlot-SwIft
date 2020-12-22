@@ -36,19 +36,18 @@ import AppKit
 
 public class CPTPlot: CPTAnnotationHostLayer {
     
-    var cachedData: [String : Any] = [:]
-//    var cachedData = NSMutableDictionary()
+    var cachedData: [Int : Any] = [:]
+//var cachedData = NSMutableDictionary()
 
     
 //    let CPTPlotBindingDataLabels = "dataLabels"
     
     public weak var dataSource : CPTPlotDataSource?
-    public var delegatePlot: CPTPlotDelegate?
+    public weak var delegatePlot: CPTPlotDelegate?
     
     var _title : String?
     var title : String? {
-        get { return _title}
-        
+        get { return _title}        
         set {
             if ( newValue != _title ) {
                 _title = newValue
@@ -66,7 +65,6 @@ public class CPTPlot: CPTAnnotationHostLayer {
         }
     }
 
-    
     var attributedTitle : NSAttributedString?
     var plotSpace : CPTPlotSpace?
     var adjustLabelAnchors = false
@@ -169,7 +167,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
         showLabels           = true;
         labelOffset          = CGFloat(0.0);
         labelRotation        = CGFloat(0.0);
-        labelField           = nil
+        labelField           = 0
         labelTextStyle       = nil;
         labelFormatter       = Formatter()
         labelShadow          = nil;
@@ -234,6 +232,16 @@ public class CPTPlot: CPTAnnotationHostLayer {
 //
 //        return nilDataNilObject
 //    }
+    
+    func reloadDataInIndexRange(indexRange :NSRange)
+    {
+        self.dataNeedsReloading = false;
+        self.reloadPlotData(indexRange: indexRange)
+        
+        // Data labels
+        self.reloadDataLabels( indexRange: indexRange)
+    }
+
     
     // MARK: - Bindings
     // MARK: - Drawing

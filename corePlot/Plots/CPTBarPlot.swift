@@ -353,7 +353,7 @@ public class CPTBarPlot: CPTPlot {
             needsLegendUpdate = true
             
             self.cacheArray(theDataSource.barLineStylesForBarPlot(barPlot: self,recordIndexRange:indexRange)
-                forKey:CPTBarPlotBindingBarLineStyles
+                            forKey: NSBindingName.CPTBarPlotBindingBarLineStyles.rawValue,
                 atRecordIndex:indexRange.location];
         }
         else if let barLineStylesForBarPlot = theDataSource?.barLineStylesForBarPlot {
@@ -375,7 +375,7 @@ public class CPTBarPlot: CPTPlot {
             }
             
             self.cacheArray(array: array,
-                            forKey:.CPTBarPlotBindingBarLineStyles,
+                            forKey: NSBindingName.CPTBarPlotBindingBarLineStyles.rawValue,
                             atRecordIndex:indexRange.location)
         }
         
@@ -1410,12 +1410,12 @@ public class CPTBarPlot: CPTPlot {
     //        return [self cachedArrayForKey:CPTBarPlotBindingBarLineStyles];
     //    }
     //
-    //    func setBarLineStyles:(nullable CPTLineStyleArray *)newBarLineStyles
-    //    {
-    //        [self cacheArray:newBarLineStyles forKey:CPTBarPlotBindingBarLineStyles];
-    //        [self setNeedsDisplay];
-    //    }
-    //
+    func setBarLineStyles(newBarLineStyles: [CPTLineStyle] )
+        {
+    self.cacheArray( newBarLineStyles, forKey:NSBindingName.CPTBarPlotBindingBarLineStyles.rawValue)
+        self.setNeedsDisplay()
+        }
+    
     func setLineStyle(newLineStyle: CPTLineStyle )
     {
         if ( lineStyle != newLineStyle ) {

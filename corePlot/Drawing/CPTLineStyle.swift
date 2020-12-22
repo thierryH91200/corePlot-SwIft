@@ -10,6 +10,8 @@ import AppKit
 
 public class CPTLineStyle: NSObject {
     
+    typealias CPTLineStyleArray = [CPTLineStyle]
+    
     var lineCap = CGLineCap.butt
     var lineJoin : CGLineJoin
     var miterLimit : CGFloat

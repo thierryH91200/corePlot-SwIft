@@ -5,12 +5,10 @@
 //  Created by thierryH24 on 14/11/2020.
 //
 
-import Cocoa
-
+import AppKit
 
 protocol CPTPlotSpaceDelegate: NSObject {
     
-    //@optional
     
     func plotSpace(space: CPTPlotSpace, interactionScale:CGFloat,  interactionPoint:CGPoint) -> Bool
     func plotSpace(space: CPTPlotSpace, proposedDisplacementVector:CGPoint)-> CGPoint

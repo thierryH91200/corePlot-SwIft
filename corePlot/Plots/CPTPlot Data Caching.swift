@@ -30,31 +30,24 @@ extension CPTPlot {
         let coordinate   = self.coordinateForFieldIdentifier(field: fieldEnum)
         var thePlotSpace = self.plotSpace;
         
-        
-        //        let numbers = numbers as! CPTScaleType
-        
         if ( numbers != nil ) {
             
             let scaleType = thePlotSpace?.scaleTypeForCoordinate(coordinate: coordinate)
             switch ( scaleType! ) {
-            
             case .linear:
                 fallthrough
-                
             case .log:
                 fallthrough
-                
             case .logModulus:
-                
                 let theNumbers = numbers;
                 let mutableNumbers = self.numericDataForNumbers(theNumbers)
                 
                 let  sampleCount = mutableNumbers.numberOfSamples;
-                if ( sampleCount > 0 ) {
+                if sampleCount > 0  {
                     (self.cachedData)[cacheKey] = mutableNumbers;
                 }
                 else {
-                    self.cachedData.removeObject(forKey: cacheKey)
+                    self.cachedData.removeValue(forKey: cacheKey)
                 }
                 
                 self.cachedDataCount = sampleCount;
@@ -62,58 +55,45 @@ extension CPTPlot {
                 switch ( self.cachePrecision ) {
                 case .auto:
                     self.setCachedDataType(mutableNumbers.dataType)
-                    break;
                     
                 case .double:
                     self.setCachedDataType(self.doubleDataType())
-                    break;
                     
                 case .decimal:
                     self.setCachedDataType(self.decimalDataType())
-                    break;
                 }
-                break;
                 
             case .category:
+                var samples = [String]()
+                thePlotSpace?.setCategories(newCategories: samples, forCoordinate: coordinate)
                 
-                    var samples = [String]()
+                let sampleCount = samples.count
+                if ( sampleCount > 0 ) {
+                    var indices = NSMutableArray()
                     
-                    if ( samples is Array  ) == true {
-                        thePlotSpace?.setCategories(newCategories: samples, forCoordinate: coordinate)
-                        
-                        let sampleCount = samples.count;
-                        if ( sampleCount > 0 ) {
-                            var indices = NSMutableArray()
-                            
-                            for category in samples {
-                                indices.addObject(thePlotSpace, indexOfCategory:category, forCoordinate: coordinate)
-                            }
-                            
-                            let dataType = (self.cachePrecision == CPTPlotCachePrecisionDecimal ? self.decimalDataType : self.doubleDataType);
-                            
-                            let mutableNumbers = CPTMutableNumericData ( initWithArray:indices,
-                                                  dataType:dataType,
-                                                  shape:nil)
-                            
-                            self.cachedData[cacheKey] = mutableNumbers;
-                            self.cachedDataCount = sampleCount;
-                        }
-                        else {
-                            self.cachedData.removeObject(forKey:cacheKey)
-                        }
+                    for category in samples {
+                        indices.addObject(thePlotSpace, indexOfCategory:category, forCoordinate: coordinate)
                     }
-                    else {
-                        self.cachedData.removeObject(forKey:cacheKey)
-                    }
-                
-                break;
+                    
+                    let dataType = (self.cachePrecision == CPTPlotCachePrecisionDecimal ? self.decimalDataType : self.doubleDataType);
+                    
+                    let mutableNumbers = CPTMutableNumericData ( initWithArray:indices,
+                                                                 dataType:dataType,
+                                                                 shape:nil)
+                    
+                    self.cachedData[cacheKey] = mutableNumbers;
+                    self.cachedDataCount = sampleCount;
+                }
+                else {
+                    self.cachedData.removeValue(forKey:cacheKey)
+                }
                 
             default:
                 break;
             }
         }
         else {
-            self.cachedData.removeObject(forKey: cacheKey)
+            self.cachedData.removeValue(forKey: cacheKey)
             self.cachedDataCount = 0;
         }
         self.needsRelabel = true;
@@ -245,18 +225,18 @@ extension CPTPlot {
             }
         }
         else if numbers is Data {
-            loadedDataType = self.doubleDataType;
-            mutableNumbers = [[CPTMutableNumericData alloc] initWithData:numbers dataType:loadedDataType shape:nil];
+            loadedDataType = self.doubleDataType();
+            mutableNumbers = CPTMutableNumericData(  initWithData:numbers dataType:loadedDataType shape:nil];
         }
         else if (numbers is Array ) {
-            if (((CPTNumberArray *)numbers).count == 0 ) {
+            if numbers.count == 0 ) {
                 loadedDataType = self.doubleDataType;
             }
             else if ( [((NSArray<NSNumber *> *)numbers)[0] is [NSDecimalNumber class]] ) {
                 loadedDataType = self.decimalDataType;
             }
             else {
-                loadedDataType = self.doubleDataType;
+                loadedDataType = self.doubleDataType();
             }
     
             mutableNumbers = [[CPTMutableNumericData alloc] initWithArray:numbers dataType:loadedDataType shape:nil];
@@ -393,9 +373,7 @@ extension CPTPlot {
     //    }
     //    return CPTDecimalNaN();
     //}setDataLabels
-    //
-    ///// @cond
-    //
+
     func setCachedDataType(_ newDataType: CPTNumericDataType) {
         let numberClass = NSNumber.self
         
@@ -425,19 +403,10 @@ extension CPTPlot {
 
     func decimalDataType() -> CPTNumericDataType
     {
-        static  dataType: CPTNumericDataType
-        static dispatch_once_t onceToken = 0;
-    
-        dispatch_once(&onceToken, ^{
-            dataType = CPTDataType(CPTDecimalDataType, sizeof(NSDecimal), CFByteOrderGetCurrent());
-        });
-    
+        let  dataType: CPTNumericDataType
+        dataType = CPTDataType(CPTDecimalDataType, sizeof(NSDecimal), CFByteOrderGetCurrent());
         return dataType;
     }
-    
-    
-    
-    
     
     //
     ///** @brief Retrieves an array of values from the cache.
@@ -457,20 +426,17 @@ extension CPTPlot {
     func cachedValueForKey(key : String, recordIndex idx:Int)-> Any?
     {
         return cachedArray(forKey: key)?[idx]
-        
     }
     
     func cachedArray(forKey key: String) -> [String]? {
         return (cachedData)[key] as? [String]
     }
     
-    
-    
     ///** @brief Copies an array of arbitrary values to the cache.
     // *  @param array An array of arbitrary values to cache.
     // *  @param key The key identifying the field.
     // **/
-    func cacheArray(_ array: [String], forKey key: String) {
+    func cacheArray(_ array: [Any], forKey key: String) {
         let sampleCount = array.count
         if sampleCount > 0 {
             cachedData[key] = array
@@ -486,9 +452,9 @@ extension CPTPlot {
     // *  @param key The key identifying the field.
     // *  @param idx The index of the first data point to replace.
     // **/
-    func cacheArray(array: Array<Any>, forKey key: String, atRecordIndex:Int)
+    func cacheArray(array: [Any], forKey key: String, atRecordIndex idx: Int)
     {
-        let  sampleCount = array.count;
+        let sampleCount = array.count
         
         if ( sampleCount > 0 ) {
             // Ensure the data cache exists and is the right size
@@ -507,10 +473,8 @@ extension CPTPlot {
             }
             
             // Update the cache
-            self.cachedDataCount = numberOfRecords!;
-            
+            self.cachedDataCount = numberOfRecords!
             let dataArray = array
-            
             cachedValues.replaceObjectsInRange(NSRange(idx, sampleCount), withObjectsFromArray(dataArray))
         }
     }

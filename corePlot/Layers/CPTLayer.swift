@@ -1,10 +1,14 @@
 
 import AppKit
 
-@objc
-public protocol CPTLayerDelegate {
-    
-}
+
+//#if ((TARGET_OS_SIMULATOR || TARGET_OS_IPHONE || TARGET_OS_TV) && (__IPHONE_OS_VERSION_MAX_ALLOWED >= 100000)) \
+//    || (TARGET_OS_MAC && (MAC_OS_X_VERSION_MAX_ALLOWED >= 101200))
+//@protocol CPTLayerDelegate
+//#else
+//@protocol CPTLayerDelegate<NSObject>
+//#endif
+
 
 public class CPTLayer : CALayer
 {
@@ -22,7 +26,7 @@ public class CPTLayer : CALayer
                     return path;
                 }
                 
-                path   = CPTPathExtensions.shared.CPTCreateRoundedRectPath(rect: self.bounds, cornerRadius: self.cornerRadius);
+                path = CPTPathExtensions.shared.CPTCreateRoundedRectPath(rect: self.bounds, cornerRadius: self.cornerRadius);
                 self.outerBorderPath = path;
                 return self.outerBorderPath;
             }
@@ -32,7 +36,6 @@ public class CPTLayer : CALayer
         }
     }
 
-    
     public override var isHidden: Bool {
         get {
             return super.isHidden
@@ -58,7 +61,7 @@ public class CPTLayer : CALayer
         }
     }
 
-    var _paddingTop   : CGFloat        = 0.0
+    var _paddingTop   : CGFloat = 0.0
     var paddingTop : CGFloat {
         get { return  _paddingLeft }
         set {
@@ -69,7 +72,7 @@ public class CPTLayer : CALayer
         }
     }
 
-    var _paddingRight : CGFloat        = 0.0
+    var _paddingRight : CGFloat = 0.0
     var paddingRight : CGFloat {
         get { return  _paddingLeft }
         set {
@@ -80,7 +83,7 @@ public class CPTLayer : CALayer
         }
     }
 
-    var _paddingBottom : CGFloat       = 0.0
+    var _paddingBottom : CGFloat = 0.0
     var paddingBottom : CGFloat {
         get { return  _paddingLeft }
         set {
