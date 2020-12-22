@@ -36,21 +36,18 @@ extension CPTAxis {
                     
                     for label in axisLabels  {
                         let contentLayer = label.contentLayer
-                        if ( contentLayer ) {
-                            if (( lastLayer ) != nil) {
-                                axisLabelGroup?.insertSublayer(contentLayer, below:lastLayer)
-                            }
-                            else {
-                                
-                                let index = thePlotArea!.sublayerIndexForAxis(axis: self, layerType:.axisLabels)
-                                axisLabelGroup?.insertSublayer(contentLayer, at: UInt32(index) )
-                            }
-                            lastLayer = contentLayer;
+                        if (( lastLayer ) != nil) {
+                            axisLabelGroup?.insertSublayer(contentLayer, below:lastLayer)
                         }
+                        else {
+                            
+                            let index = thePlotArea!.sublayerIndexForAxis(axis: self, layerType:.axisLabels)
+                            axisLabelGroup?.insertSublayer(contentLayer, at: UInt32(index) )
+                        }
+                        lastLayer = contentLayer;
                     }
                 }
             }
-            
             if ( self.labelingPolicy == .none ) {
                 self.updateCustomTickLabels()
             }
@@ -59,7 +56,6 @@ extension CPTAxis {
             }
         }
     }
-    
     
     func setMinorTickAxisLabels(newLabels: CPTAxisLabelSet )
     {
@@ -77,24 +73,22 @@ extension CPTAxis {
                 let thePlotArea = self.plotArea;
                 thePlotArea?.updateAxisSetLayersForType( layerType: .axisLabels)
                 
-                if ( minorTickAxisLabels ) {
+                if ( minorTickAxisLabels.isEmpty == false ) {
                     let axisLabelGroup = thePlotArea?.axisLabelGroup
                     let lastLayer   : CALayer?
                     
                     for  label in minorTickAxisLabels  {
                         let contentLayer = label.contentLayer
-                        if ( contentLayer ) {
-                            if (( lastLayer ) != nil) {
-                                axisLabelGroup?.insertSublayer(contentLayer, below:lastLayer)
-                            }
-                            else {
-                                
-                                let index = thePlotArea?.sublayerIndexForAxis(axis: self, layerType:.axisLabels)
-                                axisLabelGroup!.insertSublayer(contentLayer, at:UInt32(index!))
-                            }
-                            
-                            lastLayer = contentLayer;
+                        if ( lastLayer  != nil) {
+                            axisLabelGroup?.insertSublayer(contentLayer, below:lastLayer)
                         }
+                        else {
+                            
+                            let index = thePlotArea?.sublayerIndexForAxis(axis: self, layerType:.axisLabels)
+                            axisLabelGroup!.insertSublayer(contentLayer, at:UInt32(index!))
+                        }
+                        
+                        lastLayer = contentLayer;
                     }
                 }
             }
@@ -115,72 +109,73 @@ extension CPTAxis {
             
             for axisLabel in self.axisLabels {
                 let contentLayer = (axisLabel.contentLayer) as! CPTTextLayer
-                if contentLayer is CPTTextLayer {
+//                if contentLayer is CPTTextLayer {
                     contentLayer.textStyle = labelTextStyle
-                }
+//                }
             }
             self.updateMajorTickLabels()
         }
     }
     
-    //    -(void)setMinorTickLabelTextStyle:(nullable CPTTextStyle *)newStyle
-    //    {
-    //        if ( minorTickLabelTextStyle != newStyle ) {
-    //            minorTickLabelTextStyle = [newStyle copy];
-    //
-    //            Class textLayerClass = [CPTTextLayer class];
-    //            for ( CPTAxisLabel *axisLabel in self.minorTickAxisLabels ) {
-    //                CPTLayer *contentLayer = axisLabel.contentLayer;
-    //                if ( [contentLayer isKindOfClass:textLayerClass] ) {
-    //                    ((CPTTextLayer *)contentLayer).textStyle = minorTickLabelTextStyle;
-    //                }
-    //            }
-    //
-    //            [self updateMinorTickLabels];
-    //        }
-    //    }
-    //
-    //    -(void)setAxisTitle:(nullable CPTAxisTitle *)newTitle
-    //    {
-    //        if ( newTitle != axisTitle ) {
-    //            [axisTitle.contentLayer removeFromSuperlayer];
-    //            axisTitle = newTitle;
-    //
-    //            CPTPlotArea *thePlotArea = self.plotArea;
-    //            [thePlotArea updateAxisSetLayersForType:CPTGraphLayerTypeAxisTitles];
-    //
-    //            if ( axisTitle ) {
-    //                axisTitle.offset = self.titleOffset;
-    //                CPTLayer *contentLayer = axisTitle.contentLayer;
-    //                if ( contentLayer ) {
-    //                    [thePlotArea.axisTitleGroup insertSublayer:contentLayer atIndex:[thePlotArea sublayerIndexForAxis:self layerType:CPTGraphLayerTypeAxisTitles]];
-    //                    [self updateAxisTitle];
-    //                }
-    //            }
-    //        }
-    //    }
-    //
-    //    -(nullable CPTAxisTitle *)axisTitle
-    //    {
-    //        if ( !axisTitle ) {
-    //            CPTAxisTitle *newTitle = nil;
-    //
-    //            if ( self.attributedTitle ) {
-    //                CPTTextLayer *textLayer = [[CPTTextLayer alloc] initWithAttributedText:self.attributedTitle];
-    //                newTitle = [[CPTAxisTitle alloc] initWithContentLayer:textLayer];
-    //            }
-    //            else if ( self.title ) {
-    //                newTitle = [[CPTAxisTitle alloc] initWithText:self.title textStyle:self.titleTextStyle];
-    //            }
-    //
-    //            if ( newTitle ) {
-    //                newTitle.rotation = self.titleRotation;
-    //                self.axisTitle    = newTitle;
-    //            }
-    //        }
-    //        return axisTitle;
-    //    }
-    //
+    func setMinorTickLabelTextStyle(newStyle: CPTTextStyle)
+        {
+            if ( minorTickLabelTextStyle != newStyle ) {
+                minorTickLabelTextStyle = newStyle
+    
+//                Class textLayerClass = [CPTTextLayer class];
+                for   axisLabel in self.minorTickAxisLabels {
+                    let contentLayer = axisLabel.contentLayer as! CPTTextLayer
+//                    if ( [contentLayer isKindOfClass:textLayerClass] ) {
+                        contentLayer.textStyle = minorTickLabelTextStyle;
+//                    }
+                }
+    
+                self.updateMinorTickLabels()
+            }
+        }
+    
+    
+    func setAxisTitle(_ newTitle: CPTAxisTitle?) {
+        if newTitle != _axisTitle {
+            _axisTitle?.contentLayer.removeFromSuperlayer()
+            _axisTitle = newTitle
+            
+            let thePlotArea = plotArea
+            thePlotArea?.updateAxisSetLayersForType(layerType: CPTGraphLayerType.axisTitles)
+            
+            if (_axisTitle != nil) {
+                _axisTitle?.offset = titleOffset
+                let contentLayer = _axisTitle?.contentLayer
+                if let contentLayer = contentLayer {
+                    let idx = thePlotArea?.sublayerIndexForAxis(axis: self, layerType: CPTGraphLayerType.axisTitles)
+                    thePlotArea?.axisTitleGroup?.insertSublayer(contentLayer, at: UInt32(idx!))
+                    updateAxisTitle()
+                }
+            }
+        }
+    }
+    
+    func axisTitle() -> CPTAxisTitle? {
+        if (_axisTitle == nil) {
+            var newTitle: CPTAxisTitle? = nil
+            
+//            if let attributedTitle = attributedTitle {
+                let textLayer = CPTTextLayer(attributedText: attributedTitle)
+                newTitle = CPTAxisTitle(layer: textLayer)
+            if title != "" {
+                newTitle = CPTAxisTitle( layer: textLayer, text: title, textStyle: titleTextStyle)
+            }
+            
+            if let newTitle = newTitle {
+                newTitle.rotation = titleRotation!
+                _axisTitle = newTitle
+            }
+        }
+        return _axisTitle
+    }
+    
+    
+    
     //    -(void)setTitleTextStyle:(nullable CPTTextStyle *)newStyle
     //    {
     //        if ( newStyle != titleTextStyle ) {

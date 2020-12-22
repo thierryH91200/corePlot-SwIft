@@ -5,7 +5,7 @@
 //  Created by thierryH24 on 09/11/2020.
 //
 
-import Cocoa
+import AppKit
 
 class CPTTextLayer: CPTBorderedLayer {
     
@@ -46,46 +46,10 @@ class CPTTextLayer: CPTBorderedLayer {
         sizeToFit()
     }
     
-    
     convenience init(text newText: String) {
         self.init(text: newText, style: CPTTextStyle())
     }
-    
-    
-     func textStyle(withAttributes attributes: Dictionary?) -> CPTTextStyle
-     {
-        
-        let newStyle = CPTTextStyle()
-        
-        // Font
-        let styleFont = attributes?[NSAttributedString.Key.font] as? NSFont
-        
-        if let styleFont = styleFont {
-            newStyle.font = styleFont
-            newStyle.fontName = styleFont.fontName
-            newStyle.fontSize = styleFont.pointSize
-        }
-        
-        // Color
-        let styleColor = attributes?[NSAttributedString.Key.foregroundColor] as? NSColor
-        
-        if let styleColor = styleColor {
-            newStyle.color = CPTColor(cgColor: styleColor.cgColor)
-        }
-        
-        // Text alignment and line break mode
-        let paragraphStyle = attributes?[NSAttributedString.Key.paragraphStyle] as? NSParagraphStyle
-        
-        if let paragraphStyle = paragraphStyle {
-            newStyle.textAlignment = paragraphStyle.alignment as? CPTTextAlignment
-            newStyle.lineBreakMode = paragraphStyle.lineBreakMode
-        }
-        
-        return newStyle
-    }
-    
-    
-    
+
     /** @brief Initializes a newly allocated CPTTextLayer object with the provided styled text.
      *  @param newText The styled text to display.
      *  @return The initialized CPTTextLayer object.
@@ -125,6 +89,39 @@ class CPTTextLayer: CPTBorderedLayer {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    func textStyle(withAttributes attributes: Dictionary<NSAttributedString.Key, Any>?) -> CPTTextStyle
+     {
+        
+        let newStyle = CPTTextStyle()
+        
+        // Font
+        let styleFont = attributes?[NSAttributedString.Key.font] as? NSFont
+        
+        if let styleFont = styleFont {
+            newStyle.font = styleFont
+            newStyle.fontName = styleFont.fontName
+            newStyle.fontSize = styleFont.pointSize
+        }
+        
+        // Color
+        let styleColor = attributes?[NSAttributedString.Key.foregroundColor] as? NSColor
+        
+        if let styleColor = styleColor {
+            newStyle.color = CPTColor(cgColor: styleColor.cgColor)
+        }
+        
+        // Text alignment and line break mode
+        let paragraphStyle = attributes?[NSAttributedString.Key.paragraphStyle] as? NSParagraphStyle
+        
+        if let paragraphStyle = paragraphStyle {
+            newStyle.textAlignment = paragraphStyle.alignment as? CPTTextAlignment
+            newStyle.lineBreakMode = paragraphStyle.lineBreakMode
+        }
+        
+        return newStyle
+    }
+
     
     //MARK: - Layout
     func sizeThatFits() -> CGSize

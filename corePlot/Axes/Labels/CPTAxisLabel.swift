@@ -44,7 +44,7 @@ public class CPTAxisLabel: NSObject {
     }
     
     // MARK: - Layout
-    func positionRelativeToViewPoint(point: CGPoint, coordinate: CPTCoordinate, direction : CPTSign)
+    func positionRelativeToViewPoint(point: CGPoint, coordinate: CPTCoordinate, direction: CPTSign)
     {
         let content = self.contentLayer
         guard ( content.identifier != nil) else { return  }

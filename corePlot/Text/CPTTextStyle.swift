@@ -59,7 +59,6 @@ class CPTTextStyle: NSObject {
         paragraphStyle.alignment     = self.textAlignment;
         paragraphStyle.lineBreakMode = self.lineBreakMode;
         
-        
         myAttributes = [.font: NSFont( name:fontName, size:self.fontSize)!,
                         .foregroundColor : color,
                         .backgroundColor : NSColor.black,

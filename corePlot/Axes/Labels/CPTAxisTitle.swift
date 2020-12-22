@@ -20,7 +20,6 @@ public class CPTAxisTitle: CPTAxisLabel {
         self.rotation = CGFloat.nan
     }
     
-    
     // MARK: Comparison
     
     /** @brief Returns a boolean value that indicates whether the received is equal to the given object.

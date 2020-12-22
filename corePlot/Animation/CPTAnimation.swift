@@ -63,7 +63,7 @@ class CPTAnimation: NSObject {
     let CPTAnimationOperationKey  = "CPTAnimationOperationKey"
     let CPTAnimationValueKey      = "CPTAnimationValueKey"
     let CPTAnimationValueClassKey = "CPTAnimationValueClassKey"
-    let CTAnimationStartedKey     = "CPTAnimationStartedKey"
+    let CPTAnimationStartedKey     = "CPTAnimationStartedKey"
     let CPTAnimationFinishedKey   = "CPTAnimationFinishedKey"
     
     let kCPTAnimationFrameRate = CGFloat(1.0 / 60.0)  // 60 frames per second
@@ -73,16 +73,19 @@ class CPTAnimation: NSObject {
     
     var timeOffset: CGFloat
     var defaultAnimationCurve = CPTAnimationCurve.default
-    var animationOperations = [CPTAnimationOperation]
-    var runningAnimationOperations = [CPTAnimationOperation]
+    var animationOperations : [CPTAnimationOperation]
+    var runningAnimationOperations : [CPTAnimationOperation]
     
     override init()
     {
+        super.init()
         animationOperations        = []
         runningAnimationOperations = []
         timer                      = nil
         timeOffset                 = CGFloat(0.0)
         defaultAnimationCurve      = .linear
+        
+//        animationOperations = [CPTAnimationOperation]()
         
         animationQueue = dispatch_queue_create("CorePlot.CPTAnimation.animationQueue", NULL);
         
@@ -170,10 +173,10 @@ class CPTAnimation: NSObject {
         
         let theAnimationOperations = self.animationOperations;
         let runningOperations      = self.runningAnimationOperations;
-        let expiredOperations      = [[NSMutableArray alloc] init];
+        let expiredOperations      = [CPTAnimationOperation]
         
-        CGFloat currentTime      = self.timeOffset;
-        CPTStringArray *runModes = @[NSRunLoopCommonModes];
+        var currentTime      = self.timeOffset;
+        let runModes = [RunLoop.Mode.common]
         
         dispatch_queue_t mainQueue = dispatch_get_main_queue();
         
@@ -183,14 +186,14 @@ class CPTAnimation: NSObject {
             
             let period = animationOperation.period;
             
-            let  duration  = period.duration;
-            let startTime = period.startOffset;
+            let duration  = period.duration;
+            var startTime = period.startOffset;
             let delay     = period.delay;
             
-            if ( isnan(delay)) {
-                if ( [period canStartWithValueFromObject:animationOperation.boundObject propertyGetter:animationOperation.boundGetter] ) {
-                    period.delay = currentTime - startTime;
-                    startTime    = currentTime;
+            if delay.isNaN {
+                if ( period.canStartWithValueFromObject(animationOperation.boundObject, propertyGetter:animationOperation.boundGetter ) {
+                    period.delay = currentTime - startTime
+                    startTime    = currentTime
                 }
                 else {
                     startTime = CPTNAN;
@@ -201,13 +204,13 @@ class CPTAnimation: NSObject {
             }
             let endTime = startTime + duration;
             
-            if ( animationOperation.isCanceled ) {
-                [expiredOperations addObject:animationOperation];
+            if ( animationOperation.isCanceled == true) {
+                [expiredOperations.addObject(animationOperation)
                 
-                if ( [animationDelegate respondsToSelector:@selector(animationCancelled:)] ) {
-                    dispatch_async(mainQueue, ^{
-                        [animationDelegate animationCancelled:animationOperation];
-                    });
+                if ( animationDelegate.respondsToSelector(to: #selector(animationCancelled:) ) {
+//                    dispatch_async(mainQueue, ^{
+                        animationDelegate.animationCancelled(animationOperation)
+//                    });
                 }
             }
             else if ( currentTime >= startTime ) {
@@ -231,11 +234,6 @@ class CPTAnimation: NSObject {
                             }
                         }
                         
-                        
-                        
-                        
-                        
-                        
                         // Start the new animation
                         runningOperations.addObject(animationOperation)
                         started = true;
@@ -253,7 +251,7 @@ class CPTAnimation: NSObject {
                             CPTAnimationOperationKey  : animationOperation,
                             CPTAnimationValueKey      : period.tweenedValue(forProgress: progress),
                             CPTAnimationValueClassKey : valueClass ? valueClass : NSNull(),
-                            CPTAnimationStartedKey    : started),
+                            CPTAnimationStartedKey    : started,
                             CPTAnimationFinishedKey: NSNumber(value: currentTime >= endTime)
                         ] as? CPTDictionary
                         
@@ -263,10 +261,10 @@ class CPTAnimation: NSObject {
                         
                         
                         // Used -performSelectorOnMainThread:... instead of GCD to ensure the animation continues to run in all run loop common modes.
-                        [self performSelectorOnMainThread:@selector(updateOnMainThreadWithParameters:)
+                        self.performSelectorOnMainThread:@selector(updateOnMainThreadWithParameters:)
                         withObject:parameters
                         waitUntilDone:false,
-                        modes:runModes];
+                        modes:runModes)
                         
                         if ( currentTime >= endTime ) {
                             [expiredOperations addObject:animationOperation];
@@ -276,9 +274,9 @@ class CPTAnimation: NSObject {
             }
         }
         
-        for ( animationOperation in expiredOperations ) {
-            [runningOperations removeObjectIdenticalTo:animationOperation];
-            [theAnimationOperations removeObjectIdenticalTo:animationOperation];
+        for  animationOperation in expiredOperations  {
+            runningOperations.removeObjectIdentical(animationOperation)
+            theAnimationOperations.removeObjectIdenticalT(o:animationOperation)
         }
         
         if ( theAnimationOperations.count == 0 ) {

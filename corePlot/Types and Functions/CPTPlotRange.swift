@@ -16,22 +16,26 @@ class CPTPlotRange: NSObject {
         case undefined ///< Number is undefined (e.g., @NAN).
     }
 
-    var location : NSNumber = 0.0
-    var length: NSNumber = 0.0
-    var  end: NSNumber = 0.0
+    var location : CGFloat = 0.0
+    var length: CGFloat = 0.0
+    var  end: CGFloat = 0.0
+    
     var locationDecimal:  CGFloat = 0.0
     var lengthDecimal: CGFloat = 0.0
-    var  endDecimal: Decimal = 0.0
-    var  locationDouble : CGFloat = 0.0
-    var  lengthDouble: CGFloat = 0.0
-    var  endDouble: Double = 0.0
+    var endDecimal: CGFloat = 0.0
+    
+    var locationDouble : CGFloat = 0.0
+    var lengthDouble: CGFloat = 0.0
+    var endDouble: Double = 0.0
 
     var minLimit = 0.0
     var midPoint = 0.0;
     var maxLimit = 0.0
+    
     var minLimitDecimal = 0.0;
     var midPointDecimal = 0.0
     var maxLimitDecimal = 0.0
+    
     var minLimitDouble = CGFloat(0.0)
     var midPointDouble = CGFloat(0.0)
     var maxLimitDouble = CGFloat(0.0)

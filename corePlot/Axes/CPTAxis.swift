@@ -21,7 +21,7 @@ public class CPTAxis : CPTLayer {
     
     // MARK: Title
     var titleTextStyle = CPTTextStyle()
-    var axisTitle: CPTAxisTitle?
+    var _axisTitle: CPTAxisTitle?
     var titleOffset =  CGFloat(0)
     var title = "title"
     var attributedTitle =  NSAttributedString(string: "")
