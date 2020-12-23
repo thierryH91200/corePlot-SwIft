@@ -59,7 +59,7 @@ extension CPTPlot {
 // **/
     func drawSwatchForLegend(legend: CPTLegend, atIndex:Int , inRect:CGRect, context: CGContext)
     {
-        let theDelegate = self.delegate;
+        let theDelegate = self.delegate
         
         var theFill : CPTFill?
         
@@ -80,7 +80,7 @@ extension CPTPlot {
         }
         
         if ( (theFill != nil) || (theLineStyle != nil) ) {
-            let radius = legend.swatchCornerRadius()
+            let radius = legend.swatchCornerRadius
             
             if (( theFill ) != nil) {
                 context.beginPath();
@@ -89,8 +89,7 @@ extension CPTPlot {
             }
             
             if (( theLineStyle ) != nil) {
-                theLineStyle?.setLcptleg
-                neStyleInContext(context: context)
+                theLineStyle?.setLineStyleInContext(context: context)
                 context.beginPath()
                 CPTPathExtensions.shared.CPTAddRoundedRectPath(context, CPTAlignBorderedRectToUserSpace(context, rect, theLineStyle), radius);
                 theLineStyle?.strokePathInContext(context: context)

@@ -19,13 +19,12 @@ class CPTTheme: NSObject {
     }
     
     // MARK: Theme management
-
 //    +(nullable NSArray<Class> *)themeClasses
     func themeClasses() -> Array<Any>
     {
         let  nameSort = NSSortDescriptor( key: : "name",ascending:true, selector:#selector(caseInsensitiveCompare:))
 
-        return [themes.sortedArrayUsingDescriptors:@[nameSort]];
+        return themes.sortedArrayUsingDescriptors([nameSort])
     }
     
     init instancetype)themeNamed:(nullable CPTThemeName)themeName
@@ -89,7 +88,6 @@ class CPTTheme: NSObject {
     }
 
     // MARK: apply the theme
-
     /** @brief Applies the theme to the provided graph.
      *  @param graph The graph to style.
      **/
@@ -104,14 +102,12 @@ class CPTTheme: NSObject {
 
         let axisSet = graph.axisSet
         if  axisSet != nil  {
-            self.applyThemeToAxisSet(axisSet: axisSet)
+            self.applyThemeToAxisSet(axisSet: axisSet())
         }
     }
 
 
-// MARK: -
-
- //   @implementation CPTTheme(AbstractMethods)
+// MARK: - implementation CPTTheme(AbstractMethods)
 
     /** @brief Creates a new graph styled with the theme.
      *  @return The new graph.
@@ -138,10 +134,4 @@ class CPTTheme: NSObject {
     func applyThemeToAxisSet(axisSet: CPTAxisSet)
     {
     }
-
-
-
-
-
-
 }

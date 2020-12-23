@@ -37,7 +37,6 @@ class CPTXYGraph: CPTGraph {
         super.init(layer: layer)
         
         let theLayer = layer as? CPTXYGraph
-
         xScaleType = theLayer?.xScaleType
         yScaleType = theLayer?.yScaleType
     }

@@ -20,6 +20,7 @@
 		030A652525600740002B3D13 /* CPTXYPlotSpace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030A652425600740002B3D13 /* CPTXYPlotSpace.swift */; };
 		030A652A25601394002B3D13 /* CPTXYAxisSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030A652925601394002B3D13 /* CPTXYAxisSet.swift */; };
 		030A652E256013D9002B3D13 /* CPTXYAxis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030A652D256013D9002B3D13 /* CPTXYAxis.swift */; };
+		030E06A1259365EA006CE062 /* CPTPieChart reload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030E06A0259365EA006CE062 /* CPTPieChart reload.swift */; };
 		0320AFB5255C0EA100D32BF9 /* CPTConstraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0320AFB4255C0EA100D32BF9 /* CPTConstraints.swift */; };
 		0320AFB9255C0EE100D32BF9 /* CPTConstraintsFixed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0320AFB8255C0EE100D32BF9 /* CPTConstraintsFixed.swift */; };
 		0320AFBD255C0F1A00D32BF9 /* CPTConstraintsRelative.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0320AFBC255C0F1A00D32BF9 /* CPTConstraintsRelative.swift */; };
@@ -105,7 +106,6 @@
 		03DDD45625626DC200CAB29B /* CPTAxisLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DDD45525626DC200CAB29B /* CPTAxisLabel.swift */; };
 		03DDD45A25626DF500CAB29B /* CPTAxisTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DDD45925626DF500CAB29B /* CPTAxisTitle.swift */; };
 		03DDD45E2562748C00CAB29B /* CPTAxisLabelGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DDD45D2562748C00CAB29B /* CPTAxisLabelGroup.swift */; };
-		03DDD4622562893900CAB29B /* CPTTextLayer ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DDD4612562893900CAB29B /* CPTTextLayer ext.swift */; };
 		03DDD4662562BB1D00CAB29B /* CPTAxis  Accessors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DDD4652562BB1D00CAB29B /* CPTAxis  Accessors.swift */; };
 		03DDD46C256311BF00CAB29B /* CPTPlatformSpecificDefines.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DDD46B256311BF00CAB29B /* CPTPlatformSpecificDefines.swift */; };
 		03E3D50325683D4200FB3F07 /* CPTPlotAccessors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E3D50225683D4200FB3F07 /* CPTPlotAccessors.swift */; };
@@ -138,6 +138,7 @@
 		030A652425600740002B3D13 /* CPTXYPlotSpace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTXYPlotSpace.swift; sourceTree = "<group>"; };
 		030A652925601394002B3D13 /* CPTXYAxisSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTXYAxisSet.swift; sourceTree = "<group>"; };
 		030A652D256013D9002B3D13 /* CPTXYAxis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTXYAxis.swift; sourceTree = "<group>"; };
+		030E06A0259365EA006CE062 /* CPTPieChart reload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTPieChart reload.swift"; sourceTree = "<group>"; };
 		0320AFB4255C0EA100D32BF9 /* CPTConstraints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTConstraints.swift; sourceTree = "<group>"; };
 		0320AFB8255C0EE100D32BF9 /* CPTConstraintsFixed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTConstraintsFixed.swift; sourceTree = "<group>"; };
 		0320AFBC255C0F1A00D32BF9 /* CPTConstraintsRelative.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTConstraintsRelative.swift; sourceTree = "<group>"; };
@@ -226,7 +227,6 @@
 		03DDD45525626DC200CAB29B /* CPTAxisLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTAxisLabel.swift; sourceTree = "<group>"; };
 		03DDD45925626DF500CAB29B /* CPTAxisTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTAxisTitle.swift; sourceTree = "<group>"; };
 		03DDD45D2562748C00CAB29B /* CPTAxisLabelGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTAxisLabelGroup.swift; sourceTree = "<group>"; };
-		03DDD4612562893900CAB29B /* CPTTextLayer ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTTextLayer ext.swift"; sourceTree = "<group>"; };
 		03DDD4652562BB1D00CAB29B /* CPTAxis  Accessors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTAxis  Accessors.swift"; sourceTree = "<group>"; };
 		03DDD46B256311BF00CAB29B /* CPTPlatformSpecificDefines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTPlatformSpecificDefines.swift; sourceTree = "<group>"; };
 		03E3D50225683D4200FB3F07 /* CPTPlotAccessors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTPlotAccessors.swift; sourceTree = "<group>"; };
@@ -440,7 +440,6 @@
 				032573BF2582751C00B79E3B /* Mac Specific */,
 				03A9CD162559B32B0096853D /* CPTTextLayer.swift */,
 				03A9CD1A2559B4AC0096853D /* CPTTextStyle.swift */,
-				03DDD4612562893900CAB29B /* CPTTextLayer ext.swift */,
 			);
 			path = Text;
 			sourceTree = "<group>";
@@ -518,6 +517,7 @@
 				0320B013255C8CA400D32BF9 /* CPTPlot.swift */,
 				03E3D50225683D4200FB3F07 /* CPTPlotAccessors.swift */,
 				0320B00F255C8C4300D32BF9 /* CPTPlotGroup.swift */,
+				030E06A0259365EA006CE062 /* CPTPieChart reload.swift */,
 			);
 			path = Plots;
 			sourceTree = "<group>";
@@ -754,9 +754,9 @@
 				0320AFC4255C50B400D32BF9 /* CPTDarkGradientTheme.swift in Sources */,
 				03A9CD172559B32B0096853D /* CPTTextLayer.swift in Sources */,
 				0307347A2567BDA8008B7413 /* CPTLayer Drawing ext.swift in Sources */,
+				030E06A1259365EA006CE062 /* CPTPieChart reload.swift in Sources */,
 				0320B018255C8CF500D32BF9 /* CPTBarPlot.swift in Sources */,
 				03A9CCF6255973CD0096853D /* CPTGradient.swift in Sources */,
-				03DDD4622562893900CAB29B /* CPTTextLayer ext.swift in Sources */,
 				035C8A9E256D847700954017 /* CPTPlot Legend.swift in Sources */,
 				037244542545FF1700B59C97 /* CPTLayer.swift in Sources */,
 				0320AFB5255C0EA100D32BF9 /* CPTConstraints.swift in Sources */,

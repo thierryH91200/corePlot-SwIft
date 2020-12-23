@@ -7,14 +7,14 @@
 
 import AppKit
 
-@objc protocol CPTPieChartDataSource : NSObjectProtocol {
+public protocol CPTPieChartDataSource  {
     
-    @objc optional  func sliceFillsForPieChart( pieChart: CPTPieChart, recordIndexRange:NSRange) -> [CPTFill]
-    @objc optional func sliceFillForPieChart(pieChart: CPTPieChart, idx : Int) -> CPTFill
-    @objc optional func radialOffsetsForPieChart(pieChart:  CPTPieChart, indexRange:NSRange) -> [CGFloat]
-    @objc optional func radialOffsetForPieChart( pieChart: CPTPieChart, idx:Int) -> CGFloat
-    @objc optional func legendTitleForPieChart(pieChart:  CPTPieChart, idx: Int)-> String
-    @objc optional func attributedLegendTitleForPieChart(pieChart:  CPTPieChart, idx :Int)-> NSAttributedString
+    func sliceFillsForPieChart (          _ pieChart: CPTPieChart, recordIndexRange:NSRange) -> [CPTFill?]
+    func sliceFillForPieChart   (         _ pieChart: CPTPieChart, idx : Int) -> CPTFill
+    func radialOffsetsForPieChart(        _ pieChart: CPTPieChart, indexRange:NSRange) -> [CGFloat]
+    func radialOffsetForPieChart(         _ pieChart: CPTPieChart, idx:Int) -> CGFloat
+    func legendTitleForPieChart (         _ pieChart: CPTPieChart, idx: Int)-> String
+    func attributedLegendTitleForPieChart(_ pieChart: CPTPieChart, idx :Int)-> NSAttributedString
 }
 
 
@@ -64,9 +64,9 @@ public class CPTPieChart: CPTPlot {
     var labelRotationRelativeToRadius = false
     
     override init() {
-        CPTPieChart.exposeBinding(.CPTPieChartBindingPieSliceWidthValues)
-        CPTPieChart.exposeBinding(.CPTPieChartBindingPieSliceFills)
-        CPTPieChart.exposeBinding(.CPTPieChartBindingPieSliceRadialOffsets)
+        CPTPieChart.exposeBinding(.PieSliceWidthValues)
+        CPTPieChart.exposeBinding(.PieSliceFills)
+        CPTPieChart.exposeBinding(.PieSliceRadialOffsets)
     }
     
     // @name Initialization
@@ -295,49 +295,7 @@ public class CPTPieChart: CPTPlot {
     //    /** @brief Reload slice fills in the given index range from the data source immediately.
     //     *  @param indexRange The index range to load.
     //     **/
-    func reloadSliceFillsInIndexRange(indexRange: NSRange)
-    {
-        var needsLegendUpdate = false
-        
-        if ( theDataSource.respondsToSelector(to: #selector(sliceFillsForPieChart:recordIndexRange:) ) {
-            needsLegendUpdate = true
-            
-            
-            let test = theDataSource?.sliceFillsForPieChart(pieChart: self, recordIndexRange:indexRange)
-            self.cacheArray(test,
-                            forKey:.CPTPieChartBindingPieSliceFills,
-                            atRecordIndex:indexRange.location)
-        }
-        else if ( theDataSource.respondsToSelector(to: #selector(sliceFillForPieChart:recordIndex:)] ) {
-            needsLegendUpdate = true
-            
-            let nilObject               = (CPTPlot nilData)
-            let array = [Any]()
-            var maxIndex        = NSMaxRange(indexRange);
-            
-            for idx in indexRange.location..<maxIndex {
-                let dataSourceFill = theDataSource?.sliceFillForPieChart(pieChart: self,idx:idx)
-                if ( dataSourceFill ) {
-                    array.append(dataSourceFill)
-                }
-                else {
-                    array.append(nilObject)
-                }
-            }
-            
-            [self cacheArray:array forKey:CPTPieChartBindingPieSliceFills atRecordIndex:indexRange.location)
-        }
-        
-        // Legend
-        if needsLegendUpdate == true {
-            NotificationCenter.send(
-                name:.CPTLegendNeedsRedrawForPlotNotification,
-                object:self)
-        }
-        
-        self.setNeedsDisplay()
-    }
-        
+
     //     *  @brief Reload all slice offsets from the data source immediately.
     func reloadRadialOffsets()
     {
@@ -1206,12 +1164,12 @@ public class CPTPieChart: CPTPlot {
     
     func sliceFills() -> [CPTFill]
     {
-        return [self.cachedArray(forKey: NSBindingName.PieSliceFills)
+        return self.cachedArray(forKey: NSBindingName.PieSliceFills.rawValue)
         }
     
     func setSliceFills(newSliceFills: [CPTFill] )
     {
-        self.cacheArray( newSliceFills,forKey: NSBindingName.PieSliceFills)
+        self.cacheArray( newSliceFills,forKey: NSBindingName.PieSliceFills.rawValue)
                         self.setNeedsDisplay()
     }
     

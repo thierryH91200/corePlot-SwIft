@@ -985,8 +985,8 @@ class CPTXYPlotSpace: CPTPlotSpace {
                     boundsSize,
                     self.plotCoordinateForViewLength(
                         CGFloat(point.y),
-                         linearPlotRange:self.yRange,
-                       boundsLength:plotArea.heightDecimal))
+                        linearPlotRange:self.yRange,
+                        boundsLength:plotArea.heightDecimal))
     
             
         case .log:
@@ -1543,8 +1543,8 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //
     //    /// @endcond
     //
-    //    #if TARGET_OS_SIMULATOR || TARGET_OS_IPHONE
-    //    #else
+        #if TARGET_OS_SIMULATOR || TARGET_OS_IPHONE
+        #else
     //
     //    /**
     //     *  @brief Informs the receiver that the user has moved the scroll wheel.
@@ -1616,7 +1616,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //        return YES;
     //    }
     //
-    //    #endif
+        #endif
     //
     //    /**
     //     *  @brief Reset the dragging state and cancel any active animations.
@@ -1631,8 +1631,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //
     //    /// @}
     //
-    //    #pragma mark -
-    //    #pragma mark Accessors
+    // MARK: -  Accessors
     //
     //    /// @cond
     //
@@ -1647,10 +1646,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //        return self.allowsMomentumX || self.allowsMomentumY;
     //    }
     //
-    //    /// @endcond
-    //
-    //    #pragma mark -
-    //    #pragma mark Animation Delegate
+    // MARK: - Animation Delegate
     //
     //    /// @cond
     //
@@ -1661,8 +1657,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //
     //    /// @endcond
     //
-    //    #pragma mark -
-    //    #pragma mark Debugging
+    // MARK: -  Debugging
     //
     //    /// @cond
     //

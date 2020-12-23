@@ -46,16 +46,5 @@ class CPTAnimationOperation: NSObject {
             getter: #selector(init(_:)),
             setter: #selector(init(_:)) )
     }
-    
-    init(animationPeriod: CPTAnimationPeriod, animationCurve curve: CPTAnimationCurve, object: Any, getter: Selector, setter: Selector) {
-        super.init()
-            period = animationPeriod
-            animationCurve = curve
-            boundObject = object
-            boundGetter = getter
-            boundSetter = setter
-            delegate = nil
-            isCanceled = false
-            identifier = nil
-            userInfo = nil
-    }}
+        
+}

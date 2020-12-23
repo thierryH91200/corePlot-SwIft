@@ -7,40 +7,8 @@
 
 import AppKit
 
-
 extension CPTLayer {
     
-    @objc func setPaddingLeft(newPadding: CGFloat)
-    {
-        if ( newPadding != paddingLeft ) {
-            paddingLeft = newPadding
-            self.setNeedsLayout()
-        }
-    }
-    
-    @objc func setPaddingRight(newPadding : CGFloat)
-    {
-        if ( newPadding != paddingRight ) {
-            paddingRight = newPadding;
-            self.setNeedsLayout()
-        }
-    }
-    
-    @objc func setPaddingTop(newPadding: CGFloat)
-    {
-        if ( newPadding != paddingTop ) {
-            paddingTop = newPadding;
-            self.setNeedsLayout()
-        }
-    }
-    
-    @objc func setPaddingBottom( newPadding:CGFloat)
-    {
-        if ( newPadding != paddingBottom ) {
-            paddingBottom = newPadding
-            self.setNeedsLayout()
-        }
-    }
     
 /**     *  @brief Updates the layout of all sublayers. Sublayers fill the super layer&rsquo;s bounds minus any padding.
     

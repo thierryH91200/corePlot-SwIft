@@ -68,7 +68,7 @@ class CPTDarkGradientTheme: CPTXYTheme {
         whiteMinorTickTextStyle.fontSize = CGFloat(12.0);
         
         for  axis in axisSet.axes {
-            axis.labelingPolicy          = labelingPolicyFixedInterval;
+            axis.labelingPolicy          = .fixedInterval
             axis.majorIntervalLength     = 0.5
             axis.orthogonalPosition      = 0.0
             axis.tickDirection           = CPTSign.none

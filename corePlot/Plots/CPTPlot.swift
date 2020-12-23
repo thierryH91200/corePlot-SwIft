@@ -7,8 +7,6 @@
 
 import AppKit
 
-
-
 @objc public protocol CPTPlotDataSource: NSObjectProtocol {
     
     func numberOfRecordsForPlot(plot:  CPTPlot) -> Int
@@ -20,7 +18,6 @@ import AppKit
     @objc optional func dataForPlot(plot : CPTPlot , indexRange:NSRange)-> [CPTNumericData]
     @objc optional func dataLabelForPlot(plot: CPTPlot, recordIndex:Int )-> CPTLayer
 }
-
 
 @objc public protocol CPTPlotDelegate: CPTLayerDelegate {
     
@@ -36,9 +33,7 @@ import AppKit
 
 public class CPTPlot: CPTAnnotationHostLayer {
     
-    var cachedData: [Int : Any] = [:]
-//var cachedData = NSMutableDictionary()
-
+    var cachedData: [String : [Any]] = [:]
     
 //    let CPTPlotBindingDataLabels = "dataLabels"
     
@@ -76,7 +71,6 @@ public class CPTPlot: CPTAnnotationHostLayer {
     var labelFormatter = Formatter()
     
     var dataNeedsReloading = false
-//    var cachedData :  Dictionary<String, Any> = [:]
     
     var needsRelabel = false
     var labelIndexRange = NSRange()
@@ -233,6 +227,26 @@ public class CPTPlot: CPTAnnotationHostLayer {
 //        return nilDataNilObject
 //    }
     
+    func plotRangeForCoordinate(coord: CPTCoordinate)-> CPTPlotRange?
+    {
+        let fields = self.fieldIdentifiersForCoordinate(coord: coord)
+        guard ( fields.count != 0 ) else { return nil }
+        
+        var unionRange : CPTMutablePlotRange?
+        
+        for field in fields  {
+            let currentRange = self.plotRangeForField(fieldEnum: Int(field))
+            if ( (unionRange == nil) ) {
+                unionRange = currentRange as? CPTMutablePlotRange
+            }
+            else {
+                unionRange?.unionPlotRange(self, plotRangeForField(fieldEnum: Int(field)))
+            }
+        }
+        return unionRange;
+    }
+
+    
     func reloadDataInIndexRange(indexRange :NSRange)
     {
         self.dataNeedsReloading = false;
@@ -324,7 +338,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
     }
     
     // MARK: - Data Source
-    var          _numberOfRecords = 0
+    var _numberOfRecords = 0
     var numberOfRecords: Int{
         get {
             let number = self.dataSource?.numberOfRecordsForPlot(plot: self)

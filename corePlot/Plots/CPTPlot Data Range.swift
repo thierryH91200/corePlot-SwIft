@@ -86,26 +86,6 @@ extension CPTPlot {
 // *  @param coord The coordinate identifier.
 // *  @return The plot range enclosing the data.
 // **/
-    func plotRangeForCoordinate(coord: CPTCoordinate)-> CPTPlotRange?
-    {
-        let fields = self.fieldIdentifiersForCoordinate(coord: coord)
-        
-        guard ( fields.count != 0 ) else { return nil }
-        
-        var unionRange : CPTMutablePlotRange?
-        
-        for field in fields  {
-            let currentRange = self.plotRangeForField(fieldEnum: Int(field))
-            if ( (unionRange == nil) ) {
-                unionRange = currentRange as? CPTMutablePlotRange
-            }
-            else {
-                unionRange?.unionPlotRange(self, plotRangeForField(fieldEnum: Int(field)))
-            }
-        }
-        
-        return unionRange;
-    }
 //
 ///** @brief Determines the smallest plot range that fully encloses the entire plot for a particular field.
 // *  @param fieldEnum The field enumerator identifying the field.

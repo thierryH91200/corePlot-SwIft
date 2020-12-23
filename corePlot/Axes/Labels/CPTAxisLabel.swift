@@ -22,10 +22,14 @@ public class CPTAxisLabel: NSObject {
     
     typealias CPTAxisLabelSet = Set<CPTAxisLabel>
     
-    convenience init( newText: String?, newStyle: CPTTextStyle?) {
-        
-        let newLayer = CPTTextLayer(text: newText, style: newStyle)
+    convenience init( newText: String?, newStyle: CPTTextStyle?)
+    {
+        let newLayer = CPTTextLayer(newText: newText!, newStyle: newStyle!)
         self.init(layer: newLayer)
+    }
+    
+    override convenience init() {
+        self.init(newText: nil, newStyle: nil)
     }
     
     init(layer: Any)
@@ -36,11 +40,6 @@ public class CPTAxisLabel: NSObject {
         rotation     = CGFloat(0.0);
         alignment    = .center
         tickLocation = 0.0;
-    }
-    
-    override init()
-    {
-        super.init()
     }
     
     // MARK: - Layout

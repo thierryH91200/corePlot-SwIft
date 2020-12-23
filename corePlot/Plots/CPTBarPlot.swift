@@ -63,7 +63,6 @@ public class CPTBarPlot: CPTPlot {
     var pointingDeviceDownIndex = 0
     
     
-    
     // MARK: Appearance
     var barWidthsAreInViewCoordinates = true
     var barWidth = CGFloat(0.0)
@@ -298,7 +297,7 @@ public class CPTBarPlot: CPTPlot {
             needsLegendUpdate = true
             
             self.cacheArray(array: (theDataSource?.barFillsForBarPlot(barPlot: self, recordIndexRange:indexRange))!,
-                            forKey:CPTBarPlotBindingBarFills,
+                            forKey:.CPTBarPlotBinding.barFills,
                             atRecordIndex:indexRange.location)
         }
         else
@@ -352,7 +351,7 @@ public class CPTBarPlot: CPTPlot {
         
             needsLegendUpdate = true
             
-            self.cacheArray(theDataSource.barLineStylesForBarPlot(barPlot: self,recordIndexRange:indexRange)
+            self.cacheArray(array: theDataSource.barLineStylesForBarPlot(barPlot: self,recordIndexRange:indexRange)
                             forKey: NSBindingName.CPTBarPlotBindingBarLineStyles.rawValue,
                 atRecordIndex:indexRange.location];
         }
@@ -403,10 +402,10 @@ public class CPTBarPlot: CPTPlot {
     {
         let theDataSource = self.dataSource as? CPTBarPlotDataSource
 
-        if dataSource.respondsToSelector(to:#selector(barWidthsForBarPlot(recordIndexRange:) ) {
+        if dataSource.respondsToSelector(to:#selector(barWidthsForBarPlot(recordIndexRange:) ))) {
             self.cacheArray(theDataSource.barWidthsForBarPlot(self ,recordIndexRange:indexRange)
                             forKey:.CPTBarPlotBindingBarWidths,
-            atRecordIndex:indexRange.location)
+                            atRecordIndex:indexRange.location)
         }
         else if dataSource.respondsToSelector(to:#selector(barWidthForBarPlot:recordIndex:)) {
             let nilObject                 = [CPTPlot nilData]
@@ -424,7 +423,7 @@ public class CPTBarPlot: CPTPlot {
                 }
             }
             
-            self.cacheArray(array,   forKey:CPTBarPlotBindingBarWidths,  atRecordIndex:indexRange.location)
+            self.cacheArray(array: array, forKey: .CPTBarPlotBindingBarWidths, atRecordIndex:indexRange.location)
         }
         
         self.setNeedsDisplay()
@@ -456,8 +455,8 @@ public class CPTBarPlot: CPTPlot {
                 displacedPlotPoint[.y] = yLocation;
                 
             case .y:
-                originPlotPoint[.x]    = xLocation;
-                originPlotPoint[.y]    = yLocation;
+                originPlotPoint[.x]    = xLocation
+                originPlotPoint[.y]    = yLocation
                 displacedPlotPoint[.x] = xLocation;
                 displacedPlotPoint[.y] = yLocation + decimalLength
                 
@@ -538,43 +537,40 @@ public class CPTBarPlot: CPTPlot {
     
     
     // MARK: -  Data Ranges
-    //
-    //    /// @cond
-    //
-    //    -(nullable CPTPlotRange *)plotRangeForCoordinate:(CPTCoordinate)coord
-    //    {
-    //        CPTPlotRange *range = [super plotRangeForCoordinate:coord];
-    //
-    //        if ( !self.barBasesVary ) {
-    //            switch ( coord ) {
-    //                case CPTCoordinateX:
-    //                    if ( self.barsAreHorizontal ) {
-    //                        NSDecimal base = self.baseValue.decimalValue;
-    //                        if ( ![range contains:base] ) {
-    //                            CPTMutablePlotRange *newRange = [range mutableCopy];
-    //                            [newRange unionPlotRange:[CPTPlotRange plotRangeWithLocationDecimal:base lengthDecimal:CPTDecimalFromInteger(0)]];
-    //                            range = newRange;
-    //                        }
-    //                    }
-    //                    break;
-    //
-    //                case CPTCoordinateY:
-    //                    if ( !self.barsAreHorizontal ) {
-    //                        NSDecimal base = self.baseValue.decimalValue;
-    //                        if ( ![range contains:base] ) {
-    //                            CPTMutablePlotRange *newRange = [range mutableCopy];
-    //                            [newRange unionPlotRange:[CPTPlotRange plotRangeWithLocationDecimal:base lengthDecimal:CPTDecimalFromInteger(0)]];
-    //                            range = newRange;
-    //                        }
-    //                    }
-    //                    break;
-    //
-    //                default:
-    //                    break;
-    //            }
-    //        }
-    //        return range;
-    //    }
+    func plotRangeForCoordinate(coord: CPTCoordinate)->CPTPlotRange?
+    {
+        var range = super.plotRangeForCoordinate(coord: coord);
+        
+        if ( !self.barBasesVary ) {
+            switch ( coord ) {
+            case CPTCoordinate.x:
+                if ( self.barsAreHorizontal ) {
+                    let base = self.baseValue.decimalValue
+                    if range.contains(base ) == false {
+                        var newRange = range
+                        newRange.unionPlotRange(plotRangeWithLocationDecimal(base, lengthDecimal:(0))
+                            range = newRange;
+                    }
+                    }
+                break;
+                
+            case CPTCoordinate.y:
+                if ( !self.barsAreHorizontal == true ) {
+                    let base = self.baseValue.decimalValue;
+                    if ( range.contains(base) == false ) {
+                        var newRange = range
+                        newRange.unionPlotRange( plotRangeWithLocationDecimal(base ,lengthDecimal:0))
+                        range = newRange;
+                    }
+                }
+                break;
+                
+            default:
+                break;
+            }
+        }
+        return range!;
+    }
     //
     //    -(nullable CPTPlotRange *)plotRangeEnclosingField:(NSUInteger)fieldEnum
     //    {

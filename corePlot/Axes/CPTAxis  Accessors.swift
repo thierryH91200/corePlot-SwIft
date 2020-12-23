@@ -159,11 +159,11 @@ extension CPTAxis {
         if (_axisTitle == nil) {
             var newTitle: CPTAxisTitle? = nil
             
-//            if let attributedTitle = attributedTitle {
-                let textLayer = CPTTextLayer(attributedText: attributedTitle)
-                newTitle = CPTAxisTitle(layer: textLayer)
+            //            if let attributedTitle = attributedTitle {
+            let textLayer = CPTTextLayer(attributedText: attributedTitle)
+            newTitle = CPTAxisTitle(layer: textLayer)
             if title != "" {
-                newTitle = CPTAxisTitle( layer: textLayer, text: title, textStyle: titleTextStyle)
+                newTitle = CPTAxisTitle( layer: textLayer, newText: title, newStyle: titleTextStyle)
             }
             
             if let newTitle = newTitle {
@@ -997,7 +997,7 @@ extension CPTAxis {
                 range.intersectionPlotRange(theVisibleRange)
             }
             
-            if ( range.lengthDouble != 0.0 ) {
+            if ( range?.lengthDouble != 0.0 ) {
                 let orthogonalCoordinate = CPTUtilities.shared.CPTOrthogonalCoordinate(self.coordinate)
                 
                 var direction = self.tickLabelDirection;
@@ -1007,7 +1007,7 @@ extension CPTAxis {
                 }
                 
                 for label in self.axisLabels {
-                    let isVisible = range.containsNumber(label.tickLocation)
+                    let isVisible = range.containsNumber(number: label.tickLocation)
                     label.contentLayer.hidden = !isVisible;
                     if ( isVisible == true) {
                         let tickBasePoint = self.viewPointForCoordinateValue(coordinateValue: label.tickLocation)

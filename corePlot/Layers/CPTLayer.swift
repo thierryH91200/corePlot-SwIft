@@ -96,7 +96,6 @@ public class CPTLayer : CALayer
 
     var masksToBorder     = false;
     
-    
     var _shadow   : CPTShadow? = nil
     var shadow   : CPTShadow? {
         get { return _shadow}

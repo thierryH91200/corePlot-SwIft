@@ -29,7 +29,8 @@ class CPTTextLayer: CPTBorderedLayer {
     private lazy var _text = ""
     override var text: String {
         get { return _text }
-        set { _text = newValue }
+        set { _text = newValue
+            self.sizeToFit()  }
     }
     
     private lazy var _maximumSize = CGSize()
@@ -38,16 +39,16 @@ class CPTTextLayer: CPTBorderedLayer {
         set { _maximumSize = newValue }
     }
     
-    convenience init(text newText: String?, style newStyle: CPTTextStyle?) {
+    convenience init( newText: String, newStyle: CPTTextStyle) {
         self.init(frame: CGRect())
-        textStyle = newStyle!
-        text = newText!
+        textStyle = newStyle
+        text = newText
         
         sizeToFit()
     }
     
-    convenience init(text newText: String) {
-        self.init(text: newText, style: CPTTextStyle())
+    convenience init( newText: String) {
+        self.init(newText: newText, newStyle: CPTTextStyle())
     }
 
     /** @brief Initializes a newly allocated CPTTextLayer object with the provided styled text.

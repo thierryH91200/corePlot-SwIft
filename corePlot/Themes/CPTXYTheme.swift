@@ -13,7 +13,7 @@ class CPTXYTheme: CPTTheme {
     {
         var graph : CPTXYGraph?
         
-        if (( self.graphClass ) != nil) {
+        if  self.graphClass  != nil {
             graph = CPTXYGraph(frame: CGRect(x: 0.0, y: 0.0, width: 200.0, height: 200.0))
         }
         else {
@@ -24,10 +24,10 @@ class CPTXYTheme: CPTTheme {
         graph?.paddingRight  = CGFloat(60.0);
         graph?.paddingBottom = CGFloat(60.0);
         
-        let plotSpace = graph?.defaultPlotSpace;
+        let plotSpace = graph?.defaultPlotSpace as? CPTXYPlotSpace
         
-        plotSpace.xRange = CPTPlotRange.plotRangeWith(location:-1.0, length:1.0)
-        plotSpace.yRange = CPTPlotRange.plotRangeWith(location:-1.0, length:1.0)
+        plotSpace?.xRange = CPTPlotRange(location:-1.0, length:1.0)
+        plotSpace!.yRange = CPTPlotRange(location:-1.0, length:1.0)
         
         self.applyThemeToGraph(graph: graph!)
         

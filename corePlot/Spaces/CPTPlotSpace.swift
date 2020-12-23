@@ -27,7 +27,6 @@ class CPTPlotSpace: NSObject {
     let CPTPlotSpaceCoordinateKey   = "CPTPlotSpaceCoordinateKey";
     let CPTPlotSpaceScrollingKey    = "CPTPlotSpaceScrollingKey";
     let CPTPlotSpaceDisplacementKey = "CPTPlotSpaceDisplacementKey";
-
     
     var categoryNames : Dictionary<Int, String >? = [:]
     weak var delegate : CPTPlotSpaceDelegate?
@@ -67,7 +66,6 @@ class CPTPlotSpace: NSObject {
         return categories!
     }
     
-    
     func addCategory(_ category: String, for coordinate: CPTCoordinate) {
         
         var categories = orderedSet(for: coordinate)
@@ -83,7 +81,7 @@ class CPTPlotSpace: NSObject {
     func insertCategory(category: String, forCoordinate coordinate :CPTCoordinate, atIndex idx:Int)
     {
         var categories = self.orderedSet(for:coordinate)
-        categories.insert(category, atIndex:idx)
+        categories.insert(category, at:idx)
     }
     
     func setCategories(newCategories: [String],  forCoordinate coordinate:CPTCoordinate)
@@ -107,7 +105,6 @@ class CPTPlotSpace: NSObject {
             names.removeObjectForKey(cacheKey)
         }
     }
-    //
     
     func removeObject(list: [CPTPlotSpace], element: CPTPlotSpace) {
         var list = list
@@ -121,15 +118,15 @@ class CPTPlotSpace: NSObject {
     {
         self.categoryNames = [:]
     }
-    //
+    
     func categoriesForCoordinate(coordinate: CPTCoordinate)->[String]
     {
         let categories = self.orderedSet(for: coordinate)
         return categories
     }
     
-    func category(for coordinate: CPTCoordinate, at idx: Int) -> String? {
-        
+    func category(for coordinate: CPTCoordinate, at idx: Int) -> String?
+    {
         let categories = orderedSet(for: coordinate)
         return categories[idx]
     }
@@ -146,16 +143,14 @@ class CPTPlotSpace: NSObject {
     }
     
     
-    //    pragma mark -
-    //    #pragma mark Responder Chain and User interaction
-    
+    // MARK: - Responder Chain and User interaction
     // https://izziswift.com/what-is-the-swift-equivalent-of-respondstoselector/
     func pointingDeviceDownEven(event: CPTNativeEvent, atPoint interactionPoint:CGPoint)-> Bool
     {
         let theDelegate = self.delegate
         
         guard let handledByDelegate = theDelegate?.plotSpace(space: self, shouldHandlePointingDeviceDownEvent: event, atPoint: interactionPoint)
-        else { return false}
+        else{ return false}
         return handledByDelegate;
     }
     
@@ -185,22 +180,6 @@ class CPTPlotSpace: NSObject {
         return handledByDelegate;
     }
     
-    //    /**
-    //     *  @brief Informs the receiver that the user has moved
-    //     *  @if MacOnly the mouse with the button pressed. @endif
-    //     *  @if iOSOnly their finger while touching the screen. @endif
-    //     *
-    //     *
-    //     *  If the receiver does not have a @ref delegate,
-    //     *  this method always returns @NO. Otherwise, the
-    //     *  @link CPTPlotSpaceDelegate::plotSpace:shouldHandlePointingDeviceDraggedEvent:atPoint: -plotSpace:shouldHandlePointingDeviceDraggedEvent:atPoint: @endlink
-    //     *  delegate method is called. If it returns @NO, this method returns @YES
-    //     *  to indicate that the event has been handled and no further processing should occur.
-    //     *
-    //     *  @param event The OS event.
-    //     *  @param interactionPoint The coordinates of the interaction.
-    //     *  @return Whether the event was handled or not.
-    //     **/
     func pointingDeviceDraggedEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint) -> Bool
     {
         let theDelegate = self.delegate
@@ -210,23 +189,6 @@ class CPTPlotSpace: NSObject {
         return handledByDelegate;
         
     }
-    //
-    //    /**
-    //     *  @brief Informs the receiver that tracking of
-    //     *  @if MacOnly mouse moves @endif
-    //     *  @if iOSOnly touches @endif
-    //     *  has been cancelled for any reason.
-    //     *
-    //     *
-    //     *  If the receiver does not have a @ref delegate,
-    //     *  this method always returns @NO. Otherwise, the
-    //     *  @link CPTPlotSpaceDelegate::plotSpace:shouldHandlePointingDeviceCancelledEvent: -plotSpace:shouldHandlePointingDeviceCancelledEvent: @endlink
-    //     *  delegate method is called. If it returns @NO, this method returns @YES
-    //     *  to indicate that the event has been handled and no further processing should occur.
-    //     *
-    //     *  @param event The OS event.
-    //     *  @return Whether the event was handled or not.
-    //     **/
     func pointingDeviceCancelledEvent(event : CPTNativeEvent )->Bool
     {
         let theDelegate = self.delegate
@@ -240,22 +202,9 @@ class CPTPlotSpace: NSObject {
     //
     #if TARGET_OS_SIMULATOR || TARGET_OS_IPHONE
     #else
-    //
-    //    /**
-    //     *  @brief Informs the receiver that the user has moved the scroll wheel.
-    //     *
-    //     *
-    //     *  If the receiver does not have a @ref delegate,
-    //     *  this method always returns @NO. Otherwise, the
-    //     *  @link CPTPlotSpaceDelegate::plotSpace:shouldHandleScrollWheelEvent:fromPoint:toPoint: -plotSpace:shouldHandleScrollWheelEvent:fromPoint:toPoint: @endlink
-    //     *  delegate method is called. If it returns @NO, this method returns @YES
-    //     *  to indicate that the event has been handled and no further processing should occur.
-    //     *
-    //     *  @param event The OS event.
-    //     *  @param fromPoint The starting coordinates of the interaction.
-    //     *  @param toPoint The ending coordinates of the interaction.
-    //     *  @return Whether the event was handled or not.
-    //     **/
+    #endif
+    
+    
     func scrollWheelEvent(event: CPTNativeEvent, fromPoint:CGPoint, toPoint:CGPoint)-> Bool
     {
         let theDelegate = self.delegate
@@ -270,13 +219,6 @@ class CPTPlotSpace: NSObject {
     {
         return 0
     }
-    //
-    //    /// @endcond
-    //
-    //    /** @brief Converts a data point to plot area drawing coordinates.
-    //     *  @param plotPoint An array of data point coordinates (as NSNumber values).
-    //     *  @return The drawing coordinates of the data point.
-    //     **/
     func plotAreaViewPointForPlotPoint(plotPoint:  CPTNumberArray)->CGPoint
     {
         return CGPoint()
@@ -287,7 +229,7 @@ class CPTPlotSpace: NSObject {
     //     *  @param count The number of coordinate values in the @par{plotPoint} array.
     //     *  @return The drawing coordinates of the data point.
     //     **/
-    func plotAreaViewPointForPlotPoint(plotPoint:   [CGFloat], numberOfCoordinates:Int)->CGPoint
+    func plotAreaViewPointForPlotPoint(plotPoint: [CGFloat], numberOfCoordinates count :Int)->CGPoint
     {
         return CGPoint()
     }
@@ -297,17 +239,11 @@ class CPTPlotSpace: NSObject {
     //     *  @param count The number of coordinate values in the @par{plotPoint} array.
     //     *  @return The drawing coordinates of the data point.
     //     **/
-    //    -(CGPoint)plotAreaViewPointForDoublePrecisionPlotPoint:(nonnull double *__unused)plotPoint numberOfCoordinates:(NSUInteger cpt_unused)count
-    //    {
-    //        NSParameterAssert(count == self.numberOfCoordinates);
-    //
-    //        return CGPointZero;
-    //    }
-    //
-    //    /** @brief Converts a point given in plot area drawing coordinates to the data coordinate space.
-    //     *  @param point The drawing coordinates of the data point.
-    //     *  @return An array of data point coordinates (as NSNumber values).
-    //     **/
+    func plotAreaViewPointForDoublePrecisionPlotPoint(plotPoint: Double, numberOfCoordinates count:Int)-> CGPoint
+        {
+            return CGPoint()
+        }
+
     func plotPointForPlotAreaViewPoint(point: CGPoint ) -> CPTNumberArray?
     {
         return nil
@@ -375,9 +311,12 @@ class CPTPlotSpace: NSObject {
     //     *  @param newRange The new plot range.
     //     *  @param coordinate The axis coordinate.
     //     **/
-    //    -(void)setPlotRange:(nonnull CPTPlotRange *__unused)newRange forCoordinate:(CPTCoordinate __unused)coordinate
-    //    {
-    //    }
+    func  setPlotRange(newRange:  CPTPlotRange, forCoordinate coordinate :CPTCoordinate)
+    {
+    }
+    
+    
+    
     //
     //    /** @brief Gets the range of values for a given coordinate.
     //     *  @param coordinate The axis coordinate.
@@ -392,9 +331,10 @@ class CPTPlotSpace: NSObject {
     //     *  @param newType The new scale type.
     //     *  @param coordinate The axis coordinate.
     //     **/
-    //    -(void)setScaleType:(CPTScaleType __unused)newType forCoordinate:(CPTCoordinate __unused)coordinate
-    //    {
-    //    }
+    func setScaleType(_ newType: CPTScaleType, for coordinate: CPTCoordinate) {
+    }
+    
+    
     //
     //    /** @brief Gets the scale type for a given coordinate.
     //     *  @param coordinate The axis coordinate.
@@ -410,10 +350,11 @@ class CPTPlotSpace: NSObject {
     //    /** @brief Scales the plot ranges so that the plots just fit in the visible space.
     //     *  @param plots An array of the plots that have to fit in the visible area.
     //     **/
-    //    -(void)scaleToFitPlots:(nullable CPTPlotArray *__unused)plots
-    //    {
-    //    }
-    //
+    func scaleToFitPlots(plots: [CPTPlot] )
+    {
+    }
+    
+    
     //    /** @brief Scales the plot range for the given coordinate so that the plots just fit in the visible space.
     //     *  @param plots An array of the plots that have to fit in the visible area.
     //     *  @param coordinate The axis coordinate.
@@ -426,7 +367,7 @@ class CPTPlotSpace: NSObject {
         
         if let plots = plots {
             for plot in plots {
-                guard let plot = plot as? CPTPlot else { continue }
+//                guard let plot = plot as? CPTPlot else { continue }
                 
                 let currentRange = plot.plotRange(for: coordinate)
                 if unionRange == nil {
@@ -438,59 +379,60 @@ class CPTPlotSpace: NSObject {
         
         // Set range
         if let unionRange = unionRange {
-            if unionRange.lengthDecimal == Int(0) {
+            if unionRange.lengthDecimal == CGFloat(0) {
                 unionRange.union(plotRange(for: coordinate))
             }
-            setPlotRange(unionRange, for: coordinate)
+            setPlotRange(newRange: unionRange, forCoordinate: coordinate)
         }
     }
     
-    //
-    //    /** @brief Scales the plot ranges so that the plots just fit in the visible space.
-    //     *  @param plots An array of the plots that have to fit in the visible area.
-    //     **/
-    //    -(void)scaleToFitEntirePlots:(nullable CPTPlotArray *__unused)plots
-    //    {
-    //    }
-    //
-    //    /** @brief Scales the plot range for the given coordinate so that the plots just fit in the visible space.
-    //     *  @param plots An array of the plots that have to fit in the visible area.
-    //     *  @param coordinate The axis coordinate.
-    //     **/
-    //    -(void)scaleToFitEntirePlots:(nullable CPTPlotArray *)plots forCoordinate:(CPTCoordinate)coordinate
-    //    {
-    //        if ( plots.count == 0 ) {
-    //            return;
-    //        }
-    //
-    //        // Determine union of ranges
-    //        CPTMutablePlotRange *unionRange = nil;
-    //
-    //        for ( CPTPlot *plot in plots ) {
-    //            CPTPlotRange *currentRange = [plot plotRangeForCoordinate:coordinate];
-    //            if ( !unionRange ) {
-    //                unionRange = [currentRange mutableCopy];
-    //            }
-    //            [unionRange unionPlotRange:currentRange];
-    //        }
-    //
-    //        // Set range
-    //        if ( unionRange ) {
-    //            if ( CPTDecimalEquals(unionRange.lengthDecimal, CPTDecimalFromInteger(0))) {
-    //                [unionRange unionPlotRange:[self plotRangeForCoordinate:coordinate]];
-    //            }
-    //            [self setPlotRange:unionRange forCoordinate:coordinate];
-    //        }
-    //    }
-    //
-    //    /** @brief Zooms the plot space equally in each dimension.
-    //     *  @param interactionScale The scaling factor. One (@num{1}) gives no scaling.
-    //     *  @param interactionPoint The plot area view point about which the scaling occurs.
-    //     **/
-    func scale(by interactionScale: CGFloat, aboutPoint interactionPoint: CGPoint) {
+    
+    /** @brief Scales the plot ranges so that the plots just fit in the visible space.
+     *  @param plots An array of the plots that have to fit in the visible area.
+     **/
+    func scaleToFitEntirePlots(plots: [CPTPlot])
+    {
     }
     
+    /** @brief Scales the plot range for the given coordinate so that the plots just fit in the visible space.
+     *  @param plots An array of the plots that have to fit in the visible area.
+     *  @param coordinate The axis coordinate.
+     **/
+    func scaleToFitEntirePlots(plots: [CPTPlot], forCoordinate coordinate: CPTCoordinate)
+    {
+        if ( plots.count == 0 ) {
+            return;
+        }
+        
+        // Determine union of ranges
+        var unionRange : CPTMutablePlotRange?
+        
+        for plot in plots {
+            let currentRange = plot.plotRangeForCoordinate(coord: coordinate)
+            if ( (unionRange == nil) ) {
+                unionRange = currentRange
+            }
+            unionRange?.unionPlotRange(other: currentRange)
+        }
+        
+        // Set range
+        if (( unionRange ) != nil) {
+            if unionRange?.lengthDecimal == CGFloat(0) {
+                unionRange.unionPlotRange(self, plotRangeForCoordinate(coordinate))
+            }
+            self.setPlotRange(newRange: unionRange, forCoordinate:coordinate)
+        }
     }
-
-
     
+    /** @brief Zooms the plot space equally in each dimension.
+     *  @param interactionScale The scaling factor. One (@num{1}) gives no scaling.
+     *  @param interactionPoint The plot area view point about which the scaling occurs.
+     **/
+    func scale(by interactionScale: CGFloat, aboutPoint interactionPoint: CGPoint)
+    {
+    }
+    
+    
+    
+    
+}

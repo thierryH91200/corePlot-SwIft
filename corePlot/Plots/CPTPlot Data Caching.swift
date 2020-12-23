@@ -429,7 +429,7 @@ extension CPTPlot {
     }
     
     func cachedArray(forKey key: String) -> [String]? {
-        return (cachedData)[key] as? [String]
+        return cachedData[key] as? [String]
     }
     
     ///** @brief Copies an array of arbitrary values to the cache.
@@ -441,7 +441,7 @@ extension CPTPlot {
         if sampleCount > 0 {
             cachedData[key] = array
         } else {
-            cachedData.removeValue(  at: <#Int#>)
+            cachedData.removeValue( forKey : key)
         }
         cachedDataCount = sampleCount
     }
@@ -452,24 +452,31 @@ extension CPTPlot {
     // *  @param key The key identifying the field.
     // *  @param idx The index of the first data point to replace.
     // **/
+    
+    
+    
+    // cachedValues = array
+    // cachedData: [String : [Any]] = [:]
+    
     func cacheArray(array: [Any], forKey key: String, atRecordIndex idx: Int)
     {
         let sampleCount = array.count
-        
         if ( sampleCount > 0 ) {
+            
             // Ensure the data cache exists and is the right size
             let theDataSource = self.dataSource
             let numberOfRecords = theDataSource?.numberOfRecordsForPlot(plot: self)
+            var cachedValues = [Any?]()
             
-            var cachedValues  = self.cachedData[key]
-            if ( cachedValues?.isEmpty == false ) {
+            if cachedValues.isEmpty == false {
+                
                 cachedValues = [String]()
                 let nullObject : String?
                 
                 for i in 0..<numberOfRecords! {
-                    cachedValues.apppend(nullObject)
+                    cachedValues.append( nullObject)
                 }
-                self.cachedData[key] = cachedValues;
+                self.cachedData[key] = cachedValues as [Any]
             }
             
             // Update the cache

@@ -306,6 +306,7 @@ public class CPTXYAxis: CPTAxis {
 
             switch ( self.labelingPolicy ) {
             case .none:
+                fallthrough
             case .provided:
                 
                 let labeledRange = self.plotSpace?.plotRangeForCoordinate(coordinate: self.coordinate)
@@ -314,7 +315,6 @@ public class CPTXYAxis: CPTAxis {
                         labeledRange.intersectionPlotRange(theVisibleRange)
                     }
                 
-                break;
 
                 default:
                     break;
