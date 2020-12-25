@@ -9,53 +9,35 @@ import AppKit
 
 class CPTColorSpace: NSObject {
     
-    
+    static let shared = CPTColorSpace()
     var cgColorSpace : CGColorSpace?
     
+    func genericRGBSpace() -> CPTColorSpace {
+        
+        var cgSpace: CGColorSpace? = nil
+        
+        #if targetEnvironment(simulator) || os(iOS)
+        cgSpace = CGColorSpaceCreateDeviceRGB()
+        #else
+        cgSpace = CGColorSpaceCreateDeviceRGB()
+        #endif
+        let space = CPTColorSpace(cgColorSpace: cgSpace!)
+        
+        return space!
+    }
     
-//    +(nonnull instancetype)genericRGBSpace
-//{
-//static CPTColorSpace *space      = nil;
-//
-//dispatch_once(&onceToken, ^{
-//CGColorSpaceRef cgSpace = NULL;
-//#if TARGET_OS_SIMULATOR || TARGET_OS_IPHONE
-//cgSpace = CGColorSpaceCreateDeviceRGB();
-//#else
-//cgSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
-//#endif
-//space = [[self alloc] initWithCGColorSpace:cgSpace];
-//CGColorSpaceRelease(cgSpace);
-//});
-
-//return space;
-//}
-
-//    +(nonnull instancetype)genericRGBSpace
-//    {
-//        static CPTColorSpace *space      = nil;
-//        static dispatch_once_t onceToken = 0;
-//
-//        dispatch_once(&onceToken, ^{
-//            CGColorSpaceRef cgSpace = NULL;
-//    #if TARGET_OS_SIMULATOR || TARGET_OS_IPHONE
-//            cgSpace = CGColorSpaceCreateDeviceRGB();
-//    #else
-//            cgSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
-//    #endif
-//            space = [[self alloc] initWithCGColorSpace:cgSpace];
-//            CGColorSpaceRelease(cgSpace);
-//        });
-//
-//        return space;
-//    }
+    init?(cgColorSpace colorSpace: CGColorSpace) {
+        super.init()
+        cgColorSpace = colorSpace
+    }
+    
     
     override init()
     {
-        let cgSpace = CGColorSpace(name: CGColorSpace.sRGB)
+        //        let cgSpace = CGColorSpace(name: CGColorSpace.sRGB)
         super.init()
-        super.init(colorSpace: cgSpace)
-
+        //        super.init(colorSpace: cgSpace)
+        
     }
     
     init(colorSpace: CGColorSpace)

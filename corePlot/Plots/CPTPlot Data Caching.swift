@@ -228,8 +228,8 @@ extension CPTPlot {
             loadedDataType = self.doubleDataType();
             mutableNumbers = CPTMutableNumericData(  initWithData:numbers dataType:loadedDataType shape:nil];
         }
-        else if (numbers is Array ) {
-            if numbers.count == 0 ) {
+        else if let numbers = numbers as? [Any] {
+            if numbers.count == 0  {
                 loadedDataType = self.doubleDataType;
             }
             else if ( [((NSArray<NSNumber *> *)numbers)[0] is [NSDecimalNumber class]] ) {

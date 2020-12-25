@@ -10,7 +10,6 @@ import AppKit
 class CPTShadow : NSObject {
     
     var shadowOffset = CGSize()
-    var shadowBlurRadius = CGFloat(0)
     var shadowColor : NSColor?
     
     //MARK: - Init/Dealloc
@@ -21,7 +20,7 @@ class CPTShadow : NSObject {
         shadowColor      = nil
     }
     
-    func shadowIn(context: CGContext)
+    func shadowInContext (context: CGContext)
     {
         context.setShadow(offset: self.shadowOffset,
                           blur: self.shadowBlurRadius,
@@ -29,12 +28,13 @@ class CPTShadow : NSObject {
     }
     
     //MARK: Accessors
-    func setShadowBlurRadius(newShadowBlurRadius : CGFloat)
-    {
-        assert(newShadowBlurRadius >= CGFloat(0.0));
-        
-        if ( newShadowBlurRadius != shadowBlurRadius ) {
-            shadowBlurRadius = newShadowBlurRadius;
+    var _shadowBlurRadius = CGFloat(0)
+    var shadowBlurRadius : CGFloat {
+        get { return _shadowBlurRadius }
+        set {
+            if newValue != _shadowBlurRadius {
+                _shadowBlurRadius = newValue
+            }
         }
     }
 }

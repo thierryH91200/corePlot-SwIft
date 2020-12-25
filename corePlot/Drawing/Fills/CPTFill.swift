@@ -11,13 +11,27 @@ public class CPTFill: NSObject  {
     
 // MARK: - Init/Dealloc
     var isOpaque = false
-
-    class func fill(with aColor: CPTColor) -> Self {
-        return CPTFillColor(color: aColor)
-    }
     
+//    -(nonnull instancetype)initWithColor:(nonnull CPTColor *)aColor
+//    {
+//        self = [[_CPTFillColor alloc] initWithColor:aColor];
+//
+//        return self;
+//    }
+    
+    public init ( aColor: NSColor)  {
+        let result = CPTFillColor(aColor: aColor)
+        print (result)
+    }
+
+
+
+//    class func fill(with aColor: CPTColor) -> Self {
+//        return CPTFillColor(color: aColor)
+//    }
+
     class func fill(with aGradient: CPTGradient) -> Self {
-        return CPTFillGradient(gradient: aGradient)
+        return CPTFillGradient(aGradient: aGradient)
     }
     
     class func fill(with anImage: CPTImage) -> Self {

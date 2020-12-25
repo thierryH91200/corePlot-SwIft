@@ -184,7 +184,7 @@ public class CPTLineStyle: NSObject {
                 else if (( self.lineFill ) != nil) {
                     isOpaqueLine = self.lineFill!.isOpaque
                 }
-                else if ( self.lineColor ) {
+                else if (( self.lineColor ) != nil) {
                     isOpaqueLine = self.lineColor.isOpaque
                 }
             }

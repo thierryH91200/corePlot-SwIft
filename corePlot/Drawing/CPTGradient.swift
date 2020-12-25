@@ -5,30 +5,24 @@
 //  Created by thierryH24 on 09/11/2020.
 //
 
-import Cocoa
+import AppKit
 
 
 // https://stackoverflow.com/questions/49399089/binary-tree-with-struct-in-swift
 
 class CPTGradientElement {
     
-    
-    enum CPThi :Int {
-        case unowned
-        case two
-        case three
-        case four
-        case five
-        case six
-        
-    }
     var color : CPTRGBAColor    ///< Color
     var position: CGFloat      ///< Gradient position (0 ≤ @par{position} ≤ 1)
     
     var nextElement : CPTGradientElement?
     
-    init(value: CGFloat) {
-        self.position = value
+    init() {
+        self.position = CGFloat(0)
+        self.color.alpha = 0
+        self.color.red = 0
+        self.color.green = 0
+        self.color.blue = 0
     }
     
 }
@@ -68,17 +62,16 @@ class CPTGradient: NSObject {
         
         angle        = CGFloat(0.0)
         gradientType = .axial
-        startAnchor  = CGPoint(x: 0.5, y: 0.5);
-        endAnchor    = CGPoint(x: 0.5, y: 0.5);
+        startAnchor  = CGPoint(x: 0.5, y: 0.5)
+        endAnchor    = CGPoint(x: 0.5, y: 0.5)
     }
     
     func commonInit()
     {
-        self.colorspace  = CPTColorSpace.genericRGBSpace()
+        self.colorspace  = CPTColorSpace.shared.genericRGBSpace()
         self.elementList = nil;
     }
     
-
     func CPTTransformHSV_RGB(components :[CGFloat] ) // H,S,B -> R,G,B
     {
         var components = components
@@ -146,7 +139,7 @@ class CPTGradient: NSObject {
         
         if curElement == nil || (newElement.position < curElement!.position) {
             let tmpNext        = curElement;
-            var newElementList = CPTGradientElement(value: 1)
+            var newElementList = CPTGradientElement()
             if ( newElementList ) {
                 newElementList             = newElement;
                 newElementList.nextElement = tmpNext;
@@ -154,14 +147,14 @@ class CPTGradient: NSObject {
             }
         }
         else {
-            while ( curElement.nextElement != nil &&
-                        !((curElement.position <= newElement.position) &&
-                            (newElement.position < curElement.nextElement.position)))) {
-                curElement = curElement?.nextElement;
+            while ( curElement!.nextElement != nil &&
+                        !((curElement!.position <= newElement.position) &&
+                            (newElement.position < curElement!.nextElement!.position))) {
+                curElement = curElement?.nextElement
             }
             
             let tmpNext = curElement?.nextElement;
-            curElement?.nextElement        = CPTGradientElement(value: 0)
+            curElement?.nextElement        = CPTGradientElement()
             curElement?.nextElement       = newElement
             curElement?.nextElement?.nextElement = tmpNext
         }
@@ -179,13 +172,12 @@ class CPTGradient: NSObject {
 //     *  @param endingPosition The ending position (@num{0} ≤ @par{endingPosition} ≤ @num{1}).
 //     *  @return A new CPTGradient instance initialized with an axial linear gradient between the two given colors, at two given normalized positions.
 //     **/
-    +(nonnull instancetype)gradientWithBeginningColor:(nonnull CPTColor *)begin endingColor:(nonnull CPTColor *)end beginningPosition:(CGFloat)beginningPosition endingPosition:(CGFloat)endingPosition
-    {
+    class func gradient(withBeginning begin: CPTColor, ending end: CPTColor, beginningPosition: CGFloat, endingPosition: CGFloat) -> CPTGradient {
+
         let newInstance = CPTGradient()
 
-    let color1 = CPTGradientElement()
-    let color2 = CPTGradientElement()
-        CPTGradientElement color2;
+        let color1 = CPTGradientElement()
+        let color2 = CPTGradientElement()
 
         color1.color = CPTRGBAColorFromCGColor(begin.cgColor);
         color2.color = CPTRGBAColorFromCGColor(end.cgColor);
@@ -193,10 +185,10 @@ class CPTGradient: NSObject {
         color1.position = beginningPosition;
         color2.position = endingPosition;
 
-        [newInstance addElement:&color1];
-        [newInstance addElement:&color2];
+        newInstance.addElement(&color1)
+        newInstance.addElement(&color2)
 
-        return newInstance;
+        return newInstance
     }
     
     func fillRect(rect: CGRect, inContext context: CGContext)    {
@@ -204,7 +196,6 @@ class CPTGradient: NSObject {
         var myCGShading : CGShading?
         
         context.saveGState();
-        
         context.clip(to: rect);
         
         switch ( self.gradientType ) {
@@ -334,7 +325,7 @@ class CPTGradient: NSObject {
     var isOpaque: Bool     {
         get {
             var opaqueGradient = true
-            var list = self.elementList;
+            var list = self.elementList
             
             while ( opaqueGradient == true && (list != nil )) {
                 opaqueGradient = opaqueGradient && ((list?.color.alpha)! >= CGFloat(1.0));
@@ -344,8 +335,4 @@ class CPTGradient: NSObject {
         }
         set {}
     }
-
-    
-
-    
 }

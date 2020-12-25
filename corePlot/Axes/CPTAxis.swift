@@ -2293,21 +2293,4 @@ public class CPTAxis : CPTLayer {
 }
 
 
-//extension CGFloat{
-//    func roundDown(decimals:Int)->CGFloat{
-//        var from: CGFloat = self
-//        var to: CGFloat = 0.0
-//
-//        let decimalSize = 2.0 //you want to round for 2 digits after decimal point, change to your right value
-//        let k = pow(10.0, CGFloat(decimals)) //k here is 100
-//
-//        var cent = from*k
-//
-//        var centRound = floor(cent) //get floor (integer) value of this double.You will get 154.
-//
-//        to = centRound/k
-//        return to
-//    }
-//}
-
 

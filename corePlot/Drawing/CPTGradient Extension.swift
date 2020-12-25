@@ -240,7 +240,7 @@ extension CPTGradient {
      **/
     func unifiedPressedGradient() -> CPTGradient
     {
-    let newInstance = CPTGradient()
+        let newInstance = CPTGradient()
 
         let color1 : CPTGradientElement
         color1.color.red   = color1.color.green = color1.color.blue = CGFloat(0.60);
