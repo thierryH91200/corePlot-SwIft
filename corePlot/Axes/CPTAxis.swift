@@ -358,7 +358,6 @@ public class CPTAxis : CPTLayer {
                 }
             }
         }
-        
         newMajorLocations = majorLocations;
         newMinorLocations = minorLocations;
     }
@@ -789,12 +788,13 @@ public class CPTAxis : CPTLayer {
             break;
             
         case .divisions:
-            [self generateEqualMajorTickLocations:&newMajorLocations minorTickLocations:&newMinorLocations];
+            self.generateEqualMajorTickLocations(&newMajorLocations, minorTickLocations:&newMinorLocations)
             break;
         }
         
         switch ( self.labelingPolicy ) {
         case .none:
+            fallthrough
         case .provided:
             // Locations are set by user--no filtering required
             break;
@@ -999,7 +999,7 @@ public class CPTAxis : CPTLayer {
         let coordValue = self.viewPointForCoordinateValue(coordinateValue: CGFloat(self.titleLocation))
         let ortho = CPTUtilities.shared.CPTOrthogonalCoordinate(coordinate)
             
-        self.axisTitle?.positionRelativeToViewPoint( point: coordValue,
+        self.axisTitle()!.positionRelativeToViewPoint( point: coordValue,
                                                     coordinate: ortho,
                                                     direction:direction)
     }

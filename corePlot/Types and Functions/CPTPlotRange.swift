@@ -26,15 +26,15 @@ class CPTPlotRange: NSObject {
     
     var locationDouble : CGFloat = 0.0
     var lengthDouble: CGFloat = 0.0
-    var endDouble: Double = 0.0
+    var endDouble: CGFloat = 0.0
 
-    var minLimit = 0.0
-    var midPoint = 0.0;
-    var maxLimit = 0.0
+    var minLimit = CGFloat(0.0)
+    var midPoint = CGFloat(0.0);
+    var maxLimit = CGFloat(0.0)
     
-    var minLimitDecimal = 0.0;
-    var midPointDecimal = 0.0
-    var maxLimitDecimal = 0.0
+    var minLimitDecimal = CGFloat(0.0)
+    var midPointDecimal = CGFloat(0.0)
+    var maxLimitDecimal = CGFloat(0.0)
     
     var minLimitDouble = CGFloat(0.0)
     var midPointDouble = CGFloat(0.0)

@@ -9,220 +9,231 @@ import Foundation
 
 
 extension CPTLegend {
-
+    
     override func renderAsVectorInContext(context: CGContext)
     {
         guard self.isHidden == false else { return }
-
+        
         super.renderAsVectorInContext(context: context)
-
-//        if ( self.legendEntries.count == 0 ) {
-//            return;
-//        }
-
-//        BOOL isHorizontalLayout;
-//
-//        switch ( self.swatchLayout ) {
-//            case CPTLegendSwatchLayoutLeft:
-//            case CPTLegendSwatchLayoutRight:
-//                isHorizontalLayout = YES;
-//                break;
-//
-//            case CPTLegendSwatchLayoutTop:
-//            case CPTLegendSwatchLayoutBottom:
-//                isHorizontalLayout = NO;
-//                break;
-//        }
-//
-//        // calculate column positions
-//        CPTNumberArray *computedColumnWidths = self.columnWidthsThatFit;
-//        NSUInteger columnCount               = computedColumnWidths.count;
-//        CGFloat *actualColumnWidths          = calloc(columnCount, sizeof(CGFloat));
-//        CGFloat *columnPositions             = calloc(columnCount, sizeof(CGFloat));
-//
-//        columnPositions[0] = self.paddingLeft;
-//        CGFloat theOffset       = self.titleOffset;
-//        CGSize theSwatchSize    = self.swatchSize;
-//        CGFloat theColumnMargin = self.columnMargin;
-//
-//        CGFloat padLeft   = self.entryPaddingLeft;
-//        CGFloat padTop    = self.entryPaddingTop;
-//        CGFloat padRight  = self.entryPaddingRight;
-//        CGFloat padBottom = self.entryPaddingBottom;
-//
-//        for ( NSUInteger col = 0; col < columnCount; col++ ) {
-//            NSNumber *colWidth = computedColumnWidths[col];
-//            CGFloat width      = [colWidth cgFloatValue];
-//            actualColumnWidths[col] = width;
-//            if ( col < columnCount - 1 ) {
-//                columnPositions[col + 1] = columnPositions[col] + padLeft + width + padRight + (isHorizontalLayout ? theOffset + theSwatchSize.width : CPTFloat(0.0)) + theColumnMargin;
-//            }
-//        }
-//
-//        // calculate row positions
-//        CPTNumberArray *computedRowHeights = self.rowHeightsThatFit;
-//        NSUInteger rowCount                = computedRowHeights.count;
-//        CGFloat *actualRowHeights          = calloc(rowCount, sizeof(CGFloat));
-//        CGFloat *rowPositions              = calloc(rowCount, sizeof(CGFloat));
-//
-//        rowPositions[rowCount - 1] = self.paddingBottom;
-//        CGFloat theRowMargin  = self.rowMargin;
-//        CGFloat lastRowHeight = 0.0;
-//
-//        for ( NSUInteger rw = 0; rw < rowCount; rw++ ) {
-//            NSUInteger row      = rowCount - rw - 1;
-//            NSNumber *rowHeight = computedRowHeights[row];
-//            CGFloat height      = [rowHeight cgFloatValue];
-//            actualRowHeights[row] = height;
-//            if ( row < rowCount - 1 ) {
-//                rowPositions[row] = rowPositions[row + 1] + padBottom + lastRowHeight + padTop + (isHorizontalLayout ? CPTFloat(0.0) : theOffset + theSwatchSize.height) + theRowMargin;
-//            }
-//            lastRowHeight = height;
-//        }
-//
-//        // draw legend entries
-//        NSUInteger desiredRowCount    = self.numberOfRows;
-//        NSUInteger desiredColumnCount = self.numberOfColumns;
-//
-//        CPTFill *theEntryFill           = self.entryFill;
-//        CPTLineStyle *theEntryLineStyle = self.entryBorderLineStyle;
-//        CGFloat entryRadius             = self.entryCornerRadius;
-//
-//        id<CPTLegendDelegate> theDelegate = (id<CPTLegendDelegate>)self.delegate;
-//        BOOL delegateCanDraw              = [theDelegate respondsToSelector:@selector(legend:shouldDrawSwatchAtIndex:forPlot:inRect:inContext:)];
-//        BOOL delegateProvidesFills        = [theDelegate respondsToSelector:@selector(legend:fillForEntryAtIndex:forPlot:)];
-//        BOOL delegateProvidesLines        = [theDelegate respondsToSelector:@selector(legend:lineStyleForEntryAtIndex:forPlot:)];
-//
-//        for ( CPTLegendEntry *legendEntry in self.legendEntries ) {
-//            NSUInteger row = legendEntry.row;
-//            NSUInteger col = legendEntry.column;
-//
-//            if (((desiredRowCount == 0) || (row < desiredRowCount)) &&
-//                ((desiredColumnCount == 0) || (col < desiredColumnCount))) {
-//                NSUInteger entryIndex = legendEntry.index;
-//                CPTPlot *entryPlot    = legendEntry.plot;
-//
-//                CGFloat left        = columnPositions[col];
-//                CGFloat rowPosition = rowPositions[row];
-//
-//                CGRect entryRect;
-//
-//                if ( isHorizontalLayout ) {
-//                    entryRect = CPTRectMake(left,
-//                                            rowPosition,
-//                                            padLeft + theSwatchSize.width + theOffset + actualColumnWidths[col] + CPTFloat(1.0) + padRight,
-//                                            padBottom + actualRowHeights[row] + padTop);
-//                }
-//                else {
-//                    entryRect = CPTRectMake(left,
-//                                            rowPosition,
-//                                            padLeft + MAX(theSwatchSize.width, actualColumnWidths[col]) + CPTFloat(1.0) + padRight,
-//                                            padBottom + theSwatchSize.height + theOffset + actualRowHeights[row] + padTop);
-//                }
-//
-//                // draw background
-//                CPTFill *theFill = nil;
-//                if ( delegateProvidesFills ) {
-//                    theFill = [theDelegate legend:self fillForEntryAtIndex:entryIndex forPlot:entryPlot];
-//                }
-//                if ( !theFill ) {
-//                    theFill = theEntryFill;
-//                }
-//                if ( theFill ) {
-//                    CGContextBeginPath(context);
-//                    CPTAddRoundedRectPath(context, CPTAlignIntegralRectToUserSpace(context, entryRect), entryRadius);
-//                    [theFill fillPathInContext:context];
-//                }
-//
-//                CPTLineStyle *theLineStyle = nil;
-//                if ( delegateProvidesLines ) {
-//                    theLineStyle = [theDelegate legend:self lineStyleForEntryAtIndex:entryIndex forPlot:entryPlot];
-//                }
-//                if ( !theLineStyle ) {
-//                    theLineStyle = theEntryLineStyle;
-//                }
-//                if ( theLineStyle ) {
-//                    [theLineStyle setLineStyleInContext:context];
-//                    CGContextBeginPath(context);
-//                    CPTAddRoundedRectPath(context, CPTAlignBorderedRectToUserSpace(context, entryRect, theLineStyle), entryRadius);
-//                    [theLineStyle strokePathInContext:context];
-//                }
-//
-//                // lay out swatch and title
-//                CGFloat swatchLeft, swatchBottom;
-//                CGFloat titleLeft, titleBottom;
-//
-//                switch ( self.swatchLayout ) {
-//                    case CPTLegendSwatchLayoutLeft:
-//                        swatchLeft   = CGRectGetMinX(entryRect) + padLeft;
-//                        swatchBottom = CGRectGetMinY(entryRect) + (entryRect.size.height - theSwatchSize.height) * CPTFloat(0.5);
-//
-//                        titleLeft   = swatchLeft + theSwatchSize.width + theOffset;
-//                        titleBottom = CGRectGetMinY(entryRect) + padBottom;
-//                        break;
-//
-//                    case CPTLegendSwatchLayoutRight:
-//                        swatchLeft   = CGRectGetMaxX(entryRect) - padRight - theSwatchSize.width;
-//                        swatchBottom = CGRectGetMinY(entryRect) + (entryRect.size.height - theSwatchSize.height) * CPTFloat(0.5);
-//
-//                        titleLeft   = CGRectGetMinX(entryRect) + padLeft;
-//                        titleBottom = CGRectGetMinY(entryRect) + padBottom;
-//                        break;
-//
-//                    case CPTLegendSwatchLayoutTop:
-//                        swatchLeft   = CGRectGetMidX(entryRect) - theSwatchSize.width * CPTFloat(0.5);
-//                        swatchBottom = CGRectGetMaxY(entryRect) - padTop - theSwatchSize.height;
-//
-//                        titleLeft   = CGRectGetMidX(entryRect) - actualColumnWidths[col] * CPTFloat(0.5);
-//                        titleBottom = CGRectGetMinY(entryRect) + padBottom;
-//                        break;
-//
-//                    case CPTLegendSwatchLayoutBottom:
-//                        swatchLeft   = CGRectGetMidX(entryRect) - theSwatchSize.width * CPTFloat(0.5);
-//                        swatchBottom = CGRectGetMinY(entryRect) + padBottom;
-//
-//                        titleLeft   = CGRectGetMidX(entryRect) - actualColumnWidths[col] * CPTFloat(0.5);
-//                        titleBottom = swatchBottom + theOffset + theSwatchSize.height;
-//                        break;
-//                }
-//
-//                // draw swatch
-//                CGRect swatchRect = CPTRectMake(swatchLeft,
-//                                                swatchBottom,
-//                                                theSwatchSize.width,
-//                                                theSwatchSize.height);
-//
-//                BOOL legendShouldDrawSwatch = YES;
-//                if ( delegateCanDraw ) {
-//                    legendShouldDrawSwatch = [theDelegate legend:self
-//                                         shouldDrawSwatchAtIndex:entryIndex
-//                                                         forPlot:entryPlot
-//                                                          inRect:swatchRect
-//                                                       inContext:context];
-//                }
-//                if ( legendShouldDrawSwatch ) {
-//                    [entryPlot drawSwatchForLegend:self
-//                                           atIndex:entryIndex
-//                                            inRect:swatchRect
-//                                         inContext:context];
-//                }
-//
-//                // draw title
-//                CGRect titleRect = CPTRectMake(titleLeft,
-//                                               titleBottom,
-//                                               actualColumnWidths[col] + CPTFloat(1.0),
-//                                               actualRowHeights[row]);
-//
-//                [legendEntry drawTitleInRect:CPTAlignRectToUserSpace(context, titleRect)
-//                                   inContext:context
-//                                       scale:self.contentsScale];
-//            }
-//        }
-//
-//        free(actualColumnWidths);
-//        free(columnPositions);
-//        free(actualRowHeights);
-//        free(rowPositions);
+        guard self.legendEntries.isEmpty == false else { return }
+        
+        var isHorizontalLayout = false
+        
+        switch ( self.swatchLayout ) {
+        case .left:
+            fallthrough
+        case .right:
+            isHorizontalLayout = true
+            break;
+            
+        case .top:
+            fallthrough
+        case .bottom:
+            isHorizontalLayout = false;
+            break;
+        }
+        
+        // calculate column positions
+        let computedColumnWidths = self.columnWidthsThatFit;
+        let columnCount               = computedColumnWidths.count;
+        var actualColumnWidths          = [CGFloat]()
+        var columnPositions             = [CGFloat]()
+        
+        columnPositions[0] = self.paddingLeft;
+        let theOffset       = self.titleOffset;
+        let theSwatchSize    = self.swatchSize;
+        let theColumnMargin = self.columnMargin;
+        
+        let padLeft   = self.entryPaddingLeft;
+        let padTop    = self.entryPaddingTop;
+        let padRight  = self.entryPaddingRight;
+        let padBottom = self.entryPaddingBottom;
+        
+        for  col in 0..<columnCount {
+            let colWidth = computedColumnWidths[col]
+            let width      = colWidth //cgFloatValue];
+            actualColumnWidths[col] = width;
+            if ( col < columnCount - 1 ) {
+                columnPositions[col + 1] = columnPositions[col] + padLeft + width + padRight + (isHorizontalLayout ? theOffset + theSwatchSize.width : CGFloat(0.0)) + theColumnMargin;
+            }
+        }
+        
+        // calculate row positions
+        let computedRowHeights = self.rowHeightsThatFit;
+        let rowCount                = computedRowHeights.count;
+        var actualRowHeights          = [CGFloat]()
+        var rowPositions              = [CGFloat]()
+        
+        rowPositions[rowCount - 1] = self.paddingBottom;
+        let theRowMargin  = self.rowMargin;
+        var lastRowHeight = CGFloat(0.0)
+        
+        for rw in 0..<rowCount {
+            let row      = rowCount - rw - 1;
+            let rowHeight = computedRowHeights[row];
+            let height      = rowHeight
+            actualRowHeights[row] = height;
+            if ( row < rowCount - 1 ) {
+                rowPositions[row] = rowPositions[row + 1] + padBottom + lastRowHeight + padTop + (isHorizontalLayout ? CGFloat(0.0) : theOffset + theSwatchSize.height) + theRowMargin;
+            }
+            lastRowHeight = height;
+        }
+        
+        // draw legend entries
+        let desiredRowCount    = self.numberOfRows;
+        let desiredColumnCount = self.numberOfColumns;
+        
+        let theEntryFill           = self.entryFill;
+        let theEntryLineStyle = self.entryBorderLineStyle;
+        let entryRadius             = self.entryCornerRadius;
+        
+        let  theDelegate = self.delegate as? CPTLegendDelegate
+        
+        //        let delegateCanDraw              = theDelegate.legend(self, shouldDrawSwatchAtIndex:forPlot: inRect:inContext:)
+        //        let delegateProvidesFills        = theDelegate.legend(:fillForEntryAtIndex:forPlot:)
+        //        let delegateProvidesLines        = theDelegate.legend(:lineStyleForEntryAtIndex:forPlot:)
+        let delegateCanDraw              = true
+        let delegateProvidesFills        = true
+        let delegateProvidesLines        = true
+        
+        for legendEntry in self.legendEntries  {
+            let row = legendEntry.row;
+            let col = legendEntry.column;
+            
+            if (((desiredRowCount == 0) || (row < desiredRowCount)) &&
+                    ((desiredColumnCount == 0) || (col < desiredColumnCount))) {
+                let entryIndex = legendEntry.index;
+                let entryPlot    = legendEntry.plot;
+                
+                let left        = columnPositions[col];
+                let rowPosition = rowPositions[row];
+                
+                var entryRect = CGRect()
+                
+                if ( isHorizontalLayout ) {
+                    entryRect = CGRect(x: left,
+                                       y: rowPosition,
+                                       width: padLeft + theSwatchSize.width + theOffset + actualColumnWidths[col] + CGFloat(1.0) + padRight,
+                                       height: padBottom + actualRowHeights[row] + padTop)
+                }
+                else {
+                    entryRect = CGRect(x: left,
+                                       y: rowPosition,
+                                       width: padLeft + max(theSwatchSize.width, actualColumnWidths[col]) + CGFloat(1.0) + padRight,
+                                       height: padBottom + theSwatchSize.height + theOffset + actualRowHeights[row] + padTop);
+                }
+                
+                // draw background
+                let theFill : CPTFill?
+                if ( delegateProvidesFills == true ) {
+                    theFill = theDelegate?.legend(legend:self,
+                                                  fillForEntryAtIndex:entryIndex,
+                                                  forPlot:entryPlot!)
+                }
+                if ( (theFill == nil) ) {
+                    theFill = theEntryFill!;
+                }
+                if (( theFill ) != nil) {
+                    context.beginPath();
+                    
+                    let rect = CPTUtilities.shared.CPTAlignIntegralRectToUserSpace(context: context, rect: entryRect)
+                    CPTPathExtensions.shared.CPTAddRoundedRectPath(context: context,
+                                                                   rect: rect,
+                                                                   cornerRadius: entryRadius);
+                    theFill?.fillPathInContext(context: context)
+                }
+                
+                let theLineStyle : CPTLineStyle?
+                if ( delegateProvidesLines == true) {
+                    theLineStyle = theDelegate?.legend(legend: self, lineStyleForSwatchAtIndex:entryIndex, forPlot:entryPlot!)
+                }
+                if ( (theLineStyle == nil) ) {
+                    theLineStyle = theEntryLineStyle;
+                }
+                if (( theLineStyle ) != nil) {
+                    theLineStyle?.setLineStyleInContext(context: context)
+                    context.beginPath()
+                    let rect = CPTUtilities.shared.CPTAlignBorderedRectToUserSpace(context: context, rect: entryRect, borderLineStyle: theLineStyle!)
+                    CPTPathExtensions.shared.CPTAddRoundedRectPath(context: context, rect: rect, cornerRadius: entryRadius);
+                    theLineStyle?.strokePathInContext(context: context)
+                }
+                
+                // lay out swatch and title
+                var swatchLeft = CGFloat(0);
+                var swatchBottom = CGFloat(0);
+                var titleLeft = CGFloat(0)
+                var titleBottom = CGFloat(0)
+                
+                switch ( self.swatchLayout ) {
+                case .left:
+                    swatchLeft   = entryRect.minX + padLeft;
+                    swatchBottom = entryRect.minY + (entryRect.size.height - theSwatchSize.height) * CGFloat(0.5);
+                    
+                    titleLeft   = swatchLeft + theSwatchSize.width + theOffset;
+                    titleBottom = entryRect.minY + padBottom;
+                    break;
+                    
+                case .right:
+                    swatchLeft   = entryRect.maxX - padRight - theSwatchSize.width;
+                    swatchBottom = entryRect.minY + (entryRect.size.height - theSwatchSize.height) * CGFloat(0.5);
+                    
+                    titleLeft   = entryRect.minX + padLeft;
+                    titleBottom = entryRect.minY + padBottom;
+                    break;
+                    
+                case .top:
+                    swatchLeft   = entryRect.midX - theSwatchSize.width * CGFloat(0.5);
+                    swatchBottom = entryRect.maxY - padTop - theSwatchSize.height;
+                    
+                    titleLeft   = entryRect.midX - actualColumnWidths[col] * CGFloat(0.5);
+                    titleBottom = entryRect.minY + padBottom;
+                    break;
+                    
+                case .bottom:
+                    swatchLeft   = entryRect.midX - theSwatchSize.width * CGFloat(0.5);
+                    swatchBottom = entryRect.minY + padBottom
+                    
+                    titleLeft   = entryRect.midX - actualColumnWidths[col] * CGFloat(0.5);
+                    titleBottom = swatchBottom + theOffset + theSwatchSize.height
+                    break;
+                }
+                
+                // draw swatch
+                let swatchRect = CGRect(x: swatchLeft,
+                                        y: swatchBottom,
+                                        width: theSwatchSize.width,
+                                        height: theSwatchSize.height)
+                
+                var legendShouldDrawSwatch : Bool?
+                if ( delegateCanDraw == true) {
+                    legendShouldDrawSwatch = theDelegate?.legend(
+                        legend: self,
+                        shouldDrawSwatchAtIndex: entryIndex,
+                        forPlot: entryPlot!,
+                        inRect: swatchRect,
+                        inContext: context)
+                }
+                
+                if  legendShouldDrawSwatch!  {
+                    entryPlot drawSwatchForLegend:self,
+                              atIndex:entryIndex,
+                              inRect:swatchRect,
+                              inContext:context)
+                }
+                
+                // draw title
+                let titleRect = CGRect(x: titleLeft,
+                                       y: titleBottom,
+                                       width: actualColumnWidths[col] + CGFloat(1.0),
+                                       height: actualRowHeights[row]);
+                
+                legendEntry.drawTitleInRect(
+                    CPTUtilities.shared.CPTAlignRectToUserSpace( context: context, rect: titleRect),
+                 inContext:context,
+                 scale:self.contentsScale)
+            }
+        }
+        
     }
-
+    
 }

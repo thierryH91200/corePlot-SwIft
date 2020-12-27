@@ -31,13 +31,11 @@ class CPTColorSpace: NSObject {
         cgColorSpace = colorSpace
     }
     
-    
     override init()
     {
         //        let cgSpace = CGColorSpace(name: CGColorSpace.sRGB)
         super.init()
         //        super.init(colorSpace: cgSpace)
-        
     }
     
     init(colorSpace: CGColorSpace)

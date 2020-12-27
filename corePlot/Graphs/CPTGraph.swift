@@ -7,14 +7,6 @@
 
 import AppKit
 
-enum CPTGraphLayerType : Int {
-    case minorGridLines ///< Minor grid lines.
-    case majorGridLines ///< Major grid lines.
-    case axisLines      ///< Axis lines.
-    case plots          ///< Plots.
-    case axisLabels     ///< Axis labels.
-    case axisTitles      ///< Axis titles.
-}
 
 public class CPTGraph: CPTBorderedLayer {
     
@@ -131,7 +123,3 @@ public class CPTGraph: CPTBorderedLayer {
     }
     
 }
-
-
-
-

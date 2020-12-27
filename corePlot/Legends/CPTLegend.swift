@@ -21,10 +21,10 @@
     
     func legend( legend: CPTLegend, fillForEntryAtIndex:Int, forPlot plot: CPTPlot) -> CPTFill
     
-    func legend(legend: CPTLegend, fillForSwatchAtIndex:Int,idx forPlot: CPTPlot)-> CPTFill
-    func legend( legend: CPTLegend, lineStyleForSwatchAtIndex:Int, forPlot: CPTPlot) ->CPTLineStyle
+    func legend( legend: CPTLegend, fillForSwatchAtIndex:Int,idx forPlot: CPTPlot)-> CPTFill
+    func legend( legend: CPTLegend, lineStyleForSwatchAtIndex:Int, forPlot: CPTPlot) -> CPTLineStyle
     
-    func legend( legend: CPTLegend, shouldDrawSwatchAtIndex:Int, forPlot: CPTPlot, inRect:CGRect, inContext: CGContext)->Bool
+    func legend( legend: CPTLegend, shouldDrawSwatchAtIndex:Int, forPlot: CPTPlot, inRect:CGRect, inContext: CGContext)-> Bool
     func legend( legend: CPTLegend, legendEntryForPlot plot: CPTPlot, wasSelectedAtIndex:Int)
     func legend( legend: CPTLegend, legendEntryForPlot plot: CPTPlot, wasSelectedAtIndex:Int, withEvent: CPTNativeEvent)
     func legend( legend: CPTLegend, legendEntryForPlot plot: CPTPlot, touchDownAtIndex:Int)

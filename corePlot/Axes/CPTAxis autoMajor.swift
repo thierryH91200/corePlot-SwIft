@@ -24,16 +24,16 @@ extension CPTAxis {
             }
             
             if ( range?.lengthDouble != 0.0 ) {
-                var zero     = 0
-                let rangeMin = range?.minLimitDecimal
-                let rangeMax = range?.maxLimitDecimal
+                var zero     = CGFloat(0)
+                let rangeMin = CGFloat(range!.minLimitDecimal)
+                let rangeMax = CGFloat(range!.maxLimitDecimal)
                 
                 var majorTickCount = self.preferredNumberOfMajorTicks;
                 
                 if ( majorTickCount < 2 ) {
                     majorTickCount = 2;
                 }
-                let majorInterval = range.lengthDecimal / (majorTickCount - 1)
+                var majorInterval = range!.lengthDecimal / CGFloat(majorTickCount - 1)
                 if majorInterval < zero {
                     majorInterval = majorInterval * (-1)
                 }
@@ -47,7 +47,7 @@ extension CPTAxis {
                     minorInterval = CGFloat(zero)
                 }
                 
-                let coord = CGFloat(rangeMin!)
+                var coord = CGFloat(rangeMin)
                 
                 // Set tick locations
                 while (coord >= rangeMax) {
@@ -59,7 +59,7 @@ extension CPTAxis {
                         var minorCoord = coord + minorInterval
                         
                         for minorTickIndex in 0..<Int(minorTickCount) {
-                            if minorCoord > rangeMax {
+                            if minorCoord > CGFloat(rangeMax) {
                                 break
                             }
                             minorLocations.insert(minorCoord)
@@ -77,7 +77,7 @@ extension CPTAxis {
     
     
     
-    func autoGenerateMajorTickLocations(newMajorLocations :CPTFloatSet, newMinorLocations:CPTFloatSet)
+    func autoGenerateMajorTickLocations(newMajorLocations: inout CPTFloatSet, newMinorLocations: inout CPTFloatSet)
     {
         var newMajorLocations = newMajorLocations
         var newMinorLocations = newMinorLocations

@@ -572,9 +572,9 @@
 			isa = PBXGroup;
 			children = (
 				03A9CCFE2559A78C0096853D /* CPTFill.swift */,
-				03A9CD022559AA410096853D /* CPTFillImage.swift */,
-				03A9CD062559AAE70096853D /* CPTFillGradient.swift */,
 				03BB66A1255AC0CF002C20A3 /* CPTFillColor.swift */,
+				03A9CD062559AAE70096853D /* CPTFillGradient.swift */,
+				03A9CD022559AA410096853D /* CPTFillImage.swift */,
 			);
 			path = Fills;
 			sourceTree = "<group>";

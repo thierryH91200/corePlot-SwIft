@@ -21,11 +21,9 @@ extension CPTPlot {
     // *  @param numbers An array of numbers to cache. Can be a CPTNumericData, NSArray, or NSData (NSData is assumed to be a c-style array of type @double).
     // *  @param fieldEnum The field enumerator identifying the field.
     // **/
-    
-    
     func cacheNumbers(numbers : Any?, forField fieldEnum: Int)
     {
-        var cacheKey = fieldEnum
+        var cacheKey = String(fieldEnum)
         
         let coordinate   = self.coordinateForFieldIdentifier(field: fieldEnum)
         var thePlotSpace = self.plotSpace;
@@ -75,7 +73,7 @@ extension CPTPlot {
                         indices.addObject(thePlotSpace, indexOfCategory:category, forCoordinate: coordinate)
                     }
                     
-                    let dataType = (self.cachePrecision == CPTPlotCachePrecisionDecimal ? self.decimalDataType : self.doubleDataType);
+                    let dataType = (self.cachePrecision == CPTPlotCachePrecision.decimal ? self.decimalDataType : self.doubleDataType);
                     
                     let mutableNumbers = CPTMutableNumericData ( initWithArray:indices,
                                                                  dataType:dataType,
@@ -85,7 +83,7 @@ extension CPTPlot {
                     self.cachedDataCount = sampleCount;
                 }
                 else {
-                    self.cachedData.removeValue(forKey:cacheKey)
+                    self.cachedData.removeValue(forKey: cacheKey)
                 }
                 
             default:

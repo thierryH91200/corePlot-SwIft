@@ -11,19 +11,14 @@ class CPTFillColor: CPTFill {
     
     var  fillColor = NSColor.black
     
-    // MARK: Opacity
-    var isOpaque: Bool {
-        get { return fillColor.isOpaque }
-        set { }
-    }
-
     
-    init(aColor : NSColor)
+    init(aColor : NSUIColor)
     {
         fillColor = aColor
     }
     
-    func fillRect(rect :CGRect, context : CGContext)
+    // MARK: - Drawing    
+    override func fillRect(rect : CGRect, context : CGContext)
     {
         context.saveGState();
         context.setFillColor(self.fillColor.cgColor);
@@ -39,8 +34,14 @@ class CPTFillColor: CPTFill {
         context.restoreGState();
     }
     
+    // MARK: Opacity
+    override var isOpaque: Bool {
+        get { return self.fillColor.isOpaque }
+        set { }
+    }
+    
     // MARK: Color
-    func cgColor()-> CGColor
+    override func cgColor()-> CGColor
     {
         return self.fillColor.cgColor
     }

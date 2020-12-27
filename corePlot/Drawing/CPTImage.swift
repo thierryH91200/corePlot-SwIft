@@ -22,7 +22,7 @@ class CPTImage: NSObject {
     }
     
     struct _CPTImageSlices {
-        var  slice = [CGImage?] ()       ///< The image slices used to render a stretchable image.
+        var  slice = [CGImage?] ()    ///< The image slices used to render a stretchable image.
     }
     typealias CPTImageSlices = _CPTImageSlices
     
@@ -32,7 +32,6 @@ class CPTImage: NSObject {
     var isTiled = false
     var edgeInsets: NSEdgeInsets?
     var tileAnchoredToContext = false
-    var opaque = false
     let slices: CPTImageSlices
     
     var  lastDrawnScale = CGFloat(0.0)
@@ -41,7 +40,9 @@ class CPTImage: NSObject {
     // MARK: - Init/Dealloc
     init(path : String)
     {
-        //        self.initWithNativeImage([[CPTNativeImage alloc] initWithContentsOfFile:path]];
+        self.initWithNativeImage([[CPTNativeImage alloc] initWithContentsOfFile:path]];
+
+        
     }
     
     init( anImage: CGImage, newScale: CGFloat )
@@ -54,26 +55,24 @@ class CPTImage: NSObject {
         image                 = anImage;
         scale                 = newScale;
         lastDrawnScale        = newScale;
-        isTiled                 = false
+        isTiled               = false
         tileAnchoredToContext = true;
         edgeInsets            = NSEdgeInsetsZero
     }
     
-    //    convenience init( anImage: CGImage)
-    //    {
-    //        self.init(anImage: anImage, newScale:CGFloat(1.0))
-    //    }
-    //
-    //    override init()
-    //    {
-    //        //        self.init(anImage: nil)
-    //    }
-    //
-    //    // MARK: - Factory Methods
-    //    init(name:String)
-    //    {
-    //        self.imageWithNativeImage:[CPTNativeImage imageNamed:name]];
-    //    }
+    convenience init( anImage: CGImage)
+    {
+        self.init(anImage: anImage, newScale:CGFloat(1.0))
+    }
+    
+    convenience override init() {
+        self.init(nativeImage: nil)
+    }
+        // MARK: - Factory Methods
+        init(name:String)
+        {
+            self.imageWithNativeImage(name: CPTNativeImage)
+        }
     //
     //    /** @brief Initializes a CPTImage instance with the provided platform-native image.
     //     *
@@ -131,15 +130,11 @@ class CPTImage: NSObject {
     // MARK: Image comparison
     func isEqual(object: Any) -> Bool
     {
-        
         let otherImage = object as? CPTImage
-        
-        
+
         let selfCGImage  = self.image
         let otherCGImage = otherImage?.image;
-        
         return selfCGImage == otherCGImage
-        
     }
     
     //    /// @}
@@ -160,28 +155,21 @@ class CPTImage: NSObject {
     //    (NSUInteger)(CGImageGetRenderingIntent(selfCGImage) * self.scale);
     //    }
     //
-    //    /// @endcond
-    //
-    //
-    //    // MARK: Opacity
-    //    var isOpaque: Bool
-    //    {
-    //        get { return false}
-    //    }
-    //
-    //
-    //    // MARK: Accessors
-    //
-    //    /// @cond
-    //
-    //    -(void)setImage:(nullable CGImageRef)newImage
-    //    {
-    //    if ( newImage != image ) {
-    //    CGImageRetain(newImage);
-    //    CGImageRelease(image);
-    //    image = newImage;
-    //    }
-    //    }
+        // MARK: Opacity
+        var isOpaque: Bool
+        {
+            get { return false}
+            set { }
+        }
+    
+    
+    // MARK: Accessors
+    func setImage(newImage: CGImage)
+    {
+    if ( newImage != image ) {
+    image = newImage;
+    }
+    }
     //
     //    -(void)setNativeImage:(nullable CPTNativeImage *)newImage
     //    {
@@ -284,7 +272,7 @@ class CPTImage: NSObject {
     
     func drawImage(theImage: CGImage, inContext context: CGContext, rect: CGRect, scaleRatio: CGFloat)
     {
-        if ( theImage && (rect.width > CGFloat(0.0)) && (rect.height > CGFloat(0.0))) {
+        if ( theImage as! Bool && (rect.width > CGFloat(0.0)) && (rect.height > CGFloat(0.0))) {
             let imageScale = self.scale;
             
             context.saveGState();
@@ -298,14 +286,12 @@ class CPTImage: NSObject {
                 
                 let imageBounds = CGRect(x: 0.0, y: 0.0, width: CGFloat(theImage.width) / imageScale, height: CGFloat(theImage.height) / imageScale)
                 
-                CGContextDrawTiledImage(context, imageBounds, theImage);
+                CGContextDrawTiledImage(context, imageBounds, theImage)
             }
             else {
                 context.scaleBy(x: scaleRatio, y: scaleRatio);
                 context.draw(theImage, in: rect)
-                
             }
-            
             context.restoreGState();
         }
     }
@@ -347,11 +333,13 @@ class CPTImage: NSObject {
                 let imageSize   = theNativeImage!.size;
                 var drawingRect = NSRect(x: 0.0, y: 0.0, width: imageSize.width, height: imageSize.height);
                 
-                theImage = theNativeImage!.CGImageForProposedRect(&drawingRect,
-                                                                  context:  NSGraphicsContext.graphicsContextWithGraphicsPort(context, flipped:false),
-                                                                  hints:nil)
-                self.scale = contextScale;
+                theImage = theNativeImage!.CGImageForProposedRect(
+                    &drawingRect,
+                    context:  NSGraphicsContext.graphicsContextWithGraphicsPort(context, flipped:false),
+                    hints:nil)
+                self.scale = contextScale
                 #endif
+                
                 self.image = theImage;
             }
         }
@@ -395,12 +383,15 @@ class CPTImage: NSObject {
             // top row
             self.drawImage(theImage: imageSlices.slice[CPTSlice.topLeft.rawValue]!,
                            inContext:context,
-                           rect:CGRect(x: 0.0, y: rect.size.height - capTop, width: capLeft, height: capTop),
+                           rect:CGRect(x: 0.0, y: rect.size.height - capTop, width: capLeft,
+                            height: capTop),
                            scaleRatio:scaleRatio)
             
             self.drawImage(theImage: imageSlices.slice[CPTSlice.top.rawValue]!,
                            inContext:context,
-                           rect:CGRect(x: capLeft, y: rect.size.height - capTop, width: centerSize.width, height: capTop),
+                           rect:CGRect(x: capLeft, y: rect.size.height - capTop,
+                            width: centerSize.width,
+                            height: capTop),
                            scaleRatio:scaleRatio)
             
             self.drawImage(theImage: imageSlices.slice[CPTSlice.topRight.rawValue]!,
@@ -441,7 +432,6 @@ class CPTImage: NSObject {
                            rect:CGRect(x: rect.size.width - capRight, y: 0.0, width: capRight, height: capBottom),
                            scaleRatio:scaleRatio)
         }
-        
         self.lastDrawnScale = contextScale;
     }
     

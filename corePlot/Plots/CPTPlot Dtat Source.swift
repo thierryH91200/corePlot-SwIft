@@ -137,7 +137,7 @@ extension CPTPlot {
         // *  @brief Reload all data labels from the data source immediately.
     func reloadDataLabels()
     {
-        self.ca@objc @objc chedData.removeValue (forKey: .CPTPlotBindingDataLabels)
+        self.cachedData.removeValue (forKey: .CPTPlotBindingDataLabels)
         self.reloadDataLabels( indexRange: NSRange(location: 0, length: self.cachedDataCount))
     }
     

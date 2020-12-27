@@ -7,6 +7,17 @@
 
 import AppKit
 
+
+enum CPTGraphLayerType : String, CaseIterable {
+    case minorGridLines = "minorGridLines"   //< Minor grid lines.
+    case majorGridLines = "majorGridLines"
+    case axisLines      = "axisLines"
+    case plots          = "plots"
+    case axisLabels     = "axisLabels"
+    case axisTitles     = "axisTitles"
+}
+
+
 @objc
 public protocol CPTLayerDelegate: CALayerDelegate {
     
@@ -17,7 +28,6 @@ public protocol CPTLayerDelegate: CALayerDelegate {
     func plotAreaTouchUp    ( plotArea: CPTPlotArea)
     func plotAreaTouchUp    ( plotArea: CPTPlotArea, withEvent event: CPTNativeEvent)
 }
-
 
 public class CPTPlotArea: CPTAnnotationHostLayer {
     
@@ -34,15 +44,14 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
     var axisTitleGroup : CPTAxisLabelGroup?
 
     //MARK:  Layer Ordering
-    var topDownLayerOrder = [CGFloat]()
+    var topDownLayerOrder  = [CPTGraphLayerType]()
     var bottomUpLayerOrder = [CPTGraphLayerType]()
 
     //MARK:  Decorations
-    var borderLineStyle: CPTLineStyle?
     var fill: CPTFill?
 
     //MARK:  Dimensions
-    var   widthDecimal = CGFloat(0)
+    var  widthDecimal = CGFloat(0)
     var  heightDecimal = CGFloat(0)
     
     //MARK:  Init/Dealloc
@@ -57,9 +66,10 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
         axisLabelGroup     = nil
         axisTitleGroup     = nil
         fill               = nil
-        touchedPoint       = CGPoint(x:CGFloat.nan,y:  CGFloat.nan)
-        topDownLayerOrder.removeAll()
+        touchedPoint       = CGPoint(x: CGFloat.nan, y: CGFloat.nan)
         
+        
+        topDownLayerOrder.removeAll()
         bottomUpLayerOrder.removeAll()
         
         self.updateLayerOrder()
@@ -102,7 +112,6 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
         guard self.isHidden == false else {  return }
 
         super.renderAsVectorInContext(context: context)
-
         let useMask = self.masksToBounds;
 
         self.masksToBounds = true;
@@ -116,7 +125,7 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
             context.clip();
         }
 
-        self.fill?.fillRect(rect: self.bounds, inContext:context)
+        self.fill?.fillRect(rect: self.bounds, context:context)
         let theAxes = self.axisSet?.axes
 
         for axis in theAxes! {
@@ -133,21 +142,17 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
     // MARK: -  Layer ordering
     func updateLayerOrder()
     {
-        var buLayerOrder = self.bottomUpLayerOrder;
-        
-        for  i in 0..<kCPTNumberOfLayers {
-            buLayerOrder.append (i)
-        }
-        
-        let tdLayerOrder = self.topDownLayerOrder;
-        
-        if  tdLayerOrder {
-            buLayerOrder = self.bottomUpLayerOrder;
+        var buLayerOrder = bottomUpLayerOrder
+        buLayerOrder     = CPTGraphLayerType.allCases.map { $0 }
+
+        let tdLayerOrder = self.topDownLayerOrder
+        if  tdLayerOrder.count > 0 {
             
+            buLayerOrder = self.bottomUpLayerOrder;
             for layerIndex in 0..<tdLayerOrder.count {
                 let layerType = tdLayerOrder[layerIndex]
-                var i  = kCPTNumberOfLayers - layerIndex - 1;
-                
+                var i  = kCPTNumberOfLayers - layerIndex - 1
+
                 while ( buLayerOrder[i] != layerType ) {
                     if ( i == 0 ) {
                         break;
@@ -155,14 +160,14 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
                     i -= 1
                 }
                 while ( i < kCPTNumberOfLayers - layerIndex - 1 ) {
-                    buLayerOrder[i] = buLayerOrder[i + 1];
+                    buLayerOrder[i] = buLayerOrder[i + 1]
                     i += 1
                 }
-                buLayerOrder[kCPTNumberOfLayers - layerIndex - 1] = layerType;
+                buLayerOrder[kCPTNumberOfLayers - layerIndex - 1] = layerType
             }
         }
-        
-        // force the layer hierarchy to update
+//
+//        // force the layer hierarchy to update
 //        self.updatingLayers     = true;
 //        self.minorGridLineGroup = minorGridLineGroup;
 //        self.majorGridLineGroup = .majorGridLineGroup;
@@ -221,9 +226,9 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
     
     
     
-// MARK: - mark Axis set layer management
-//
-//    /** @brief Checks for the presence of the specified layer group and adds or removes it as needed.
+// MARK: - Axis set layer management
+
+    //    /** @brief Checks for the presence of the specified layer group and adds or removes it as needed.
 //     *  @param layerType The layer type being updated.
 //     **/
     func updateAxisSetLayersForType(layerType: CPTGraphLayerType)
@@ -249,7 +254,7 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
                 }
                 
             case .axisTitles:
-                if (( axis.axisTitle ) != nil) {
+                if  axis.axisTitle  != nil {
                     needsLayer = true
                 }
                 
@@ -355,26 +360,6 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
     }
 
 // MARK: - Event Handling
-//
-//    /// @name User Interaction
-//    /// @{
-//
-//    /**
-//     *  @brief Informs the receiver that the user has
-//     *  @if MacOnly pressed the mouse button. @endif
-//     *  @if iOSOnly touched the screen. @endif
-//     *
-//     *
-//     *  If this plot area has a delegate that responds to the
-//     *  @link CPTPlotAreaDelegate::plotAreaTouchDown: -plotAreaTouchDown: @endlink and/or
-//     *  @link CPTPlotAreaDelegate::plotAreaTouchDown:withEvent: -plotAreaTouchDown:withEvent: @endlink
-//     *  methods, the delegate method will be called and this method returns @true if the @par{interactionPoint} is within the
-//     *  plot area bounds.
-//     *
-//     *  @param event The OS event.
-//     *  @param interactionPoint The coordinates of the interaction.
-//     *  @return Whether the event was handled or not.
-//     **/
     override func pointingDeviceDownEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint)-> Bool
     {
         let theGraph = self.graph;
@@ -481,26 +466,19 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
 
     
     // MARK: - Accessors
-//
-//    /// @cond
-//
-//    -(nullable CPTLineStyle *)borderLineStyle
-//    {
-//        return self.axisSet.borderLineStyle;
-//    }
-//
-//    func setBorderLineStyle:(nullable CPTLineStyle *)newLineStyle
-//    {
-//        self.axisSet.borderLineStyle = newLineStyle;
-//    }
-//
-//    func setFill:(nullable CPTFill *)newFill
-//    {
-//        if ( newFill != fill ) {
-//            fill = [newFill copy];
-//            [self setNeedsDisplay];
-//        }
-//    }
+    var _borderLineStyle: CPTLineStyle?
+    var borderLineStyle : CPTLineStyle? {
+        get { return (self.axisSet?.borderLineStyle)! }
+        set { self.axisSet?.borderLineStyle = newValue}
+    }
+
+    func setFill(newFill: CPTFill)
+    {
+        if ( newFill != fill ) {
+            fill = newFill
+            self.setNeedsDisplay()
+        }
+    }
 //
 //    func setMinorGridLineGroup:(nullable CPTGridLineGroup *)newGridLines
 //    {

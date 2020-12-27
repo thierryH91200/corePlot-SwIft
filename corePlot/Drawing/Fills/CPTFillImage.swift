@@ -14,21 +14,11 @@ class CPTFillImage: CPTFill {
     init(anImage: CPTImage )
     {
         super.init()
-            fillImage = anImage
+        fillImage = anImage
     }
-
-
-    override init() {
-    }
-    
     
     // MARK: Drawing
-
-    /** @brief Draws the color into the given graphics context inside the provided rectangle.
-     *  @param rect The rectangle to draw into.
-     *  @param context The graphics context to draw into.
-     **/
-    func fillPathInContext(rect: CGRect, context: CGContext)
+    override func fillRect(rect: CGRect, context: CGContext)
     {
         context.saveGState();
 
@@ -38,20 +28,13 @@ class CPTFillImage: CPTFill {
         context.restoreGState();
     }
 
-    /** @brief Draws the color into the given graphics context clipped to the current drawing path.
-     *  @param context The graphics context to draw into.
-     **/
     override func fillPathInContext(context: CGContext)
     {
         context.saveGState();
         let bounds = context.boundingBoxOfPath
-        context.clip();
+        context.clip()
         self.fillImage.drawInRect(rect: bounds, inContext:context)
         context.restoreGState();
-
-//        contextsetFillColor(self.fillColor.cgColor)
-//        .
-//        context.fillPath();
     }
 
     // MARK: Opacity
@@ -59,8 +42,4 @@ class CPTFillImage: CPTFill {
         get { return self.fillImage.isOpaque }
         set { }
     }
-
-
-
-
 }

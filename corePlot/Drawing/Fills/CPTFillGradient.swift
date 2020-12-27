@@ -5,39 +5,34 @@
 //  Created by thierryH24 on 09/11/2020.
 //
 
-import Cocoa
+import AppKit
 
 class CPTFillGradient: CPTFill {
     
-    
     var fillGradient :CPTGradient
     
-    override init() {
-        
-    }
-    
     // MARK: - Init/Dealloc
-    init( aGradient: CPTGradient)
+    init( gradient: CPTGradient)
     {
         super.init()
-        fillGradient = aGradient;
+        fillGradient = gradient;
     }
     
     // MARK: - Drawing
-    override func fillRect(rect: CGRect, inContext context: CGContext)
+    override func fillRect(rect: CGRect, context: CGContext)
     {
         self.fillGradient.fillRect(rect: rect, inContext:context)
     }
 
     override func fillPathInContext(context : CGContext)
     {
-        self.fillGradient.fillPathInContext(context)
+        self.fillPathInContext(context: context)
     }
     
     // MARK: - Opacity
     override var isOpaque: Bool {
         get { return self.fillGradient.isOpaque }
-        set {}
+        set { }
     }
     
 }
