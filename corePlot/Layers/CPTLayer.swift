@@ -138,9 +138,8 @@ public class CPTLayer : CALayer
     var renderingRecursively = false
     var useFastRendering     = false
     
-    var _outerBorderPath  :CGPath?   = nil
-    
-    var outerBorderPath : CGPath? {
+    var _outerBorderPath : CGPath?   = nil
+    var outerBorderPath  : CGPath? {
         get { return _outerBorderPath }
         set {
             if ( newValue != _outerBorderPath ) {
@@ -149,8 +148,8 @@ public class CPTLayer : CALayer
         }
     }
     
-    var _innerBorderPath  :CGPath?   = nil
-    var innerBorderPath  :CGPath?   {
+    var _innerBorderPath : CGPath?   = nil
+    var innerBorderPath  : CGPath?   {
         get {return _innerBorderPath }
         set {
             if ( _innerBorderPath != newValue ) {

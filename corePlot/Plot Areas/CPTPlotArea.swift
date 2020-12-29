@@ -19,7 +19,7 @@ enum CPTGraphLayerType : String, CaseIterable {
 
 
 @objc
-public protocol CPTLayerDelegate: CALayerDelegate {
+public protocol CPTPlotAreaDelegate: CALayerDelegate {
     
     @objc optional func plotAreaWasSelected( plotArea: CPTPlotArea )
     func plotAreaWasSelected( plotArea: CPTPlotArea, withEvent event: CPTNativeEvent )
@@ -35,9 +35,6 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
 
     var touchedPoint = CGPoint(x: 0,y: 0)
     
-    //MARK: Layers
-    var minorGridLineGroup : CPTGridLineGroup?
-    var majorGridLineGroup : CPTGridLineGroup?
     var axisSet: CPTAxisSet?
     var plotGroup: CPTPlotGroup?
     var axisLabelGroup : CPTAxisLabelGroup?
@@ -47,12 +44,10 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
     var topDownLayerOrder  = [CPTGraphLayerType]()
     var bottomUpLayerOrder = [CPTGraphLayerType]()
 
-    //MARK:  Decorations
-    var fill: CPTFill?
-
     //MARK:  Dimensions
-    var  widthDecimal = CGFloat(0)
-    var  heightDecimal = CGFloat(0)
+    var isUpdatingLayers = false
+    var widthDecimal = CGFloat(0)
+    var heightDecimal = CGFloat(0)
     
     //MARK:  Init/Dealloc
     override init(frame:CGRect)
@@ -285,10 +280,11 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
             }
         }
     }
-//
-//    /** @brief Ensures that a group layer is set for the given layer type.
-//     *  @param layerType The layer type being updated.
-//     **/
+    
+
+    /** @brief Ensures that a group layer is set for the given layer type.
+     *  @param layerType The layer type being updated.
+     **/
     func setAxisSetLayersForType(layerType: CPTGraphLayerType)
     {
         switch ( layerType ) {
@@ -348,7 +344,7 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
                 }
                 
             case .axisTitles:
-                if (( currentAxis.axisTitle ) != nil) {
+                if ( currentAxis.axisTitle() != nil) {
                     idx += 1
                 }
                 
@@ -363,36 +359,22 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
     override func pointingDeviceDownEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint)-> Bool
     {
         let theGraph = self.graph;
-
-        if ( (theGraph == nil) || self.isHidden ) {
-            return false
-        }
-
+        guard (theGraph != nil) || self.isHidden == false else { return false }
+        
         weak var theDelegate = self.delegate as? CPTPlotAreaDelegate
-
-        if theDelegate?.respondsToSelector(to:#selector(plotAreaTouchDown(plotArea:))) ||
-            theDelegate.respondsToSelector(to:#selector(plotAreaTouchDown(plotArea:withEvent:))) ||
-           theDelegate.respondsToSelector(to:#selector(plotAreaWasSelected:) ||
-           theDelegate.respondsToSelector(to:#selector(plotAreaWasSelected:withEvent:) {
+        
+        // Inform delegate if a point was hit
+        let plotAreaPoint = theGraph?.convert(interactionPoint, to: self)
+        
+        if self.bounds.contains( plotAreaPoint!)  {
+            self.touchedPoint = plotAreaPoint!
             
-            // Inform delegate if a point was hit
-            let plotAreaPoint = theGraph?.convert(interactionPoint, to:self)
-
-            if self.bounds.contains( plotAreaPoint!)  {
-                self.touchedPoint = plotAreaPoint!
-
-                if theDelegate?.respondsToSelector( to: #selector(plotAreaTouchDown!(plotArea:self)) {
-                    theDelegate?.plotAreaTouchDown!(plotArea: self)
-                }
-                if theDelegate.respondsToSelector( to: #selector(plotAreaTouchDown:withEvent:) {
-                    theDelegate.plotAreaTouchDown(plotArea: self, withEvent:event)
-                }
-
-                return false // don't block other events in the responder chain
-            }
+            theDelegate?.plotAreaTouchDown?(plotArea: self)
+            theDelegate?.plotAreaTouchDown?(plotArea: self, withEvent:event)
+            
+            return false // don't block other events in the responder chain
         }
-
-        return super.pointingDeviceDownEvent(event: event, atPoint:interactionPoint)
+        return super.pointingDeviceDownEvent(event: event, atPoint: interactionPoint)
     }
 
 //    /**
@@ -472,47 +454,59 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
         set { self.axisSet?.borderLineStyle = newValue}
     }
 
-    func setFill(newFill: CPTFill)
-    {
-        if ( newFill != fill ) {
-            fill = newFill
-            self.setNeedsDisplay()
+    //MARK:  Decorations
+    var _fill: CPTFill?
+    var fill: CPTFill? {
+        get { }
+        set {
+            if ( newValue != _fill ) {
+                _fill = newValue
+                self.setNeedsDisplay()
+            }
         }
     }
-//
-//    func setMinorGridLineGroup:(nullable CPTGridLineGroup *)newGridLines
-//    {
-//        if ((newGridLines != minorGridLineGroup) || self.isUpdatingLayers ) {
-//            [minorGridLineGroup removeFromSuperlayer];
-//            minorGridLineGroup = newGridLines;
-//            if ( newGridLines ) {
-//                CPTGridLineGroup *gridLines = newGridLines;
-//
-//                gridLines.plotArea = self;
-//                gridLines.major    = false
-//                [self insertSublayer:gridLines atIndex:[self indexForLayerType:CPTGraphLayerTypeMinorGridLines]];
-//            }
-//            [self setNeedsLayout];
-//        }
-//    }
-//
-//    func setMajorGridLineGroup:(nullable CPTGridLineGroup *)newGridLines
-//    {
-//        if ((newGridLines != majorGridLineGroup) || self.isUpdatingLayers ) {
-//            [majorGridLineGroup removeFromSuperlayer];
-//            majorGridLineGroup = newGridLines;
-//            if ( newGridLines ) {
-//                CPTGridLineGroup *gridLines = newGridLines;
-//
-//                gridLines.plotArea = self;
-//                gridLines.major    = true;
-//                [self insertSublayer:gridLines atIndex:[self indexForLayerType:CPTGraphLayerTypeMajorGridLines]];
-//            }
-//            [self setNeedsLayout];
-//        }
-//    }
-//
-//    func setAxisSet:(nullable CPTAxisSet *)newAxisSet
+
+    //MARK: Layers
+    var _minorGridLineGroup : CPTGridLineGroup?
+    var minorGridLineGroup : CPTGridLineGroup? {
+        get { }
+        set {
+            if ((newValue != _minorGridLineGroup) || self.isUpdatingLayers ) {
+                _minorGridLineGroup?.removeFromSuperlayer()
+                _minorGridLineGroup = newValue;
+                if (( newValue ) != nil) {
+                    let gridLines = newValue;
+                    gridLines?.plotArea = self;
+                    gridLines?.major    = false
+                    self.insertSublayer(gridLines!, at:UInt32(self.indexForLayerType(layerType: .minorGridLines)))
+                }
+                self.setNeedsLayout()
+            }
+        }
+    }
+
+
+    var _majorGridLineGroup : CPTGridLineGroup?
+    var majorGridLineGroup : CPTGridLineGroup? {
+        get { return _majorGridLineGroup }
+        set {
+            if ((newValue != majorGridLineGroup) || self.isUpdatingLayers == true  ) {
+                majorGridLineGroup?.removeFromSuperlayer()
+                _majorGridLineGroup = newValue
+                if (( newValue ) != nil) {
+                    let gridLines = newValue;
+                    
+                    gridLines?.plotArea = self
+                    gridLines?.major    = true
+                    self.insertSublayer(gridLines!, at:UInt32(self.indexForLayerType(layerType: .majorGridLines)))
+                }
+                self.setNeedsLayout()
+            }
+        }
+    }
+
+
+    //    func setAxisSet:(nullable CPTAxisSet *)newAxisSet
 //    {
 //        if ((newAxisSet != axisSet) || self.isUpdatingLayers ) {
 //            [axisSet removeFromSuperlayer];
@@ -582,7 +576,7 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
 //        }
 //    }
 //
-//    func setTopDownLayerOrder:(nullable CPTNumberArray *)newArray
+//    func setTopDownLayerOrder(newArray [CPTGraphLayerType])
 //    {
 //        if ( newArray != topDownLayerOrder ) {
 //            topDownLayerOrder = newArray;
@@ -590,16 +584,18 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
 //        }
 //    }
 //
-//    func setGraph:(nullable CPTGraph *)newGraph
-//    {
-//        if ( newGraph != self.graph ) {
-//            super.graph = newGraph;
-//
-//            for ( CPTAxis *axis in self.axisSet.axes ) {
-//                axis.graph = newGraph;
-//            }
-//        }
-//    }
+    
+    override var graph : CPTGraph? {
+        get { super.graph  }
+        set {
+            if ( newValue != super.graph ) {
+                super.graph = newValue;
+                for axis in self.axisSet!.axes {
+                    axis.graph = newValue
+                }
+            }
+        }
+    }
 //
 //    func setBounds:(CGRect)newBounds
 //    {

@@ -171,7 +171,6 @@ extension CPTLegend {
                     
                     titleLeft   = swatchLeft + theSwatchSize.width + theOffset;
                     titleBottom = entryRect.minY + padBottom;
-                    break;
                     
                 case .right:
                     swatchLeft   = entryRect.maxX - padRight - theSwatchSize.width;
@@ -179,7 +178,6 @@ extension CPTLegend {
                     
                     titleLeft   = entryRect.minX + padLeft;
                     titleBottom = entryRect.minY + padBottom;
-                    break;
                     
                 case .top:
                     swatchLeft   = entryRect.midX - theSwatchSize.width * CGFloat(0.5);
@@ -187,7 +185,6 @@ extension CPTLegend {
                     
                     titleLeft   = entryRect.midX - actualColumnWidths[col] * CGFloat(0.5);
                     titleBottom = entryRect.minY + padBottom;
-                    break;
                     
                 case .bottom:
                     swatchLeft   = entryRect.midX - theSwatchSize.width * CGFloat(0.5);
@@ -195,7 +192,6 @@ extension CPTLegend {
                     
                     titleLeft   = entryRect.midX - actualColumnWidths[col] * CGFloat(0.5);
                     titleBottom = swatchBottom + theOffset + theSwatchSize.height
-                    break;
                 }
                 
                 // draw swatch
@@ -214,11 +210,12 @@ extension CPTLegend {
                         inContext: context)
                 }
                 
-                if  legendShouldDrawSwatch!  {
-                    entryPlot drawSwatchForLegend:self,
-                              atIndex:entryIndex,
-                              inRect:swatchRect,
-                              inContext:context)
+                if  legendShouldDrawSwatch! == true {
+                    entryPlot!.drawSwatchForLegend(
+                        legend   : self,
+                        atIndex  : entryIndex,
+                        inRect   : swatchRect,
+                        context  : context)
                 }
                 
                 // draw title
@@ -227,9 +224,9 @@ extension CPTLegend {
                                        width: actualColumnWidths[col] + CGFloat(1.0),
                                        height: actualRowHeights[row]);
                 
-                legendEntry.drawTitleInRect(
-                    CPTUtilities.shared.CPTAlignRectToUserSpace( context: context, rect: titleRect),
-                 inContext:context,
+                legendEntry.drawTitle(
+                    in: CPTUtilities.shared.CPTAlignRectToUserSpace( context: context, rect: titleRect),
+                    in:context,
                  scale:self.contentsScale)
             }
         }

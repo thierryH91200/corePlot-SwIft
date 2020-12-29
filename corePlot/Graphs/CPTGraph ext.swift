@@ -440,54 +440,15 @@ extension CPTGraph {
         return contentAnchor;
     }
     
-    // MARK: - Accessors
-    override func setPaddingLeft(newPadding: CGFloat)
-    {
-        if newPadding != self.paddingLeft  {
-            super.paddingLeft = newPadding
-            for theAxes in self.axisSet().axes{
-                theAxes.setNeedsDisplay()
-            }
-        }
-    }
     
-    override func setPaddingRight(newPadding:CGFloat)
-    {
-        if ( newPadding != self.paddingRight ) {
-            super.paddingRight = newPadding;
-            for theAxes in self.axisSet().axes{
-                theAxes.setNeedsDisplay()
-            }
-        }
-    }
-    
-    override func setPaddingTop(newPadding:CGFloat)
-    {
-        if ( newPadding != self.paddingTop ) {
-            super.paddingTop = newPadding
-            for theAxes in self.axisSet().axes{
-                theAxes.setNeedsDisplay()
-            }
-        }
-    }
-    
-    override func setPaddingBottom(newPadding: CGFloat)
-    {
-        if ( newPadding != self.paddingBottom ) {
-            super.paddingBottom = newPadding
-            for theAxes in self.axisSet().axes{
-                theAxes.setNeedsDisplay()
-            }
-        }
-    }
-    
-    //    func topDownLayerOrder() -> CPTNumberArray? {
+    //    func topDownLayerOrder() -> [CPTGraphLayerType] {
     //        return plotAreaFrame.plotArea.topDownLayerOrder()
     //    }
     
-    func setTopDownLayerOrder(_ newArray: [CGFloat]?) {
-        plotAreaFrame.plotArea?.topDownLayerOrder = newArray!
+    func setTopDownLayerOrder(_ newArray: [CPTGraphLayerType]) {
+        plotAreaFrame.plotArea?.topDownLayerOrder = newArray
     }
+    
     func setTitle(newTitle : String)
     {
         if ( newTitle != title ) {

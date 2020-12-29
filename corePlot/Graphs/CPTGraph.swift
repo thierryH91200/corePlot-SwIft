@@ -46,12 +46,54 @@ public class CPTGraph: CPTBorderedLayer {
     var plotAreaFrame : CPTPlotAreaFrame
 //    var defaultPlotSpace : CPTPlotSpace
     var newPlotSpace : CPTPlotSpace?
-    var topDownLayerOrder : CPTNumberArray
+    var topDownLayerOrder : [CPTGraphLayerType]
     
     // MARK: Legend
     var legend : CPTLegend?
     var legendAnchor : CPTRectAnchor?
     var legendDisplacement: CGPoint;
+    
+    // MARK: - Accessors
+    func setPaddingLeft(newPadding: CGFloat)
+    {
+        if newPadding != self.paddingLeft  {
+            super.paddingLeft = newPadding
+            for theAxes in self.axisSet().axes{
+                theAxes.setNeedsDisplay()
+            }
+        }
+    }
+    
+    func setPaddingRight(newPadding:CGFloat)
+    {
+        if ( newPadding != self.paddingRight ) {
+            super.paddingRight = newPadding;
+            for theAxes in self.axisSet().axes{
+                theAxes.setNeedsDisplay()
+            }
+        }
+    }
+    
+     func setPaddingTop(newPadding:CGFloat)
+    {
+        if ( newPadding != self.paddingTop ) {
+            super.paddingTop = newPadding
+            for theAxes in self.axisSet().axes{
+                theAxes.setNeedsDisplay()
+            }
+        }
+    }
+    
+    func setPaddingBottom(newPadding: CGFloat)
+    {
+        if ( newPadding != self.paddingBottom ) {
+            super.paddingBottom = newPadding
+            for theAxes in self.axisSet().axes{
+                theAxes.setNeedsDisplay()
+            }
+        }
+    }
+
     
     override init(frame : CGRect) {
         super.init(frame: frame)

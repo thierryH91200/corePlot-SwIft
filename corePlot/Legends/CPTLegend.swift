@@ -27,9 +27,9 @@
     func legend( legend: CPTLegend, shouldDrawSwatchAtIndex:Int, forPlot: CPTPlot, inRect:CGRect, inContext: CGContext)-> Bool
     func legend( legend: CPTLegend, legendEntryForPlot plot: CPTPlot, wasSelectedAtIndex:Int)
     func legend( legend: CPTLegend, legendEntryForPlot plot: CPTPlot, wasSelectedAtIndex:Int, withEvent: CPTNativeEvent)
-    func legend( legend: CPTLegend, legendEntryForPlot plot: CPTPlot, touchDownAtIndex:Int)
     
-    func legend( legend: CPTLegend, legendEntryForPlot plot: CPTPlot, touchDownAtIndex:Int, withEvent:CPTNativeEvent )
+    @objc optional func legend( legend: CPTLegend, legendEntryForPlot plot: CPTPlot, touchDownAtIndex:Int)
+    @objc optional func legend( legend: CPTLegend, legendEntryForPlot plot: CPTPlot, touchDownAtIndex:Int, withEvent:CPTNativeEvent )
     func legend( legend: CPTLegend, legendEntryForPlot plot: CPTPlot, touchUpAtIndex: Int)
     func legend( legend: CPTLegend, legendEntryForPlot plot: CPTPlot, touchUpAtIndex:Int, withEvent: CPTNativeEvent)
  }
@@ -615,13 +615,7 @@
                 object:plotToRemove)
         }
     }
-    //
-    //    /// @cond
-    //
-    //    /** @internal
-    //     *  @brief Remove all legend entries for the given plot from the legend.
-    //     *  @param plot The plot.
-    //     **/
+
     func removeLegendEntriesForPlot(plot: CPTPlot)
     {
         var theLegendEntries = self.legendEntries;
@@ -678,254 +672,187 @@
     
     
     // MARK: - Responder Chain and User interaction
-    //
-    //    /// @cond
-    //
-    //    func legendEntryForInteractionPoint:(CGPoint)interactionPoint row:(nonnull NSUInteger *)row col:(nonnull NSUInteger *)col
-    //    {
-    //        // Convert the interaction point to the local coordinate system
-    //        CPTGraph *theGraph = self.graph;
-    //
-    //        if ( theGraph ) {
-    //            interactionPoint = [self convertPoint:interactionPoint fromLayer:theGraph];
-    //        }
-    //        else {
-    //            for ( CPTPlot *plot in self.plots ) {
-    //                CPTGraph *plotGraph = plot.graph;
-    //
-    //                if ( plotGraph ) {
-    //                    interactionPoint = [self convertPoint:interactionPoint fromLayer:plotGraph];
-    //                    break;
-    //                }
-    //            }
-    //        }
-    //
-    //        // Update layout if needed
-    //        [self recalculateLayout];
-    //
-    //        // Hit test the legend entries
-    //        CGFloat rMargin = self.rowMargin;
-    //        CGFloat cMargin = self.columnMargin;
-    //
-    //        CGFloat swatchWidth = self.swatchSize.width + self.titleOffset;
-    //
-    //        CGFloat padHorizontal = self.entryPaddingLeft + self.entryPaddingRight;
-    //        CGFloat padVertical   = self.entryPaddingTop + self.entryPaddingBottom;
-    //
-    //        // Rows
-    //        CGFloat position = CGRectGetMaxY(self.bounds) - self.paddingTop;
-    //
-    //        NSUInteger i = 0;
-    //
-    //        for ( NSNumber *height in self.rowHeightsThatFit ) {
-    //            CGFloat rowHeight = height.cgFloatValue + padVertical;
-    //            if ((interactionPoint.y <= position) && (interactionPoint.y >= position - rowHeight)) {
-    //                *row = i;
-    //                break;
-    //            }
-    //
-    //            position -= rowHeight + rMargin;
-    //            i++;
-    //        }
-    //
-    //        // Columns
-    //        position = self.paddingLeft;
-    //
-    //        i = 0;
-    //
-    //        for ( NSNumber *width in self.columnWidthsThatFit ) {
-    //            CGFloat colWidth = width.cgFloatValue + swatchWidth + padHorizontal;
-    //            if ((interactionPoint.x >= position) && (interactionPoint.x <= position + colWidth)) {
-    //                *col = i;
-    //                break;
-    //            }
-    //
-    //            position += colWidth + cMargin;
-    //            i++;
-    //        }
-    //    }
-    //
-    //    /// @endcond
-    //
-    //    /// @name User Interaction
-    //    /// @{
-    //
-    //    /**
-    //     *  @brief Informs the receiver that the user has
-    //     *  @if MacOnly pressed the mouse button. @endif
-    //     *  @if iOSOnly started touching the screen. @endif
-    //     *
-    //     *
-    //     *  If this legend has a delegate that responds to the
-    //     *  @link CPTLegendDelegate::legend:legendEntryForPlot:touchDownAtIndex: -legend:legendEntryForPlot:touchDownAtIndex: @endlink or
-    //     *  @link CPTLegendDelegate::legend:legendEntryForPlot:touchDownAtIndex:withEvent: -legend:legendEntryForPlot:touchDownAtIndex:withEvent: @endlink
-    //     *  methods, the legend entries are searched to find the plot and index of the one whose swatch or title contains the @par{interactionPoint}.
-    //     *  The delegate method will be called and this method returns @YES if the @par{interactionPoint} is within a legend entry.
-    //     *  This method returns @NO if the @par{interactionPoint} is too far away from all of the legend entries.
-    //     *
-    //     *  @param event The OS event.
-    //     *  @param interactionPoint The coordinates of the interaction.
-    //     *  @return Whether the event was handled or not.
-    //     **/
-    //    -(BOOL)pointingDeviceDownEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
-    //    {
-    //        if ( self.hidden || (self.plots.count == 0)) {
-    //            return false
-    //        }
-    //
-    //        id<CPTLegendDelegate> theDelegate = (id<CPTLegendDelegate>)self.delegate;
-    //
-    //        if ( [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:touchDownAtIndex:)] ||
-    //             [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:touchDownAtIndex:withEvent:)] ||
-    //             [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:wasSelectedAtIndex:)] ||
-    //             [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:wasSelectedAtIndex:withEvent:)] ) {
-    //            NSUInteger row = NSNotFound;
-    //            NSUInteger col = NSNotFound;
-    //            [self legendEntryForInteractionPoint:interactionPoint row:&row col:&col];
-    //
-    //            // Notify the delegate if we found a hit
-    //            if ((row != NSNotFound) && (col != NSNotFound)) {
-    //                for ( CPTLegendEntry *legendEntry in self.legendEntries ) {
-    //                    if ((legendEntry.row == row) && (legendEntry.column == col)) {
-    //                        self.pointingDeviceDownEntry = legendEntry;
-    //
-    //                        CPTPlot *legendPlot = legendEntry.plot;
-    //                        BOOL handled        = false
-    //
-    //                        if ( [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:touchDownAtIndex:)] ) {
-    //                            handled = true
-    //                            [theDelegate legend:self legendEntryForPlot:legendPlot touchDownAtIndex:legendEntry.index];
-    //                        }
-    //                        if ( [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:touchDownAtIndex:withEvent:)] ) {
-    //                            handled = true
-    //                            [theDelegate legend:self legendEntryForPlot:legendPlot touchDownAtIndex:legendEntry.index withEvent:event];
-    //                        }
-    //
-    //                        if ( handled ) {
-    //                            return true
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //        }
-    //
-    //        return [super pointingDeviceDownEvent:event atPoint:interactionPoint];
-    //    }
-    //
-    //    /**
-    //     *  @brief Informs the receiver that the user has
-    //     *  @if MacOnly released the mouse button. @endif
-    //     *  @if iOSOnly ended touching the screen. @endif
-    //     *
-    //     *
-    //     *  If this legend has a delegate that responds to the
-    //     *  @link CPTLegendDelegate::legend:legendEntryForPlot:touchUpAtIndex: -legend:legendEntryForPlot:touchUpAtIndex: @endlink or
-    //     *  @link CPTLegendDelegate::legend:legendEntryForPlot:touchUpAtIndex:withEvent: -legend:legendEntryForPlot:touchUpAtIndex:withEvent: @endlink
-    //     *  methods, the legend entries are searched to find the plot and index of the one whose swatch or title contains the @par{interactionPoint}.
-    //     *  The delegate method will be called and this method returns @YES if the @par{interactionPoint} is within a legend entry.
-    //     *  This method returns @NO if the @par{interactionPoint} is too far away from all of the legend entries.
-    //     *
-    //     *  If the bar being released is the same as the one that was pressed (see
-    //     *  @link CPTLegend::pointingDeviceDownEvent:atPoint: -pointingDeviceDownEvent:atPoint: @endlink), if the delegate responds to the
-    //     *  @link CPTLegendDelegate::legend:legendEntryForPlot:wasSelectedAtIndex: -legend:legendEntryForPlot:wasSelectedAtIndex: @endlink and/or
-    //     *  @link CPTLegendDelegate::legend:legendEntryForPlot:wasSelectedAtIndex:withEvent: -legend:legendEntryForPlot:wasSelectedAtIndex:withEvent: @endlink
-    //     *  methods, these will be called.
-    //     *
-    //     *  @param event The OS event.
-    //     *  @param interactionPoint The coordinates of the interaction.
-    //     *  @return Whether the event was handled or not.
-    //     **/
-    //    -(BOOL)pointingDeviceUpEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
-    //    {
-    //        CPTLegendEntry *selectedDownEntry = self.pointingDeviceDownEntry;
-    //
-    //        self.pointingDeviceDownEntry = nil;
-    //
-    //        if ( self.hidden || (self.plots.count == 0)) {
-    //            return false
-    //        }
-    //
-    //        theDelegate = self.delegate
-    //
-    //        if ( [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:touchUpAtIndex:)] ||
-    //             [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:touchUpAtIndex:withEvent:)] ||
-    //             [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:wasSelectedAtIndex:)] ||
-    //             [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:wasSelectedAtIndex:withEvent:)] ) {
-    //            NSUInteger row = NSNotFound;
-    //            NSUInteger col = NSNotFound;
-    //            [self legendEntryForInteractionPoint:interactionPoint row:&row col:&col];
-    //
-    //            // Notify the delegate if we found a hit
-    //            if ((row != NSNotFound) && (col != NSNotFound)) {
-    //                for ( CPTLegendEntry *legendEntry in self.legendEntries ) {
-    //                    if ((legendEntry.row == row) && (legendEntry.column == col)) {
-    //                        BOOL handled = false
-    //
-    //                        CPTPlot *entryPlot = legendEntry.plot;
-    //
-    //                        if ( [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:touchUpAtIndex:)] ) {
-    //                            handled = true
-    //                            [theDelegate legend:self legendEntryForPlot:entryPlot touchUpAtIndex:legendEntry.index];
-    //                        }
-    //                        if ( [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:touchUpAtIndex:withEvent:)] ) {
-    //                            handled = true
-    //                            [theDelegate legend:self legendEntryForPlot:entryPlot touchUpAtIndex:legendEntry.index withEvent:event];
-    //                        }
-    //
-    //                        if ( legendEntry == selectedDownEntry ) {
-    //                            if ( [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:wasSelectedAtIndex:)] ) {
-    //                                handled = true
-    //                                [theDelegate legend:self legendEntryForPlot:entryPlot wasSelectedAtIndex:legendEntry.index];
-    //                            }
-    //
-    //                            if ( [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:wasSelectedAtIndex:withEvent:)] ) {
-    //                                handled = true
-    //                                [theDelegate legend:self legendEntryForPlot:entryPlot wasSelectedAtIndex:legendEntry.index withEvent:event];
-    //                            }
-    //                        }
-    //
-    //                        if ( handled ) {
-    //                            return true
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //        }
-    //
-    //        return [super pointingDeviceUpEvent:event atPoint:interactionPoint];
-    //    }
-    //
-    //    /// @}
-    //
-    //  MARK: Description
-    //
-    //    /// @cond
-    //
-    //    -(nullable NSString *)description
-    //    {
-    //        return [NSString stringWithFormat:@"<%@ for plots %@>", super.description, self.plots];
-    //    }
-    //
-    //    /// @endcond
-    //
-    //    #pragma mark Accessors
-    //
-    //    /// @cond
-    //
-    //    func setTextStyle(newTextStyle: CPTTextStyle)
-    //    {
-    //        if ( newTextStyle != textStyle ) {
-    //            textStyle = newTextStyle
-    //
-    //            self.legendEntries makeObjectsPerformSelector:@selector(setTextStyle:) withObject:textStyle];
-    //
-    //            for legendEntry in self.legendEntries {
-    //                legendEntry.setTextStyle(w)
-    //            }
-    //
-    //            self.layoutChanged = true
-    //        }
-    //    }
+    func legendEntryForInteractionPoint(interactionPoint:CGPoint, row: inout Int, col: inout Int )
+    {
+        var interactionPoint = interactionPoint
+
+        // Convert the interaction point to the local coordinate system
+        let theGraph = self.graph;
+        
+        if (( theGraph ) != nil) {
+            interactionPoint = self.convert(interactionPoint, from:theGraph)
+        }
+        else {
+            for plot in self.plots {
+                let plotGraph = plot.graph;
+                
+                if (( plotGraph ) != nil) {
+                    interactionPoint = self.convert(interactionPoint, from:plotGraph)
+                    break;
+                }
+            }
+        }
+        
+        // Update layout if needed
+        self.recalculateLayout()
+        
+        // Hit test the legend entries
+        let rMargin = self.rowMargin;
+        let cMargin = self.columnMargin;
+        
+        let swatchWidth = self.swatchSize.width + self.titleOffset;
+        
+        let padHorizontal = self.entryPaddingLeft + self.entryPaddingRight;
+        let padVertical   = self.entryPaddingTop + self.entryPaddingBottom;
+        
+        // Rows
+        var position = self.bounds.maxY - self.paddingTop;
+        
+        var i = 0;
+        
+        for height in self.rowHeightsThatFit  {
+            let rowHeight = height + padVertical;
+            if interactionPoint.y <= position && (interactionPoint.y >= position - rowHeight) {
+                row = i;
+                break;
+            }
+            
+            position -= rowHeight + rMargin;
+            i += 1
+        }
+        
+        // Columns
+        position = self.paddingLeft;
+        
+        i = 0;
+        
+        for width in self.columnWidthsThatFit  {
+            let colWidth = width + swatchWidth + padHorizontal;
+            if (interactionPoint.x >= position) && (interactionPoint.x <= position + colWidth) {
+                col = i
+                break;
+            }
+            
+            position += colWidth + cMargin;
+            i += 1
+        }
+    }
+    
+    override func pointingDeviceDownEvent(event: CPTNativeEvent, atPoint interactionPoint: CGPoint) -> Bool
+    {
+        guard  self.isHidden == false || (self.plots.count != 0) else { return false }
+        let theDelegate = self.delegate as? CPTLegendDelegate
+        
+        var row = NSNotFound
+        var col = NSNotFound
+        self.legendEntryForInteractionPoint(interactionPoint: interactionPoint, row:&row,  col:&col)
+        
+        // Notify the delegate if we found a hit
+        if (row != NSNotFound) && (col != NSNotFound) {
+            for legendEntry in self.legendEntries {
+                
+                if ((legendEntry.row == row) && (legendEntry.column == col)) {
+                    
+                    self.pointingDeviceDownEntry = legendEntry
+                    let legendPlot = legendEntry.plot
+                    var handled = false
+                    
+                    //                        if ( [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:touchDownAtIndex:)] ) {
+                    
+                    theDelegate?.legend?( legend: self, legendEntryForPlot:legendPlot!, touchDownAtIndex:legendEntry.index)
+                    handled = true
+                    
+                    theDelegate?.legend?( legend: self, legendEntryForPlot:legendPlot!, touchDownAtIndex:legendEntry.index, withEvent:event)
+                    handled = true
+                    
+                    theDelegate?.legend(legend: self, legendEntryForPlot:legendPlot!, wasSelectedAtIndex:legendEntry.index, withEvent:event)
+                    handled = true
+                    
+                    if handled == true {
+                        return true
+                    }
+                }
+            }
+        }
+        return super.pointingDeviceDownEvent(event: event, atPoint:interactionPoint)
+    }
+    
+//        -(BOOL)pointingDeviceUpEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
+//        {
+//            CPTLegendEntry *selectedDownEntry = self.pointingDeviceDownEntry;
+//
+//            self.pointingDeviceDownEntry = nil;
+//
+//            if ( self.hidden || (self.plots.count == 0)) {
+//                return false
+//            }
+//
+//            theDelegate = self.delegate
+//
+//            if ( [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:touchUpAtIndex:)] ||
+//                 [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:touchUpAtIndex:withEvent:)] ||
+//                 [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:wasSelectedAtIndex:)] ||
+//                 [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:wasSelectedAtIndex:withEvent:)] ) {
+//                NSUInteger row = NSNotFound;
+//                NSUInteger col = NSNotFound;
+//                [self legendEntryForInteractionPoint:interactionPoint row:&row col:&col];
+//
+//                // Notify the delegate if we found a hit
+//                if ((row != NSNotFound) && (col != NSNotFound)) {
+//                    for ( CPTLegendEntry *legendEntry in self.legendEntries ) {
+//                        if ((legendEntry.row == row) && (legendEntry.column == col)) {
+//                            BOOL handled = false
+//
+//                            CPTPlot *entryPlot = legendEntry.plot;
+//
+//                            if ( [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:touchUpAtIndex:)] ) {
+//                                handled = true
+//                                [theDelegate legend:self legendEntryForPlot:entryPlot touchUpAtIndex:legendEntry.index];
+//                            }
+//                            if ( [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:touchUpAtIndex:withEvent:)] ) {
+//                                handled = true
+//                                [theDelegate legend:self legendEntryForPlot:entryPlot touchUpAtIndex:legendEntry.index withEvent:event];
+//                            }
+//
+//                            if ( legendEntry == selectedDownEntry ) {
+//                                if ( [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:wasSelectedAtIndex:)] ) {
+//                                    handled = true
+//                                    [theDelegate legend:self legendEntryForPlot:entryPlot wasSelectedAtIndex:legendEntry.index];
+//                                }
+//
+//                                if ( [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:wasSelectedAtIndex:withEvent:)] ) {
+//                                    handled = true
+//                                    [theDelegate legend:self legendEntryForPlot:entryPlot wasSelectedAtIndex:legendEntry.index withEvent:event];
+//                                }
+//                            }
+//
+//                            if ( handled ) {
+//                                return true
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//
+//            return [super pointingDeviceUpEvent:event atPoint:interactionPoint];
+//        }
+    
+
+    // MARK: - Accessors
+//        func setTextStyle(newTextStyle: CPTTextStyle)
+//        {
+//            if ( newTextStyle != textStyle ) {
+//                textStyle = newTextStyle
+//
+//                self.legendEntries.makeObjectsPerformSelector:@selector(setTextStyle:) withObject:textStyle];
+//
+//                for legendEntry in self.legendEntries {
+//                    legendEntry.setTextStyle(w)
+//                }
+//
+//                self.layoutChanged = true
+//            }
+//        }
     
     var  _swatchSize = CGSize()
     var swatchSize : CGSize {
@@ -955,10 +882,6 @@
         }
     }
     
-    
-    
-    
-    
     func setSwatchBorderLineStyle(newSwatchBorderLineStyle: CPTLineStyle )
     {
         if ( newSwatchBorderLineStyle != swatchBorderLineStyle ) {
@@ -974,95 +897,95 @@
             self.setNeedsDisplay()
         }
     }
-    //
-    //    func setSwatchFill:(nullable CPTFill *)newSwatchFill
-    //    {
-    //        if ( newSwatchFill != swatchFill ) {
-    //            swatchFill = [newSwatchFill copy];
-    //            [self setNeedsDisplay];
-    //        }
-    //    }
-    //
-    //    func setEntryBorderLineStyle:(nullable CPTLineStyle *)newEntryBorderLineStyle
-    //    {
-    //        if ( newEntryBorderLineStyle != entryBorderLineStyle ) {
-    //            entryBorderLineStyle = [newEntryBorderLineStyle copy];
-    //            [self setNeedsDisplay];
-    //        }
-    //    }
-    //
-    //    func setEntryCornerRadius:(CGFloat)newEntryCornerRadius
-    //    {
-    //        if ( newEntryCornerRadius != entryCornerRadius ) {
-    //            entryCornerRadius = newEntryCornerRadius;
-    //            [self setNeedsDisplay];
-    //        }
-    //    }
-    //
-    //    func setEntryFill:(nullable CPTFill *)newEntryFill
-    //    {
-    //        if ( newEntryFill != entryFill ) {
-    //            entryFill = [newEntryFill copy];
-    //            [self setNeedsDisplay];
-    //        }
-    //    }
-    //
-    //    func setEntryPaddingLeft:(CGFloat)newPadding
-    //    {
-    //        if ( newPadding != entryPaddingLeft ) {
-    //            entryPaddingLeft   = newPadding;
-    //            self.layoutChanged = true
-    //        }
-    //    }
-    //
-    //    func setEntryPaddingTop:(CGFloat)newPadding
-    //    {
-    //        if ( newPadding != entryPaddingTop ) {
-    //            entryPaddingTop    = newPadding;
-    //            self.layoutChanged = true
-    //        }
-    //    }
-    //
-    //    func setEntryPaddingRight:(CGFloat)newPadding
-    //    {
-    //        if ( newPadding != entryPaddingRight ) {
-    //            entryPaddingRight  = newPadding;
-    //            self.layoutChanged = true
-    //        }
-    //    }
-    //
-    //    func setEntryPaddingBottom:(CGFloat)newPadding
-    //    {
-    //        if ( newPadding != entryPaddingBottom ) {
-    //            entryPaddingBottom = newPadding;
-    //            self.layoutChanged = true
-    //        }
-    //    }
-    //
-    //    func setNumberOfRows:(NSUInteger)newNumberOfRows
-    //    {
-    //        if ( newNumberOfRows != numberOfRows ) {
-    //            numberOfRows       = newNumberOfRows;
-    //            self.layoutChanged = true
-    //        }
-    //    }
-    //
-    //    func setNumberOfColumns:(NSUInteger)newNumberOfColumns
-    //    {
-    //        if ( newNumberOfColumns != numberOfColumns ) {
-    //            numberOfColumns    = newNumberOfColumns;
-    //            self.layoutChanged = true
-    //        }
-    //    }
-    //
-    //    func setEqualRows:(BOOL)newEqualRows
-    //    {
-    //        if ( newEqualRows != equalRows ) {
-    //            equalRows          = newEqualRows;
-    //            self.layoutChanged = true
-    //        }
-    //    }
-    //
+    
+    func setSwatchFill(newSwatchFill: CPTFill )
+    {
+        if newSwatchFill != swatchFill {
+            swatchFill = newSwatchFill
+            self.setNeedsDisplay()
+        }
+    }
+    
+    func setEntryBorderLineStyle(newEntryBorderLineStyle: CPTLineStyle )
+        {
+            if ( newEntryBorderLineStyle != entryBorderLineStyle ) {
+                entryBorderLineStyle = newEntryBorderLineStyle
+                self.setNeedsDisplay()
+            }
+        }
+
+    func setEntryCornerRadius(newEntryCornerRadius: CGFloat)
+    {
+        if ( newEntryCornerRadius != entryCornerRadius ) {
+            entryCornerRadius = newEntryCornerRadius;
+            self.setNeedsDisplay()
+        }
+    }
+    
+    func setEntryFill(newEntryFill: CPTFill )
+        {
+            if ( newEntryFill != entryFill ) {
+                entryFill = newEntryFill
+                self.setNeedsDisplay()
+            }
+        }
+    
+    func setEntryPaddingLeft(newPadding: CGFloat)
+        {
+            if ( newPadding != entryPaddingLeft ) {
+                entryPaddingLeft   = newPadding;
+                self.layoutChanged = true
+            }
+        }
+    
+    func setEntryPaddingTop(newPadding: CGFloat)
+        {
+            if ( newPadding != entryPaddingTop ) {
+                entryPaddingTop    = newPadding;
+                self.layoutChanged = true
+            }
+        }
+    
+    func setEntryPaddingRight(newPadding: CGFloat)
+        {
+            if ( newPadding != entryPaddingRight ) {
+                entryPaddingRight  = newPadding;
+                self.layoutChanged = true
+            }
+        }
+    
+    func setEntryPaddingBottom(newPadding: CGFloat)
+        {
+            if ( newPadding != entryPaddingBottom ) {
+                entryPaddingBottom = newPadding;
+                self.layoutChanged = true
+            }
+        }
+    
+    func setNumberOfRows(newNumberOfRows: Int)
+        {
+            if ( newNumberOfRows != numberOfRows ) {
+                numberOfRows       = newNumberOfRows
+                self.layoutChanged = true
+            }
+        }
+    
+    func setNumberOfColumns(newNumberOfColumns: Int)
+        {
+            if ( newNumberOfColumns != numberOfColumns ) {
+                numberOfColumns    = newNumberOfColumns
+                self.layoutChanged = true
+            }
+        }
+    
+    func setEqualRows(newEqualRows: Bool)
+        {
+            if ( newEqualRows != equalRows ) {
+                equalRows = newEqualRows;
+                self.layoutChanged = true
+            }
+        }
+    
     func setEqualColumns(newEqualColumns : Bool)
     {
         if ( newEqualColumns != equalColumns ) {
@@ -1131,7 +1054,7 @@
         }
     }
     
-    override func setPaddingLeft(newPadding : CGFloat)
+    func setPaddingLeft(newPadding : CGFloat)
     {
         if ( newPadding != self.paddingLeft ) {
             super.paddingLeft  = newPadding;
@@ -1139,7 +1062,7 @@
         }
     }
     
-    override func setPaddingTop(newPadding : CGFloat)
+    func setPaddingTop(newPadding : CGFloat)
     {
         if ( newPadding != self.paddingTop ) {
             super.paddingTop   = newPadding;
@@ -1147,7 +1070,7 @@
         }
     }
     
-    override func setPaddingRight(newPadding : CGFloat)
+    func setPaddingRight(newPadding : CGFloat)
     {
         if ( newPadding != self.paddingRight ) {
             super.paddingRight = newPadding;
@@ -1155,7 +1078,7 @@
         }
     }
     
-    override func setPaddingBottom(newPadding : CGFloat)
+    func setPaddingBottom(newPadding : CGFloat)
     {
         if ( newPadding != self.paddingBottom ) {
             super.paddingBottom = newPadding;
