@@ -34,9 +34,7 @@ import AppKit
 public class CPTPlot: CPTAnnotationHostLayer {
     
     var cachedData: [String : [Any]] = [:]
-    
-//    let CPTPlotBindingDataLabels = "dataLabels"
-    
+        
     public weak var dataSource : CPTPlotDataSource?
     public weak var delegatePlot: CPTPlotDelegate?
     

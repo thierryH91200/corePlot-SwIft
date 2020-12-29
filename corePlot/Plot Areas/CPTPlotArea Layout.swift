@@ -18,7 +18,7 @@ extension CPTPlotArea {
     //     *  This is where we do our custom replacement for the Mac-only layout manager and autoresizing mask.
     //     *  Subclasses should override this method to provide a different layout of their own sublayers.
     //     **/
-    override func layoutSublayers()
+    public override func layoutSublayers()
     {
         super.layoutSublayers()
         
@@ -49,7 +49,7 @@ extension CPTPlotArea {
         }
         
         // the label and title groups never have anything to draw; make them as small as possible to save memory
-        sublayerFrame             = CGRect(x: sublayerPosition.x, y: sublayerPosition.y, width: 0.0, height: 0.0);
+        sublayerFrame = CGRect(x: sublayerPosition.x, y: sublayerPosition.y, width: 0.0, height: 0.0)
         self.axisLabelGroup?.frame = sublayerFrame;
         self.axisTitleGroup?.frame = sublayerFrame;
         if ( axisSetHasBorder == false) {
@@ -59,44 +59,43 @@ extension CPTPlotArea {
     }
 
     override func sublayersExcludedFromAutomaticLayout()->CPTSublayerSet
-        {
-            let minorGrid = self.minorGridLineGroup;
-            let majorGrid = self.majorGridLineGroup;
-            let theAxisSet      = self.axisSet;
-            let thePlotGroup  = self.plotGroup;
-            let labels   = self.axisLabelGroup;
-            let titles   = self.axisTitleGroup;
-            
+    {
+        let minorGrid = self.minorGridLineGroup;
+        let majorGrid = self.majorGridLineGroup;
+        let theAxisSet      = self.axisSet;
+        let thePlotGroup  = self.plotGroup;
+        let labels   = self.axisLabelGroup;
+        let titles   = self.axisTitleGroup;
+        
         if ( (minorGrid != nil) || (majorGrid != nil) || (theAxisSet != nil) || (thePlotGroup != nil) || (labels != nil) || (titles != nil) ) {
             var excludedSublayers = super.sublayersExcludedFromAutomaticLayout()
-                if ( (excludedSublayers == nil) ) {
-                    excludedSublayers = NSMutableSet() as? CPTAnnotationHostLayer.CPTSublayerSet
-                }
-                
+            if ( (excludedSublayers == nil) ) {
+                excludedSublayers = NSMutableSet() as? CPTAnnotationHostLayer.CPTSublayerSet
+            }
             if  (minorGrid != nil)  {
-                    excludedSublayers.add(minorGrid)
-                }
-            if (( majorGrid ) != nil) {
-                    excludedSublayers.addObject(majorGrid)
-                }
-            if (( theAxisSet ) != nil) {
-                    excludedSublayers.addObject:theAxisSet];
-                }
-                if ( thePlotGroup ) {
-                    excludedSublayers.addObject(thePlotGroup];
-                }
-                if ( labels ) {
-                    excludedSublayers.addObject(labels)
-                }
-                if (( titles ) != nil) {
-                    excludedSublayers.addObject(titles)
-                }
-                
-                return excludedSublayers;
+                excludedSublayers?.insert(minorGrid!)
             }
-            else {
-                return super.sublayersExcludedFromAutomaticLayout()!
+            if ( majorGrid != nil) {
+                excludedSublayers?.insert(majorGrid!)
             }
+            if ( theAxisSet != nil) {
+                excludedSublayers?.insert(theAxisSet!)
+            }
+            if ( thePlotGroup != nil) {
+                excludedSublayers?.insert(thePlotGroup!)
+            }
+            if ( labels != nil) {
+                excludedSublayers?.insert(labels!)
+            }
+            if ( titles != nil) {
+                excludedSublayers?.insert(titles!)
+            }
+            
+            return excludedSublayers!
         }
+        else {
+            return super.sublayersExcludedFromAutomaticLayout()!
+        }
+    }
 
 }

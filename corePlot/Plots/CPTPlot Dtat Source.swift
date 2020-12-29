@@ -137,7 +137,7 @@ extension CPTPlot {
         // *  @brief Reload all data labels from the data source immediately.
     func reloadDataLabels()
     {
-        self.cachedData.removeValue (forKey: .CPTPlotBindingDataLabels)
+        self.cachedData.removeValue (forKey: CPTPlotBinding.DataLabels)
         self.reloadDataLabels( indexRange: NSRange(location: 0, length: self.cachedDataCount))
     }
     
@@ -154,7 +154,7 @@ extension CPTPlot {
         if ((theDataSource?.responds(to: #selector(CPTPlotDataSource.dataLabels(forPlot:recordIndexRange:) ))) != nil)  {
             cacheArray(
                 array: (theDataSource?.dataLabels(forPlot: self, recordIndexRange: indexRange))!,
-                forKey: .CPTPlotBindingDataLabels,
+                forKey: NSBindingName.dataLabels,
                 atRecordIndex: indexRange.location)
         } else if theDataSource?.responds(to: #selector(CPTPlotDataSource.dataLabel(forPlot:recordIndex:)))  {
             let nilObject = CPTPlot.nilData()

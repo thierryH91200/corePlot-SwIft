@@ -113,8 +113,8 @@ class CPTMutablePlotRange: CPTPlotRange {
                 break;
             }
         }
-        else if ( !self.isInfinite && other?.isInfinite ) {
-            switch ( other.lengthSign ) {
+        else if ( !self.isInfinite && ((other?.isInfinite) != nil) ) {
+            switch ( other?.lengthSign ) {
             case .positive:
                 self.locationDecimal = minimum;
                 self.lengthDouble    = CGFloat.infinity;

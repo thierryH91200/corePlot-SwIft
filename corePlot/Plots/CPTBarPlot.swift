@@ -37,8 +37,8 @@ public class CPTBarPlot: CPTPlot {
     
     enum  CPTBarPlotField  :Int {
         case location ///< Bar location on independent coordinate axis.
-        case barTip      ///< Bar tip value.
-        case barBase      ///< Bar base (used only if @link CPTBarPlot::barBasesVary barBasesVary @endlink is YES).
+        case tip      ///< Bar tip value.
+        case base      ///< Bar base (used only if @link CPTBarPlot::barBasesVary barBasesVary @endlink is YES).
     };
     
     
@@ -537,15 +537,15 @@ public class CPTBarPlot: CPTPlot {
     
     
     // MARK: -  Data Ranges
-    func plotRangeForCoordinate(coord: CPTCoordinate)->CPTPlotRange?
+    override func plotRangeForCoordinate(coord: CPTCoordinate)->CPTPlotRange?
     {
         var range = super.plotRangeForCoordinate(coord: coord);
         
         if ( !self.barBasesVary ) {
             switch ( coord ) {
             case CPTCoordinate.x:
-                if ( self.barsAreHorizontal ) {
-                    let base = self.baseValue.decimalValue
+                if ( self.barsAreHorizontal == true ) {
+                    let base = self.baseValue
                     if range.contains(base ) == false {
                         var newRange = range
                         newRange.unionPlotRange(plotRangeWithLocationDecimal(base, lengthDecimal:(0))
@@ -556,7 +556,7 @@ public class CPTBarPlot: CPTPlot {
                 
             case CPTCoordinate.y:
                 if ( !self.barsAreHorizontal == true ) {
-                    let base = self.baseValue.decimalValue;
+                    let base = self.baseValue
                     if ( range.contains(base) == false ) {
                         var newRange = range
                         newRange.unionPlotRange( plotRangeWithLocationDecimal(base ,lengthDecimal:0))
@@ -571,30 +571,27 @@ public class CPTBarPlot: CPTPlot {
         }
         return range!;
     }
-    //
-    //    -(nullable CPTPlotRange *)plotRangeEnclosingField:(NSUInteger)fieldEnum
-    //    {
-    //        CPTPlotRange *range = nil;
-    //
-    //        switch ( fieldEnum ) {
-    //            case CPTBarPlotFieldBarLocation:
-    //                range = [self plotRangeEnclosingBars];
-    //                break;
-    //
-    //            case CPTBarPlotFieldBarTip:
-    //            case CPTBarPlotFieldBarBase:
-    //                range = [self plotRangeForField:fieldEnum];
-    //                break;
-    //
-    //            default:
-    //                break;
-    //        }
-    //
-    //        return range;
-    //    }
-    //
-    //    /// @endcond
-    //
+    
+    func plotRangeEnclosingField(fieldEnum: CPTBarPlotField) -> CPTPlotRange
+    {
+        var range : CPTPlotRange?
+        switch ( fieldEnum ) {
+        case .location:
+            range = self.plotRangeEnclosingBars()
+            break;
+            
+        case .tip:
+        case .base:
+            range = self.plotRangeForField(fieldEnum: fieldEnum.rawValue)
+            break;
+            
+        default:
+            break;
+        }
+        
+        return range!;
+    }
+
     //    /** @brief Computes a plot range that completely encloses all of the bars.
     //     *
     //     *  For a horizontal bar plot, this range starts at the left edge of the first bar and continues to the right edge
@@ -603,41 +600,41 @@ public class CPTBarPlot: CPTPlot {
     //     *
     //     *  @return A plot range that completely encloses all of the bars.
     //     **/
-    //    -(nullable CPTPlotRange *)plotRangeEnclosingBars
-    //    {
-    //        BOOL horizontalBars = self.barsAreHorizontal;
-    //        CPTMutablePlotRange *range;
-    //
-    //        if ( horizontalBars ) {
-    //            range = [[self plotRangeForCoordinate:CPTCoordinateY] mutableCopy];
-    //        }
-    //        else {
-    //            range = [[self plotRangeForCoordinate:CPTCoordinateX] mutableCopy];
-    //        }
-    //
-    //        NSDecimal barOffsetLength = [self lengthInPlotCoordinates:self.barOffset.decimalValue];
-    //        NSDecimal barWidthLength  = [self lengthInPlotCoordinates:self.barWidth.decimalValue];
-    //        NSDecimal halfBarWidth    = CPTDecimalDivide(barWidthLength, CPTDecimalFromInteger(2));
-    //
-    //        NSDecimal rangeLocation = range.locationDecimal;
-    //        NSDecimal rangeLength   = range.lengthDecimal;
-    //
-    //        if ( CPTDecimalGreaterThanOrEqualTo(rangeLength, CPTDecimalFromInteger(0))) {
-    //            rangeLocation = CPTDecimalSubtract(rangeLocation, halfBarWidth);
-    //
-    //            range.locationDecimal = CPTDecimalAdd(rangeLocation, barOffsetLength);
-    //            range.lengthDecimal   = CPTDecimalAdd(rangeLength, barWidthLength);
-    //        }
-    //        else {
-    //            rangeLocation = CPTDecimalAdd(rangeLocation, halfBarWidth);
-    //
-    //            range.locationDecimal = CPTDecimalSubtract(rangeLocation, barOffsetLength);
-    //            range.lengthDecimal   = CPTDecimalSubtract(rangeLength, barWidthLength);
-    //        }
-    //
-    //        return range;
-    //    }
-    //
+        func plotRangeEnclosingBars() -> CPTPlotRange
+        {
+            var horizontalBars = self.barsAreHorizontal;
+            var range = CPTPlotRange(location: 0, length: 0)
+    
+            if ( horizontalBars ) {
+                range = self.plotRangeForCoordinate(coord: CPTCoordinate.y)!
+            }
+            else {
+                range = self.plotRangeForCoordinate(coord: CPTCoordinate.x)!
+            }
+    
+            var barOffsetLength = self.lengthInPlotCoordinates(self.barOffset)
+            var barWidthLength  = self.lengthInPlotCoordinates(self.barWidth)
+            var halfBarWidth    = barWidthLength / CGFloat(2)
+    
+            var rangeLocation = range.location
+            var rangeLength   = range.length
+    
+            if rangeLength > CGFloat(0) {
+                rangeLocation = rangeLocation - halfBarWidth
+    
+                range.locationDecimal = rangeLocation + barOffsetLength
+                range.lengthDecimal   = rangeLength + barWidthLength
+            }
+            else {
+                rangeLocation = rangeLocation + halfBarWidth
+    
+                range.locationDecimal = rangeLocation - barOffsetLength
+                range.lengthDecimal   = rangeLength - barWidthLength
+            }
+    
+            return range;
+        }
+    
     // MARK: - Drawing
     //
     //    func renderAsVectorInContext:(nonnull CGContextRef)context
@@ -923,15 +920,15 @@ public class CPTBarPlot: CPTPlot {
     //    }
     
     func barFillForIndex(idx: Int)-> CPTFill
-        {
-        var theBarFill = self.cachedValueForKey(key: .CPTBarPlotBindingBarFills, recordIndex: idx)
-    
-            if theBarFill == nil || (theBarFill == [CPTPlot nilData] {
-                theBarFill = self.fill
+    {
+        var theBarFill = self.cachedValueForKey(key: CPTBarPlotBindingBarFills, recordIndex: idx)
+        
+        if theBarFill == nil || (theBarFill == [CPTPlot nilData] {
+            theBarFill = self.fill
             }
-    
+            
             return theBarFill;
-        }
+    }
     //
     //    -(nullable CPTLineStyle *)barLineStyleForIndex:(NSUInteger)idx
     //    {

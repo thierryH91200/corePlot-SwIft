@@ -161,7 +161,7 @@ func relabel()
     if ( !self.showLabels || (!hasCachedLabels && !plotProvidesLabels)) {
         for ( CPTAnnotation *annotation in self.labelAnnotations ) {
             if ( [annotation isKindOfClass:annotationClass] ) {
-                [self removeAnnotation:annotation];
+                self.removeAnnotation(annotation)
             }
         }
         self.labelAnnotations = nil;
@@ -181,10 +181,10 @@ func relabel()
     }
 
     let thePlotSpace            = self.plotSpace;
-    let theRotation                   = self.labelRotation;
+    let theRotation              = self.labelRotation;
     let labelArray = self.labelAnnotations;
     let oldLabelCount    = labelArray.count;
-    id nilObject         = [CPTPlot nilData];
+    let nilObject         = [CPTPlot nilData];
 
     CPTMutableNumericData *labelFieldDataCache = [self cachedNumbersForField:self.labelField];
     let theShadow                       = self.labelShadow;

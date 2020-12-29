@@ -34,11 +34,6 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
     let kCPTNumberOfLayers = 6; // number of primary layers to arrange
 
     var touchedPoint = CGPoint(x: 0,y: 0)
-    
-    var axisSet: CPTAxisSet?
-    var plotGroup: CPTPlotGroup?
-    var axisLabelGroup : CPTAxisLabelGroup?
-    var axisTitleGroup : CPTAxisLabelGroup?
 
     //MARK:  Layer Ordering
     var topDownLayerOrder  = [CPTGraphLayerType]()
@@ -62,7 +57,6 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
         axisTitleGroup     = nil
         fill               = nil
         touchedPoint       = CGPoint(x: CGFloat.nan, y: CGFloat.nan)
-        
         
         topDownLayerOrder.removeAll()
         bottomUpLayerOrder.removeAll()
@@ -213,7 +207,6 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
                 if (( self.axisTitleGroup ) != nil) {
                     idx += 1
                 }
-                break;
             }
         }
         return idx;
@@ -223,7 +216,7 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
     
 // MARK: - Axis set layer management
 
-    //    /** @brief Checks for the presence of the specified layer group and adds or removes it as needed.
+//    /** @brief Checks for the presence of the specified layer group and adds or removes it as needed.
 //     *  @param layerType The layer type being updated.
 //     **/
     func updateAxisSetLayersForType(layerType: CPTGraphLayerType)
@@ -249,7 +242,7 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
                 }
                 
             case .axisTitles:
-                if  axis.axisTitle  != nil {
+                if  axis.axisTitle()  != nil {
                     needsLayer = true
                 }
                 
@@ -442,10 +435,8 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
 //
 //        return [super pointingDeviceUpEvent:event atPoint:interactionPoint];
 //    }
-//
-//    /// @}
-//
 
+    
     
     // MARK: - Accessors
     var _borderLineStyle: CPTLineStyle?
@@ -485,7 +476,6 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
         }
     }
 
-
     var _majorGridLineGroup : CPTGridLineGroup?
     var majorGridLineGroup : CPTGridLineGroup? {
         get { return _majorGridLineGroup }
@@ -505,77 +495,80 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
         }
     }
 
+    var _axisSet: CPTAxisSet?
+    var axisSet: CPTAxisSet? {
+        get { return _axisSet }
+        set {
+            if (newValue != _axisSet || self.isUpdatingLayers == true ) {
+                axisSet?.removeFromSuperlayer()
+                for axis in axisSet!.axes {
+                    axis.plotArea = nil
+                }
+                
+                _axisSet = newValue;
+                self.updateAxisSetLayersForType(layerType: .majorGridLines)
+                self.updateAxisSetLayersForType(layerType: .minorGridLines)
+                self.updateAxisSetLayersForType(layerType: .axisLabels)
+                self.updateAxisSetLayersForType(layerType: .axisTitles)
+                
+                if (( newValue ) != nil) {
+                    let theGraph     = self.graph;
+                    self.insertSublayer(newValue!, at: UInt32(self.indexForLayerType(layerType: .axisLines)))
+                    for axis in newValue!.axes {
+                        axis.plotArea = self
+                        axis.graph    = theGraph
+                    }
+                }
+                self.setNeedsLayout()
+            }
+        }
+    }
+    
+    var _plotGroup: CPTPlotGroup?
+    var plotGroup: CPTPlotGroup? {
+        get { }
+        set {
+            if (newValue != plotGroup || self.isUpdatingLayers ) {
+                _plotGroup?.removeFromSuperlayer()
+                _plotGroup = newValue;
+                if (( newValue ) != nil) {
+                    self.insertSublayer(newValue!, at:UInt32(self.indexForLayerType(layerType: .plots)))
+                }
+                self.setNeedsLayout()
+            }
+        }
+    }
+    
+    var _axisLabelGroup : CPTAxisLabelGroup?
+    var axisLabelGroup : CPTAxisLabelGroup? {
+        get { }
+        set {
+            if ( newValue != axisLabelGroup || self.isUpdatingLayers ) {
+                _axisLabelGroup?.removeFromSuperlayer()
+                _axisLabelGroup = newValue;
+                if ( newValue  != nil) {
+                    self.insertSublayer(newValue!, at:UInt32(self.indexForLayerType(layerType: .axisLabels)))
+                }
+                self.setNeedsLayout()
+            }
+        }
+    }
+    var _axisTitleGroup : CPTAxisLabelGroup?
+    var axisTitleGroup : CPTAxisLabelGroup? {
+        get { }
+        set {
+            if (newValue != axisTitleGroup || self.isUpdatingLayers ) {
+                _axisTitleGroup?.removeFromSuperlayer()
+                _axisTitleGroup = newValue;
+                if (( newValue ) != nil) {
+                    
+                    self.insertSublayer(newValue!, at:UInt32(self.indexForLayerType(layerType: .axisTitles)))
+                }
+                self.setNeedsLayout()
+            }
+        }
+    }
 
-    //    func setAxisSet:(nullable CPTAxisSet *)newAxisSet
-//    {
-//        if ((newAxisSet != axisSet) || self.isUpdatingLayers ) {
-//            [axisSet removeFromSuperlayer];
-//            for ( CPTAxis *axis in axisSet.axes ) {
-//                axis.plotArea = nil;
-//            }
-//
-//            axisSet = newAxisSet;
-//            [self updateAxisSetLayersForType:CPTGraphLayerTypeMajorGridLines];
-//            [self updateAxisSetLayersForType:CPTGraphLayerTypeMinorGridLines];
-//            [self updateAxisSetLayersForType:CPTGraphLayerTypeAxisLabels];
-//            [self updateAxisSetLayersForType:CPTGraphLayerTypeAxisTitles];
-//
-//            if ( newAxisSet ) {
-//                CPTGraph *theGraph     = self.graph;
-//                CPTAxisSet *theAxisSet = newAxisSet;
-//
-//                [self insertSublayer:theAxisSet atIndex:[self indexForLayerType:CPTGraphLayerTypeAxisLines]];
-//                for ( CPTAxis *axis in theAxisSet.axes ) {
-//                    axis.plotArea = self;
-//                    axis.graph    = theGraph;
-//                }
-//            }
-//            [self setNeedsLayout];
-//        }
-//    }
-//
-//    func setPlotGroup:(nullable CPTPlotGroup *)newPlotGroup
-//    {
-//        if ((newPlotGroup != plotGroup) || self.isUpdatingLayers ) {
-//            [plotGroup removeFromSuperlayer];
-//            plotGroup = newPlotGroup;
-//            if ( newPlotGroup ) {
-//                CPTPlotGroup *group = newPlotGroup;
-//
-//                [self insertSublayer:group atIndex:[self indexForLayerType:CPTGraphLayerTypePlots]];
-//            }
-//            [self setNeedsLayout];
-//        }
-//    }
-//
-//    func setAxisLabelGroup:(nullable CPTAxisLabelGroup *)newAxisLabelGroup
-//    {
-//        if ((newAxisLabelGroup != axisLabelGroup) || self.isUpdatingLayers ) {
-//            [axisLabelGroup removeFromSuperlayer];
-//            axisLabelGroup = newAxisLabelGroup;
-//            if ( newAxisLabelGroup ) {
-//                CPTAxisLabelGroup *group = newAxisLabelGroup;
-//
-//                [self insertSublayer:group atIndex:[self indexForLayerType:CPTGraphLayerTypeAxisLabels]];
-//            }
-//            [self setNeedsLayout];
-//        }
-//    }
-//
-//    func setAxisTitleGroup:(nullable CPTAxisLabelGroup *)newAxisTitleGroup
-//    {
-//        if ((newAxisTitleGroup != axisTitleGroup) || self.isUpdatingLayers ) {
-//            [axisTitleGroup removeFromSuperlayer];
-//            axisTitleGroup = newAxisTitleGroup;
-//            if ( newAxisTitleGroup ) {
-//                CPTAxisLabelGroup *group = newAxisTitleGroup;
-//
-//                [self insertSublayer:group atIndex:[self indexForLayerType:CPTGraphLayerTypeAxisTitles]];
-//            }
-//            [self setNeedsLayout];
-//        }
-//    }
-//
 //    func setTopDownLayerOrder(newArray [CPTGraphLayerType])
 //    {
 //        if ( newArray != topDownLayerOrder ) {
@@ -586,9 +579,9 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
 //
     
     override var graph : CPTGraph? {
-        get { super.graph  }
+        get { return super.graph  }
         set {
-            if ( newValue != super.graph ) {
+            if newValue != super.graph {
                 super.graph = newValue;
                 for axis in self.axisSet!.axes {
                     axis.graph = newValue
@@ -596,22 +589,15 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
             }
         }
     }
-//
-//    func setBounds:(CGRect)newBounds
-//    {
-//        if ( !CGRectEqualToRect(self.bounds, newBounds)) {
-//            self.widthDecimal  = CPTDecimalFromCGFloat(newBounds.size.width);
-//            self.heightDecimal = CPTDecimalFromCGFloat(newBounds.size.height);
-//
-//            super.bounds = newBounds;
-//        }
-//    }
-//
-//    /// @endcond
-//
-//    @end
-//
-//
 
+    func setBounds(newBounds: CGRect)
+    {
+        if  !self.bounds.equalTo( newBounds) {
+            self.widthDecimal  = newBounds.size.width
+            self.heightDecimal = newBounds.size.height
+
+            super.bounds = newBounds;
+        }
+    }
 
 }

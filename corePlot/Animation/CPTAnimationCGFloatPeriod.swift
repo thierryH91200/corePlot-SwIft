@@ -38,20 +38,15 @@ class CPTAnimationCGFloatPeriod: CPTAnimationPeriod {
             self.setStartValueFromObject(boundObject, propertyGetter:boundGetter)
         }
         
-        self.startValue.getValue(&start)
-        self.endValue.getValue(&end)
         
         return ((current >= start) && (current <= end)) || ((current >= end) && (current <= start));
     }
     
     func tweenedValueForProgress(progress: CGFloat) -> CGFloat
     {
-        var start = startValue
-        var end = endValue
-        
-        startValue.getValue(&start)
-        endValue.getValue(&end)
-        
+        let start = startValue
+        let end = endValue
+                
         let tweenedValue = start + progress * (end - start);
         return tweenedValue
     }
