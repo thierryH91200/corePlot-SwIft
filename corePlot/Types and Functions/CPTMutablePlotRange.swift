@@ -231,7 +231,7 @@ class CPTMutablePlotRange: CPTPlotRange {
     func expandRangeByFactor(factor: CGFloat )
     {
         let oldLength      = self.lengthDecimal
-        let newLength      = oldLength * factor.decimalValue
+        let newLength      = oldLength * factor
         let locationOffset = ((oldLength - newLength) / (2));
         let newLocation    = self.locationDecimal + locationOffset
 
@@ -270,17 +270,15 @@ class CPTMutablePlotRange: CPTPlotRange {
 
     switch otherRange.compare(toDecimal: endDecimal) {
     case .numberBelowRange:
-            locationDecimal = CPTDecimalSubtract(otherRange.minLimitDecimal, lengthDecimal)
+            locationDecimal = otherRange.minLimitDecimal - lengthDecimal
     case .numberAboveRange:
-            locationDecimal = CPTDecimalSubtract(otherRange.maxLimitDecimal, lengthDecimal)
+            locationDecimal = otherRange.maxLimitDecimal - lengthDecimal
         default:
             // in range--do nothing
             break
     }
 }
     // mark Accessors
-
-
     func setLocation(newLocation : CGFloat )
     {
         self.inValueUpdate = true
@@ -296,7 +294,4 @@ class CPTMutablePlotRange: CPTPlotRange {
         self.lengthDouble  = newLength;
         self.inValueUpdate = false;
     }
-
-
-
 }

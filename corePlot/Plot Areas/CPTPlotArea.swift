@@ -155,16 +155,6 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
                 buLayerOrder[kCPTNumberOfLayers - layerIndex - 1] = layerType
             }
         }
-//
-//        // force the layer hierarchy to update
-//        self.updatingLayers     = true;
-//        self.minorGridLineGroup = minorGridLineGroup;
-//        self.majorGridLineGroup = .majorGridLineGroup;
-//        self.axisSet            = self.axisSet;
-//        self.plotGroup          = self.plotGroup;
-//        self.axisLabelGroup     = self.axisLabelGroup;
-//        self.axisTitleGroup     = self.axisTitleGroup;
-//        self.updatingLayers     = false
     }
     
     func indexForLayerType(layerType: CPTGraphLayerType)->Int

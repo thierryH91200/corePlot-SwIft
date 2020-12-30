@@ -15,17 +15,12 @@ public class CPTGraph: CPTBorderedLayer {
     var hostingView : CPTGraphHostingView?
     var plots = [CPTPlot]()
     
-//    var axisSet: CPTAxisSet {
-//    {
-//        get {
-//
-//        }
-//        set {
-//            self.plotAreaFrame.axisSet = newSet;
-//    }
-//    }
+    // MARK: - Axis Set
+    var axisSet : CPTAxisSet? {
+        get { return self.plotAreaFrame.axisSet! }
+        set { self.plotAreaFrame.axisSet = newValue   }
+    }
 
-    
     var title = ""
     var attributedTitle = NSAttributedString()
     var titleTextStyle : CPTTextStyle
@@ -58,7 +53,7 @@ public class CPTGraph: CPTBorderedLayer {
     {
         if newPadding != self.paddingLeft  {
             super.paddingLeft = newPadding
-            for theAxes in self.axisSet().axes{
+            for theAxes in self.axisSet!.axes{
                 theAxes.setNeedsDisplay()
             }
         }
@@ -68,7 +63,7 @@ public class CPTGraph: CPTBorderedLayer {
     {
         if ( newPadding != self.paddingRight ) {
             super.paddingRight = newPadding;
-            for theAxes in self.axisSet().axes{
+            for theAxes in self.axisSet!.axes{
                 theAxes.setNeedsDisplay()
             }
         }
@@ -78,7 +73,7 @@ public class CPTGraph: CPTBorderedLayer {
     {
         if ( newPadding != self.paddingTop ) {
             super.paddingTop = newPadding
-            for theAxes in self.axisSet().axes{
+            for theAxes in self.axisSet!.axes{
                 theAxes.setNeedsDisplay()
             }
         }
@@ -88,7 +83,7 @@ public class CPTGraph: CPTBorderedLayer {
     {
         if ( newPadding != self.paddingBottom ) {
             super.paddingBottom = newPadding
-            for theAxes in self.axisSet().axes{
+            for theAxes in self.axisSet!.axes{
                 theAxes.setNeedsDisplay()
             }
         }
@@ -117,7 +112,6 @@ public class CPTGraph: CPTBorderedLayer {
         
         // Axis set
         let newAxisSet = self.newAxisSet
-//        axisSet = newAxisSet!
         
         // Title
         title = ""

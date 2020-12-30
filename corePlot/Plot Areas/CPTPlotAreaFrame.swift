@@ -9,25 +9,11 @@ import Cocoa
 
 class CPTPlotAreaFrame: CPTBorderedLayer {
     
-    var plotArea: CPTPlotArea?
-    var axisSet: CPTAxisSet?
+    var plotArea : CPTPlotArea?
+    var axisSet  : CPTAxisSet?
 //    var plotGroup: CPTPlotGroup?
 
     // MARK: - Init/Dealloc
-
-    /// @name Initialization
-    /// @{
-
-    /** @brief Initializes a newly allocated CPTPlotAreaFrame object with the provided frame rectangle.
-     *
-     *  This is the designated initializer. The initialized layer will have the following properties:
-     *  - @ref plotArea = a new CPTPlotArea with the same frame rectangle
-     *  - @ref masksToBorder = @YES
-     *  - @ref needsDisplayOnBoundsChange = @YES
-     *
-     *  @param newFrame The frame rectangle.
-     *  @return The initialized CPTPlotAreaFrame object.
-     **/
     init(newFrame: CGRect)
     {
         super.init(frame: newFrame)
@@ -137,10 +123,6 @@ class CPTPlotAreaFrame: CPTBorderedLayer {
         }
     }
     
-    func axisSet() ->CPTAxisSet
-    {
-        return self.plotArea!.axisSet!
-    }
     
     func setAxisSet(newAxisSet: CPTAxisSet)
     {

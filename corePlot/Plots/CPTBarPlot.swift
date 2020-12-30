@@ -11,45 +11,40 @@ import AppKit
 // MARK: bar plot data source.
 @objc public protocol CPTBarPlotDataSource:   CPTPlotDataSource  {
     
-    func barFillsForBarPlot(barPlot: CPTBarPlot, recordIndexRange indexRange:NSRange)-> [CPTFill]
-    func barFillForBarPlot(barPlot: CPTBarPlot, recordIndex idx:Int) -> [CPTFill]
-    @objc optional func barLineStyleForBarPlot(barPlot: CPTBarPlot, recordIndex idx:Int)-> CPTLineStyle
-    @objc optional func barLineStylesForBarPlot(barPlot:  CPTBarPlot, recordIndexRange:NSRange)-> [CPTLineStyle]
-    func barWidthsForBarPlot(barPlot: CPTBarPlot, recordIndexRange indexRange :NSRange)-> [CGFloat]
-    func barWidthForBarPlot(barPlot : CPTBarPlot, recordIndex idx: Int)-> CGFloat
-    @objc optional func legendTitleForBarPlot(barPlot: CPTBarPlot, recordIndex idx:Int) -> String
-    func attributedLegendTitleForBarPlot(barPlot: CPTBarPlot, recordIndex idx:Int )-> NSAttributedString
+    func barFillsForBarPlot     (plot: CPTBarPlot, indexRange:NSRange)-> [CPTFill]
+    func barFillForBarPlot      (plot: CPTBarPlot, index:Int) -> [CPTFill]
+    
+    func barLineStyleForBarPlot (plot: CPTBarPlot, index:Int)-> CPTLineStyle
+    func barLineStylesForBarPlot(plot: CPTBarPlot, indexRange:NSRange)-> [CPTLineStyle]
+    
+    func barWidthsForBarPlot    (plot: CPTBarPlot, indexRange :NSRange)-> [CGFloat]
+    func barWidthForBarPlot     (plot: CPTBarPlot, index: Int)-> CGFloat
+    
+    func legendTitleForBarPlot  (plot: CPTBarPlot, index:Int) -> String
+    
+    func attributedLegendTitleForBarPlot(plot: CPTBarPlot, idx:Int )-> NSAttributedString
 }
 
 
 // MARK:  Bar plot delegate
 protocol CPTBarPlotDelegate: CPTPlotDelegate {
     
-    func barPlot(plot: CPTBarPlot, barWasSelectedAtRecordIndex idx: Int)
+    func barPlot( plot: CPTBarPlot, barWasSelectedAtRecordIndex idx: Int)
     func barPlot( plot: CPTBarPlot, barWasSelectedAtRecordIndex idx: Int, withEvent event: CPTNativeEvent)
-    func barPlot( plot: CPTBarPlot, barTouchDownAtRecordIndex idx: Int)
-    func barPlot( plot: CPTBarPlot, barTouchDownAtRecordIndex idx: Int, withEvent event: CPTNativeEvent)
-    func barPlot( plot: CPTBarPlot, barTouchUpAtRecordIndex idx: Int)
-    func barPlot( plot: CPTBarPlot, barTouchUpAtRecordIndex idx: Int, withEvent event: CPTNativeEvent )
+    func barPlot( plot: CPTBarPlot, barTouchDownAtRecordIndex   idx: Int)
+    func barPlot( plot: CPTBarPlot, barTouchDownAtRecordIndex   idx: Int, withEvent event: CPTNativeEvent)
+    func barPlot( plot: CPTBarPlot, barTouchUpAtRecordIndex     idx: Int)
+    func barPlot( plot: CPTBarPlot, barTouchUpAtRecordIndex     idx: Int, withEvent event: CPTNativeEvent )
 }
 
+enum  CPTBarPlotField  :Int {
+    case location ///< Bar location on independent coordinate axis.
+    case tip      ///< Bar tip value.
+    case base      ///< Bar base (used only if @link CPTBarPlot::barBasesVary barBasesVary @endlink is YES).
+}
+
+
 public class CPTBarPlot: CPTPlot {
-    
-    enum  CPTBarPlotField  :Int {
-        case location ///< Bar location on independent coordinate axis.
-        case tip      ///< Bar tip value.
-        case base      ///< Bar base (used only if @link CPTBarPlot::barBasesVary barBasesVary @endlink is YES).
-    };
-    
-    
-    
-//    let CPTBarPlotBindingBarLocations  = "barLocations"  ///< Bar locations.
-//    let CPTBarPlotBindingBarTips       = "barTips"       ///< Bar tips.
-//    let CPTBarPlotBindingBarBases      = "barBases"      ///< Bar bases.
-//    let CPTBarPlotBindingBarFills      = "barFills"      ///< Bar fills.
-//    let CPTBarPlotBindingBarLineStyles = "barLineStyles" ///< Bar line styles.
-//    let CPTBarPlotBindingBarWidths     = "barWidths"     ///< Bar widths.
-//
     
     
     weak public var barDataSource : CPTBarPlotDataSource?
@@ -61,7 +56,6 @@ public class CPTBarPlot: CPTPlot {
     var barLineStyles  = [CPTLineStyle]()
     var barWidths  = [CPTLineStyle]()
     var pointingDeviceDownIndex = 0
-    
     
     // MARK: Appearance
     var barWidthsAreInViewCoordinates = true
@@ -117,7 +111,7 @@ public class CPTBarPlot: CPTPlot {
         barPlot.barWidth = CGFloat( 0.8)
         barPlot.barCornerRadius = CGFloat(2.0)
         
-        //        let fillGradient = CPTGradient(beginningColor: color, endingColor: NSUIColor.black)
+        let fillGradient = CPTGradient(beginningColor: color, endingColor: NSUIColor.black)
         
         fillGradient.angle = CGFloat(horizontal ? -90.0 : 0.0)
         barPlot?.fill = CPTFill(gradient: fillGradient)
@@ -128,21 +122,18 @@ public class CPTBarPlot: CPTPlot {
     }
     
     override init() {
-        CPTBarPlot.exposeBinding(.CPTBarPlotBindingBarLocations)
-        CPTBarPlot.exposeBinding(.CPTBarPlotBindingBarLocations)
-        CPTBarPlot.exposeBinding(.CPTBarPlotBindingBarTips)
-        CPTBarPlot.exposeBinding(.CPTBarPlotBindingBarBases)
-        CPTBarPlot.exposeBinding(.CPTBarPlotBindingBarFills)
-        CPTBarPlot.exposeBinding(.CPTBarPlotBindingBarLineStyles)
-        CPTBarPlot.exposeBinding(.CPTBarPlotBindingBarWidths)
-        
+        CPTBarPlot.exposeBinding(.BarLocations)
+        CPTBarPlot.exposeBinding(.BarTips)
+        CPTBarPlot.exposeBinding(.BarBases)
+        CPTBarPlot.exposeBinding(.BarFills)
+        CPTBarPlot.exposeBinding(.BarLineStyles)
+        CPTBarPlot.exposeBinding(.BarWidths)
     }
     
     //    func legendTitleForBarPlot(barPlot: CPTBarPlot, recordIndex idx:Int) -> String
     
     
     // https://ask.xiaolee.net/questions/1044854
-    
     override func reloadData(indexRange: NSRange)
     {
         super.reloadData(indexRange: indexRange)
@@ -162,7 +153,8 @@ public class CPTBarPlot: CPTPlot {
         if let legendTitleForBarPlot = theDataSource?.legendTitleForBarPlot {
             _ = legendTitleForBarPlot(self, indexRange.length)
             NotificationCenter.send(
-                name: .CPTLegendNeedsRedrawForPlotNotification)
+                name: .CPTLegendNeedsRedrawForPlotNotification,
+                object : self)
         }
     }
     
@@ -297,7 +289,7 @@ public class CPTBarPlot: CPTPlot {
             needsLegendUpdate = true
             
             self.cacheArray(array: (theDataSource?.barFillsForBarPlot(barPlot: self, recordIndexRange:indexRange))!,
-                            forKey:.CPTBarPlotBinding.barFills,
+                            forKey: NSBindingName.BarFills.rawValue,
                             atRecordIndex:indexRange.location)
         }
         else
@@ -306,26 +298,26 @@ public class CPTBarPlot: CPTPlot {
             
             let nilObject               : CPTFill?
             var array = [CPTFill]()
-            var maxIndex        = NSMaxRange(indexRange)
+            let maxIndex        = NSMaxRange(indexRange)
             let location = indexRange.location
             
             for  idx in location..<maxIndex {
                 let dataSourceFill = theDataSource?.barFillForBarPlot(barPlot: self, recordIndex:idx)
-                if (( dataSourceFill ) != nil) {
-                    array.append(dataSourceFill)
+                if dataSourceFill  != nil {
+                    array.append( dataSourceFill!)
                 }
                 else {
-                    array.append(nilObject)
+                    array.append(nilObject!)
                 }
             }
             
             self.cacheArray(array: array,
-                            forKey: .CPTBarPlotBindingBarFills,
-            atRecordIndex:indexRange.location)
+                            forKey: NSBindingName.BarFills.rawValue,
+                            atRecordIndex:indexRange.location)
         }
         
         // Legend
-        if ( needsLegendUpdate ) {
+        if needsLegendUpdate == true {
             NotificationCenter.send (
                 name: .CPTLegendNeedsRedrawForPlotNotification,
                 object:self)
@@ -348,33 +340,33 @@ public class CPTBarPlot: CPTPlot {
         
         var needsLegendUpdate = false
         if let barLineStylesForBarPlot = theDataSource?.barLineStylesForBarPlot {
-        
-            needsLegendUpdate = true
             
-            self.cacheArray(array: theDataSource.barLineStylesForBarPlot(barPlot: self,recordIndexRange:indexRange)
-                            forKey: NSBindingName.CPTBarPlotBindingBarLineStyles.rawValue,
-                atRecordIndex:indexRange.location];
+            needsLegendUpdate = true
+            let array = theDataSource?.barLineStylesForBarPlot!(
+                            plot: self,
+                            indexRange:indexRange)
+            self.cacheArray(array: array! ,
+                                forKey: NSBindingName.BarLineStyles.rawValue,
+                                atRecordIndex: indexRange.location)
         }
         else if let barLineStylesForBarPlot = theDataSource?.barLineStylesForBarPlot {
- 
-            needsLegendUpdate = true
             
-            let  nilObject                    = [CPTPlot nilData];
-            var array = [CPTLineStyle]()
-            let maxIndex             = NSMaxRange(indexRange)
+            needsLegendUpdate = true
+            let  nilObject : CPTLineStyle?
+            var array = [CPTLineStyle?]()
+            let maxIndex  = NSMaxRange(indexRange)
             
             for  idx in indexRange.location..<maxIndex {
-                let dataSourceLineStyle = theDataSource?.barLineStyleForBarPlot!(barPlot: self, recordIndex:idx)
+                let dataSourceLineStyle = theDataSource?.barLineStyleForBarPlot!(plot: self, index: idx)
                 if (( dataSourceLineStyle ) != nil) {
                     array.append(dataSourceLineStyle!)
                 }
                 else {
-                    array.addObject(nilObject)
+                    array.append(nilObject)
                 }
             }
-            
-            self.cacheArray(array: array,
-                            forKey: NSBindingName.CPTBarPlotBindingBarLineStyles.rawValue,
+            self.cacheArray(array: array as [Any],
+                            forKey: NSBindingName.BarLineStyles.rawValue,
                             atRecordIndex:indexRange.location)
         }
         
@@ -387,50 +379,49 @@ public class CPTBarPlot: CPTPlot {
         self.setNeedsDisplay()
     }
     
-    //    /**
-    //     //*  @brief Reload all bar widths from the data source immediately.
-    //     **/
+        //**
+        //*  @brief Reload all bar widths from the data source immediately.
     func reloadBarWidths()
     {
         self.reloadBarWidths(indexRange: NSMakeRange(0, self.cachedDataCount))
     }
-    //
-    //    /** @brief Reload bar widths in the given index range from the data source immediately.
-    //     *  @param indexRange The index range to load.
-    //     **/
+    
+        /** @brief Reload bar widths in the given index range from the data source immediately.
+         *  @param indexRange The index range to load.
+         **/
     func reloadBarWidths(indexRange: NSRange)
     {
-        let theDataSource = self.dataSource as? CPTBarPlotDataSource
-
-        if dataSource.respondsToSelector(to:#selector(barWidthsForBarPlot(recordIndexRange:) ))) {
-            self.cacheArray(theDataSource.barWidthsForBarPlot(self ,recordIndexRange:indexRange)
-                            forKey:.CPTBarPlotBindingBarWidths,
-                            atRecordIndex:indexRange.location)
-        }
-        else if dataSource.respondsToSelector(to:#selector(barWidthForBarPlot:recordIndex:)) {
-            let nilObject                 = [CPTPlot nilData]
+        let theBarDataSource = self.dataSource as? CPTBarPlotDataSource
+        
+        let array = theBarDataSource?.barWidthsForBarPlot(plot : self ,indexRange: indexRange)
+        self.cacheArray(array: array!,
+                        forKey: NSBindingName.BarWidths.rawValue,
+                        atRecordIndex:indexRange.location)
+        
+        if ((theBarDataSource?.barWidthsForBarPlot(plot: self, indexRange: indexRange)) != nil) {
+            let nilObject : CGFloat?
             var array = [CGFloat]()
             
-            let maxIndex          = NSMaxRange(indexRange);
+            let maxIndex = NSMaxRange(indexRange);
             
-            for idx in indexRange.location..<maxIndex {
-                let width = dataSource.barWidthForBarPlot(self, recordIndex:idx)
+            for index in indexRange.location..<maxIndex {
+                let width = theBarDataSource?.barWidthForBarPlot(plot: self, index:index)
                 if width != 0  {
-                    array.append(width)
+                    array.append(width!)
                 }
                 else {
-                    array.addObject(nilObject)
+                    array.append(nilObject!)
                 }
             }
             
-            self.cacheArray(array: array, forKey: .CPTBarPlotBindingBarWidths, atRecordIndex:indexRange.location)
+            self.cacheArray(array: array,
+                            forKey: NSBindingName.BarWidths.rawValue,
+                            atRecordIndex:indexRange.location)
         }
-        
         self.setNeedsDisplay()
     }
     
     // MARK:Length Conversions for Independent Coordinate (e.g., widths, offsets)
-    
     func lengthInView(decimalLength: CGFloat)-> CGFloat
     {
         var length = CGFloat(0)
@@ -481,59 +472,67 @@ public class CPTBarPlot: CPTPlot {
         return length;
     }
     
-    //
-    //    -(double)doubleLengthInPlotCoordinates:(NSDecimal)decimalLength
-    //    {
-    //        double length;
-    //
-    //        if ( self.barWidthsAreInViewCoordinates ) {
-    //            CGFloat floatLength = CPTDecimalCGFloatValue(decimalLength);
-    //            CGPoint originViewPoint = CGPointZero;
-    //            CGPoint displacedViewPoint = CPTPointMake(floatLength, floatLength);
-    //            double originPlotPoint[2], displacedPlotPoint[2];
-    //            CPTPlotSpace *thePlotSpace = self.plotSpace;
-    //            [thePlotSpace doublePrecisionPlotPoint:originPlotPoint numberOfCoordinates:2 forPlotAreaViewPoint:originViewPoint];
-    //            [thePlotSpace doublePrecisionPlotPoint:displacedPlotPoint numberOfCoordinates:2 forPlotAreaViewPoint:displacedViewPoint];
-    //            if ( self.barsAreHorizontal ) {
-    //                length = displacedPlotPoint[CPTCoordinateY] - originPlotPoint[CPTCoordinateY];
-    //            }
-    //            else {
-    //                length = displacedPlotPoint[CPTCoordinateX] - originPlotPoint[CPTCoordinateX];
-    //            }
-    //        }
-    //        else {
-    //            length = CPTDecimalDoubleValue(decimalLength);
-    //        }
-    //        return length;
-    //    }
-    //
-    //    -(NSDecimal)lengthInPlotCoordinates:(NSDecimal)decimalLength
-    //    {
-    //        NSDecimal length;
-    //
-    //        if ( self.barWidthsAreInViewCoordinates ) {
-    //            CGFloat floatLength = CPTDecimalCGFloatValue(decimalLength);
-    //            CGPoint originViewPoint = CGPointZero;
-    //            CGPoint displacedViewPoint = CPTPointMake(floatLength, floatLength);
-    //            NSDecimal originPlotPoint[2], displacedPlotPoint[2];
-    //            CPTPlotSpace *thePlotSpace = self.plotSpace;
-    //            [thePlotSpace plotPoint:originPlotPoint numberOfCoordinates:2 forPlotAreaViewPoint:originViewPoint];
-    //            [thePlotSpace plotPoint:displacedPlotPoint numberOfCoordinates:2 forPlotAreaViewPoint:displacedViewPoint];
-    //            if ( self.barsAreHorizontal ) {
-    //                length = CPTDecimalSubtract(displacedPlotPoint[CPTCoordinateY], originPlotPoint[CPTCoordinateY]);
-    //            }
-    //            else {
-    //                length = CPTDecimalSubtract(displacedPlotPoint[CPTCoordinateX], originPlotPoint[CPTCoordinateX]);
-    //            }
-    //        }
-    //        else {
-    //            length = decimalLength;
-    //        }
-    //        return length;
-    //    }
-    //
-    //    /// @endcond
-    //
+    func LengthinPlotCoordinates( length: CGFloat) -> Double {
+        var lengthDouble: Double
+        
+        if barWidthsAreInViewCoordinates {
+            let floatLength = CGFloat(length)
+            let originViewPoint = CGPoint.zero
+            let displacedViewPoint = CGPoint(x: floatLength, y: floatLength)
+            let originPlotPoint = [Double]()
+            let displacedPlotPoint = [Double]()
+            let thePlotSpace = plotSpace
+            thePlotSpace?.doublePrecisionPlotPoint(originPlotPoint, numberOfCoordinates: 2, forPlotAreaViewPoint: originViewPoint)
+            thePlotSpace?.doublePrecisionPlotPoint(displacedPlotPoint, numberOfCoordinates: 2, forPlotAreaViewPoint: displacedViewPoint)
+            if barsAreHorizontal {
+                lengthDouble = displacedPlotPoint[CPTCoordinate.y.rawValue] - originPlotPoint[CPTCoordinate.y.rawValue]
+            } else {
+                lengthDouble = displacedPlotPoint[CPTCoordinate.x.rawValue] - originPlotPoint[CPTCoordinate.x.rawValue]
+            }
+        } else {
+            lengthDouble = Double(length)
+        }
+        return lengthDouble
+    }
+    
+    
+    
+    /** @brief Converts a point given in plot area drawing coordinates to the data coordinate space.
+     *  @param plotPoint A c-style array of data point coordinates (as NSDecimal structs).
+     *  @param count The number of coordinate values in the @par{plotPoint} array.
+     *  @param point The drawing coordinates of the data point.
+     **/
+    func lengthInPlotCoordinates(decimalLength: CGFloat)-> CGFloat
+    {
+        var length = CGFloat(0)
+        
+        if ( self.barWidthsAreInViewCoordinates ) {
+            let floatLength = decimalLength
+            
+            let originView = CGPoint()
+            let displacedView = CGPoint(x: floatLength, y: floatLength)
+            
+            var originPlot = [CGFloat]()
+            var displacedPlot  = [CGFloat]()
+            
+            let thePlotSpace = self.plotSpace;
+            thePlotSpace?.plotPoint(plotPoint: originPlot, numberOfCoordinates:2, forPlotAreaViewPoint:originView)
+            thePlotSpace?.plotPoint(plotPoint: displacedPlot, numberOfCoordinates:2, forPlotAreaViewPoint:displacedView)
+            
+            if ( self.barsAreHorizontal == true ) {
+                length = displacedPlot[CPTCoordinate.y.rawValue] - originPlot[CPTCoordinate.y.rawValue]
+            }
+            else {
+                length = displacedPlot[CPTCoordinate.x.rawValue] - originPlot[CPTCoordinate.x.rawValue]
+            }
+        }
+        else {
+            length = decimalLength;
+        }
+        return length;
+    }
+    
+    
     
     
     // MARK: -  Data Ranges
@@ -546,18 +545,18 @@ public class CPTBarPlot: CPTPlot {
             case CPTCoordinate.x:
                 if ( self.barsAreHorizontal == true ) {
                     let base = self.baseValue
-                    if range.contains(base ) == false {
+                    if range?.contains(base ) == false {
                         var newRange = range
                         newRange.unionPlotRange(plotRangeWithLocationDecimal(base, lengthDecimal:(0))
-                            range = newRange;
+                                                range = newRange;
                     }
-                    }
+                }
                 break;
                 
             case CPTCoordinate.y:
                 if ( !self.barsAreHorizontal == true ) {
                     let base = self.baseValue
-                    if ( range.contains(base) == false ) {
+                    if ( range?.contains(base) == false ) {
                         var newRange = range
                         newRange.unionPlotRange( plotRangeWithLocationDecimal(base ,lengthDecimal:0))
                         range = newRange;
@@ -578,17 +577,15 @@ public class CPTBarPlot: CPTPlot {
         switch ( fieldEnum ) {
         case .location:
             range = self.plotRangeEnclosingBars()
-            break;
             
         case .tip:
+            fallthrough
         case .base:
             range = self.plotRangeForField(fieldEnum: fieldEnum.rawValue)
-            break;
             
         default:
             break;
         }
-        
         return range!;
     }
 
@@ -612,8 +609,8 @@ public class CPTBarPlot: CPTPlot {
                 range = self.plotRangeForCoordinate(coord: CPTCoordinate.x)!
             }
     
-            var barOffsetLength = self.lengthInPlotCoordinates(self.barOffset)
-            var barWidthLength  = self.lengthInPlotCoordinates(self.barWidth)
+            var barOffsetLength = self.lengthInPlotCoordinates(decimalLength: self.barOffset)
+            var barWidthLength  = self.lengthInPlotCoordinates(decimalLength: self.barWidth)
             var halfBarWidth    = barWidthLength / CGFloat(2)
     
             var rangeLocation = range.location
@@ -636,150 +633,149 @@ public class CPTBarPlot: CPTPlot {
         }
     
     // MARK: - Drawing
-    //
-    //    func renderAsVectorInContext:(nonnull CGContextRef)context
-    //    {
-    //        if ( self.hidden ) {
-    //            return;
-    //        }
-    //
-    //        CPTMutableNumericData *cachedLocations = [self cachedNumbersForField:CPTBarPlotFieldBarLocation];
-    //        CPTMutableNumericData *cachedLengths   = [self cachedNumbersForField:CPTBarPlotFieldBarTip];
-    //
-    //        if ((cachedLocations == nil) || (cachedLengths == nil)) {
-    //            return;
-    //        }
-    //
-    //        BOOL basesVary                     = self.barBasesVary;
-    //        CPTMutableNumericData *cachedBases = [self cachedNumbersForField:CPTBarPlotFieldBarBase];
-    //
-    //        if ( basesVary && (cachedBases == nil)) {
-    //            return;
-    //        }
-    //
-    //        NSUInteger barCount = self.cachedDataCount;
-    //
-    //        if ( barCount == 0 ) {
-    //            return;
-    //        }
-    //
-    //        if ( cachedLocations.numberOfSamples != cachedLengths.numberOfSamples ) {
-    //            [NSException raise:CPTException format:@"Number of bar locations and lengths do not match"];
-    //        }
-    //
-    //        if ( basesVary && (cachedLengths.numberOfSamples != cachedBases.numberOfSamples)) {
-    //            [NSException raise:CPTException format:@"Number of bar lengths and bases do not match"];
-    //        }
-    //
-    //        [super renderAsVectorInContext:context];
-    //
-    //        CGContextBeginTransparencyLayer(context, NULL);
-    //
-    //        for ( NSUInteger ii = 0; ii < barCount; ii++ ) {
-    //            // Draw
-    //            [self drawBarInContext:context recordIndex:ii];
-    //        }
-    //
-    //        CGContextEndTransparencyLayer(context);
-    //    }
-    //
-    //    -(BOOL)barAtRecordIndex:(NSUInteger)idx basePoint:(nonnull CGPoint *)basePoint tipPoint:(nonnull CGPoint *)tipPoint
-    //    {
-    //        BOOL horizontalBars            = self.barsAreHorizontal;
-    //        CPTCoordinate independentCoord = (horizontalBars ? CPTCoordinateY : CPTCoordinateX);
-    //        CPTCoordinate dependentCoord   = (horizontalBars ? CPTCoordinateX : CPTCoordinateY);
-    //
-    //        CPTPlotSpace *thePlotSpace = self.plotSpace;
-    //
-    //        if ( self.doublePrecisionCache ) {
-    //            double plotPoint[2];
-    //            plotPoint[independentCoord] = [self cachedDoubleForField:CPTBarPlotFieldBarLocation recordIndex:idx];
-    //            if ( isnan(plotPoint[independentCoord])) {
-    //                return false
-    //            }
-    //
-    //            // Tip point
-    //            plotPoint[dependentCoord] = [self cachedDoubleForField:CPTBarPlotFieldBarTip recordIndex:idx];
-    //            if ( isnan(plotPoint[dependentCoord])) {
-    //                return false
-    //            }
-    //            *tipPoint = [thePlotSpace plotAreaViewPointForDoublePrecisionPlotPoint:plotPoint numberOfCoordinates:2];
-    //
-    //            // Base point
-    //            if ( !self.barBasesVary ) {
-    //                plotPoint[dependentCoord] = self.baseValue.doubleValue;
-    //            }
-    //            else {
-    //                plotPoint[dependentCoord] = [self cachedDoubleForField:CPTBarPlotFieldBarBase recordIndex:idx];
-    //            }
-    //            if ( isnan(plotPoint[dependentCoord])) {
-    //                return false
-    //            }
-    //            *basePoint = [thePlotSpace plotAreaViewPointForDoublePrecisionPlotPoint:plotPoint numberOfCoordinates:2];
-    //        }
-    //        else {
-    //            NSDecimal plotPoint[2];
-    //            plotPoint[independentCoord] = [self cachedDecimalForField:CPTBarPlotFieldBarLocation recordIndex:idx];
-    //            if ( NSDecimalIsNotANumber(&plotPoint[independentCoord])) {
-    //                return false
-    //            }
-    //
-    //            // Tip point
-    //            plotPoint[dependentCoord] = [self cachedDecimalForField:CPTBarPlotFieldBarTip recordIndex:idx];
-    //            if ( NSDecimalIsNotANumber(&plotPoint[dependentCoord])) {
-    //                return false
-    //            }
-    //            *tipPoint = [thePlotSpace plotAreaViewPointForPlotPoint:plotPoint numberOfCoordinates:2];
-    //
-    //            // Base point
-    //            if ( !self.barBasesVary ) {
-    //                plotPoint[dependentCoord] = self.baseValue.decimalValue;
-    //            }
-    //            else {
-    //                plotPoint[dependentCoord] = [self cachedDecimalForField:CPTBarPlotFieldBarBase recordIndex:idx];
-    //            }
-    //            if ( NSDecimalIsNotANumber(&plotPoint[dependentCoord])) {
-    //                return false
-    //            }
-    //            *basePoint = [thePlotSpace plotAreaViewPointForPlotPoint:plotPoint numberOfCoordinates:2];
-    //        }
-    //
-    //        // Determine bar width and offset.
-    //        CGFloat barOffsetLength = [self lengthInView:self.barOffset.decimalValue];
-    //
-    //        // Offset
-    //        if ( horizontalBars ) {
-    //            basePoint->y += barOffsetLength;
-    //            tipPoint->y  += barOffsetLength;
-    //        }
-    //        else {
-    //            basePoint->x += barOffsetLength;
-    //            tipPoint->x  += barOffsetLength;
-    //        }
-    //
-    //        return true
-    //    }
-    //
-    //    -(nullable CGMutablePathRef)newBarPathWithContext:(nullable CGContextRef)context recordIndex:(NSUInteger)recordIndex
-    //    {
-    //        // Get base and tip points
-    //        CGPoint basePoint, tipPoint;
-    //        BOOL barExists = [self barAtRecordIndex:recordIndex basePoint:&basePoint tipPoint:&tipPoint];
-    //
-    //        if ( !barExists ) {
-    //            return NULL;
-    //        }
-    //
-    //        NSNumber *width = [self barWidthForIndex:recordIndex];
-    //
-    //        CGMutablePathRef path = [self newBarPathWithContext:context
-    //                                                  basePoint:basePoint
-    //                                                   tipPoint:tipPoint
-    //                                                      width:width];
-    //
-    //        return path;
-    //    }
-    //
+    
+    override func renderAsVectorInContext(context: CGContext)
+    {
+        if ( self.isHidden ) {
+            return;
+        }
+        
+        var cachedLocations = self.cachedNumbersForField(CPTBarPlotField.location.rawValue)
+        var cachedLengths   = self.cachedNumbersForField(CPTBarPlotField.tip.rawValue)
+        
+        if ((cachedLocations == nil) || (cachedLengths == nil)) {
+            return
+        }
+        
+        var basesVary   = self.barBasesVary;
+        var cachedBases = self.cachedNumbersForField(CPTBarPlotField.base.rawValue)
+        
+        if ( basesVary && (cachedBases == nil)) {
+            return;
+        }
+        
+        var barCount = self.cachedDataCount;
+        guard barCount != 0 else { return }
+        
+        if ( cachedLocations.numberOfSamples != cachedLengths.numberOfSamples ) {
+            print("[NSException raise:CPTException format:Number of bar locations and lengths do not match")
+        }
+        
+        if ( basesVary && (cachedLengths.numberOfSamples != cachedBases.numberOfSamples)) {
+            print("NSException raise:CPTException format:@ Number of bar lengths and bases do not match")
+        }
+        
+        super.renderAsVectorInContext(context: context)
+        
+        context.beginTransparencyLayer(auxiliaryInfo: nil);
+        for ii in 0..<barCount {
+            self.drawBarInContext(context: context, recordIndex:ii)
+        }
+        context.endTransparencyLayer();
+    }
+    
+    func barAtRecordIndex(idx: Int, basePoint: inout CGPoint, tipPoint: inout CGPoint)-> Bool
+     
+    {
+        var basePoint = basePoint
+        var tipPoint = tipPoint
+        var horizontalBars            = self.barsAreHorizontal;
+        let independentCoord = horizontalBars ? CPTCoordinate.y : CPTCoordinate.x
+        let dependentCoord   = horizontalBars ? CPTCoordinate.x : CPTCoordinate.y
+        
+        let thePlotSpace = self.plotSpace;
+        
+        if ( self.doublePrecisionCache ) {
+            var plotPoint = [CGFloat]()
+            
+            plotPoint[independentCoord.rawValue] = self.cachedDoubleForField(CPTBarPlotField.location, recordIndex:idx)
+            if plotPoint[independentCoord.rawValue].isNaN {
+                return false
+            }
+            
+            // Tip point
+            plotPoint[dependentCoord.rawValue] = self.cachedDoubleForField(CPTBarPlotField.tip, recordIndex:idx)
+            if plotPoint[dependentCoord.rawValue].isNaN {
+                return false
+            }
+            tipPoint = thePlotSpace.plotAreaViewPointForDoublePrecisionPlotPoint(plotPoint, numberOfCoordinates:2)
+            
+            // Base point
+            if ( !self.barBasesVary ) {
+                plotPoint[dependentCoord.rawValue] = self.baseValue
+            }
+            else {
+                plotPoint[dependentCoord.rawValue] = self.cachedDoubleForField(CPTBarPlotField.base, recordIndex:idx)
+            }
+            if plotPoint[dependentCoord.rawValue].isNaN {
+                return false
+            }
+            basePoint = thePlotSpace.plotAreaViewPointForDoublePrecisionPlotPoint(plotPoint, numberOfCoordinates:2)
+        }
+        else {
+            var plotPoint = [CGFloat]()
+            plotPoint[independentCoord.rawValue] = self.cachedDecimalForField(CPTBarPlotField.location, recordIndex:idx)
+            if plotPoint[independentCoord.rawValue].isNaN {
+                return false
+            }
+            
+            // Tip point
+            plotPoint[dependentCoord.rawValue] = self.cachedDecimalForField(fieldEnum: CPTBarPlotField.tip.rawValue, recordIndex:idx)
+            if plotPoint[dependentCoord.rawValue].isNaN {
+                return false
+            }
+            tipPoint = (thePlotSpace?.plotAreaViewPointForPlotPoint(plotPoint: plotPoint, numberOfCoordinates:2))!
+            
+            // Base point
+            if ( !self.barBasesVary ) {
+                plotPoint[dependentCoord.rawValue] = self.baseValue
+            }
+            else {
+                plotPoint[dependentCoord.rawValue] = self.cachedDecimalForField(fieldEnum: CPTBarPlotField.base.rawValue, recordIndex:idx)
+            }
+            if plotPoint[dependentCoord.rawValue].isNaN {
+                return false
+            }
+            basePoint = (thePlotSpace?.plotAreaViewPointForPlotPoint(plotPoint: plotPoint, numberOfCoordinates:2))!
+//            basePoint -= 1
+        }
+        
+        // Determine bar width and offset.
+        var barOffsetLength = self.lengthInView(decimalLength: self.barOffset)
+        
+        // Offset
+        if ( horizontalBars ) {
+            basePoint.y += barOffsetLength
+            tipPoint.y  += barOffsetLength
+        }
+        else {
+            basePoint.x += barOffsetLength
+            tipPoint.x  += barOffsetLength
+        }
+        
+        return true
+    }
+    
+    func newBarPath(with context: CGContext?, record recordIndex: Int) -> CGMutablePath? {
+    // Get base and tip points
+        var basePoint: CGPoint
+        var tipPoint: CGPoint
+        
+        let barExists = barAtRecordIndex (idx: recordIndex, basePoint: &basePoint, tipPoint: &tipPoint)
+        guard barExists == true else  { return nil }
+        
+        let width = barWidthForIndex(for: recordIndex)
+        
+        let path = newBarPath(
+            with: context,
+            basePoint: basePoint,
+            tip: tipPoint,
+            width: width)
+        
+        return path
+}
+    
+    
     //    -(nonnull CGMutablePathRef)newBarPathWithContext:(nullable CGContextRef)context basePoint:(CGPoint)basePoint tipPoint:(CGPoint)tipPoint width:(NSNumber *)width
     //    {
     //        // This function is used to create a path which is used for both
@@ -921,7 +917,7 @@ public class CPTBarPlot: CPTPlot {
     
     func barFillForIndex(idx: Int)-> CPTFill
     {
-        var theBarFill = self.cachedValueForKey(key: CPTBarPlotBindingBarFills, recordIndex: idx)
+        var theBarFill = self.cachedValueForKey(key: NSBindingName.BarFills.rawValue, recordIndex: idx)
         
         if theBarFill == nil || (theBarFill == [CPTPlot nilData] {
             theBarFill = self.fill
@@ -929,28 +925,29 @@ public class CPTBarPlot: CPTPlot {
             
             return theBarFill;
     }
-    //
-    //    -(nullable CPTLineStyle *)barLineStyleForIndex:(NSUInteger)idx
-    //    {
-    //        CPTLineStyle *theBarLineStyle = [self cachedValueForKey:CPTBarPlotBindingBarLineStyles recordIndex:idx];
-    //
-    //        if ((theBarLineStyle == nil) || (theBarLineStyle == [CPTPlot nilData])) {
-    //            theBarLineStyle = self.lineStyle;
-    //        }
-    //
-    //        return theBarLineStyle;
-    //    }
-    //
-    //    -(nonnull NSNumber *)barWidthForIndex:(NSUInteger)idx
-    //    {
-    //        NSNumber *theBarWidth = [self cachedValueForKey:CPTBarPlotBindingBarWidths recordIndex:idx];
-    //
-    //        if ((theBarWidth == nil) || (theBarWidth == [CPTPlot nilData])) {
-    //            theBarWidth = self.barWidth;
-    //        }
-    //
-    //        return theBarWidth;
-    //    }
+    
+    
+    func barLineStyleForIndex(idx: Int) -> CPTLineStyle
+    {
+        var theBarLineStyle = self.cachedValueForKey( key: NSBindingName.BarLineStyles.rawValue, recordIndex:idx)
+        
+        if ((theBarLineStyle == nil) || (theBarLineStyle == [CPTPlot nilData])) {
+            theBarLineStyle = self.lineStyle;
+        }
+        
+        return theBarLineStyle;
+    }
+    
+    func barWidthForIndex(idx: Int)-> CGFloat
+    {
+        let theBarWidth = self.cachedValueForKey(key: NSBindingName.BarWidths.rawValue, recordIndex:idx)
+        
+        if ((theBarWidth == nil) || (theBarWidth == [CPTPlot nilData])) {
+            theBarWidth = self.barWidth;
+        }
+        
+        return theBarWidth;
+    }
     
     func drawBarInContext(context: CGContext, recordIndex idx: Int)
     {
@@ -958,15 +955,14 @@ public class CPTBarPlot: CPTPlot {
         var basePoint = CGPoint()
         var tipPoint = CGPoint()
         
-        let barExists = self.barAtRecordIndex(idx, basePoint:&basePoint, tipPoint:&tipPoint)
-        
+        let barExists = self.barAtRecordIndex(idx: idx, basePoint:&basePoint, tipPoint:&tipPoint)
         guard barExists == true else { return }
         
-        let width = self.barWidthForIndex(recordIndex)
+        let width = self.barWidthForIndex(idx: idx)
         
         // Return if bar is off screen
         if self.barIsVisibleWithBasePoint(basePoint, width:width ) == false {
-            return;
+            return
         }
         
         let path = self.newBarPathWithContext(context,
@@ -977,55 +973,55 @@ public class CPTBarPlot: CPTPlot {
         if ( path ) {
             context.saveGState();
             
-            let theBarFill = self.barFillForIndex(idx)
-            if ( theBarFill is CPTFill ) {
+            let theBarFill = self.barFillForIndex(idx: idx)
+//            if ( theBarFill is CPTFill ) {
                 context.beginPath()
                 CGContextAddPath(context, path);
-                theBarFill.fillPathInContext(context)
-            }
+                theBarFill.fillPathInContext(context: context)
+//            }
             
-            let theLineStyle = self.barLineStyleForIndex(idx)
-            if ( theLineStyle is CPTLineStyle ) {
+            let theLineStyle = self.barLineStyleForIndex(idx: idx)
+//            if ( theLineStyle is CPTLineStyle ) {
                 context.beginPath();
                 CGContextAddPath(context, path);
-                theLineStyle.setLineStyleInContext(context)
-                theLineStyle.strokePathInContext(context)
-            }
+                theLineStyle.setLineStyleInContext(context: context)
+                theLineStyle.strokePathInContext(context: context)
+//            }
             
             context.restoreGState();
             
         }
     }
-    //
-    //    func drawSwatchForLegend:(nonnull CPTLegend *)legend atIndex:(NSUInteger)idx inRect:(CGRect)rect inContext:(nonnull CGContextRef)context
-    //    {
-    //        [super drawSwatchForLegend:legend atIndex:idx inRect:rect inContext:context];
-    //
-    //        if ( self.drawLegendSwatchDecoration ) {
-    //            CPTFill *theFill           = [self barFillForIndex:idx];
-    //            CPTLineStyle *theLineStyle = [self barLineStyleForIndex:idx];
-    //
-    //            if ( theFill || theLineStyle ) {
-    //                CGFloat radius = MAX(self.barCornerRadius, self.barBaseCornerRadius);
-    //
-    //                if ( [theFill isKindOfClass:[CPTFill class]] ) {
-    //                    CGContextBeginPath(context);
-    //                    CPTAddRoundedRectPath(context, CPTAlignIntegralRectToUserSpace(context, rect), radius);
-    //                    [theFill fillPathInContext:context];
-    //                }
-    //
-    //                if ( [theLineStyle isKindOfClass:[CPTLineStyle class]] ) {
-    //                    [theLineStyle setLineStyleInContext:context];
-    //                    CGContextBeginPath(context);
-    //                    CPTAddRoundedRectPath(context, CPTAlignBorderedRectToUserSpace(context, rect, theLineStyle), radius);
-    //                    [theLineStyle strokePathInContext:context];
-    //                }
-    //            }
-    //        }
-    //    }
-    //
-    //    /// @endcond
-    //
+    
+    func drawSwatchForLegend(legend: CPTLegend, atIndex:Int, inRect rect:CGRect, inContext context: CGContext)
+    {
+        super.drawSwatchForLegend(legend: legend, atIndex  :atIndex, inRect: rect, context: context)
+        
+        if ( self.drawLegendSwatchDecoration ) {
+            let theFill    = self.barFillForIndex( idx: atIndex)
+            let theLineStyle = self.barLineStyleForIndex(idx: atIndex)
+            
+            if ( theFill || theLineStyle ) {
+                let radius = max(self.barCornerRadius, self.barBaseCornerRadius);
+                
+//                if ( [theFill isKindOfClass:[CPTFill class]] ) {
+                    context.beginPath();
+                    CPTAddRoundedRectPath(context, CPTAlignIntegralRectToUserSpace(context, rect), radius);
+                    theFill.fillPathInContext(context: context)
+//                }
+                
+                //                if ( theLineStyle is CPTLineStyle ) {
+                theLineStyle.setLineStyleInContext(context: context)
+                context.beginPath();
+                CPTAddRoundedRectPath(context, CPTAlignBorderedRectToUserSpace(context, rect, theLineStyle), radius);
+                theLineStyle.strokePathInContext(context: context)
+                //                }
+            }
+        }
+    }
+    
+        /// @endcond
+    
     // MARK: - Animation
     
     override func needsDisplayForKey(forKey aKey: String) -> Bool

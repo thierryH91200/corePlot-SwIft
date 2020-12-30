@@ -15,15 +15,15 @@ extension CPTLayer {
         guard self.isHidden == false else {return}
         
         _ = NSApp.effectiveAppearance //{
-            let oldAppearance = NSAppearance.current
-            NSAppearance.current = self.graph?.hostingView?.effectiveAppearance
-            
-            super.display()
-            NSAppearance.current = oldAppearance;
-//        }
-//        else {
-//            super.display()
-//        }
+        let oldAppearance = NSAppearance.current
+        NSAppearance.current = self.graph?.hostingView?.effectiveAppearance
+        
+        super.display()
+        NSAppearance.current = oldAppearance;
+        //        }
+        //        else {
+        //            super.display()
+        //        }
     }
     
     @objc func drawInContext(context: CGContext)
@@ -53,10 +53,10 @@ extension CPTLayer {
     @objc func renderAsVectorInContext(context: CGContext)
     {
         // This is where subclasses do their drawing
-        if ( self.renderingRecursively ) {
+        if ( self.renderingRecursively == true ) {
             self.applyMaskToContext(context: context)
         }
-        self.shadow?.shadowIn(context: context)
+        self.shadow?.shadowInContext(context: context)
     }
     
     /** @brief Draws layer content and the content of all sublayers into the provided graphics context.
@@ -190,7 +190,7 @@ extension CPTLayer {
         return false;
     }
     
-    func scrollWheelEvent(event : CPTNativeEvent, fromPoint:CGPoint, toPoint:CGPoint) -> Bool
+    @objc func scrollWheelEvent(event : CPTNativeEvent, fromPoint:CGPoint, toPoint:CGPoint) -> Bool
     {
         return false
     }

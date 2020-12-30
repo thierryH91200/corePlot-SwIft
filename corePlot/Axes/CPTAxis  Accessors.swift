@@ -135,44 +135,44 @@ extension CPTAxis {
         }
     
     
-    func setAxisTitle(_ newTitle: CPTAxisTitle?) {
-        if newTitle != _axisTitle {
-            _axisTitle?.contentLayer.removeFromSuperlayer()
-            _axisTitle = newTitle
-            
-            let thePlotArea = plotArea
-            thePlotArea?.updateAxisSetLayersForType(layerType: CPTGraphLayerType.axisTitles)
-            
-            if (_axisTitle != nil) {
-                _axisTitle?.offset = titleOffset
-                let contentLayer = _axisTitle?.contentLayer
-                if let contentLayer = contentLayer {
-                    let idx = thePlotArea?.sublayerIndexForAxis(axis: self, layerType: CPTGraphLayerType.axisTitles)
-                    thePlotArea?.axisTitleGroup?.insertSublayer(contentLayer, at: UInt32(idx!))
-                    updateAxisTitle()
-                }
-            }
-        }
-    }
-    
-    func axisTitle() -> CPTAxisTitle? {
-        if (_axisTitle == nil) {
-            var newTitle: CPTAxisTitle? = nil
-            
-            //            if let attributedTitle = attributedTitle {
-            let textLayer = CPTTextLayer(attributedText: attributedTitle)
-            newTitle = CPTAxisTitle(layer: textLayer)
-            if title != "" {
-                newTitle = CPTAxisTitle( layer: textLayer, newText: title, newStyle: titleTextStyle)
-            }
-            
-            if let newTitle = newTitle {
-                newTitle.rotation = titleRotation!
-                _axisTitle = newTitle
-            }
-        }
-        return _axisTitle
-    }
+//    func setAxisTitle(_ newTitle: CPTAxisTitle?) {
+//        if newTitle != _axisTitle {
+//            _axisTitle?.contentLayer.removeFromSuperlayer()
+//            _axisTitle = newTitle
+//            
+//            let thePlotArea = plotArea
+//            thePlotArea?.updateAxisSetLayersForType(layerType: CPTGraphLayerType.axisTitles)
+//            
+//            if (_axisTitle != nil) {
+//                _axisTitle?.offset = titleOffset
+//                let contentLayer = _axisTitle?.contentLayer
+//                if let contentLayer = contentLayer {
+//                    let idx = thePlotArea?.sublayerIndexForAxis(axis: self, layerType: CPTGraphLayerType.axisTitles)
+//                    thePlotArea?.axisTitleGroup?.insertSublayer(contentLayer, at: UInt32(idx!))
+//                    updateAxisTitle()
+//                }
+//            }
+//        }
+//    }
+//    
+//    func axisTitle() -> CPTAxisTitle? {
+//        if (_axisTitle == nil) {
+//            var newTitle: CPTAxisTitle? = nil
+//            
+//            //            if let attributedTitle = attributedTitle {
+//            let textLayer = CPTTextLayer(attributedText: attributedTitle)
+//            newTitle = CPTAxisTitle(layer: textLayer)
+//            if title != "" {
+//                newTitle = CPTAxisTitle( layer: textLayer, newText: title, newStyle: titleTextStyle)
+//            }
+//            
+//            if let newTitle = newTitle {
+//                newTitle.rotation = titleRotation!
+//                _axisTitle = newTitle
+//            }
+//        }
+//        return _axisTitle
+//    }
     
     
     
@@ -1007,8 +1007,8 @@ extension CPTAxis {
                 }
                 
                 for label in self.axisLabels {
-                    let isVisible = range.containsNumber(number: label.tickLocation)
-                    label.contentLayer.hidden = !isVisible;
+                    let isVisible = range?.containsNumber(number: label.tickLocation)
+                    label.contentLayer.isHidden = !isVisible!;
                     if ( isVisible == true) {
                         let tickBasePoint = self.viewPointForCoordinateValue(coordinateValue: label.tickLocation)
                         label.positionRelativeToViewPoint(point: tickBasePoint, coordinate:orthogonalCoordinate, direction:direction)
@@ -1016,8 +1016,8 @@ extension CPTAxis {
                 }
                 
                 for label in self.minorTickAxisLabels {
-                    let isVisible = range.containsNumber(label.tickLocation)
-                    label.contentLayer.hidden = !isVisible
+                    let isVisible = range?.containsNumber(number: label.tickLocation)
+                    label.contentLayer.isHidden = !isVisible!
                     if ( isVisible == true) {
                         let tickBasePoint = self.viewPointForCoordinateValue(coordinateValue: label.tickLocation)
                         label.positionRelativeToViewPoint(point: tickBasePoint, coordinate:orthogonalCoordinate, direction:direction)

@@ -17,7 +17,7 @@
  }
  
  
- @objc public protocol CPTLegendDelegate: CPTLayerDelegate {
+ @objc public protocol CPTLegendDelegate<CPTLayerDelegate> {
     
     func legend( legend: CPTLegend, fillForEntryAtIndex:Int, forPlot plot: CPTPlot) -> CPTFill
     

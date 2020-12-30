@@ -7,6 +7,18 @@
 
 import Cocoa
 
+//typedef NSString *CPTThemeName cpt_swift_struct;
+//
+///// @ingroup themeNames
+///// @{
+//extern CPTThemeName __nonnull const kCPTDarkGradientTheme; ///< A graph theme with dark gray gradient backgrounds and light gray lines.
+//extern CPTThemeName __nonnull const kCPTPlainBlackTheme;   ///< A graph theme with black backgrounds and white lines.
+//extern CPTThemeName __nonnull const kCPTPlainWhiteTheme;   ///< A graph theme with white backgrounds and black lines.
+//extern CPTThemeName __nonnull const kCPTSlateTheme;        ///< A graph theme with colors that match the default iPhone navigation bar, toolbar buttons, and table views.
+//extern CPTThemeName __nonnull const kCPTStocksTheme;       ///< A graph theme with a gradient background and white lines.
+///// @}
+
+
 class CPTTheme: NSObject {
     
     
@@ -19,74 +31,41 @@ class CPTTheme: NSObject {
     }
     
     // MARK: Theme management
-//    +(nullable NSArray<Class> *)themeClasses
     func themeClasses() -> Array<Any>
     {
-        let  nameSort = NSSortDescriptor( key: : "name",ascending:true, selector:#selector(caseInsensitiveCompare:))
-
+        let  nameSort = NSSortDescriptor( key: "name",ascending:true, selector:#selector(caseInsensitiveCompare:))
+        
         return themes.sortedArrayUsingDescriptors([nameSort])
     }
     
-    init instancetype)themeNamed:(nullable CPTThemeName)themeName
+    init (themeNamed: CPTThemeName)
     {
-        CPTTheme *newTheme = nil;
-
-        for ( Class themeClass in themes ) {
+        let newTheme : CPTTheme?
+        
+        for  themeClass in themes  {
             if ( [themeName isEqualToString:[themeClass name]] ) {
                 newTheme = [[themeClass alloc] init];
                 break;
             }
         }
-
-        return newTheme;
     }
-
-    /** @brief Register a theme class.
-     *  @param themeClass Theme class to register.
-     **/
-    +(void)registerTheme:(nonnull Class)themeClass
+    
+    // MARK : Accessors
+    func setGraphClass(newGraphClass: Class)newGraphClass
     {
-        NSParameterAssert(themeClass);
-
-        @synchronized ( self ) {
-            if ( !themes ) {
-                themes = [[NSMutableSet alloc] init];
-            }
-
-            if ( [themes containsObject:themeClass] ) {
-                [NSException raise:CPTException format:@"Theme class already registered: %@", themeClass];
-            }
-            else {
-                [themes addObject:themeClass];
-            }
-        }
+    if graphClass != newGraphClass ) {
+    if ( ![newGraphClass isSubclassOfClass:[CPTGraph class]] ) {
+    [NSException raise:CPTException format:@"Invalid graph class for theme; must be a subclass of CPTGraph"];
     }
-
-    /** @brief The name used for this theme class.
-     *  @return The name.
-     **/
-    +(nonnull CPTThemeName)name
-    {
-        return NSStringFromClass(self);
+    else if ( [newGraphClass isEqual:[CPTGraph class]] ) {
+    [NSException raise:CPTException format:@"Invalid graph class for theme; must be a subclass of CPTGraph"];
     }
-
-   // MARK : Accessors
-
-    -(void)setGraphClass:(nullable Class)newGraphClass
-    {
-        if ( graphClass != newGraphClass ) {
-            if ( ![newGraphClass isSubclassOfClass:[CPTGraph class]] ) {
-                [NSException raise:CPTException format:@"Invalid graph class for theme; must be a subclass of CPTGraph"];
-            }
-            else if ( [newGraphClass isEqual:[CPTGraph class]] ) {
-                [NSException raise:CPTException format:@"Invalid graph class for theme; must be a subclass of CPTGraph"];
-            }
-            else {
-                graphClass = newGraphClass;
-            }
-        }
+    else {
+    graphClass = newGraphClass;
     }
-
+    }
+    }
+    
     // MARK: apply the theme
     /** @brief Applies the theme to the provided graph.
      *  @param graph The graph to style.
@@ -95,20 +74,20 @@ class CPTTheme: NSObject {
         
         self.applyThemeToBackground(graph: graph)
         let plotAreaFrame = graph.plotAreaFrame;
-
+        
         if ( plotAreaFrame ) {
             self.applyThemeToPlotArea(plotAreaFrame: plotAreaFrame)
         }
-
+        
         let axisSet = graph.axisSet
         if  axisSet != nil  {
-            self.applyThemeToAxisSet(axisSet: axisSet())
+            self.applyThemeToAxisSet(axisSet: axisSet!)
         }
     }
-
-
-// MARK: - implementation CPTTheme(AbstractMethods)
-
+    
+    
+    // MARK: - implementation CPTTheme(AbstractMethods)
+    
     /** @brief Creates a new graph styled with the theme.
      *  @return The new graph.
      **/
@@ -116,18 +95,18 @@ class CPTTheme: NSObject {
     {
         return nil
     }
-
+    
     func applyThemeToBackground(graph: CPTGraph)
     {
     }
-
+    
     /** @brief Applies the theme to the provided plot area.
      *  @param plotAreaFrame The plot area to style.
      **/
     func applyThemeToPlotArea( plotAreaFrame: CPTPlotAreaFrame)
     {
     }
-
+    
     /** @brief Applies the theme to the provided axis set.
      *  @param axisSet The axis set to style.
      **/

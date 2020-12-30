@@ -9,18 +9,19 @@ import Cocoa
 
 class PieChartController: NSViewController {
     
-    
     private var pieGraph : CPTXYGraph? = nil
     let dataForChart = [20.0, 30.0, 60.0]
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do view setup here.
         
         // Create graph from theme
+        
+        let kCPTDarkGradientTheme = "Dark Gradients"
+
         let newGraph = CPTXYGraph(frame: CGRect())
-        newGraph.applyTheme(CPTTheme(named: kCPTDarkGradientTheme))
+        newGraph.applyTheme(theme: CPTTheme(named: .darkGradientTheme))
         
         let hostingView = self.view as! CPTGraphHostingView
         hostingView.hostedGraph = newGraph
@@ -33,7 +34,7 @@ class PieChartController: NSViewController {
         
         newGraph.axisSet = nil
         
-        let whiteText = CPTMutableTextStyle()
+        let whiteText = CPTTextStyle()
         whiteText.color = NSColor.white
         
         newGraph.titleTextStyle = whiteText
@@ -45,7 +46,7 @@ class PieChartController: NSViewController {
         piePlot.pieRadius       = 131.0
         piePlot.identifier      = "Pie Chart 1"
         piePlot.startAngle      = CGFloat(M_PI_4)
-        piePlot.sliceDirection  = .CounterClockwise
+        piePlot.sliceDirection  = .counterClockwise
         piePlot.centerAnchor    = CGPoint(x: 0.5, y: 0.38)
         piePlot.borderLineStyle = CPTLineStyle()
         piePlot.delegate        = self
@@ -106,9 +107,5 @@ class PieChartController: NSViewController {
         self.pieGraph?.title = "Selected index: \(recordIndex)"
     }
 }
-
-//extension PieChartController :CPTPieChartDataSource {
-//    
-//}
 
 

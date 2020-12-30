@@ -254,10 +254,10 @@ class CPTPlotSpace: NSObject {
     //     *  @param count The number of coordinate values in the @par{plotPoint} array.
     //     *  @param point The drawing coordinates of the data point.
     //     **/
-    //    -(void)plotPoint:(nonnull NSDecimal *__unused)plotPoint numberOfCoordinates:(NSUInteger cpt_unused)count forPlotAreaViewPoint:(CGPoint __unused)point
-    //    {
-    //        NSParameterAssert(count == self.numberOfCoordinates);
-    //    }
+    func plotPoint(plotPoint: CGFloat,  numberOfCoordinates count :Int , forPlotAreaViewPoint point: CGPoint)
+    {
+        assert(count == self.numberOfCoordinates())
+    }
     //
     //    /** @brief Converts a point given in drawing coordinates to the data coordinate space.
     //     *  @param plotPoint A c-style array of data point coordinates (as @double values).

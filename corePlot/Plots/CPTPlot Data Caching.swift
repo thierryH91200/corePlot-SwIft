@@ -340,37 +340,34 @@ extension CPTPlot {
     // *  @param idx The index of the desired data value.
     // *  @return The cached number or @NAN if no data is cached for the requested field.
     // **/
-    //-(NSDecimal)cachedDecimalForField:(NSUInteger)fieldEnum recordIndex:(NSUInteger)idx
-    //{
-    //    CPTMutableNumericData *numbers = [self cachedNumbersForField:fieldEnum];
-    //
-    //    if ( numbers ) {
-    //        switch ( numbers.dataTypeFormat ) {
-    //            case CPTFloatingPointDataType:
-    //            {
-    //                const double *doubleNumber = (const double *)[numbers samplePointer:idx];
-    //                if ( doubleNumber ) {
-    //                    return CPTDecimalFromDouble(*doubleNumber);
-    //                }
-    //            }
-    //            break;
-    //
-    //            case CPTDecimalDataType:
-    //            {
-    //                const NSDecimal *decimalNumber = (const NSDecimal *)[numbers samplePointer:idx];
-    //                if ( decimalNumber ) {
-    //                    return *decimalNumber;
-    //                }
-    //            }
-    //            break;
-    //
-    //            default:
-    //                [NSException raise:CPTException format:@"Unsupported data type format"];
-    //                break;
-    //        }
-    //    }
-    //    return CPTDecimalNaN();
-    //}setDataLabels
+    func cachedDecimalForField(fieldEnum: Int, recordIndex idx: Int) -> CGFloat
+    {
+        let numbers = self.cachedNumbersForField(fieldEnum)
+        
+        if ( numbers ) {
+            switch ( numbers.dataTypeFormat ) {
+            case .floatingPoint:
+                const double doubleNumber = (const double *)[numbers samplePointer:idx];
+                if ( doubleNumber ) {
+                    return CPTDecimalFromDouble(*doubleNumber);
+                }
+                
+            case .decimal:
+                let decimalNumber = numbers.samplePointer(idx) as? Decimal
+                if let decimalNumber = decimalNumber {
+                    return decimalNumber
+                }
+                
+            default:
+                print("NSException raise:CPTException format:@Unsupported data type format")
+                break;
+            }
+        }
+        return .nan
+    }
+    
+    
+    //setDataLabels
 
     func setCachedDataType(_ newDataType: CPTNumericDataType) {
         let numberClass = NSNumber.self
@@ -383,8 +380,6 @@ extension CPTPlot {
                 numericData.dataType = newDataType
             }
         }
-    
-    
     }
 
     func doubleDataType() ->CPTNumericDataType
@@ -455,7 +450,6 @@ extension CPTPlot {
     
     // cachedValues = array
     // cachedData: [String : [Any]] = [:]
-    
     func cacheArray(array: [Any], forKey key: String, atRecordIndex idx: Int)
     {
         let sampleCount = array.count

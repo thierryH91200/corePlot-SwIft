@@ -69,16 +69,15 @@ extension NotificationCenter {
 public extension NSBindingName {
     
     // MARK: CPTPlot
-
-    static let CPTPlotBindingDataLabels  =  NSBindingName( "dataLabels")
+    static let PlotDataLabels  =  NSBindingName( "dataLabels")
     
     // MARK: CPTBar
-    static let CPTBarPlotBindingBarLocations  = NSBindingName("barLocations" ) ///< Bar locations.
-    static let CPTBarPlotBindingBarTips       = NSBindingName("barTips"  )     ///< Bar tips.
-    static let CPTBarPlotBindingBarBases      = NSBindingName("barBases")      ///< Bar bases.
-    static let CPTBarPlotBindingBarFills      = NSBindingName("barFills" )    ///< Bar fills.
-    static let CPTBarPlotBindingBarLineStyles = NSBindingName("barLineStyles") ///< Bar line styles.
-    static let CPTBarPlotBindingBarWidths     = NSBindingName("barWidths" )    ///< Bar widths.
+    static let BarLocations  = NSBindingName("barLocations" ) ///< Bar locations.
+    static let BarTips       = NSBindingName("barTips"  )     ///< Bar tips.
+    static let BarBases      = NSBindingName("barBases")      ///< Bar bases.
+    static let BarFills      = NSBindingName("barFills" )    ///< Bar fills.
+    static let BarLineStyles = NSBindingName("barLineStyles") ///< Bar line styles.
+    static let BarWidths     = NSBindingName("barWidths" )    ///< Bar widths.
     
     // MARK: CPTPie
     static let PieSliceWidthValues   = NSBindingName("sliceWidths")        ///< Pie slice widths.

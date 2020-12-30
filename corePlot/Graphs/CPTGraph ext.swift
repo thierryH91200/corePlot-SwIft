@@ -8,30 +8,33 @@
 import AppKit
 
 
+func |= (left: inout  Bool, right: Bool) {
+   left = left || right
+}
+
 extension CPTGraph {
     
     
     // MARK: - Drawing
-    override func layoutAndRenderInContext(context: CGContext)
+    override func layoutAndRender(context: CGContext)
     {
         self.reloadDataIfNeeded()
         
-        
-        for theAxis in self.axisSet().axes {
+        for theAxis in self.axisSet!.axes {
             theAxis.relabel()
         }
         
-        if  NSView.instancesRespondToSelector(#selector(effectiveAppearance))  {
+//        if let appearance = NSView.effectiveAppearance  {
             let  oldAppearance = NSAppearance.current
             let view  = self.hostingView
             
             NSAppearance.current = view?.effectiveAppearance
-            super.layoutAndRenderInContext(context: context)
+            super.layoutAndRender(context: context)
             NSAppearance.current = oldAppearance
-        }
-        else {
-            super.layoutAndRenderInContext(context: context)
-        }
+//        }
+//        else {
+            super.layoutAndRender(context: context)
+//        }
     }
     
     // MARK: Animation
@@ -153,9 +156,9 @@ extension CPTGraph {
      *  @param plot The plot.
      *  @param idx An index within the bounds of the plot array.
      **/
-    func insertPlot(plot: CPTPlot, atIndex:Int)
+    func insertPlot(plot: CPTPlot, index:Int)
     {
-        self.insertPlo(plot, atIndex:idx, intoPlotSpace:self.defaultPlotSpace)
+        self.insertPlo(plot, atIndex:index, intoPlotSpace:self.defaultPlotSpace)
     }
     
     /** @brief Add a plot to the given plot space at the given index in the plot array.
@@ -288,7 +291,7 @@ extension CPTGraph {
                 self.plotSpaces.removeObject(thePlotSpace!)
                 
                 // Update axes that referenced space
-                for axis in self.axisSet().axes {
+                for axis in self.axisSet!.axes {
                     if ( axis.plotSpace == thePlotSpace ) {
                         axis.plotSpace = nil
                     }
@@ -315,7 +318,7 @@ extension CPTGraph {
         let plotSpace        = notif.object as! CPTPlotSpace
         var backgroundBandsNeedRedraw = false;
         
-        for axis in self.axisSet().axes {
+        for axis in self.axisSet!.axes {
             if  axis.plotSpace == plotSpace {
                 axis.setNeedsRelabel()
                 axis.updateAxisTitle()
@@ -334,18 +337,7 @@ extension CPTGraph {
             self.plotAreaFrame.plotArea?.setNeedsDisplay()
         }
     }
-    
-    // MARK: - Axis Set
-    func axisSet() ->CPTAxisSet
-    {
-        return self.plotAreaFrame.axisSet!
-    }
-    
-    func setAxisSet(newSet :CPTAxisSet )
-    {
-        self.plotAreaFrame.axisSet = newSet
-    }
-    
+        
     // MARK: - Themes
     
     /** @brief Apply a theme to style the graph.
@@ -616,7 +608,7 @@ extension CPTGraph {
         }
         
         // Axes Set
-        if self.axisSet().pointingDeviceDownEvent(event :event, atPoint:interactionPoint ) {
+        if ((self.axisSet?.pointingDeviceDownEvent(event :event, atPoint:interactionPoint )) != nil) {
             return true
         }
         
@@ -684,7 +676,7 @@ extension CPTGraph {
         }
         
         // Axes Set
-        if  !handledEvent && self.axisSet().pointingDeviceUpEvent(event:event, atPoint:interactionPoint ) {
+        if  !handledEvent && self.axisSet?.pointingDeviceUpEvent(event:event, atPoint:interactionPoint ) {
             handledEvent = true
         }
         
@@ -747,7 +739,7 @@ extension CPTGraph {
         }
         
         // Axes Set
-        if self.axisSet().pointingDeviceDraggedEvent(event: event, atPoint:interactionPoint ) {
+        if self.axisSet?.pointingDeviceDraggedEvent(event: event, atPoint:interactionPoint ) {
             return true
         }
         
@@ -810,7 +802,7 @@ extension CPTGraph {
         }
         
         // Axes Set
-        if self.axisSet().pointingDeviceCancelledEvent(event: event ) {
+        if ((self.axisSet?.pointingDeviceCancelledEvent(event: event )) != nil) {
             return true
         }
         
@@ -826,7 +818,6 @@ extension CPTGraph {
         
         // Plot spaces
         var handledEvent = false
-        
         for space in self.plotSpaces  {
             let handled = space.pointingDeviceCancelledEvent(event: event)
             handledEvent = !handled
@@ -840,26 +831,7 @@ extension CPTGraph {
         }
     }
     
-    /**
-     *  @brief @required Informs the receiver that the user has moved the scroll wheel.
-     *
-     *
-     *  The event is passed in turn to the following layers:
-     *  -# All plots in reverse order (i.e., from front to back in the layer order)
-     *  -# The axis set
-     *  -# The plot area
-     *  -# The legend
-     *
-     *  If any layer handles the event, subsequent layers are not notified and
-     *  this method immediately returns @YES. If none of the layers
-     *  handle the event, it is passed to all plot spaces whether they handle it or not.
-     *
-     *  @param event The OS event.
-     *  @param fromPoint The starting coordinates of the interaction.
-     *  @param toPoint The ending coordinates of the interaction.
-     *  @return Whether the event was handled or not.
-     **/
-    @objc func scrollWheelEvent(event: CPTNativeEvent, fromPoint:CGPoint,  toPoint: CGPoint) -> Bool
+    override func scrollWheelEvent(event: CPTNativeEvent, fromPoint:CGPoint,  toPoint: CGPoint) -> Bool
     {
         // Plots
         let reversedCollection = plots.reversed()
@@ -871,7 +843,7 @@ extension CPTGraph {
         }
         
         // Axes Set
-        if self.axisSet().scrollWheelEvent(event: event, fromPoint: fromPoint, toPoint: toPoint)  {
+        if ((self.axisSet?.scrollWheelEvent(event: event, fromPoint: fromPoint, toPoint: toPoint)) != nil)  {
             return true
         }
         

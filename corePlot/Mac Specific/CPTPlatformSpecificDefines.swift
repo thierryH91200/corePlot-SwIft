@@ -26,7 +26,7 @@ extension CPTLayer {
         // Figure out the scale of pixels to points
         var scale = CGFloat(0.0)
         
-        if ( self.respondsToSelector(to: #selector(hostingView))) {
+        if self.respondsToSelector(to: #selector(hostingView)) {
             scale = (self as? CPTGraph)?.hostingView.window.backingScaleFactor
         }
         
@@ -37,7 +37,7 @@ extension CPTLayer {
         if ( scale == 0.0 ) {
             let myWindow = self.graph?.hostingView?.window;
             
-            if ( myWindow ) {
+            if (( myWindow ) != nil) {
                 scale = myWindow!.backingScaleFactor;
             }
             else {
@@ -53,7 +53,7 @@ extension CPTLayer {
                                           hasAlpha: true,
                                           isPlanar: false,
                                           colorSpaceName: .calibratedRGB,
-                                          bitmapFormat: NSAlphaFirstBitmapFormat,
+//                                          bitmapFormat: NSAlphaFirstBitmapFormat,
                                           bytesPerRow: 0,
                                           bitsPerPixel: 0)
         
@@ -69,8 +69,8 @@ extension CPTLayer {
         self.layoutAndRender(context: context!)
         context!.flush()
         
-        let image = NSImage(size: CGSize(boundsSize))
-        image.addRepresentation(layerImage)
+        let image = NSImage(size: boundsSize)
+        image.addRepresentation(layerImage!)
         return image;
     }
 }
@@ -104,7 +104,6 @@ extension NSAttributedString {
         {
             rect = self.boundingRectWithSize(CGSize(10000.0, 10000.0),  options: CPTStringDrawingOptions)
         }
-        
         var textSize = rect.size
         textSize.width  = ceil(textSize.width)
         textSize.height = ceil(textSize.height)

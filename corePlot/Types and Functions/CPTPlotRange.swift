@@ -291,36 +291,25 @@ class CPTPlotRange: NSObject {
 //
 
     // MARK: -  Checking Containership
-//
-//    /** @brief Determines whether a given number is inside the range.
-//     *  @param number The number to check.
-//     *  @return @YES if @ref location ≤ @par{number} ≤ @ref end.
-//     **/
-//    -(BOOL)contains:(NSDecimal)number
-//    {
-//        BOOL result = false
-//
-//        if ( self.isInfinite ) {
-//            switch ( self.lengthSign ) {
-//                case CPTSignPositive:
-//                    result = CPTDecimalGreaterThanOrEqualTo(number, self.minLimitDecimal);
-//                    break;
-//
-//                case CPTSignNegative:
-//                    result = CPTDecimalLessThanOrEqualTo(number, self.maxLimitDecimal);
-//                    break;
-//
-//                default:
-//                    break;
-//            }
-//        }
-//        else {
-//            result = CPTDecimalGreaterThanOrEqualTo(number, self.minLimitDecimal) && CPTDecimalLessThanOrEqualTo(number, self.maxLimitDecimal);
-//        }
-//
-//        return result;
-//    }
-//
+    func contains(_ number: CGFloat) -> Bool {
+
+        var result = false
+        if isInfinite == true {
+            switch lengthSign {
+            case CPTSign.positive:
+                result = number >= minLimitDecimal
+            case CPTSign.negative:
+                result = number <= maxLimitDecimal
+            default:
+                break
+            }
+        } else {
+            result = number >= minLimitDecimal && number <= maxLimitDecimal
+        }
+        return result
+    }
+    
+    //
 //    /** @brief Determines whether a given number is inside the range.
 //     *  @param number The number to check.
 //     *  @return @YES if @ref locationDouble ≤ @par{number} ≤ @ref endDouble.
@@ -365,43 +354,37 @@ class CPTPlotRange: NSObject {
 //     *  @param otherRange The range to check.
 //     *  @return @YES if the other range fits entirely within the range of the receiver.
 //     **/
-//    -(BOOL)containsRange:(nullable CPTPlotRange *)otherRange
-//    {
-//        BOOL result = false
-//
-//        if ( otherRange ) {
-//            if ( self.isInfinite ) {
-//                if ( !otherRange.isInfinite || (otherRange.lengthSign == self.lengthSign)) {
-//                    switch ( self.lengthSign ) {
-//                        case CPTSignPositive:
-//                            result = CPTDecimalGreaterThanOrEqualTo(otherRange.minLimitDecimal, self.minLimitDecimal);
-//                            break;
-//
-//                        case CPTSignNegative:
-//                            result = CPTDecimalLessThanOrEqualTo(otherRange.maxLimitDecimal, self.maxLimitDecimal);
-//                            break;
-//
-//                        default:
-//                            break;
-//                    }
-//                }
-//            }
-//            else {
-//                result = CPTDecimalGreaterThanOrEqualTo(otherRange.minLimitDecimal, self.minLimitDecimal) && CPTDecimalLessThanOrEqualTo(otherRange.maxLimitDecimal, self.maxLimitDecimal);
-//            }
-//        }
-//
-//        return result;
-//    }
-//
-//    /** @brief Determines whether a given range intersects the receiver.
+    func contains(_ otherRange: CPTPlotRange?) -> Bool {
+        var result = false
+        
+        if let otherRange = otherRange {
+            if isInfinite {
+                if !otherRange.isInfinite || (otherRange.lengthSign == lengthSign) {
+                    switch lengthSign {
+                    case CPTSign.positive:
+                        result = CPTDecimalGreaterThanOrEqualTo(otherRange.minLimitDecimal, minLimitDecimal)
+                    case CPTSign.negative:
+                        result = CPTDecimalLessThanOrEqualTo(otherRange.maxLimitDecimal, maxLimitDecimal)
+                    default:
+                        break
+                    }
+                }
+            } else {
+                result = CPTDecimalGreaterThanOrEqualTo(otherRange.minLimitDecimal, minLimitDecimal) && CPTDecimalLessThanOrEqualTo(otherRange.maxLimitDecimal, maxLimitDecimal)
+            }
+        }
+
+        return result
+    }
+    
+    //    /** @brief Determines whether a given range intersects the receiver.
 //     *  @param otherRange The range to check.
 //     *  @return @YES if the ranges intersect.
 //     **/
     func intersectsRange(otherRange: CPTPlotRange? ) -> Bool
     {
         var result = false
-
+        
         if (( otherRange ) != nil) {
             if ( self.isInfinite ) {
                 if (( otherRange?.isInfinite ) != nil) {
@@ -411,14 +394,14 @@ class CPTPlotRange: NSObject {
                     switch ( self.lengthSign ) {
                     case .positive:
                         result = otherRange!.maxLimitDecimal >= self.minLimitDecimal
-                            break;
-
+                        break;
+                        
                     case .negative:
                         result = otherRange!.minLimitDecimal <= self.maxLimitDecimal
-                            break;
-
-                        default:
-                            break;
+                        break;
+                        
+                    default:
+                        break;
                     }
                 }
             }
@@ -427,30 +410,29 @@ class CPTPlotRange: NSObject {
                     switch ( otherRange?.lengthSign ) {
                     case .positive:
                         result = otherRange!.minLimitDecimal <= self.maxLimitDecimal
-                            break;
-
+                        break;
+                        
                     case .negative:
                         result = otherRange!.maxLimitDecimal <= self.minLimitDecimal
-                            break;
-
-                        default:
-                            break;
+                        break;
+                        
+                    default:
+                        break;
                     }
                 }
                 else {
                     let min1    = self.minLimitDecimal;
                     let min2    = otherRange!.minLimitDecimal;
                     let minimum = max(min1, min2);
-
+                    
                     let max1    = self.maxLimitDecimal
                     let max2    = otherRange!.maxLimitDecimal
                     let maximum = min(max1, max2)
-
+                    
                     result = maximum >= minimum
                 }
             }
         }
-
         return result;
     }
 

@@ -18,10 +18,50 @@ public class CPTAxis : CPTLayer {
     }
     typealias CPTAxisLabelSet = Set<CPTAxisLabel>
     
+    var _axisTitle: CPTAxisTitle?
+    var axisTitle : CPTAxisTitle? {
+        get {
+            if (_axisTitle == nil) {
+                var newTitle: CPTAxisTitle? = nil
+                
+                let textLayer = CPTTextLayer(attributedText: attributedTitle)
+                newTitle = CPTAxisTitle(layer: textLayer)
+                if title != "" {
+                    newTitle = CPTAxisTitle( layer: textLayer, newText: title, newStyle: titleTextStyle)
+                }
+                
+                if let newTitle = newTitle {
+                    newTitle.rotation = titleRotation!
+                    _axisTitle = newTitle
+                }
+            }
+            return _axisTitle
+        }
+        set {
+            if newValue != _axisTitle {
+                _axisTitle?.contentLayer.removeFromSuperlayer()
+                _axisTitle = newValue
+                
+                let thePlotArea = plotArea
+                thePlotArea?.updateAxisSetLayersForType(layerType: CPTGraphLayerType.axisTitles)
+                
+                if (_axisTitle != nil) {
+                    _axisTitle?.offset = titleOffset
+                    let contentLayer = _axisTitle?.contentLayer
+                    if let contentLayer = contentLayer {
+                        let idx = thePlotArea?.sublayerIndexForAxis(axis: self, layerType: CPTGraphLayerType.axisTitles)
+                        thePlotArea?.axisTitleGroup?.insertSublayer(contentLayer, at: UInt32(idx!))
+                        updateAxisTitle()
+                    }
+                }
+            }
+        }
+    }
+    
+    
     
     // MARK: Title
     var titleTextStyle = CPTTextStyle()
-    var _axisTitle: CPTAxisTitle?
     var titleOffset =  CGFloat(0)
     var title = "title"
     var attributedTitle =  NSAttributedString(string: "")
@@ -51,7 +91,6 @@ public class CPTAxis : CPTLayer {
     var visibleAxisRange : CPTPlotRange?
     var axisLineCapMin : CPTLineCap
     var axisLineCapMax : CPTLineCap
-    
     
     // MARK: Labels
     var labelingPolicy =  CPTAxisLabelingPolicy.automatic
@@ -170,7 +209,7 @@ public class CPTAxis : CPTLayer {
         axisLabels.removeAll()
         minorTickAxisLabels.removeAll()
         tickDirection               = CPTSign.none
-        axisTitle                  = nil
+//        axisTitle                  = CPTAxisTitle()
         titleTextStyle              = CPTTextStyle()
         titleRotation               = nil
         titleLocation               = 0
@@ -1431,46 +1470,6 @@ public class CPTAxis : CPTLayer {
     //        }
     //    }
     //
-    //   func setAxisTitle:(nullable CPTAxisTitle *)newTitle
-    //    {
-    //        if ( newTitle != axisTitle ) {
-    //            [axisTitle.contentLayer removeFromSuperlayer];
-    //            axisTitle = newTitle;
-    //
-    //            CPTPlotArea *thePlotArea = self.plotArea;
-    //            [thePlotArea updateAxisSetLayersForType:CPTGraphLayerTypeAxisTitles];
-    //
-    //            if ( axisTitle ) {
-    //                axisTitle.offset = self.titleOffset;
-    //                CPTLayer *contentLayer = axisTitle.contentLayer;
-    //                if ( contentLayer ) {
-    //                    [thePlotArea.axisTitleGroup insertSublayer:contentLayer atIndex:[thePlotArea sublayerIndexForAxis:self layerType:CPTGraphLayerTypeAxisTitles]];
-    //                    [self updateAxisTitle];
-    //                }
-    //            }
-    //        }
-    //    }
-    //
-    //    -(nullable CPTAxisTitle *)axisTitle
-    //    {
-    //        if ( !axisTitle ) {
-    //            CPTAxisTitle *newTitle = nil;
-    //
-    //            if ( self.attributedTitle ) {
-    //                CPTTextLayer *textLayer = [[CPTTextLayer alloc] initWithAttributedText:self.attributedTitle];
-    //                newTitle = [[CPTAxisTitle alloc] initWithContentLayer:textLayer];
-    //            }
-    //            else if ( self.title ) {
-    //                newTitle = [[CPTAxisTitle alloc] initWithText:self.title textStyle:self.titleTextStyle];
-    //            }
-    //
-    //            if ( newTitle ) {
-    //                newTitle.rotation = self.titleRotation;
-    //                self.axisTitle    = newTitle;
-    //            }
-    //        }
-    //        return axisTitle;
-    //    }
     //
     //   func setTitleTextStyle:(nullable CPTTextStyle *)newStyle
     //    {

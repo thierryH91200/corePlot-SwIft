@@ -88,6 +88,4 @@ extension CPTLayer {
             }
         }
     }
-
-    
 }
