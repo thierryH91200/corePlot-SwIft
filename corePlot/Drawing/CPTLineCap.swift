@@ -4,6 +4,9 @@
 //
 //  Created by thierryH24 on 09/11/2020.
 //
+
+
+
 //private var export: String {
 //    get {
 //        return exportTmp
@@ -345,20 +348,20 @@ class CPTLineCap: NSObject {
                     // use fillRect instead of fillPath so that images and gradients are properly centered in the symbol
                     let symbolSize = self.size;
                     let halfSize   = CGSize(width: symbolSize.width / CGFloat(2.0), height: symbolSize.height / CGFloat(2.0));
-                    let bounds     = CGRect(x: -halfSize.width, y: -halfSize.height, width: symbolSize.width, height: symbolSize.height);
+                    let bounds = CGRect(x: -halfSize.width, y: -halfSize.height, width: symbolSize.width, height: symbolSize.height);
                     
                     context.saveGState();
                     if ( !theLineCapPath!.isEmpty) {
                         context.beginPath();
                         context.addPath(theLineCapPath!);
                         if self.usesEvenOddClipRule == true {
-                            CGContextEOClip(context);
+                            context.clip(using: .evenOdd)
                         }
                         else {
                             context.clip();
                         }
                     }
-                    theFill?.fillRect(rect: bounds, inContext: context)
+                    theFill?.fillRect(rect: bounds, context: context)
                     context.restoreGState();
                 }
                 
@@ -372,5 +375,4 @@ class CPTLineCap: NSObject {
             }
         }
     }
-    
 }

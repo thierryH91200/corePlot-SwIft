@@ -109,3 +109,8 @@ if ( [labelAnnotation isKindOfClass:nullClass] ) {
 }
 
 class CPTLegendEntry : ok
+
+
+28-12-20protocol CPTAxisDelegate : CPTLayerDelegate {
+
+add protocol CPTAxisDelegate : CPTLayerDelegate {

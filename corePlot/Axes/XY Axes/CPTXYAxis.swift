@@ -48,9 +48,8 @@ public class CPTXYAxis: CPTAxis {
         let xyPlotSpace        = self.plotSpace
         let orthogonalRange = xyPlotSpace?.plotRangeForCoordinate(coordinate: orthogonalCoordinate)
 
-
-        let lowerBoundPoint = self.viewPointForOrthogonalCoordinate(orthogonalCoord: CGFloat(truncating: orthogonalRange!.location), axisCoordinate:0)
-        let upperBoundPoint = self.viewPointForOrthogonalCoordinate(orthogonalCoord: CGFloat(truncating: orthogonalRange!.end), axisCoordinate:0)
+        let lowerBoundPoint = self.viewPointForOrthogonalCoordinate(orthogonalCoord: CGFloat(truncating: NSNumber(nonretainedObject: orthogonalRange!.location)), axisCoordinate:0)
+        let upperBoundPoint = self.viewPointForOrthogonalCoordinate(orthogonalCoord: CGFloat(truncating: NSNumber(nonretainedObject: orthogonalRange!.end)), axisCoordinate:0)
 
         switch ( self.coordinate ) {
         case CPTCoordinate.x:
@@ -131,65 +130,60 @@ public class CPTXYAxis: CPTAxis {
     func drawTicksInContext(context: CGContext, atLocations locations: CPTNumberSet, withLength length:CGFloat, inRange labeledRange: CPTPlotRange, isMajor major:Bool)
     {
         let lineStyle = (major ? self.majorTickLineStyle : self.minorTickLineStyle)
-
+        
         let lineWidth = lineStyle.lineWidth;
         let alignmentFunction : CPTAlignPointFunction = nil
-
+        
         if ((self.contentsScale > CGFloat(1.0)) && (round(lineWidth) == lineWidth)) {
             alignmentFunction = CPTAlignIntegralPointToUserSpace;
         }
         else {
             alignmentFunction = CPTAlignPointToUserSpace;
         }
-
+        
         lineStyle.setLineStyleInContext(context: context)
         context.beginPath();
-
+        
         for  tickLocation in locations {
             if labeledRange && labeledRange.containsNumber(number: tickLocation) == false {
                 continue;
             }
-
+            
             // Tick end points
             let baseViewPoint  = self.viewPointForCoordinateValue(coordinateValue: CGFloat(truncating: tickLocation))
             var startViewPoint = baseViewPoint
             var endViewPoint   = baseViewPoint
-
+            
             var startFactor = CGFloat(0.0);
             var endFactor   = CGFloat(0.0);
             switch ( self.tickDirection ) {
             case .positive:
-                    endFactor = CGFloat(1.0);
-                    break;
-
+                endFactor = CGFloat(1.0);
+                
             case .negative:
-                    endFactor = CGFloat(-1.0);
-                    break;
-
+                endFactor = CGFloat(-1.0);
+                
             case .none:
-                    startFactor = CGFloat(-0.5);
-                    endFactor   = CGFloat(0.5);
-                    break;
+                startFactor = CGFloat(-0.5);
+                endFactor   = CGFloat(0.5);
             }
-
+            
             switch ( self.coordinate ) {
             case CPTCoordinate.x:
-                    startViewPoint.y += length * startFactor;
-                    endViewPoint.y   += length * endFactor;
-                    break;
-
+                startViewPoint.y += length * startFactor;
+                endViewPoint.y   += length * endFactor;
+                
             case CPTCoordinate.y:
-                    startViewPoint.x += length * startFactor;
-                    endViewPoint.x   += length * endFactor;
-                    break;
-
-                default:
-                    print("Invalid coordinate in [CPTXYAxis drawTicksInContext:]")
+                startViewPoint.x += length * startFactor;
+                endViewPoint.x   += length * endFactor;
+                
+            default:
+                print("Invalid coordinate in [", #file ,"]", #function )
             }
-
-            startViewPoint = alignmentFunction(context, startViewPoint);
-            endViewPoint   = alignmentFunction(context, endViewPoint);
-
+            
+            startViewPoint = alignmentFunction!(context, startViewPoint);
+            endViewPoint   = alignmentFunction!(context, endViewPoint);
+            
             // Add tick line
             context.move(to: startViewPoint)
             context.addLine(to: endViewPoint)
@@ -228,8 +222,8 @@ public class CPTXYAxis: CPTAxis {
         }
         
         // Ticks
-        self.drawTicksInContext(context, atLocations:self.minorTickLocations, withLength:self.minorTickLength, inRange:labeledRange, isMajor:false)
-        self.drawTicksInContext(context, atLocations:self.majorTickLocations, withLength:self.majorTickLength, inRange:labeledRange, isMajor:true)
+        self.drawTicksInContext(context: context, atLocations:self.minorTickLocations, withLength:self.minorTickLength, inRange:labeledRange!, isMajor:false)
+        self.drawTicksInContext(context: context, atLocations:self.majorTickLocations, withLength:self.majorTickLength, inRange:labeledRange!, isMajor:true)
         
         // Axis Line
         let theLineStyle = self.axisLineStyle
@@ -245,18 +239,18 @@ public class CPTXYAxis: CPTAxis {
                 
             }
             let alignmentFunction : CPTAlignPointFunction = CPTUtilities.shared.CPTAlignPointToUserSpace
-            if ( theLineStyle ) {
+            if (( theLineStyle ) != nil) {
                 let lineWidth = theLineStyle?.lineWidth;
-                if ((self.contentsScale > CGFloat(1.0)) && (round(lineWidth) == lineWidth)) {
+                if ((self.contentsScale > CGFloat(1.0)) && (round(lineWidth!) == lineWidth)) {
                     alignmentFunction = CPTAlignIntegralPointToUserSpace;
                 }
                 
-                let startViewPoint = alignmentFunction(context, self.viewPointForCoordinateValue(range.location))
-                let endViewPoint   = alignmentFunction(context, self.viewPointForCoordinateValue(range.end))
+                let startViewPoint = alignmentFunction!(context, self.viewPointForCoordinateValue(coordinateValue: range!.location))
+                let endViewPoint   = alignmentFunction!(context, self.viewPointForCoordinateValue(coordinateValue: range!.end))
                 theLineStyle?.setLineStyleInContext(context: context)
                 context.beginPath();
-                CGContextMoveToPoint(context, startViewPoint.x, startViewPoint.y);
-                CGContextAddLineToPoint(context, endViewPoint.x, endViewPoint.y);
+                context.move(to: startViewPoint)
+                context.addLine(to: endViewPoint)
                 theLineStyle?.strokePathInContext(context: context)
             }
             
@@ -275,13 +269,13 @@ public class CPTXYAxis: CPTAxis {
             }
             
             if (( minCap ) != nil) {
-                let viewPoint = alignmentFunction(context, self.viewPointForCoordinateValue(range.minLimit))
-                minCap.renderAsVectorInContext(context, atPoint:viewPoint, inDirection:CGPoint(-axisDirection.x, -axisDirection.y))
+                let viewPoint = alignmentFunction!(context, self.viewPointForCoordinateValue(coordinateValue: range!.minLimit))
+                minCap!.renderAsVectorInContext(context: context, center:viewPoint, direction:CGPoint(x: -axisDirection.x, y: -axisDirection.y))
             }
             
             if (( maxCap ) != nil) {
-                let viewPoint = alignmentFunction(context, self.viewPointForCoordinateValue(range.maxLimit))
-                maxCap.renderAsVectorInContext(context, atPoint:viewPoint, inDirection:axisDirection)
+                let viewPoint = alignmentFunction!(context, self.viewPointForCoordinateValue(coordinateValue: range!.maxLimit))
+                maxCap!.renderAsVectorInContext(context: context, center:viewPoint, direction:axisDirection)
             }
         }
     }
@@ -333,12 +327,12 @@ public class CPTXYAxis: CPTAxis {
 
             let lineWidth = lineStyle?.lineWidth;
 
-            let alignmentFunction : CPTUtilities.shared.CPTAlignPointFunction?
-            if ((self.contentsScale > CGFloat(1.0)) && (round(lineWidth) == lineWidth)) {
+            let alignmentFunction : CPTAlignPointFunction?
+            if ((self.contentsScale > CGFloat(1.0)) && (round(lineWidth!) == lineWidth)) {
                 alignmentFunction = CPTAlignIntegralPointToUserSpace;
             }
             else {
-                alignmentFunction = CPTAlignPointToUserSpace;
+                alignmentFunction = CPTAlignPointToUserSpace
             }
 
             context.beginPath();
@@ -346,31 +340,31 @@ public class CPTXYAxis: CPTAxis {
             for location in locations {
                 let locationDecimal = location.decimalValue;
 
-                if ( labeledRange && !labeledRange.contains(locationDecimal )) {
+                if ( labeledRange && labeledRange.contains(locationDecimal) == false ) {
                     continue;
                 }
 
-                startPlotPoint[selfCoordinate] = locationDecimal;
-                endPlotPoint[selfCoordinate]   = locationDecimal;
+                startPlotPoint[selfCoordinate] = locationDecimal
+                endPlotPoint[selfCoordinate]   = locationDecimal
 
                 // Start point
-                let startViewPoint = thePlotSpace.plotAreaViewPointForPlotPoint(plotPoint: startPlotPoint, numberOfCoordinates:2)
-                startViewPoint.x += originTransformed.x;
-                startViewPoint.y += originTransformed.y;
+                var startViewPoint = thePlotSpace?.plotAreaViewPointForPlotPoint(plotPoint: startPlotPoint, numberOfCoordinates:2)
+                startViewPoint?.x += originTransformed.x;
+                startViewPoint?.y += originTransformed.y;
 
                 // End point
-                var endViewPoint = thePlotSpace.plotAreaViewPointForPlotPoint( plotPoint: endPlotPoint, numberOfCoordinates: 2)
-                endViewPoint.x += originTransformed.x
-                endViewPoint.y += originTransformed.y
+                var endViewPoint = thePlotSpace?.plotAreaViewPointForPlotPoint( plotPoint: endPlotPoint, numberOfCoordinates: 2)
+                endViewPoint?.x += originTransformed.x
+                endViewPoint?.y += originTransformed.y
                 
                 
                 // Align to pixels
-                startViewPoint = alignmentFunction(context, startViewPoint);
-                endViewPoint   = alignmentFunction(context, endViewPoint);
+                startViewPoint = alignmentFunction!!(context, startViewPoint!);
+                endViewPoint   = alignmentFunction!!(context, endViewPoint!);
 
                 // Add grid line
-                CGContextMoveToPoint(context, startViewPoint.x, startViewPoint.y);
-                CGContextAddLineToPoint(context, endViewPoint.x, endViewPoint.y);
+                context.move(to: startViewPoint!)
+                context.addLine(to: endViewPoint!)
             }
 
             // Stroke grid lines
@@ -477,7 +471,7 @@ public class CPTXYAxis: CPTAxis {
 //        return bandIndex;
 //    }
 //
-//    -(void)drawBackgroundBandsInContext:(nonnull CGContextRef)context
+//    func drawBackgroundBandsInContext(context: CGContextRef)
 //    {
 //        CPTFillArray *bandArray = self.alternatingBandFills;
 //        NSUInteger bandCount    = bandArray.count;
@@ -659,11 +653,9 @@ public class CPTXYAxis: CPTAxis {
 //            }
 //        }
 //    }
-//
-//    /// @endcond
-//
-//    #pragma mark -
-//    #pragma mark Description
+
+
+    // MARK: - Description
 //
 //    /// @cond
 //
@@ -682,12 +674,9 @@ public class CPTXYAxis: CPTAxis {
 //
 //    /// @endcond
 //
-//    #pragma mark -
-//    #pragma mark Titles
-//
-//    /// @cond
-//
-//    // Center title in the plot range by default
+    // MARK: - Titles
+
+    // Center title in the plot range by default
 //    -(nonnull NSNumber *)defaultTitleLocation
 //    {
 //        NSNumber *location;
@@ -742,8 +731,7 @@ public class CPTXYAxis: CPTAxis {
 //
 //    /// @endcond
 //
-//    #pragma mark -
-//    #pragma mark Accessors
+    // MARK: - Accessors
 //
 //    /// @cond
 //
@@ -811,8 +799,4 @@ public class CPTXYAxis: CPTAxis {
 //            }
 //        }
 //    }
-//
-//    /// @endcond
-//
-//    @en/
 }

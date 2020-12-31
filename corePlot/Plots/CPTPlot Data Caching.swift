@@ -209,7 +209,7 @@ extension CPTPlot {
     //
     ///// @cond
     //
-    func numericDataForNumbers(numbers:Any?) ->CPTMutableNumericData
+    func numericDataForNumbers(numbers:Any?) -> CPTMutableNumericData
     {
         let mutableNumbers : CPTMutableNumericData? = nil
         var loadedDataType : CPTNumericDataType?
@@ -217,9 +217,8 @@ extension CPTPlot {
         if numbers is CPTNumericData  {
             mutableNumbers = numbers
             // ensure the numeric data is in a supported format; default to double if not already NSDecimal
-            if ( !CPTDataTypeEqualToDataType(mutableNumbers.dataType, self.decimalDataType) &&
-                 !CPTDataTypeEqualToDataType(mutableNumbers.dataType, self.doubleDataType)) {
-                mutableNumbers.dataType = self.doubleDataType;
+            if ( mutableNumbers.dataType !=  self.decimalDataType && mutableNumbers.dataType != self.doubleDataType {
+                    mutableNumbers.dataType = self.doubleDataType;
             }
         }
         else if numbers is Data {
@@ -228,7 +227,7 @@ extension CPTPlot {
         }
         else if let numbers = numbers as? [Any] {
             if numbers.count == 0  {
-                loadedDataType = self.doubleDataType;
+                loadedDataType = self.doubleDataType
             }
             else if ( [((NSArray<NSNumber *> *)numbers)[0] is [NSDecimalNumber class]] ) {
                 loadedDataType = self.decimalDataType;
@@ -245,8 +244,6 @@ extension CPTPlot {
         return mutableNumbers;
     }
     
-    //
-    ///// @endcond
     //
     //-(BOOL)doublePrecisionCache
     //{
@@ -347,9 +344,9 @@ extension CPTPlot {
         if ( numbers ) {
             switch ( numbers.dataTypeFormat ) {
             case .floatingPoint:
-                const double doubleNumber = (const double *)[numbers samplePointer:idx];
+                let doubleNumber = numbers.samplePointer(idx)
                 if ( doubleNumber ) {
-                    return CPTDecimalFromDouble(*doubleNumber);
+                    return CGFloat(doubleNumber)
                 }
                 
             case .decimal:
@@ -360,15 +357,12 @@ extension CPTPlot {
                 
             default:
                 print("NSException raise:CPTException format:@Unsupported data type format")
-                break;
             }
         }
         return .nan
     }
     
-    
     //setDataLabels
-
     func setCachedDataType(_ newDataType: CPTNumericDataType) {
         let numberClass = NSNumber.self
         

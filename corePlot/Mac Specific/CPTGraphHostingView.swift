@@ -42,7 +42,7 @@ class CPTGraphHostingView: NSView {
         }
         
 
-        if ( !self.superview!.wantsLayer ) {
+        if  self.superview!.wantsLayer == false {
             self.layer = self.makeBackingLayer()
         }
         
@@ -50,7 +50,7 @@ class CPTGraphHostingView: NSView {
     
     override init(frame: NSRect) {
         super.init(frame: frame)
-            commonInit()
+        commonInit()
     }
     
     required init?(coder: NSCoder) {
@@ -72,7 +72,6 @@ class CPTGraphHostingView: NSView {
                 self.viewDidChangeBackingProperties()
 
                 let graphicsContext = NSGraphicsContext.current;
-
                 graphicsContext!.saveGraphicsState()
 
                 let sourceRect      = NSRectToCGRect(self.frame);
@@ -156,7 +155,7 @@ class CPTGraphHostingView: NSView {
         if let theGraph = theGraph {
             let pointOfMouseDown = NSPointToCGPoint(convert(theEvent.locationInWindow, from: nil))
             let pointInHostedGraph = layer?.convert(pointOfMouseDown, to: theGraph)
-            handled = theGraph.pointingDeviceDownEvent(event: theEvent, interactionPoint: pointInHostedGraph!)
+            handled = theGraph.pointingDeviceDownEvent(event: theEvent, atPoint: pointInHostedGraph!)
         }
         
         if handled == false {
@@ -253,7 +252,7 @@ class CPTGraphHostingView: NSView {
                 handled = handled || theGraph.pointingDeviceDraggedEvent(event: theEvent, atPoint:pointInHostedGraph!)
                 
             case .ended:
-                var offset = self.scrollOffset;
+                let offset = self.scrollOffset;
                 
                 var scrolledPointOfMouse = self.locationInWindow;
                 scrolledPointOfMouse.x += offset.x;
@@ -282,7 +281,7 @@ class CPTGraphHostingView: NSView {
                     let scrolledPointOfMouse       = NSPointToCGPoint(self.convert(scrolledLocationInWindow, from:nil))
                     let scrolledPointInHostedGraph = self.layer?.convert(scrolledPointOfMouse, to:theGraph)
                     
-                    handled = theGraph.scrollWheelEvent( theEvent, fromPoint:pointInHostedGraph!, toPoint:scrolledPointInHostedGraph!)
+                    handled = theGraph.scrollWheelEvent( event: theEvent, fromPoint:pointInHostedGraph!, toPoint:scrolledPointInHostedGraph!)
                 }
                 
             default:

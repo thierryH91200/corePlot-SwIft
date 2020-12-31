@@ -105,10 +105,9 @@ extension CPTAxis {
             
         case .log:
             // supported scale type--check range
-            if ((range!.minLimitDouble <= 0.0) || (range?.maxLimitDouble <= 0.0)) {
+            if ((range!.minLimitDouble <= 0.0) || (range!.maxLimitDouble <= 0.0)) {
                 valid = false
             }
-            break;
             
         case .logModulus:
             // supported scale type

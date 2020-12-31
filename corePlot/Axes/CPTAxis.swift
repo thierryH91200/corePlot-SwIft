@@ -7,6 +7,28 @@
 
 import AppKit
 
+
+protocol CPTAxisDelegate : CPTLayerDelegate {
+    
+    func axisShouldRelabel(axis: CPTAxis ) -> Bool
+    func axisDidRelabel(axis: CPTAxis )
+    func axis(axis:  CPTAxis, shouldUpdateAxisLabelsAtLocations locations: CPTNumberSet )
+    func axis(axis:  CPTAxis, shouldUpdateMinorAxisLabelsAtLocations locations: CPTNumberSet ) -> Bool
+    func axis(axis:  CPTAxis, labelWasSelected label: CPTAxisLabel ) -> Bool
+    func axis(axis:  CPTAxis, labelWasSelected label: CPTAxisLabel, withEvent event: CPTNativeEvent )
+    func axis(axis:  CPTAxis, minorTickLabelWasSelected label: CPTAxisLabel )
+    func axis(axis:  CPTAxis, minorTickLabelWasSelected label: CPTAxisLabel, withEvent event: CPTNativeEvent )
+    func axis(axis:  CPTAxis, labelTouchDown label: CPTAxisLabel )
+    func axis(axis:  CPTAxis, labelTouchDown label: CPTAxisLabel, withEvent event: CPTNativeEvent )
+    func axis(axis:  CPTAxis, labelTouchUplabel label: CPTAxisLabel );
+    func axis(axis:  CPTAxis, labelTouchUp label: CPTAxisLabel, withEvent event: CPTNativeEvent)
+    func axis(axis:  CPTAxis, minorTickTouchDown label: CPTAxisLabel)
+    func axis(axis:  CPTAxis, minorTickTouchDown label: CPTAxisLabel, withEvent event: CPTNativeEvent )
+    func axis(axis:  CPTAxis, minorTickTouchUp label: CPTAxisLabel );
+    func axis(axis:  CPTAxis, minorTickTouchUp label: CPTAxisLabel, withEvent event: CPTNativeEvent )
+    
+}
+
 public class CPTAxis : CPTLayer {
     
     enum CPTAxisLabelingPolicy: Int  {
@@ -27,7 +49,7 @@ public class CPTAxis : CPTLayer {
                 let textLayer = CPTTextLayer(attributedText: attributedTitle)
                 newTitle = CPTAxisTitle(layer: textLayer)
                 if title != "" {
-                    newTitle = CPTAxisTitle( layer: textLayer, newText: title, newStyle: titleTextStyle)
+                    newTitle = CPTAxisTitle( newText: self.title, newStyle: self.titleTextStyle)
                 }
                 
                 if let newTitle = newTitle {
@@ -57,8 +79,6 @@ public class CPTAxis : CPTLayer {
             }
         }
     }
-    
-    
     
     // MARK: Title
     var titleTextStyle = CPTTextStyle()
@@ -421,91 +441,6 @@ public class CPTAxis : CPTLayer {
     //     *  @brief Determines a @quote{nice} number (a multiple of @num{2}, @num{5}, or @num{10}) near the given number.
     //     *  @param x The number to round.
     //     */
-    //    NSDecimal CPTNiceNum(NSDecimal x)
-    //    {
-    //        NSDecimal zero = CPTDecimalFromInteger(0);
-    //
-    //        if ( CPTDecimalEquals(x, zero)) {
-    //            return zero;
-    //        }
-    //
-    //        NSDecimal minusOne = CPTDecimalFromInteger(-1);
-    //
-    //        var xIsNegative = CPTDecimalLessThan(x, zero);
-    //
-    //        if ( xIsNegative ) {
-    //            x = CPTDecimalMultiply(x, minusOne);
-    //        }
-    //
-    //        short exponent = (short)lrint(floor(log10(CPTDecimalDoubleValue(x))));
-    //
-    //        NSDecimal fractionPart;
-    //
-    //        NSDecimalMultiplyByPowerOf10(&fractionPart, &x, -exponent, NSRoundPlain);
-    //
-    //        NSDecimal roundedFraction;
-    //
-    //        if ( CPTDecimalLessThan(fractionPart, CPTDecimalFromDouble(1.5))) {
-    //            roundedFraction = CPTDecimalFromInteger(1);
-    //        }
-    //        else if ( CPTDecimalLessThan(fractionPart, CPTDecimalFromInteger(3))) {
-    //            roundedFraction = CPTDecimalFromInteger(2);
-    //        }
-    //        else if ( CPTDecimalLessThan(fractionPart, CPTDecimalFromInteger(7))) {
-    //            roundedFraction = CPTDecimalFromInteger(5);
-    //        }
-    //        else {
-    //            roundedFraction = CPTDecimalFromInteger(10);
-    //        }
-    //
-    //        if ( xIsNegative ) {
-    //            roundedFraction = CPTDecimalMultiply(roundedFraction, minusOne);
-    //        }
-    //
-    //        NSDecimal roundedNumber;
-    //
-    //        NSDecimalMultiplyByPowerOf10(&roundedNumber, &roundedFraction, exponent, NSRoundPlain);
-    //
-    //        return roundedNumber;
-    //    }
-    //
-    //    /**
-    //     *  @internal
-    //     *  @brief Determines a @quote{nice} range length (a multiple of @num{2}, @num{5}, or @num{10}) less than or equal to the given length.
-    //     *  @param length The length to round.
-    //     */
-    //    NSDecimal CPTNiceLength(NSDecimal length)
-    //    {
-    //        NSDecimal zero = CPTDecimalFromInteger(0);
-    //
-    //        if ( CPTDecimalEquals(length, zero)) {
-    //            return zero;
-    //        }
-    //
-    //        NSDecimal minusOne = CPTDecimalFromInteger(-1);
-    //
-    //        var isNegative = CPTDecimalLessThan(length, zero);
-    //
-    //        if ( isNegative ) {
-    //            length = CPTDecimalMultiply(length, minusOne);
-    //        }
-    //
-    //        NSDecimal roundedNumber;
-    //
-    //        if ( CPTDecimalGreaterThan(length, CPTDecimalFromInteger(10))) {
-    //            NSDecimalRound(&roundedNumber, &length, 0, NSRoundDown);
-    //        }
-    //        else {
-    //            short exponent = (short)lrint(floor(log10(CPTDecimalDoubleValue(length)))) - 1;
-    //            NSDecimalRound(&roundedNumber, &length, -exponent, NSRoundDown);
-    //        }
-    //
-    //        if ( isNegative ) {
-    //            roundedNumber = CPTDecimalMultiply(roundedNumber, minusOne);
-    //        }
-    //
-    //        return roundedNumber;
-    //    }
     //
     //    /**
     //     *  @internal
@@ -552,11 +487,7 @@ public class CPTAxis : CPTLayer {
         return self.filteredTickLocations(allLocations: allLocations)
     }
     //
-    //    #pragma mark -
-    //    #pragma mark Labels
-    //
-    //    /// @cond
-    //
+    // MARK: - Labels
     var _tickOffset = CGFloat(0)
     var tickOffset : CGFloat {
         get   {
@@ -579,15 +510,15 @@ public class CPTAxis : CPTLayer {
         }
         set {}
     }
-    //
-    //    /**
-    //     *  @internal
-    //     *  @brief Updates the set of axis labels using the given locations.
-    //     *  Existing axis label objects and content layers are reused where possible.
-    //     *  @param locations A set of NSDecimalNumber label locations.
-    //     *  @param labeledRange A plot range used to filter the generated labels. If @nil, no filtering is done.
-    //     *  @param useMajorAxisLabels If @true, label the major ticks, otherwise label the minor ticks.
-    //     **/
+
+        /**
+         *  @internal
+         *  @brief Updates the set of axis labels using the given locations.
+         *  Existing axis label objects and content layers are reused where possible.
+         *  @param locations A set of NSDecimalNumber label locations.
+         *  @param labeledRange A plot range used to filter the generated labels. If @nil, no filtering is done.
+         *  @param useMajorAxisLabels If @true, label the major ticks, otherwise label the minor ticks.
+         **/
     //   func updateAxisLabelsAtLocations:(nullable CPTNumberSet *)locations inRange:(nullable CPTPlotRange *)labeledRange useMajorAxisLabels:(var)useMajorAxisLabels
     //    {
     //        CPTAlignment theLabelAlignment;
@@ -763,9 +694,7 @@ public class CPTAxis : CPTLayer {
     //        }
     //        self.labelsUpdated = false
     //    }
-    //
-    //    /// @endcond
-    //
+
     //    /**
     //     *  @brief Marks the receiver as needing to update the labels before the content is next drawn.
     //     **/
@@ -801,10 +730,9 @@ public class CPTAxis : CPTLayer {
         guard self.needsRelabel == true else { return }
         guard self.plotSpace != nil else  { return }
         
+        let theDelegate = self.delegate as! CPTAxisDelegate
         
-        let theDelegate = self.delegate;
-        
-        if ( theDelegate.respondsToSelector(#selector(axisShouldRelabel:)] && ![theDelegate axisShouldRelabel:self] ) {
+        if theDelegate.axisShouldRelabel(axis: self ) == true {
             self.needsRelabel = false
             return;
         }
@@ -851,7 +779,6 @@ public class CPTAxis : CPTLayer {
             break;
             
         case .provided:
-            
             let labeledRange = self.plotSpace?.plotRangeForCoordinate(coordinate: self.coordinate)
                 let theVisibleRange     = self.visibleRange;
             if (( theVisibleRange ) != nil) {
@@ -865,9 +792,7 @@ public class CPTAxis : CPTLayer {
             self.updateAxisLabelsAtLocations(self.minorTickLocations,
                 inRange:labeledRange,
                 useMajorAxisLabels:false)
-            
-            break
-            
+                        
         default:
             self.updateAxisLabelsAtLocations(self.majorTickLocations,
                                               inRange:nil,
@@ -876,7 +801,6 @@ public class CPTAxis : CPTLayer {
             self.updateAxisLabelsAtLocations(self.minorTickLocations,
                 inRange:nil,
                 useMajorAxisLabels:false)
-                break;
         }
         
         self.needsRelabel = false
@@ -885,13 +809,9 @@ public class CPTAxis : CPTLayer {
             thePlotArea?.setNeedsDisplay()
         }
         
-        if ( [theDelegate.respondsToSelector:@selector(axisDidRelabel:)] ) {
-            theDelegate.axisDidRelabel(self)
-        }
+        theDelegate.axisDidRelabel(axis: self)
     }
     
-    //    /// @cond
-    //
     //    /**
     //     *  @internal
     //     *  @brief Updates the position of all custom labels, hiding the ones that are outside the visible range.
@@ -936,26 +856,7 @@ public class CPTAxis : CPTLayer {
     //        }
     //    }
     //
-    //   func updateMajorTickLabelOffsets
-    //    {
-    //        CPTSign direction      = self.tickDirection;
-    //        CPTSign labelDirection = self.tickLabelDirection;
-    //
-    //        if ( labelDirection == CPTSignNone ) {
-    //            labelDirection = direction;
-    //        }
-    //
-    //        CGFloat majorOffset = self.labelOffset;
-    //
-    //        if ((direction == CPTSignNone) || (labelDirection == direction)) {
-    //            majorOffset += self.tickOffset;
-    //        }
-    //
-    //        for ( CPTAxisLabel *label in self.axisLabels ) {
-    //            label.offset = majorOffset;
-    //        }
-    //    }
-    //
+    
     //   func updateMinorTickLabelOffsets
     //    {
     //        CPTSign direction      = self.tickDirection;

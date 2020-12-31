@@ -111,7 +111,7 @@ public class CPTGraph: CPTBorderedLayer {
         plotSpaces.append(newPlotSpace!)
         
         // Axis set
-        let newAxisSet = self.newAxisSet
+//        let newAxisSet = self.newAxisSet
         
         // Title
         title = ""

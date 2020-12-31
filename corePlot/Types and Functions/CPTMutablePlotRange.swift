@@ -8,15 +8,15 @@
 import Cocoa
 
 class CPTMutablePlotRange: CPTPlotRange {
-
+    
     
     var inValueUpdate = false
-
+    
     override var location : CGFloat {
         get { return super.location  }
         set { super.location = newValue }
     }
-
+    
     /** @property nonnull NSNumber *length
      *  @brief The length of the range.
      *  @see @ref lengthDecimal, @ref lengthDouble
@@ -25,7 +25,7 @@ class CPTMutablePlotRange: CPTPlotRange {
         get { return super.length  }
         set { super.length = newValue }
     }
-
+    
     /** @property NSDecimal locationDecimal
      *  @brief The starting value of the range.
      *  @see @ref location, @ref locationDouble
@@ -34,7 +34,7 @@ class CPTMutablePlotRange: CPTPlotRange {
         get { return super.locationDecimal  }
         set { super.locationDecimal = newValue }
     }
-
+    
     /** @property NSDecimal lengthDecimal
      *  @brief The length of the range.
      *  @see @ref length, @ref lengthDouble
@@ -43,8 +43,8 @@ class CPTMutablePlotRange: CPTPlotRange {
         get { return super.lengthDecimal  }
         set { super.lengthDecimal = newValue }
     }
-
-
+    
+    
     /** @property double locationDouble
      *  @brief The starting value of the range as a @double.
      *  @see @ref location, @ref locationDecimal
@@ -61,11 +61,11 @@ class CPTMutablePlotRange: CPTPlotRange {
         get { return super.lengthDouble  }
         set { super.lengthDouble = newValue }
     }
-
-
-
-// MARK: -  Combining ranges
-
+    
+    
+    
+    // MARK: -  Combining ranges
+    
     /** @brief Extends the range to include another range. The sign of @ref length is unchanged.
      *  @param other The other plot range.
      **/
@@ -134,7 +134,7 @@ class CPTMutablePlotRange: CPTPlotRange {
             self.lengthDecimal   = CGFloat.nan
         }
         else {
-            if self.lengthDecimal >= Int(0) {
+            if self.lengthDecimal >= CGFloat(0) {
                 self.locationDecimal = CGFloat(minimum);
                 self.lengthDecimal   = CGFloat(maximum - minimum)
             }
@@ -151,15 +151,15 @@ class CPTMutablePlotRange: CPTPlotRange {
     func intersectionPlotRange(other: CPTPlotRange? )
     {
         guard ( other != nil) else { return }
-
+        
         let min1    = self.minLimitDecimal
         let min2    = other?.minLimitDecimal;
         let minimum = max(min1, min2!);
-
+        
         let max1    = self.maxLimitDecimal
         let max2    = (other?.maxLimitDecimal)!
         var maximum = min(max1, max2)
-
+        
         if !self.intersectsRange(otherRange: other ) {
             self.locationDecimal = CGFloat.nan
             self.lengthDecimal   = CGFloat.nan
@@ -168,14 +168,14 @@ class CPTMutablePlotRange: CPTPlotRange {
             switch ( self.lengthSign ) {
             case .positive:
                 self.locationDecimal = CGFloat(minimum);
-                    break;
-
+                break;
+                
             case .negative:
                 self.locationDecimal = CGFloat(maximum);
-                    break;
-
-                default:
-                    break;
+                break;
+                
+            default:
+                break;
             }
         }
         else if ( self.isInfinite && !other!.isInfinite ) {
@@ -183,13 +183,13 @@ class CPTMutablePlotRange: CPTPlotRange {
             case .positive:
                 self.locationDecimal = CGFloat(minimum);
                 self.lengthDecimal   = CGFloat(other!.maxLimitDecimal - minimum)
-
+                
             case .negative:
                 self.locationDecimal = CGFloat(maximum);
                 self.lengthDecimal   = CGFloat(other!.minLimitDecimal - maximum)
-
+                
             default:
-                    break;
+                break;
             }
         }
         else if ( !self.isInfinite && ((other?.isInfinite) != nil) ) {
@@ -197,13 +197,13 @@ class CPTMutablePlotRange: CPTPlotRange {
             case .positive:
                 self.locationDecimal = CGFloat(minimum);
                 self.lengthDecimal   = CGFloat(self.maxLimitDecimal - minimum)
-
+                
             case .negative:
-                    self.locationDecimal = CGFloat(maximum)
-                    self.lengthDecimal   = self.minLimitDecimal - CGFloat(maximum)
-
-                default:
-                    break;
+                self.locationDecimal = CGFloat(maximum)
+                self.lengthDecimal   = self.minLimitDecimal - CGFloat(maximum)
+                
+            default:
+                break;
             }
         }
         else if ( NSDecimalIsNotANumber(&minimum) || NSDecimalIsNotANumber(&maximum)) {
@@ -221,9 +221,9 @@ class CPTMutablePlotRange: CPTPlotRange {
             }
         }
     }
-
-  // mark Expanding/Contracting ranges
-
+    
+    // mark Expanding/Contracting ranges
+    
     /** @brief Extends/contracts the range by a given factor.
      *  @param factor Factor used. A value of @num{1.0} gives no change.
      *  Less than @num{1.0} is a contraction, and greater than @num{1.0} is expansion.
@@ -234,13 +234,13 @@ class CPTMutablePlotRange: CPTPlotRange {
         let newLength      = oldLength * factor
         let locationOffset = ((oldLength - newLength) / (2));
         let newLocation    = self.locationDecimal + locationOffset
-
+        
         self.locationDecimal = newLocation;
         self.lengthDecimal   = newLength;
     }
-
-// MARK: - Shifting Range
-
+    
+    // MARK: - Shifting Range
+    
     /** @brief Moves the whole range so that the @ref location fits in other range.
      *  @param otherRange Other range.
      *  The minimum possible shift is made. The range @ref length is unchanged.
@@ -248,36 +248,36 @@ class CPTMutablePlotRange: CPTPlotRange {
     func shiftLocationToFitInRange(otherRange: CPTPlotRange )
     {
         switch otherRange.compareToDecimal(self.locationDecimal ) {
-            case CPTPlotRangeComparisonResultNumberBelowRange:
-                self.locationDecimal = otherRange.minLimitDecimal;
-                break;
-
-            case CPTPlotRangeComparisonResultNumberAboveRange:
-                self.locationDecimal = otherRange.maxLimitDecimal;
-                break;
-
-            default:
-                // in range--do nothing
-                break;
+        case CPTPlotRangeComparisonResultNumberBelowRange:
+            self.locationDecimal = otherRange.minLimitDecimal;
+            break;
+            
+        case CPTPlotRangeComparisonResultNumberAboveRange:
+            self.locationDecimal = otherRange.maxLimitDecimal;
+            break;
+            
+        default:
+            // in range--do nothing
+            break;
         }
     }
-
+    
     /** @brief Moves the whole range so that the @ref end point fits in other range.
      *  @param otherRange Other range.
      *  The minimum possible shift is made. The range @ref length is unchanged.
      **/
     func shiftEndToFit(in otherRange: CPTPlotRange) {
-
-    switch otherRange.compare(toDecimal: endDecimal) {
-    case .numberBelowRange:
+        
+        switch otherRange.compare(toDecimal: endDecimal) {
+        case .numberBelowRange:
             locationDecimal = otherRange.minLimitDecimal - lengthDecimal
-    case .numberAboveRange:
+        case .numberAboveRange:
             locationDecimal = otherRange.maxLimitDecimal - lengthDecimal
         default:
             // in range--do nothing
             break
+        }
     }
-}
     // mark Accessors
     func setLocation(newLocation : CGFloat )
     {
@@ -286,7 +286,7 @@ class CPTMutablePlotRange: CPTPlotRange {
         self.locationDouble  = newLocation
         self.inValueUpdate = false
     }
-
+    
     func setLength(newLength:  CGFloat )
     {
         self.inValueUpdate = true

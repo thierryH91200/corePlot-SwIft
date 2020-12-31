@@ -115,36 +115,36 @@ extension CPTGraph {
      **/
     func addPlot(plot : CPTPlot )
     {
-        self.addPlot(plot: plot , space:self.defaultPlotSpace)
+        self.addPlot(plot: plot , space: self.defaultPlotSpace()!)
     }
     
     /** @brief Add a plot to the given plot space.
      *  @param plot The plot.
      *  @param space The plot space.
      **/
-    func addPlot(plot: CPTPlot, space: CPTPlotSpace )
+    func addPlot(plot: CPTPlot?, space: CPTPlotSpace )
     {
-        if ( plot ) {
-            self.plots.append(plot)
-            plot.plotSpace = space
-            plot.graph     = self;
-            self.plotAreaFrame.plotGroup.addPlot(plot)
+        if (( plot ) != nil) {
+            self.plots.append(plot!)
+            plot?.plotSpace = space
+            plot?.graph     = self;
+            self.plotAreaFrame.plotGroup.addPlot(plot: plot!)
         }
     }
     
     /** @brief Remove a plot from the graph.
      *  @param plot The plot to remove.
      **/
-    func removePlot(plot: CPTPlot )
+    func removePlot(plot: CPTPlot? )
     {
-        if ( plot ) {
+        if (( plot ) != nil) {
             let thePlot = plot
             
-            if self.plots.contains(plot ) {
-                thePlot.plotSpace = nil
-                thePlot.graph     = nil
-                self.plotAreaFrame.plotGroup.removePlot(thePlot)
-                self.plots.remove(thePlot)
+            if self.plots.contains(plot! ) {
+                thePlot?.plotSpace = nil
+                thePlot?.graph     = nil
+                self.plotAreaFrame.plotGroup.removePlot(plot: thePlot!)
+                self.plots.remove(at: thePlot)
             }
             else {
                 print("Tried to remove CPTPlot which did not exist.")
@@ -158,7 +158,7 @@ extension CPTGraph {
      **/
     func insertPlot(plot: CPTPlot, index:Int)
     {
-        self.insertPlo(plot, atIndex:index, intoPlotSpace:self.defaultPlotSpace)
+        self.insertPlot(plot: plot, index: index, space:self.defaultPlotSpace()!)
     }
     
     /** @brief Add a plot to the given plot space at the given index in the plot array.
@@ -166,33 +166,33 @@ extension CPTGraph {
      *  @param idx An index within the bounds of the plot array.
      *  @param space The plot space.
      **/
-    func insertPlot(plot: CPTPlot, index:Int, space: CPTPlotSpace)
+    func insertPlot(plot: CPTPlot?, index:Int, space: CPTPlotSpace)
     {
-        if ( plot ) {
-            self.plots.insert(plot, at: index)
-            plot.plotSpace = space
-            plot.graph     = self
-            self.plotAreaFrame.plotGroup.insertPlot(plot, at: index)
+        if (( plot ) != nil) {
+            self.plots.insert(plot!, at: index)
+            plot?.plotSpace = space
+            plot?.graph     = self
+            self.plotAreaFrame.plotGroup.insertPlot(plot: plot!, atIndex: index)
         }
     }
     
     /** @brief Remove a plot from the graph.
      *  @param identifier The identifier of the plot to remove.
      **/
-    func removePlotWithIdentifier(identifier: Any)
+    func removePlotWithIdentifier(identifier: UUID)
     {
-        let plotToRemove = self.plotWithIdentifier(identifier)
+        let plotToRemove = self.plotWithIdentifier(identifier: identifier)
         
-        if ( plotToRemove ) {
-            plotToRemove.plotSpace = nil
-            plotToRemove.graph     = nil
-            self.plotAreaFrame.plotGroup.removePlot(plotToRemove)
-            self.plots.removeObjectIdenticalTo(plotToRemove)
+        if (( plotToRemove ) != nil) {
+            plotToRemove?.plotSpace = nil
+            plotToRemove?.graph     = nil
+            self.plotAreaFrame.plotGroup.removePlot(plot: plotToRemove!)
+            self.plots.removeObjectIdentical(plotToRemove)
         }
     }
     
     // MARK: - Retrieving Plot Spaces
-    func defaultPlotSpace() ->CPTPlotSpace
+    func defaultPlotSpace() ->CPTPlotSpace?
     {
         return self.plotSpaces.count > 0 ? (self.plotSpaces)[0] : nil;
     }
@@ -209,7 +209,7 @@ extension CPTGraph {
      *  @param idx An index within the bounds of the plot space array.
      *  @return The plot space at the given index.
      **/
-    func plotSpaceAtIndex(idx : Int) -> CPTPlotSpace
+    func plotSpaceAtIndex(idx : Int) -> CPTPlotSpace?
     {
         return self.plotSpaces.count > idx ? self.plotSpaces[idx] : nil
     }
@@ -229,19 +229,19 @@ extension CPTGraph {
     }
     
     // MARK: Set Plot Area
-    func setPlotAreaFrame(newArea: CPTPlotAreaFrame)
+    func setPlotAreaFrame(newArea: CPTPlotAreaFrame?)
     {
         if ( plotAreaFrame != newArea ) {
             plotAreaFrame.graph = nil;
             plotAreaFrame.removeFromSuperlayer()
             
-            plotAreaFrame = newArea;
+            plotAreaFrame = newArea!;
             
-            if ( newArea ) {
+            if (( newArea ) != nil) {
                 let theFrame = newArea
                 
-                self.addSublayer(theFrame)
-                theFrame.graph = self;
+                self.addSublayer(theFrame!)
+                theFrame?.graph = self;
             }
             
             for space in self.plotSpaces  {
@@ -249,7 +249,6 @@ extension CPTGraph {
             }
         }
     }
-    
     
     // MARK: - Organizing Plot Spaces
     
@@ -451,30 +450,30 @@ extension CPTGraph {
                 self.attributedTitle = nil;
                 self.inTitleUpdate   = false
                 
-                let theTitleAnnotation = self.titleAnnotation;
+                let theTitleAnnotation = self.titleAnnotation
                 
                 if title != "" {
-                    if ( theTitleAnnotation ) {
-                        theTitleAnnotation.contentLayer.text = title;
+                    if (( theTitleAnnotation ) != nil) {
+                        theTitleAnnotation?.contentLayer.text = title
                     }
                     else {
-                        let frameLayer = self.plotAreaFrame;
+                        let frameLayer = self.plotAreaFrame
                         if ( frameLayer ) {
-                            let newTitleAnnotation = CPTLayerAnnotation( frame: frameLayer)
+                            let newTitleAnnotation = CPTLayerAnnotation( newAnchorLayer: frameLayer)
                             
-                            let newTextLayer             = CPTTextLayer(text: title, style: titleTextStyle)
+                            let newTextLayer             = CPTTextLayer(newText: title, newStyle: titleTextStyle)
                             
                             newTitleAnnotation.contentLayer       = newTextLayer
                             newTitleAnnotation.displacement       = self.titleDisplacement
                             newTitleAnnotation.rectAnchor         = self.titlePlotAreaFrameAnchor
-                            newTitleAnnotation.contentAnchorPoint = self.contentAnchorForRectAnchor(anchor: titlePlotAreaFrameAnchor)
+                            newTitleAnnotation.contentAnchorPoint = self.contentAnchorForRectAnchor(anchor: titlePlotAreaFrameAnchor!)
                             self.addAnnotation(newTitleAnnotation)
                             self.titleAnnotation = newTitleAnnotation;
                         }
                     }
                 }
                 else {
-                    if  theTitleAnnotation  {
+                    if  (theTitleAnnotation != nil)  {
                         self.removeAnnotation(theTitleAnnotation)
                         self.titleAnnotation = nil;
                     }
@@ -573,30 +572,7 @@ extension CPTGraph {
     
     // MARK: - Event Handling
     
-    /// @name User Interaction
-    /// @{
-    
-    /**
-     *  @brief Informs the receiver that the user has
-     *  @if MacOnly pressed the mouse button. @endif
-     *  @if iOSOnly touched the screen. @endif
-     *
-     *
-     *  The event is passed in turn to the following layers:
-     *  -# All plots in reverse order (i.e., from front to back in the layer order)
-     *  -# The axis set
-     *  -# The plot area
-     *  -# The legend
-     *
-     *  If any layer handles the event, subsequent layers are not notified and
-     *  this method immediately returns @YES. If none of the layers
-     *  handle the event, it is passed to all plot spaces whether they handle it or not.
-     *
-     *  @param event The OS event.
-     *  @param interactionPoint The coordinates of the interaction.
-     *  @return Whether the event was handled or not.
-     **/
-    func pointingDeviceDownEvent(event :CPTNativeEvent, interactionPoint:CGPoint) ->Bool
+    override func pointingDeviceDownEvent(event : CPTNativeEvent,  atPoint interactionPoint: CGPoint) ->Bool
     {
         // Plots
         let reversedCollection = plots.reversed()
@@ -629,7 +605,7 @@ extension CPTGraph {
         var handledEvent = false;
         
         for space in self.plotSpaces {
-            let handled = space.pointingDeviceDownEvent(event:event, atPoint:interactionPoint)
+            let handled = space.pointingDeviceDownEvent(event:event, atPoint: interactionPoint)
             handledEvent |= handled;
         }
         
@@ -637,7 +613,7 @@ extension CPTGraph {
             return true
         }
         else {
-            return super.pointingDeviceDownEvent(event :event, atPoint:interactionPoint)
+            return super.pointingDeviceDownEvent(event :event, atPoint : interactionPoint)
         }
     }
     
@@ -661,7 +637,7 @@ extension CPTGraph {
      *  @param interactionPoint The coordinates of the interaction.
      *  @return Whether the event was handled or not.
      **/
-    func pointingDeviceUpEvent(event : CPTNativeEvent, interactionPoint:CGPoint)-> Bool
+    override func pointingDeviceUpEvent(event : CPTNativeEvent, atPoint interactionPoint : CGPoint )-> Bool
     {
         var handledEvent = false
         
@@ -676,7 +652,7 @@ extension CPTGraph {
         }
         
         // Axes Set
-        if  !handledEvent && self.axisSet?.pointingDeviceUpEvent(event:event, atPoint:interactionPoint ) {
+        if  !handledEvent && ((self.axisSet?.pointingDeviceUpEvent(event:event, atPoint:interactionPoint )) != nil) {
             handledEvent = true
         }
         
@@ -686,7 +662,7 @@ extension CPTGraph {
         }
         
         // Legend
-        if  !handledEvent == false && self.legend.pointingDeviceUpEvent(event:event, atPoint:interactionPoint ) {
+        if  !handledEvent == false && ((self.legend?.pointingDeviceUpEvent(event:event, atPoint:interactionPoint )) != nil) {
             handledEvent = true
         }
         
@@ -708,30 +684,10 @@ extension CPTGraph {
         }
     }
     
-    /**
-     *  @brief Informs the receiver that the user has moved
-     *  @if MacOnly the mouse with the button pressed. @endif
-     *  @if iOSOnly their finger while touching the screen. @endif
-     *
-     *
-     *  The event is passed in turn to the following layers:
-     *  -# All plots in reverse order (i.e., from front to back in the layer order)
-     *  -# The axis set
-     *  -# The plot area
-     *  -# The legend
-     *
-     *  If any layer handles the event, subsequent layers are not notified and
-     *  this method immediately returns @YES. If none of the layers
-     *  handle the event, it is passed to all plot spaces whether they handle it or not.
-     *
-     *  @param event The OS event.
-     *  @param interactionPoint The coordinates of the interaction.
-     *  @return Whether the event was handled or not.
-     **/
     override func pointingDeviceDraggedEvent(event : CPTNativeEvent, atPoint interactionPoint:CGPoint)-> Bool
     {
         // Plots
-        let reversedCollection = plots.reversed()
+//        let reversedCollection = plots.reversed()
         for  plot in self.plots {
             if plot.pointingDeviceDraggedEvent(event:event, atPoint:interactionPoint ) {
                 return true
@@ -739,7 +695,7 @@ extension CPTGraph {
         }
         
         // Axes Set
-        if self.axisSet?.pointingDeviceDraggedEvent(event: event, atPoint:interactionPoint ) {
+        if ((self.axisSet?.pointingDeviceDraggedEvent(event: event, atPoint:interactionPoint )) != nil) {
             return true
         }
         

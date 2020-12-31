@@ -19,7 +19,7 @@ import AppKit
     @objc optional func dataLabelForPlot(plot: CPTPlot, recordIndex:Int )-> CPTLayer
 }
 
-@objc public protocol CPTPlotDelegate: CPTLayerDelegate {
+@objc public protocol CPTPlotDelegate {
     
     func plot(plot: CPTPlot, dataLabelWasSelectedAtRecordIndex:Int)
     func plot(plot: CPTPlot, dataLabelWasSelectedAtRecordIndex:Int,  event: CPTNativeEvent )

@@ -329,7 +329,7 @@ class CPTPlotRange: NSObject {
             return self.contains(number as! CGFloat)
         }
         else {
-            return self.contains(number as! Double)
+            return self.contains(number as! CGFloat)
         }
     }
 
@@ -362,15 +362,15 @@ class CPTPlotRange: NSObject {
                 if !otherRange.isInfinite || (otherRange.lengthSign == lengthSign) {
                     switch lengthSign {
                     case CPTSign.positive:
-                        result = CPTDecimalGreaterThanOrEqualTo(otherRange.minLimitDecimal, minLimitDecimal)
+                        result = otherRange.minLimitDecimal >= minLimitDecimal
                     case CPTSign.negative:
-                        result = CPTDecimalLessThanOrEqualTo(otherRange.maxLimitDecimal, maxLimitDecimal)
+                        result = otherRange.maxLimitDecimal <= maxLimitDecimal
                     default:
                         break
                     }
                 }
             } else {
-                result = CPTDecimalGreaterThanOrEqualTo(otherRange.minLimitDecimal, minLimitDecimal) && CPTDecimalLessThanOrEqualTo(otherRange.maxLimitDecimal, maxLimitDecimal)
+                result = otherRange.minLimitDecimal >= minLimitDecimal && otherRange.maxLimitDecimal <= maxLimitDecimal
             }
         }
 
@@ -499,11 +499,7 @@ class CPTPlotRange: NSObject {
 //        return result;
 //    }
 //
-//    #pragma mark -
-//    #pragma mark Label comparison
-//
-//    /// @cond
-//
+    // MARK: -  Label comparison
 //    -(BOOL)isEqual:(nullable id)object
 //    {
 //        if ( self == object ) {
@@ -524,8 +520,6 @@ class CPTPlotRange: NSObject {
 //
 //        return locationNumber.hash + lengthNumber.hash;
 //    }
-//
-//    /// @endcond
-//
+
 
 }

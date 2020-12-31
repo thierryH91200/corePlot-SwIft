@@ -125,10 +125,10 @@ class CPTPlotSpace: NSObject {
         return categories
     }
     
-    func category(for coordinate: CPTCoordinate, at idx: Int) -> String?
+    func category(for coordinate: CPTCoordinate, at index: Int) -> String?
     {
         let categories = orderedSet(for: coordinate)
-        return categories[idx]
+        return categories[index]
     }
     
     func indexOfCategory(_ category: String, for coordinate: CPTCoordinate) -> Int {
@@ -145,12 +145,12 @@ class CPTPlotSpace: NSObject {
     
     // MARK: - Responder Chain and User interaction
     // https://izziswift.com/what-is-the-swift-equivalent-of-respondstoselector/
-    func pointingDeviceDownEven(event: CPTNativeEvent, atPoint interactionPoint:CGPoint)-> Bool
+    func pointingDeviceDownEvent(event: CPTNativeEvent, atPoint interactionPoint : CGPoint)-> Bool
     {
         let theDelegate = self.delegate
         
         guard let handledByDelegate = theDelegate?.plotSpace(space: self, shouldHandlePointingDeviceDownEvent: event, atPoint: interactionPoint)
-        else{ return false}
+        else { return false}
         return handledByDelegate;
     }
     
