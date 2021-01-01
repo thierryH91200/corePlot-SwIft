@@ -819,7 +819,7 @@ extension CPTAxis {
                 gridLines.axis = self
                 
                 let thePlotArea = plotArea
-                thePlotArea?.minorGridLineGroup.insertSublayer(gridLines, at: thePlotArea?.sublayerIndex(forAxis: self, layerType: .minorGridLines))
+                thePlotArea?.minorGridLineGroup!.insertSublayer(gridLines, at: (thePlotArea?.sublayerIndex(forAxis: self, layerType: .minorGridLines))!)
             }
         }
     }

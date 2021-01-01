@@ -410,67 +410,6 @@ extension CPTPlot {
     // *  @param idx The index of the desired data value.
     // *  @return The cached value or @nil if no data is cached for the requested key.
     // **/
-    func cachedValueForKey(key : String, recordIndex idx:Int)-> Any?
-    {
-        return cachedArray(forKey: key)?[idx]
-    }
-    
-    func cachedArray(forKey key: String) -> [String]? {
-        return cachedData[key] as? [String]
-    }
-    
-    ///** @brief Copies an array of arbitrary values to the cache.
-    // *  @param array An array of arbitrary values to cache.
-    // *  @param key The key identifying the field.
-    // **/
-    func cacheArray(_ array: [Any], forKey key: String) {
-        let sampleCount = array.count
-        if sampleCount > 0 {
-            cachedData[key] = array
-        } else {
-            cachedData.removeValue( forKey : key)
-        }
-        cachedDataCount = sampleCount
-    }
-    
-    //
-    ///** @brief Copies an array of arbitrary values to replace a part of the cache.
-    // *  @param array An array of arbitrary values to cache.
-    // *  @param key The key identifying the field.
-    // *  @param idx The index of the first data point to replace.
-    // **/
-    
-    
-    
-    // cachedValues = array
-    // cachedData: [String : [Any]] = [:]
-    func cacheArray(array: [Any], forKey key: String, atRecordIndex idx: Int)
-    {
-        let sampleCount = array.count
-        if ( sampleCount > 0 ) {
-            
-            // Ensure the data cache exists and is the right size
-            let theDataSource = self.dataSource
-            let numberOfRecords = theDataSource?.numberOfRecordsForPlot(plot: self)
-            var cachedValues = [Any?]()
-            
-            if cachedValues.isEmpty == false {
-                
-                cachedValues = [String]()
-                let nullObject : String?
-                
-                for i in 0..<numberOfRecords! {
-                    cachedValues.append( nullObject)
-                }
-                self.cachedData[key] = cachedValues as [Any]
-            }
-            
-            // Update the cache
-            self.cachedDataCount = numberOfRecords!
-            let dataArray = array
-            cachedValues.replaceObjectsInRange(NSRange(idx, sampleCount), withObjectsFromArray(dataArray))
-        }
-    }
 }
 
 

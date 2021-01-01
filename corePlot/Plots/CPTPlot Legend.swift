@@ -29,7 +29,7 @@ extension CPTPlot {
             let  myIdentifier = self.identifier;
             
             if myIdentifier is String {
-                legendTitle = myIdentifier;
+                legendTitle = myIdentifier as? String
             }
         }
         return legendTitle!;
@@ -37,17 +37,16 @@ extension CPTPlot {
     
     func attributedTitleForLegendEntryAtIndex(idx: Int )-> NSAttributedString
     {
-        var legendTitle = self.attributedTitle;
+        var legendAttributedTitle = self.attributedTitle
         
-        if ( (legendTitle == nil) ) {
-            var  myIdentifier = self.identifier
+        if ( legendAttributedTitle == nil ) {
+            let  myIdentifier = self.identifier
             
             if myIdentifier is NSAttributedString {
-                legendTitle = myIdentifier;
+                legendAttributedTitle = myIdentifier as? NSAttributedString
             }
         }
-        
-        return legendTitle!
+        return legendAttributedTitle!
     }
 
 ///** @brief Draws the legend swatch of a legend entry.

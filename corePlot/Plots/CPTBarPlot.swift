@@ -339,17 +339,17 @@ public class CPTBarPlot: CPTPlot {
         let theDataSource = self.dataSource as? CPTBarPlotDataSource
         
         var needsLegendUpdate = false
-        if let barLineStylesForBarPlot = theDataSource?.barLineStylesForBarPlot {
+        if (theDataSource?.barLineStylesForBarPlot) != nil {
             
             needsLegendUpdate = true
-            let array = theDataSource?.barLineStylesForBarPlot!(
+            let array = theDataSource?.barLineStylesForBarPlot(
                             plot: self,
                             indexRange:indexRange)
             self.cacheArray(array: array! ,
                                 forKey: NSBindingName.BarLineStyles.rawValue,
                                 atRecordIndex: indexRange.location)
         }
-        else if let barLineStylesForBarPlot = theDataSource?.barLineStylesForBarPlot {
+        else if (theDataSource?.barLineStylesForBarPlot) != nil {
             
             needsLegendUpdate = true
             let  nilObject : CPTLineStyle?
@@ -357,7 +357,7 @@ public class CPTBarPlot: CPTPlot {
             let maxIndex  = NSMaxRange(indexRange)
             
             for  idx in indexRange.location..<maxIndex {
-                let dataSourceLineStyle = theDataSource?.barLineStyleForBarPlot!(plot: self, index: idx)
+                let dataSourceLineStyle = theDataSource?.barLineStyleForBarPlot(plot: self, index: idx)
                 if (( dataSourceLineStyle ) != nil) {
                     array.append(dataSourceLineStyle!)
                 }
@@ -435,27 +435,27 @@ public class CPTBarPlot: CPTPlot {
             let xLocation          = thePlotSpace.xRange.locationDecimal;
             let yLocation          = thePlotSpace.yRange.locationDecimal;
             
-            var originPlotPoint = [CPTCoordinate: CGFloat]()
-            var displacedPlotPoint = [CPTCoordinate: CGFloat]()
+            var originPlotPoint    = [ CGFloat](repeating: 0, count: 2)
+            var displacedPlotPoint = [ CGFloat](repeating: 0, count: 2)
             
             switch ( coord ) {
             case .x:
-                originPlotPoint[.x]    = xLocation
-                originPlotPoint[.y]    = yLocation;
-                displacedPlotPoint[.x] = xLocation + decimalLength
-                displacedPlotPoint[.y] = yLocation;
+                originPlotPoint[CPTCoordinate.x.rawValue]    = xLocation
+                originPlotPoint[CPTCoordinate.y.rawValue]    = yLocation
+                displacedPlotPoint[CPTCoordinate.x.rawValue] = xLocation + decimalLength
+                displacedPlotPoint[CPTCoordinate.y.rawValue] = yLocation;
                 
             case .y:
-                originPlotPoint[.x]    = xLocation
-                originPlotPoint[.y]    = yLocation
-                displacedPlotPoint[.x] = xLocation;
-                displacedPlotPoint[.y] = yLocation + decimalLength
+                originPlotPoint[CPTCoordinate.x.rawValue]    = xLocation
+                originPlotPoint[CPTCoordinate.y.rawValue]    = yLocation
+                displacedPlotPoint[CPTCoordinate.x.rawValue] = xLocation;
+                displacedPlotPoint[CPTCoordinate.y.rawValue] = yLocation + decimalLength
                 
             default:
                 break;
             }
             
-            let originPoint    = thePlotSpace.plotAreaViewPointForPlotPoint(plotPoint: originPlotPoint, numberOfCoordinates:2)
+            let originPoint    = thePlotSpace.plotAreaViewPointForPlotPoint(plotPoint: originPlotPoint   , numberOfCoordinates:2)
             let displacedPoint = thePlotSpace.plotAreaViewPointForPlotPoint(plotPoint: displacedPlotPoint, numberOfCoordinates:2)
             
             switch ( coord ) {
@@ -473,19 +473,23 @@ public class CPTBarPlot: CPTPlot {
     }
     
     func LengthinPlotCoordinates( length: CGFloat) -> Double {
-        var lengthDouble: Double
         
-        if barWidthsAreInViewCoordinates {
+        var lengthDouble = Double(0)
+        
+        if barWidthsAreInViewCoordinates == true {
             let floatLength = CGFloat(length)
             let originViewPoint = CGPoint.zero
             let displacedViewPoint = CGPoint(x: floatLength, y: floatLength)
-            let originPlotPoint = [Double]()
-            let displacedPlotPoint = [Double]()
+            
+            var originPlotPoint    = [ CGFloat](repeating: 0, count: 2)
+            var displacedPlotPoint = [ CGFloat](repeating: 0, count: 2)
+
             let thePlotSpace = plotSpace
-            thePlotSpace?.doublePrecisionPlotPoint(originPlotPoint, numberOfCoordinates: 2, forPlotAreaViewPoint: originViewPoint)
+            thePlotSpace?.doublePrecisionPlotPoint(originPlotPoint  , numberOfCoordinates: 2, forPlotAreaViewPoint: originViewPoint)
             thePlotSpace?.doublePrecisionPlotPoint(displacedPlotPoint, numberOfCoordinates: 2, forPlotAreaViewPoint: displacedViewPoint)
-            if barsAreHorizontal {
-                lengthDouble = displacedPlotPoint[CPTCoordinate.y.rawValue] - originPlotPoint[CPTCoordinate.y.rawValue]
+            
+            if barsAreHorizontal == true {
+                lengthDouble = Double(displacedPlotPoint[CPTCoordinate.y.rawValue] - originPlotPoint[CPTCoordinate.y.rawValue])
             } else {
                 lengthDouble = displacedPlotPoint[CPTCoordinate.x.rawValue] - originPlotPoint[CPTCoordinate.x.rawValue]
             }
@@ -506,18 +510,19 @@ public class CPTBarPlot: CPTPlot {
     {
         var length = CGFloat(0)
         
-        if ( self.barWidthsAreInViewCoordinates ) {
+        if self.barWidthsAreInViewCoordinates == true  {
+            
             let floatLength = decimalLength
             
             let originView = CGPoint()
             let displacedView = CGPoint(x: floatLength, y: floatLength)
-            
+
             var originPlot = [CGFloat]()
             var displacedPlot  = [CGFloat]()
             
             let thePlotSpace = self.plotSpace;
-            thePlotSpace?.plotPoint(plotPoint: originPlot, numberOfCoordinates:2, forPlotAreaViewPoint:originView)
-            thePlotSpace?.plotPoint(plotPoint: displacedPlot, numberOfCoordinates:2, forPlotAreaViewPoint:displacedView)
+            thePlotSpace?.plotPoint(plotPoint: originPlot,    numberOfCoordinates: 2, forPlotAreaViewPoint:originView)
+            thePlotSpace?.plotPoint(plotPoint: displacedPlot, numberOfCoordinates: 2, forPlotAreaViewPoint:displacedView)
             
             if ( self.barsAreHorizontal == true ) {
                 length = displacedPlot[CPTCoordinate.y.rawValue] - originPlot[CPTCoordinate.y.rawValue]
@@ -532,9 +537,6 @@ public class CPTBarPlot: CPTPlot {
         return length;
     }
     
-    
-    
-    
     // MARK: -  Data Ranges
     override func plotRangeForCoordinate(coord: CPTCoordinate)->CPTPlotRange?
     {
@@ -548,7 +550,7 @@ public class CPTBarPlot: CPTPlot {
                     if range?.contains(base ) == false {
                         var newRange = range
                         newRange.unionPlotRange(plotRangeWithLocationDecimal(base, lengthDecimal:(0))
-                                                range = newRange;
+                        range = newRange;
                     }
                 }
                 break;
@@ -599,7 +601,7 @@ public class CPTBarPlot: CPTPlot {
     //     **/
         func plotRangeEnclosingBars() -> CPTPlotRange
         {
-            var horizontalBars = self.barsAreHorizontal;
+            let horizontalBars = self.barsAreHorizontal;
             var range = CPTPlotRange(location: 0, length: 0)
     
             if ( horizontalBars ) {
@@ -609,12 +611,12 @@ public class CPTBarPlot: CPTPlot {
                 range = self.plotRangeForCoordinate(coord: CPTCoordinate.x)!
             }
     
-            var barOffsetLength = self.lengthInPlotCoordinates(decimalLength: self.barOffset)
-            var barWidthLength  = self.lengthInPlotCoordinates(decimalLength: self.barWidth)
-            var halfBarWidth    = barWidthLength / CGFloat(2)
+            let barOffsetLength = self.lengthInPlotCoordinates(decimalLength: self.barOffset)
+            let barWidthLength  = self.lengthInPlotCoordinates(decimalLength: self.barWidth)
+            let halfBarWidth    = barWidthLength / CGFloat(2)
     
             var rangeLocation = range.location
-            var rangeLength   = range.length
+            let rangeLength   = range.length
     
             if rangeLength > CGFloat(0) {
                 rangeLocation = rangeLocation - halfBarWidth

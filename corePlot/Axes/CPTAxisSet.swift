@@ -90,8 +90,6 @@ class CPTAxisSet: CPTLayer {
     // MARK: - Labeling
     func relabelAxes()
     {
-//        let theAxes = self.axes;
-        
         for theAxes in self.axes{
             theAxes.setNeedsLayout()
         }
@@ -130,20 +128,6 @@ class CPTAxisSet: CPTLayer {
         return super.pointingDeviceDownEvent(event:event, atPoint:interactionPoint)
     }
 
-    /**
-     *  @brief Informs the receiver that the user has
-     *  @if MacOnly released the mouse button. @endif
-     *  @if iOSOnly ended touching the screen. @endif
-     *
-     *
-     *  The event will be passed to each axis belonging to the receiver in turn. This method
-     *  returns @YES if any of its axes handle the event.
-     *
-     *  @param event The OS event.
-     *  @param interactionPoint The coordinates of the interaction.
-     *  @return Whether the event was handled or not.
-     **/
-    
     override func pointingDeviceUpEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint)-> Bool
     {
         for  axis in self.axes {

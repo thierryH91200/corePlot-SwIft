@@ -5,29 +5,21 @@
 //  Created by thierryH24 on 20/11/2020.
 //
 
-import Foundation
+import AppKit
 
 extension CPTPlot {
     
-    
-    
-    
     // MARK: - Accessors
     
-    //    -(nullable CPTLayerArray *)dataLabels
-    //    {
-    //        return [self cachedArrayForKey:CPTPlotBindingDataLabels];
-    //    }
-    //
-    //    -(void)setDataLabels:(nullable CPTLayerArray *)newDataLabels
-    //    {
-    //        [self cacheArray:newDataLabels forKey:CPTPlotBindingDataLabels];
-    //        [self setNeedsRelabel];
-    //    }
-    //
+    func dataLabels() -> [ CPTLayer]? {
+        return cachedArray(forKey: NSBindingName.PlotDataLabels.rawValue)
+    }
     
+    func setDataLabels(_ newDataLabels:[ CPTLayer]) {
+        cacheArray(newDataLabels, forKey: NSBindingName.PlotDataLabels.rawValue)
+        setNeedsRelabel()
+    }
     
-    //
     func setAttributedTitle(newTitle: NSAttributedString )
     {
         if ( newTitle != attributedTitle ) {

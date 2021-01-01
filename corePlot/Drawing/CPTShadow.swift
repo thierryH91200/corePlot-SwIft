@@ -20,7 +20,7 @@ class CPTShadow : NSObject {
         shadowColor      = nil
     }
     
-    func shadowInContext (context: CGContext)
+    func setShadowInContext (context: CGContext)
     {
         context.setShadow(offset: self.shadowOffset,
                           blur: self.shadowBlurRadius,

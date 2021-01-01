@@ -163,7 +163,7 @@ public class CPTLayer : CALayer
         }
     }
 
-    var identifier  : UUID?         = nil
+    var identifier  : Any?
     
     init ( frame : CGRect) {
         
@@ -243,11 +243,9 @@ public class CPTLayer : CALayer
         if renderingRecursively == true {
             applyMask(to: context)
         }
-        shadow?.shadowIn(context:  context)
+        shadow?.setShadowInContext(context:  context)
     }
 
-    
-    
     public override var cornerRadius: CGFloat {
         get {
             return super.cornerRadius

@@ -17,7 +17,7 @@
  }
  
  
- @objc public protocol CPTLegendDelegate<CPTLayerDelegate> {
+ protocol CPTLegendDelegate : CPTLayerDelegate {
     
     func legend( legend: CPTLegend, fillForEntryAtIndex:Int, forPlot plot: CPTPlot) -> CPTFill
     
@@ -28,8 +28,8 @@
     func legend( legend: CPTLegend, legendEntryForPlot plot: CPTPlot, wasSelectedAtIndex:Int)
     func legend( legend: CPTLegend, legendEntryForPlot plot: CPTPlot, wasSelectedAtIndex:Int, withEvent: CPTNativeEvent)
     
-    @objc optional func legend( legend: CPTLegend, legendEntryForPlot plot: CPTPlot, touchDownAtIndex:Int)
-    @objc optional func legend( legend: CPTLegend, legendEntryForPlot plot: CPTPlot, touchDownAtIndex:Int, withEvent:CPTNativeEvent )
+    func legend( legend: CPTLegend, legendEntryForPlot plot: CPTPlot, touchDownAtIndex:Int)
+    func legend( legend: CPTLegend, legendEntryForPlot plot: CPTPlot, touchDownAtIndex:Int, withEvent:CPTNativeEvent )
     func legend( legend: CPTLegend, legendEntryForPlot plot: CPTPlot, touchUpAtIndex: Int)
     func legend( legend: CPTLegend, legendEntryForPlot plot: CPTPlot, touchUpAtIndex:Int, withEvent: CPTNativeEvent)
  }
@@ -74,7 +74,6 @@
     var pointingDeviceDownEntry : CPTLegendEntry?
     
     
-    //
     //    #pragma mark -
     // MARK: Factory Methods
     //

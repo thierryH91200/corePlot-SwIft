@@ -102,7 +102,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
     }
 
     var _labelShadow : CPTShadow?
-    var labelShadow : CPTShadow {
+    var labelShadow : CPTShadow? {
         get { return _labelShadow!}
         set {
             if ( newValue != _labelShadow ) {
@@ -140,7 +140,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
     override init()
     {
         super.init()
-        CPTPlot.exposeBinding(.CPTPlotBindingDataLabels)
+        CPTPlot.exposeBinding(.PlotDataLabels)
     }
 
     override init(frame: CGRect)
@@ -162,7 +162,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
         labelField           = 0
         labelTextStyle       = nil;
         labelFormatter       = Formatter()
-        labelShadow          = nil;
+        labelShadow          = nil
         labelIndexRange      = NSRange(location: 0, length: 0);
         labelAnnotations.removeAll()
         alignsPointsToPixels = true;
@@ -238,7 +238,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
                 unionRange = currentRange as? CPTMutablePlotRange
             }
             else {
-                unionRange?.unionPlotRange(self, plotRangeForField(fieldEnum: Int(field)))
+                unionRange?.unionPlotRange(other: self.plotRangeForField(fieldEnum: Int(field)))
             }
         }
         return unionRange;

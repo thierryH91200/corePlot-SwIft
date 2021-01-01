@@ -77,6 +77,8 @@
 		037244462545FE4600B59C97 /* corePlotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037244452545FE4600B59C97 /* corePlotTests.swift */; };
 		037244482545FE4600B59C97 /* corePlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 0372443A2545FE4600B59C97 /* corePlot.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		037244542545FF1700B59C97 /* CPTLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037244532545FF1700B59C97 /* CPTLayer.swift */; };
+		03783481259F7D0B002447D3 /* CPTPlot cacheArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03783480259F7D0B002447D3 /* CPTPlot cacheArray.swift */; };
+		03783485259F9CC7002447D3 /* CPTPlotSymbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03783484259F9CC7002447D3 /* CPTPlotSymbol.swift */; };
 		03848EFB255F2F7000F1C1D5 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 03848EFA255F2F7000F1C1D5 /* README.md */; };
 		0387947E257BD06300F322E8 /* Platform+Graphics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0387947D257BD06300F322E8 /* Platform+Graphics.swift */; };
 		0397469B2557269E008CF3E6 /* CPTShadow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397469A2557269E008CF3E6 /* CPTShadow.swift */; };
@@ -198,6 +200,8 @@
 		037244452545FE4600B59C97 /* corePlotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = corePlotTests.swift; sourceTree = "<group>"; };
 		037244472545FE4600B59C97 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		037244532545FF1700B59C97 /* CPTLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTLayer.swift; sourceTree = "<group>"; };
+		03783480259F7D0B002447D3 /* CPTPlot cacheArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTPlot cacheArray.swift"; sourceTree = "<group>"; };
+		03783484259F9CC7002447D3 /* CPTPlotSymbol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTPlotSymbol.swift; sourceTree = "<group>"; };
 		03848EFA255F2F7000F1C1D5 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		0387947D257BD06300F322E8 /* Platform+Graphics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Platform+Graphics.swift"; sourceTree = "<group>"; };
 		0397469A2557269E008CF3E6 /* CPTShadow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTShadow.swift; sourceTree = "<group>"; };
@@ -518,6 +522,7 @@
 				03E3D50225683D4200FB3F07 /* CPTPlotAccessors.swift */,
 				0320B00F255C8C4300D32BF9 /* CPTPlotGroup.swift */,
 				030E06A0259365EA006CE062 /* CPTPieChart reload.swift */,
+				03783480259F7D0B002447D3 /* CPTPlot cacheArray.swift */,
 			);
 			path = Plots;
 			sourceTree = "<group>";
@@ -525,6 +530,7 @@
 		03A9CCD72559300B0096853D /* Plot Symbols */ = {
 			isa = PBXGroup;
 			children = (
+				03783484259F9CC7002447D3 /* CPTPlotSymbol.swift */,
 			);
 			path = "Plot Symbols";
 			sourceTree = "<group>";
@@ -787,6 +793,7 @@
 				030A6506255FBB44002B3D13 /* CPTAnimation.swift in Sources */,
 				0397469B2557269E008CF3E6 /* CPTShadow.swift in Sources */,
 				0332628525738C0E00224856 /* CPTAnimationPlotRangePeriod.swift in Sources */,
+				03783481259F7D0B002447D3 /* CPTPlot cacheArray.swift in Sources */,
 				0320B014255C8CA400D32BF9 /* CPTPlot.swift in Sources */,
 				03A9CCEA255957510096853D /* CPTLayerAnnotation.swift in Sources */,
 				03432FF0258E576A0034FE12 /* CPTTextStylePlatformSpecific.swift in Sources */,
@@ -803,6 +810,7 @@
 				03A9CCE6255956F70096853D /* CPTAnnotationHostLayer.swift in Sources */,
 				0320AFD4255C5A7000D32BF9 /* CPTXYGraph.swift in Sources */,
 				03DDD45E2562748C00CAB29B /* CPTAxisLabelGroup.swift in Sources */,
+				03783485259F9CC7002447D3 /* CPTPlotSymbol.swift in Sources */,
 				039746A325572B55008CF3E6 /* CPTImage.swift in Sources */,
 				034D8D43257E8C7D0040151E /* CPTAxis autoMajor.swift in Sources */,
 				0332627125738ACE00224856 /* CPTAnimationCGPointPeriod.swift in Sources */,

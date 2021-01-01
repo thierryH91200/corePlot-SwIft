@@ -18,6 +18,17 @@ public protocol CPTPieChartDataSource  {
 }
 
 
+protocol CPTPieChartDelegate : CPTPlotDelegate {
+
+    func pieChart(plot: CPTPieChart, sliceWasSelectedAtRecordIndex idx:Int)
+    func pieChart(plot: CPTPieChart, sliceWasSelectedAtRecordIndex idx: Int, withEvent event: CPTNativeEvent )
+    func pieChart(plot: CPTPieChart, sliceTouchDownAtRecordIndex idx: Int)
+    func pieChart(plot: CPTPieChart, sliceTouchDownAtRecordIndex idx: Int, withEvent event: CPTNativeEvent )
+    func pieChart(plot: CPTPieChart, sliceTouchUpAtRecordIndex idx: Int)
+    func pieChart(plot: CPTPieChart, sliceTouchUpAtRecordIndex idx: Int, withEvent event: CPTNativeEvent )
+
+}
+
 public class CPTPieChart: CPTPlot {
     
     private let colorLookupTable = [
@@ -39,13 +50,13 @@ public class CPTPieChart: CPTPlot {
     }
     
     enum CPTPieChartField : Int {
-        case sliceWidth ///< Pie slice width.
-        case sliceWidthNormalized ///< Pie slice width normalized [0, 1].
-        case sliceWidthSum ///< Cumulative sum of pie slice widths.
+        case sliceWidth             //< Pie slice width.
+        case sliceWidthNormalized   //< Pie slice width normalized [0, 1].
+        case sliceWidthSum          //< Cumulative sum of pie slice widths.
     }
     
     var theDataSource : CPTPieChartDataSource?
-
+    
     
     var pieRadius: CGFloat
     var pieInnerRadius : CGFloat
@@ -69,7 +80,7 @@ public class CPTPieChart: CPTPlot {
         CPTPieChart.exposeBinding(.PieSliceRadialOffsets)
     }
     
-    // @name Initialization
+    // Initialization
     override init(frame newFrame: CGRect) {
         super.init(frame: newFrame)
         pieRadius = CGFloat(0.8) * (min(newFrame.size.width, newFrame.size.height) / CGFloat(2.0))
@@ -87,9 +98,8 @@ public class CPTPieChart: CPTPlot {
         labelField = CPTPieChartField.sliceWidth.rawValue
         
         theDataSource = dataSource as? CPTPieChartDataSource
-
+        
     }
-    
     
     override init(layer: Any) {
         
@@ -108,13 +118,12 @@ public class CPTPieChart: CPTPlot {
         pointingDeviceDownIndex = NSNotFound
         
         theDataSource = dataSource as? CPTPieChartDataSource
-
+        
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
     
     override func reloadData()
     {
@@ -137,7 +146,7 @@ public class CPTPieChart: CPTPlot {
         // Legend
         if let theDataSource = theDataSource {
             if let _ = theDataSource.legendTitleForPieChart {
-
+                
                 NotificationCenter.send(
                     name: .CPTLegendNeedsRedrawForPlotNotification,
                     object:self)
@@ -151,7 +160,7 @@ public class CPTPieChart: CPTPlot {
         
         if self.loadNumbersForAllFieldsFromDataSourceInRecordIndexRange(indexRange: indexRange) == false {
             var theDataSource = dataSource as? CPTPieChartDataSource?
-
+            
             // Pie slice widths
             if ( theDataSource != nil ) {
                 // Grab all values from the data source
@@ -170,7 +179,7 @@ public class CPTPieChart: CPTPlot {
         self.updateNormalizedData()
     }
     
-    func insertDataAtIndex(idx: Int, numberOfRecords: Int)
+    override func insertDataAtIndex(idx: Int, numberOfRecords: Int)
     {
         super.insertDataAtIndex(idx: idx, numberOfRecords:numberOfRecords)
         NotificationCenter.send(
@@ -178,7 +187,7 @@ public class CPTPieChart: CPTPlot {
             object:self)
     }
     
-    func deleteDataInIndexRange(indexRange: NSRange)
+    override func deleteDataInIndexRange(indexRange: NSRange)
     {
         super.deleteDataInIndexRange(indexRange:indexRange)
         self.updateNormalizedData();
@@ -188,114 +197,106 @@ public class CPTPieChart: CPTPlot {
             object:self)
     }
     
-    //    -(void)updateNormalizedData
-    //    {
-    //        // Normalize these widths to 1.0 for the whole pie
-    //        NSUInteger sampleCount = self.cachedDataCount;
-    //
-    //        if ( sampleCount > 0 ) {
-    //            CPTMutableNumericData *rawSliceValues = [self cachedNumbersForField:CPTPieChartFieldSliceWidth)
-    //            if ( self.doublePrecisionCache ) {
-    //                double valueSum         = 0.0;
-    //                const double *dataBytes = (const double *)rawSliceValues.bytes;
-    //                const double *dataEnd   = dataBytes + sampleCount;
-    //                while ( dataBytes < dataEnd ) {
-    //                    double currentWidth = *dataBytes++;
-    //                    if ( !isnan(currentWidth)) {
-    //                        valueSum += currentWidth;
-    //                    }
-    //                }
-    //
-    //                CPTNumericDataType dataType = CPTDataType(CGFloatingPointDataType, sizeof(double), CFByteOrderGetCurrent());
-    //
-    //                CPTMutableNumericData *normalizedSliceValues = [[CPTMutableNumericData alloc] initWithData:[NSData data] dataType:dataType shape:nil)
-    //                normalizedSliceValues.shape = @[@(sampleCount))
-    //                CPTMutableNumericData *cumulativeSliceValues = [[CPTMutableNumericData alloc] initWithData:[NSData data] dataType:dataType shape:nil)
-    //                cumulativeSliceValues.shape = @[@(sampleCount))
-    //
-    //                double cumulativeSum = 0.0;
-    //
-    //                dataBytes = (const double *)rawSliceValues.bytes;
-    //                double *normalizedBytes = normalizedSliceValues.mutableBytes;
-    //                double *cumulativeBytes = cumulativeSliceValues.mutableBytes;
-    //                while ( dataBytes < dataEnd ) {
-    //                    double currentWidth = *dataBytes++;
-    //                    if ( isnan(currentWidth)) {
-    //                        *normalizedBytes++ = (double)NAN;
-    //                    }
-    //                    else {
-    //                        *normalizedBytes++ = currentWidth / valueSum;
-    //                        cumulativeSum     += currentWidth;
-    //                    }
-    //                    *cumulativeBytes++ = cumulativeSum / valueSum;
-    //                }
-    //                [self cacheNumbers:normalizedSliceValues forField:CPTPieChartFieldSliceWidthNormalized)
-    //                [self cacheNumbers:cumulativeSliceValues forField:CPTPieChartFieldSliceWidthSum)
-    //            }
-    //            else {
-    //                NSDecimal valueSum         = CPTDecimalFromInteger(0);
-    //                const NSDecimal *dataBytes = (const NSDecimal *)rawSliceValues.bytes;
-    //                const NSDecimal *dataEnd   = dataBytes + sampleCount;
-    //                while ( dataBytes < dataEnd ) {
-    //                    NSDecimal currentWidth = *dataBytes++;
-    //                    if ( !NSDecimalIsNotANumber(&currentWidth)) {
-    //                        valueSum = CPTDecimalAdd(valueSum, currentWidth);
-    //                    }
-    //                }
-    //
-    //                CPTNumericDataType dataType = CPTDataType(CPTDecimalDataType, sizeof(NSDecimal), CFByteOrderGetCurrent());
-    //
-    //                CPTMutableNumericData *normalizedSliceValues = [[CPTMutableNumericData alloc] initWithData:[NSData data] dataType:dataType shape:nil)
-    //                normalizedSliceValues.shape = @[@(sampleCount))
-    //                CPTMutableNumericData *cumulativeSliceValues = [[CPTMutableNumericData alloc] initWithData:[NSData data] dataType:dataType shape:nil)
-    //                cumulativeSliceValues.shape = @[@(sampleCount))
-    //
-    //                NSDecimal cumulativeSum = CPTDecimalFromInteger(0);
-    //
-    //                NSDecimal decimalNAN = CPTDecimalNaN();
-    //                dataBytes = (const NSDecimal *)rawSliceValues.bytes;
-    //                NSDecimal *normalizedBytes = normalizedSliceValues.mutableBytes;
-    //                NSDecimal *cumulativeBytes = cumulativeSliceValues.mutableBytes;
-    //                while ( dataBytes < dataEnd ) {
-    //                    NSDecimal currentWidth = *dataBytes++;
-    //                    if ( NSDecimalIsNotANumber(&currentWidth)) {
-    //                        *normalizedBytes++ = decimalNAN;
-    //                    }
-    //                    else {
-    //                        *normalizedBytes++ = CPTDecimalDivide(currentWidth, valueSum);
-    //                        cumulativeSum      = CPTDecimalAdd(cumulativeSum, currentWidth);
-    //                    }
-    //                    *cumulativeBytes++ = CPTDecimalDivide(cumulativeSum, valueSum);
-    //                }
-    //                [self cacheNumbers:normalizedSliceValues forField:CPTPieChartFieldSliceWidthNormalized)
-    //                [self cacheNumbers:cumulativeSliceValues forField:CPTPieChartFieldSliceWidthSum)
-    //            }
-    //        }
-    //        else {
-    //            [self cacheNumbers:nil forField:CPTPieChartFieldSliceWidthNormalized)
-    //            [self cacheNumbers:nil forField:CPTPieChartFieldSliceWidthSum)
-    //        }
-    //
-    //        // Labels
-//    var theDataSource = dataSource as? CPTPieChartDataSource?
-    //
-    //        [self relabelIndexRange:NSMakeRange(0, [theDataSource numberOfRecordsForPlot:self]))
-    //    }
-    //
-    //    /// @endcond
-    //
-    //    /**
-    //     *  @brief Reload all slice fills from the data source immediately.
-    //     **/
-        func reloadSliceFills()
-        {
-            self.reloadSliceFillsInIndexRange(indexRange: NSRange(location: 0, length: self.cachedDataCount))
-        }
+    func updateNormalizedData()
+    {
+        // Normalize these widths to 1.0 for the whole pie
+        //        let sampleCount = self.cachedDataCount;
+        //
+        //        if ( sampleCount > 0 ) {
+        //            let rawSliceValues = self.cachedNumbersForField(CPTPieChartFieldSliceWidth)
+        //            if ( self.doublePrecisionCache ) {
+        //                var valueSum         = 0.0;
+        //                let dataBytes = rawSliceValues.bytes;
+        //                let dataEnd   = dataBytes + sampleCount;
+        //
+        //                while dataBytes < dataEnd {
+        //                    let currentWidth = dataBytes += 1
+        //                    if !currentWidth.isNaN {
+        //                        valueSum += currentWidth
+        //                    }
+        //                }
+        //                let dataType = CPTDataType(CGFloatingPointDataType, sizeof(double), CFByteOrderGetCurrent());
+        //
+        //                CPTMutableNumericData *normalizedSliceValues = [[CPTMutableNumericData alloc] initWithData:[NSData data] dataType:dataType shape:nil)
+        //                    normalizedSliceValues.shape = @[@(sampleCount))
+        //                    let cumulativeSliceValues = [[CPTMutableNumericData alloc] initWithData:[NSData data] dataType:dataType shape:nil)
+        //                    cumulativeSliceValues.shape = @[@(sampleCount))
+        //
+        //                    let cumulativeSum = 0.0;
+        //
+        //                    dataBytes = (const double *)rawSliceValues.bytes;
+        //                    double *normalizedBytes = normalizedSliceValues.mutableBytes;
+        //                    double *cumulativeBytes = cumulativeSliceValues.mutableBytes;
+        //
+        //                    while dataBytes < dataEnd {
+        //                    let currentWidth = dataBytes += 1
+        //
+        //                    if currentWidth.isNaN {
+        //                    normalizedBytes += 1 = Double(.nan)
+        //                    } else {
+        //                    normalizedBytes += 1 = currentWidth / valueSum
+        //                    cumulativeSum += currentWidth
+        //                    }
+        //                    cumulativeBytes += 1 = cumulativeSum / valueSum
+        //                    }
+        //
+        //                    self.cacheNumbers(normalizedSliceValues forField:CPTPieChartFieldSliceWidthNormalized)
+        //                    self.cacheNumbers(cumulativeSliceValues forField:CPTPieChartFieldSliceWidthSum)
+        //                    } else {
+        //                    var valueSum         = 0
+        //                    let dataBytes = rawSliceValues.bytes;
+        //                    let dataEnd   = dataBytes + sampleCount;
+        //                    while ( dataBytes < dataEnd ) {
+        //                    var currentWidth = dataBytes++;
+        //                    if currentWidth.isNaN {
+        //                    valueSum = valueSum + currentWidth
+        //                    }
+        //                    }
+        //
+        //                    let dataType = CPTDataType(CPTDecimalDataType, sizeof(NSDecimal), CFByteOrderGetCurrent());
+        //                    let normalizedSliceValues = [[CPTMutableNumericData alloc] initWithData:[NSData data] dataType:dataType shape:nil)
+        //
+        //                    normalizedSliceValues.shape = @[@(sampleCount))
+        //                    let cumulativeSliceValues = [[CPTMutableNumericData alloc] initWithData:[NSData data] dataType:dataType shape:nil)
+        //                    cumulativeSliceValues.shape = @[@(sampleCount))
+        //
+        //                    let cumulativeSum = 0
+        //                    NSDecimal decimalNAN = CPTDecimalNaN();
+        //                    dataBytes = (const NSDecimal *)rawSliceValues.bytes;
+        //                    NSDecimal *normalizedBytes = normalizedSliceValues.mutableBytes;
+        //                    NSDecimal *cumulativeBytes = cumulativeSliceValues.mutableBytes;
+        //                    while ( dataBytes < dataEnd ) {
+        //                    let currentWidth = *dataBytes++;
+        //                    if ( NSDecimalIsNotANumber(&currentWidth)) {
+        //                    normalizedBytes++ = decimalNAN;
+        //                    } else {
+        //                    normalizedBytes++ = currentWidth / valueSum
+        //                    cumulativeSum      = cumulativeSum + currentWidth);
+        //                    }
+        //                    cumulativeBytes++ = cumulativeSum / valueSum);
+        //                    }
+        //                    self cacheNumbers:normalizedSliceValues forField:CPTPieChartFieldSliceWidthNormalized)
+        //                    self cacheNumbers:cumulativeSliceValues forField:CPTPieChartFieldSliceWidthSum)
+        //                    }
+        //                    } else {
+        //                    self.cacheNumbers(nil, forField:CPTPieChartFieldSliceWidthNormalized)
+        //                    self.cacheNumbers(nil, forField:CPTPieChartFieldSliceWidthSum)
+        //                    }
+        //
+        //                    // Labels
+        //                    var theDataSource = dataSource as? CPTPieChartDataSource?
+        //
+        //                    self relabelIndexRange:NSMakeRange(0, [theDataSource numberOfRecordsForPlot:self])
+    }
+    func reloadSliceFills()
+    {
+        self.reloadSliceFillsInIndexRange(indexRange: NSRange(location: 0, length: self.cachedDataCount))
+    }
     
     //    /** @brief Reload slice fills in the given index range from the data source immediately.
     //     *  @param indexRange The index range to load.
     //     **/
-
+    
     //     *  @brief Reload all slice offsets from the data source immediately.
     func reloadRadialOffsets()
     {
@@ -307,8 +308,8 @@ public class CPTPieChart: CPTPlot {
     //     **/
     func reloadRadialOffsetsInIndexRange(indexRange: NSRange)
     {
-        var theDataSource = dataSource as? CPTPieChartDataSource?
-
+        var theDataSource = dataSource as? CPTPieChartDataSource
+        
         if theDataSource.respondsToSelector(to: #selector(radialOffsetsForPieChart:recordIndexRange:) ) {
             
             self.cacheArray( theDataSource,
@@ -318,24 +319,23 @@ public class CPTPieChart: CPTPlot {
                              atRecordIndex   :indexRange.location)
         }
         else if ( theDataSource.respondsToSelector( to: #selector(radialOffsetForPieChart:recordIndex:) ) {
-
-
-            let array = [CGFloat]()
-            let maxIndex          = NSMaxRange(indexRange);
             
-            for  idx in indexRange.location..<maxIndex {
-                let offset = theDataSource.radialOffsetForPieChart(self, recordIndex:idx)
-                array.append(offset)
+            
+            var array = [CGFloat]()
+            let maxIndex    = NSMaxRange(indexRange);
+            
+            for idx in indexRange.location..<maxIndex {
+                let offset = theDataSource?.radialOffsetForPieChart(self, idx:idx)
+                array.append(offset!)
             }
             
             self.cacheArray(array: array,
                             forKey: NSBindingName.PieSliceRadialOffsets.rawValue,
                             atRecordIndex:indexRange.location)
         }
-        
         self.setNeedsDisplay()
     }
-
+    
     // MARK: Drawing
     override func renderAsVectorInContext(context: CGContext)
     {
@@ -374,7 +374,7 @@ public class CPTPieChart: CPTPlot {
         var overlay          = self.overlayFill
         
         var hasNonZeroOffsets      = false;
-        var offsetArray = self.cachedArrayForKey(NSBindingName.CPTPieChartBindingPieSliceRadialOffsets.rawValue)
+        var offsetArray = self.cachedArrayForKey(NSBindingName.PieSliceRadialOffsets.rawValue)
         
         for  offset in offsetArray {
             if offset  != CGFloat(0.0) {
@@ -401,13 +401,13 @@ public class CPTPieChart: CPTPlot {
         let  fillClass = CPTFill()
         
         while ( currentIndex < sampleCount ) {
-            let currentWidth = self.cachedDoubleForField( CPTPieChartFieldSliceWidthNormalized , recordIndex:currentIndex)
+            let currentWidth = self.cachedDoubleForField( CPTPieChartField.sliceWidthNormalized , recordIndex:currentIndex)
             
             if ( !isnan(currentWidth)) {
                 let radialOffset = offsetArray[currentIndex]
-                    
-                    // draw slice
-                    context.saveGState();
+                
+                // draw slice
+                context.saveGState();
                 
                 let startingAngle  = self.radiansForPieSliceValue(startingWidth)
                 let finishingAngle = self.radiansForPieSliceValue(startingWidth + currentWidth)
@@ -452,7 +452,7 @@ public class CPTPieChart: CPTPlot {
                     context.addPath(slicePath);
                     context.clip();
                     overlay?.fillRect( rect: bounds.offsetBy(dx: xOffset, dy: yOffset), inContext:context)
-                        
+                    
                     context.restoreGState();
                 }
                 
@@ -564,7 +564,7 @@ public class CPTPieChart: CPTPlot {
             if ( (theFill != nil) || (theLineStyle != nil) ) {
                 let radius = legend.swatchCornerRadius
                 
-                if ( theFill is CPTFill ) {
+                if theFill != nil  {
                     context.beginPath();
                     CPTAddRoundedRectPath(context, CPTAlignIntegralRectToUserSpace(context, rect), radius);
                     theFill?.fillPathInContext(context: context)
@@ -626,7 +626,7 @@ public class CPTPieChart: CPTPlot {
     //     *  @return The angle that is halfway between the slice's starting and ending angles, or @NAN if
     //     *  an angle matching the given index cannot be found.
     //     **/
-    //    -(CGFloat)medianAngleForPieSliceIndex:(NSUInteger)idx
+    //    -(CGFloat)medianAngleForPieSliceIndex idx: Int,
     //    {
     //        NSUInteger sampleCount = self.cachedDataCount;
     //
@@ -678,7 +678,7 @@ public class CPTPieChart: CPTPlot {
     }
     
     // MARK: - Fields
-
+    
     //    -(NSUInteger)numberOfFields
     //    {
     //        return 1;
@@ -695,7 +695,7 @@ public class CPTPieChart: CPTPlot {
     //
     //    /// @cond
     //
-    //    -(void)positionLabelAnnotation:(nonnull CPTPlotSpaceAnnotation *)label forIndex:(NSUInteger)idx
+    //    func positionLabelAnnotation:(nonnull CPTPlotSpaceAnnotation *)label forIndex idx: Int,
     //    {
     //        CPTLayer *contentLayer   = label.contentLayer;
     //        CPTPlotArea *thePlotArea = self.plotArea;
@@ -749,7 +749,7 @@ public class CPTPieChart: CPTPlot {
     //    /// @endcond
     //
     // MARK: - Legends
-
+    
     //    /** @internal
     //     *  @brief The number of legend entries provided by this plot.
     //     *  @return The number of legend entries.
@@ -765,11 +765,11 @@ public class CPTPieChart: CPTPlot {
     //     *  @param idx The index of the desired title.
     //     *  @return The title of the legend entry at the requested index.
     //     **/
-    //    -(nullable NSString *)titleForLegendEntryAtIndex:(NSUInteger)idx
+    //    -(nullable NSString *)titleForLegendEntryAtIndex idx: Int,
     //    {
     //        NSString *legendTitle = nil;
     //
-//    var theDataSource = dataSource as? CPTPieChartDataSource?
+    //    var theDataSource = dataSource as? CPTPieChartDataSource?
     //
     //        if ( [theDataSource respondsToSelector:@selector(legendTitleForPieChart:recordIndex:)] ) {
     //            legendTitle = [theDataSource legendTitleForPieChart:self recordIndex:idx)
@@ -786,7 +786,7 @@ public class CPTPieChart: CPTPlot {
     //     *  @param idx The index of the desired title.
     //     *  @return The styled title of the legend entry at the requested index.
     //     **/
-    //    -(nullable NSAttributedString *)attributedTitleForLegendEntryAtIndex:(NSUInteger)idx
+    //    -(nullable NSAttributedString *)attributedTitleForLegendEntryAtIndex idx: Int,
     //    {
     //        NSAttributedString *legendTitle = nil;
     //
@@ -805,9 +805,6 @@ public class CPTPieChart: CPTPlot {
     //    /// @endcond
     
     // MARK: - Responder Chain and User interaction
-    //
-    //    /// @cond
-    //
     //    -(CGFloat)normalizedPosition:(CGFloat)rawPosition
     //    {
     //        CGFloat result = rawPosition;
@@ -868,47 +865,47 @@ public class CPTPieChart: CPTPlot {
     //     *  @param interactionPoint The coordinates of the interaction.
     //     *  @return Whether the event was handled or not.
     //     **/
-    //    -(BOOL)pointingDeviceDownEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
-    //    {
-    //        CPTGraph *theGraph       = self.graph;
-    //        CPTPlotArea *thePlotArea = self.plotArea;
-    //
-    //        if ( !theGraph || !thePlotArea || self.hidden ) {
-    //            return false
-    //        }
-    //
-    //        id<CPTPieChartDelegate> theDelegate = (id<CPTPieChartDelegate>)self.delegate;
-    //
-    //        if ( [theDelegate respondsToSelector:@selector(pieChart:sliceTouchDownAtRecordIndex:)] ||
-    //             [theDelegate respondsToSelector:@selector(pieChart:sliceTouchDownAtRecordIndex:withEvent:)] ||
-    //             [theDelegate respondsToSelector:@selector(pieChart:sliceWasSelectedAtRecordIndex:)] ||
-    //             [theDelegate respondsToSelector:@selector(pieChart:sliceWasSelectedAtRecordIndex:withEvent:)] ) {
-    //            CGPoint plotAreaPoint = [theGraph convertPoint:interactionPoint toLayer:thePlotArea)
-    //
-    //            NSUInteger idx = [self dataIndexFromInteractionPoint:plotAreaPoint)
-    //            self.pointingDeviceDownIndex = idx;
-    //
-    //            if ( idx != NSNotFound ) {
-    //                BOOL handled = false
-    //
-    //                if ( [theDelegate respondsToSelector:@selector(pieChart:sliceTouchDownAtRecordIndex:)] ) {
-    //                    handled = true
-    //                    [theDelegate pieChart:self sliceTouchDownAtRecordIndex:idx)
-    //                }
-    //
-    //                if ( [theDelegate respondsToSelector:@selector(pieChart:sliceTouchDownAtRecordIndex:withEvent:)] ) {
-    //                    handled = true
-    //                    [theDelegate pieChart:self sliceTouchDownAtRecordIndex:idx withEvent:event)
-    //                }
-    //
-    //                if ( handled ) {
-    //                    return true
-    //                }
-    //            }
-    //        }
-    //
-    //        return [super pointingDeviceDownEvent:event atPoint:interactionPoint)
-    //    }
+    override func pointingDeviceDownEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint )->Bool
+    {
+    CPTGraph *theGraph       = self.graph;
+    CPTPlotArea *thePlotArea = self.plotArea;
+    
+    if ( !theGraph || !thePlotArea || self.hidden ) {
+    return false
+    }
+    
+    let theDelegate = self.delegate as! CPTPieChartDelegate
+    
+    if ( [theDelegate respondsToSelector:@selector(pieChart:sliceTouchDownAtRecordIndex:)] ||
+    [theDelegate respondsToSelector:@selector(pieChart:sliceTouchDownAtRecordIndex:withEvent:)] ||
+    [theDelegate respondsToSelector:@selector(pieChart:sliceWasSelectedAtRecordIndex:)] ||
+    [theDelegate respondsToSelector:@selector(pieChart:sliceWasSelectedAtRecordIndex:withEvent:)] ) {
+    CGPoint plotAreaPoint = [theGraph convertPoint:interactionPoint toLayer:thePlotArea)
+    
+    NSUInteger idx = [self dataIndexFromInteractionPoint:plotAreaPoint)
+    self.pointingDeviceDownIndex = idx;
+    
+    if ( idx != NSNotFound ) {
+    BOOL handled = false
+    
+    if ( [theDelegate respondsToSelector:@selector(pieChart:sliceTouchDownAtRecordIndex:)] ) {
+    handled = true
+    [theDelegate pieChart:self sliceTouchDownAtRecordIndex:idx)
+    }
+    
+    if ( [theDelegate respondsToSelector:@selector(pieChart:sliceTouchDownAtRecordIndex:withEvent:)] ) {
+    handled = true
+    [theDelegate pieChart:self sliceTouchDownAtRecordIndex:idx withEvent:event)
+    }
+    
+    if ( handled ) {
+    return true
+    }
+    }
+    }
+    
+    return [super pointingDeviceDownEvent:event atPoint:interactionPoint)
+    }
     //
     //    /**
     //     *  @brief Informs the receiver that the user has
@@ -1165,12 +1162,12 @@ public class CPTPieChart: CPTPlot {
     func sliceFills() -> [CPTFill]
     {
         return self.cachedArray(forKey: NSBindingName.PieSliceFills.rawValue)
-        }
+    }
     
     func setSliceFills(newSliceFills: [CPTFill] )
     {
         self.cacheArray( newSliceFills,forKey: NSBindingName.PieSliceFills.rawValue)
-                        self.setNeedsDisplay()
+        self.setNeedsDisplay()
     }
     
     func sliceRadialOffsets() -> [CGFloat]

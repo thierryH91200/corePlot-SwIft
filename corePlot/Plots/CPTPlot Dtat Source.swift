@@ -25,7 +25,7 @@ extension CPTPlot {
     // *  @param idx The starting index of the new records.
     // *  @param numberOfRecords The number of records to insert.
     // **/
-    func insertDataAtIndex(idx : Int, numberOfRecords:Int)
+    @objc func insertDataAtIndex(idx : Int, numberOfRecords:Int)
     {
         Class numericClass = (CPTNumericData class)
         
@@ -75,7 +75,7 @@ extension CPTPlot {
     ///** @brief Delete records in the given index rang@objc e from the plot data cache.
     // *  @param indexRange The index range of the data records to remove.
     // **/
-    func deleteDataInIndexRange(indexRange: NSRange)
+    @objc func deleteDataInIndexRange(indexRange: NSRange)
     {
         Class numericClass = [CPTNumericData class];
         
@@ -104,8 +104,8 @@ extension CPTPlot {
         let annotationClass = CPTAnnotation.class
         
         for  i in  indexRange.location..<maxIndex {
-            let annotation = labelArrayi];
-            if ( annotation isKindOfClass:annotationClass] ) {
+            let annotation = labelArray[i];
+            if ( annotation is CPTAnnotation ) {
                 self.removeAnnotation(annotation)
             }
         }
@@ -122,13 +122,13 @@ extension CPTPlot {
         for fieldID in fieldIdentifiers {
             dataCache.removeValue(forKey: String(fieldID))
         }
-        reloadPlotData(indexRange: NSRange(location: 0, length: cachedDataCount))
+        reloadPlotDataInIndexRange(indexRange: NSRange(location: 0, length: cachedDataCount))
     }
     //
     ///** @brief Reload plot data in the given index range from the data source immediately.
     // *  @param indexRange The index range to load.
     // **/
-    @objc func reloadPlotData(indexRange: NSRange )
+    @objc func reloadPlotDataInIndexRange(indexRange: NSRange )
     {
         // do nothing--implementation provided by subclasses
     }
