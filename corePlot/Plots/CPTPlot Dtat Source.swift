@@ -94,7 +94,7 @@ extension CPTPlot {
                 dataBuffer.length -= length;
             }
             else  {
-                (NSMutableArray *) data removeObjectsInRange:indexRange];
+                data.removeObjectsInRange(indexRange)
             }
         }
         
@@ -112,7 +112,7 @@ extension CPTPlot {
         labelArray.removeObjectsInRange(indexRange)
         
         self.cachedDataCount -= indexRange.length;
-        self setNeedsDisplay];
+        self.setNeedsDisplay()
     }
     
     // *  @brief Reload all plot data from the data source immediately.
@@ -284,7 +284,7 @@ extension CPTPlot {
                 
                 if ((sampleCount > 0) && (data.numberOfDimensions == 2)) {
                     let theShape    = data.shape;
-                    let rowCount   = theShape0]
+                    let rowCount   = theShape[0]
                     let fieldCount = theShape[1]
                     
                     if ( fieldCount > 0 ) {
@@ -309,7 +309,7 @@ extension CPTPlot {
                             
                         case .decimal:
                             if ( !CPTDataTypeEqualToDataType(dataType, self.decimalDataType)) {
-                                CPTMutableNumericData *mutableData = data mutableCopy];
+                                let mutableData = data
                                 mutableData.dataType = self.decimalDataType;
                                 data                 = mutableData;
                             }
@@ -366,7 +366,7 @@ extension CPTPlot {
                         case .columnsFirst:
                             for  fieldNum in 0..<fieldCount {
                                 let samples = data.samplePointerAtIndex(0, fieldNum)
-                                NSData *tempData    = NSData alloc] initWithBytes:samples
+                                let tempData    = NSData alloc] initWithBytes:samples
                                                        length:bufferLength];
                                 
                                 CPTMutableNumericData *tempNumericData = CPTMutableNumericData alloc] initWithData:tempData

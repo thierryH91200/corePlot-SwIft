@@ -96,7 +96,7 @@ class CPTPlotSpace: NSObject {
         
         let cacheKey = coordinate
         
-        if newCategories is Array<Any> {
+        if newCategories is [String] {
             let categories = newCategories;
             
             names[cacheKey] = orderedSetWithArray(categories)
@@ -254,7 +254,7 @@ class CPTPlotSpace: NSObject {
     //     *  @param count The number of coordinate values in the @par{plotPoint} array.
     //     *  @param point The drawing coordinates of the data point.
     //     **/
-    func plotPoint(plotPoint: CGFloat,  numberOfCoordinates count :Int , forPlotAreaViewPoint point: CGPoint)
+    func plotPoint(plotPoint: [CGFloat],  numberOfCoordinates count :Int , forPlotAreaViewPoint point: CGPoint)
     {
         assert(count == self.numberOfCoordinates())
     }
@@ -314,8 +314,6 @@ class CPTPlotSpace: NSObject {
     func  setPlotRange(newRange:  CPTPlotRange, forCoordinate coordinate :CPTCoordinate)
     {
     }
-    
-    
     
     //
     //    /** @brief Gets the range of values for a given coordinate.

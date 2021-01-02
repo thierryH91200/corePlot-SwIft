@@ -36,7 +36,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
     var cachedData: [String : [Any]] = [:]
         
     public weak var dataSource : CPTPlotDataSource?
-    public weak var delegatePlot: CPTPlotDelegate?
+    @objc open weak var delegatePlot: CPTPlotDelegate?
     
     var _title : String?
     var title : String? {

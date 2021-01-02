@@ -19,7 +19,9 @@ public class CPTLayer : CALayer
     typealias CPTSublayerArray = [CALayer]
     typealias CPTSublayerSet = Set<CALayer>
     
-    var graph   : CPTGraph?     = nil
+    var graph  : CPTGraph?     = nil
+    var identifier  : Any?
+
     
     var maskingPath :  CGPath? {
         set {   }
@@ -163,7 +165,6 @@ public class CPTLayer : CALayer
         }
     }
 
-    var identifier  : Any?
     
     init ( frame : CGRect) {
         

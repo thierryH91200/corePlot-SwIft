@@ -30,15 +30,15 @@ public class CPTAnnotationHostLayer: CPTLayer {
     
     override init(frame newFrame: CGRect) {
         super.init(frame: newFrame)
-            mutableAnnotations = [CPTAnnotation]()
+        mutableAnnotations = [CPTAnnotation]()
     }
     
     override init(layer: Any) {
-    super.init(layer: layer)
+        super.init(layer: layer)
         let theLayer = layer as? CPTAnnotationHostLayer
-
+        
         mutableAnnotations = theLayer!.mutableAnnotations
-}
+    }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -86,10 +86,10 @@ public class CPTAnnotationHostLayer: CPTLayer {
             }
             
             for annotation in annotations {
-                guard let annotation = annotation as? CPTAnnotation else { continue }
+                //                guard let annotation = annotation as? CPTAnnotation else { continue }
                 let content = annotation.contentLayer
                 if let content = content {
-                    excludedSublayers?.add(content)
+                    excludedSublayers?.insert(content)
                 }
             }
             return excludedSublayers
@@ -98,6 +98,7 @@ public class CPTAnnotationHostLayer: CPTLayer {
             return super.sublayersExcludedFromAutomaticLayout()
         }
     }
+    
     public override func layoutSublayers()
     {
         super.layoutSublayers()
@@ -105,7 +106,7 @@ public class CPTAnnotationHostLayer: CPTLayer {
             annotation.positionContentLayer()
         }
     }
-
+    
     override func pointingDeviceDownEvent(event: CPTNativeEvent, atPoint interactionPoint: CGPoint)-> Bool
     {
         for annotation in self.annotations  {

@@ -333,10 +333,10 @@ extension CPTAxis {
                         var sign = multiplier;
                         
                         if ( multiplier < 1.0 ) {
-                            pointLocation = Int(sign * pow(10.0, fabs((CGFloat(i)) - 1.0)))
+                            pointLocation = Int(sign * pow(10.0, abs((CGFloat(i)) - 1.0)))
                         }
                         else {
-                            pointLocation = Int(sign * pow(10.0, fabs(CGFloat(i))))
+                            pointLocation = Int(sign * pow(10.0, abs(CGFloat(i))))
                         }
                         
                         for   j in 1..<Int(minorTicks) {

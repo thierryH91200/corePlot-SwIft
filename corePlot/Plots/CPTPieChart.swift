@@ -154,9 +154,9 @@ public class CPTPieChart: CPTPlot {
         }
     }
     
-    func reloadPlotDataInIndexRange(indexRange: NSRange)
+    override func reloadPlotDataInIndexRange(indexRange: NSRange)
     {
-        super.reloadPlotDataInIndexRange(indexRange)
+        super.reloadPlotDataInIndexRange(indexRange: indexRange)
         
         if self.loadNumbersForAllFieldsFromDataSourceInRecordIndexRange(indexRange: indexRange) == false {
             var theDataSource = dataSource as? CPTPieChartDataSource?
@@ -841,71 +841,54 @@ public class CPTPieChart: CPTPlot {
     //        }
     //        return false
     //    }
-    //
-    //    /// @endcond
-    //
-    //    /// @name User Interaction
-    //    /// @{
-    //
-    //    /**
-    //     *  @brief Informs the receiver that the user has
-    //     *  @if MacOnly pressed the mouse button. @endif
-    //     *  @if iOSOnly started touching the screen. @endif
-    //     *
-    //     *
-    //     *  If this plot has a delegate that responds to the
-    //     *  @link CPTPieChartDelegate::pieChart:sliceTouchDownAtRecordIndex: -pieChart:sliceTouchDownAtRecordIndex: @endlink and/or
-    //     *  @link CPTPieChartDelegate::pieChart:sliceTouchDownAtRecordIndex:withEvent: -pieChart:sliceTouchDownAtRecordIndex:withEvent: @endlink
-    //     *  methods, the @par{interactionPoint} is compared with each slice in index order.
-    //     *  The delegate method will be called and this method returns @YES for the first
-    //     *  index where the @par{interactionPoint} is inside a pie slice.
-    //     *  This method returns @NO if the @par{interactionPoint} is outside all of the slices.
-    //     *
-    //     *  @param event The OS event.
-    //     *  @param interactionPoint The coordinates of the interaction.
-    //     *  @return Whether the event was handled or not.
-    //     **/
-    override func pointingDeviceDownEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint )->Bool
+    
+    
+    override func pointingDeviceDownEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint )-> Bool
     {
-    CPTGraph *theGraph       = self.graph;
-    CPTPlotArea *thePlotArea = self.plotArea;
-    
-    if ( !theGraph || !thePlotArea || self.hidden ) {
-    return false
+        let theGraph       = self.graph
+        let thePlotArea = self.plotArea
+        
+        guard self.isHidden == false else { return false }
+        guard theGraph != nil else { return false }
+
+        if !thePlotArea {
+            return false
+        }
+        
+       var theDelegate = self.delegate as? CPTPieChartDelegate
+        
+        if ( [theDelegate respondsToSelector:@selector(pieChart:sliceTouchDownAtRecordIndex:)] ||
+             [theDelegate respondsToSelector:@selector(pieChart:sliceTouchDownAtRecordIndex:withEvent:)] ||
+             [theDelegate respondsToSelector:@selector(pieChart:sliceWasSelectedAtRecordIndex:)] ||
+             [theDelegate respondsToSelector:@selector(pieChart:sliceWasSelectedAtRecordIndex:withEvent:)] ) {
+            
+            let plotAreaPoint = theGraph?.convert(interactionPoint, to:thePlotArea())
+            
+            let idx = self.dataIndexFromInteractionPoint( point: plotAreaPoint!)
+            self.pointingDeviceDownIndex = idx
+            
+            if ( idx != NSNotFound ) {
+                var handled = false
+                
+                if  ((theDelegate?.pieChart(plot: self, sliceTouchDownAtRecordIndex:idx)) != nil)  {
+                    handled = true
+                    theDelegate?.pieChart(plot: self, sliceTouchDownAtRecordIndex:idx)
+                }
+                
+                if ((theDelegate?.pieChart(plot: self, sliceTouchDownAtRecordIndex: idx, withEvent: event)) != nil)  {
+                    handled = true
+                    theDelegate?.pieChart(plot: self, sliceTouchDownAtRecordIndex:idx, withEvent:event)
+                }
+                
+                if handled == true {
+                    return true
+                }
+            }
+        }
+        return super.pointingDeviceDownEvent(event: event, atPoint: interactionPoint)
     }
-    
-    let theDelegate = self.delegate as! CPTPieChartDelegate
-    
-    if ( [theDelegate respondsToSelector:@selector(pieChart:sliceTouchDownAtRecordIndex:)] ||
-    [theDelegate respondsToSelector:@selector(pieChart:sliceTouchDownAtRecordIndex:withEvent:)] ||
-    [theDelegate respondsToSelector:@selector(pieChart:sliceWasSelectedAtRecordIndex:)] ||
-    [theDelegate respondsToSelector:@selector(pieChart:sliceWasSelectedAtRecordIndex:withEvent:)] ) {
-    CGPoint plotAreaPoint = [theGraph convertPoint:interactionPoint toLayer:thePlotArea)
-    
-    NSUInteger idx = [self dataIndexFromInteractionPoint:plotAreaPoint)
-    self.pointingDeviceDownIndex = idx;
-    
-    if ( idx != NSNotFound ) {
-    BOOL handled = false
-    
-    if ( [theDelegate respondsToSelector:@selector(pieChart:sliceTouchDownAtRecordIndex:)] ) {
-    handled = true
-    [theDelegate pieChart:self sliceTouchDownAtRecordIndex:idx)
-    }
-    
-    if ( [theDelegate respondsToSelector:@selector(pieChart:sliceTouchDownAtRecordIndex:withEvent:)] ) {
-    handled = true
-    [theDelegate pieChart:self sliceTouchDownAtRecordIndex:idx withEvent:event)
-    }
-    
-    if ( handled ) {
-    return true
-    }
-    }
-    }
-    
-    return [super pointingDeviceDownEvent:event atPoint:interactionPoint)
-    }
+                
+                
     //
     //    /**
     //     *  @brief Informs the receiver that the user has

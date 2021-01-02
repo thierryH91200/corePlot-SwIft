@@ -56,23 +56,23 @@ extension CPTPlot {
 // *  @param rect The bounding rectangle where the swatch should be drawn.
 // *  @param context The graphics context to draw into.
 // **/
-    func drawSwatchForLegend(legend: CPTLegend, atIndex:Int , inRect:CGRect, context: CGContext)
+    func drawSwatchForLegend(legend: CPTLegend, atIndex idx:Int , inRect rect: CGRect, context: CGContext)
     {
-        let theDelegate = self.delegate
+        let theDelegate = self.delegate as? CPTPlotDelegate
         
         var theFill : CPTFill?
         
         if ( theDelegate.respondsToSelector(to:: #selector(legend:fillForSwatchAtIndex:forPlot:) ) {
-            theFill = theDelegate.legend:legend.fillForSwatchAtIndex(:idx forPlot:self)
+            theFill = theDelegate.legend(legend, fillForSwatchAtIndex: idx, forPlot: self)
         }
         if ( (theFill == nil) ) {
-        theFill = legend.swatchFill;
+            theFill = legend.swatchFill;
         }
         
         var theLineStyle : CPTLineStyle?
         
         if ( theDelegate.respondsToSelector( to: #selector(legend:lineStyleForSwatchAtIndex:forPlot:)] ) {
-            theLineStyle = theDelegate.legend(legend:legend ,lineStyleForSwatchAtIndex(idx, forPlot:self)
+            theLineStyle = theDelegate.legend(legend:legend, lineStyleForSwatchAtIndex(idx, forPlot:self)
         }
         if ( (theLineStyle == nil) ) {
             theLineStyle = legend.swatchBorderLineStyle

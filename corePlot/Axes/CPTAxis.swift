@@ -628,7 +628,7 @@ public class CPTAxis : CPTLayer {
                 newAxisLabel = oldAxisLabel;
             }
             else {
-                newAxisLabel              = CPTAxisLabel(nil, textStyle:nil)
+                newAxisLabel              = CPTAxisLabel(newText: nil, newStyle:nil)
                 newAxisLabel.tickLocation = tickLocation;
                 needsNewContentLayer      = true;
             }
@@ -646,22 +646,22 @@ public class CPTAxis : CPTLayer {
                     }
                 }
                 else if ( hasAttributedFormatter == true) {
-                    NSAttributedString *labelString = [theLabelFormatter attributedStringForObjectValue:tickLocation withDefaultAttributes:textAttributes];
-                    newLabelLayer = [[CPTTextLayer alloc] initWithAttributedText:labelString];
+                    let labelString = [theLabelFormatter attributedStringForObjectValue:tickLocation withDefaultAttributes:textAttributes];
+                    newLabelLayer = CPTTextLayer(attributedText: labelString)
                 }
                 else {
                     var labelString = [theLabelFormatter stringForObjectValue:tickLocation];
                     newLabelLayer = CPTTextLayer(labelString, style:theLabelTextStyle)
                 }
                 [oldAxisLabel.contentLayer removeFromSuperlayer];
-                if ( newLabelLayer ) {
-                    newAxisLabel.contentLayer = newLabelLayer;
+                if (( newLabelLayer ) != nil) {
+                    newAxisLabel.contentLayer = newLabelLayer!;
                     
-                    if ( lastLayer ) {
-                        [axisLabelGroup insertSublayer:newLabelLayer below:lastLayer];
+                    if (( lastLayer ) != nil) {
+                        axisLabelGroup?.insertSublayer(newLabelLayer!, below:lastLayer)
                     }
                     else {
-                        [axisLabelGroup insertSublayer:newLabelLayer atIndex:[thePlotArea sublayerIndexForAxis:self layerType:CPTGraphLayerTypeAxisLabels]];
+                        axisLabelGroup?.insertSublayer(newLabelLayer!, at: UInt32((thePlotArea?.sublayerIndexForAxis(axis: self, layerType:CPTGraphLayerType.axisLabels))!))
                     }
                 }
             }
