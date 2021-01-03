@@ -740,6 +740,7 @@
     override func pointingDeviceDownEvent(event: CPTNativeEvent, atPoint interactionPoint: CGPoint) -> Bool
     {
         guard  self.isHidden == false || (self.plots.count != 0) else { return false }
+        
         let theDelegate = self.delegate as? CPTLegendDelegate
         
         var row = NSNotFound

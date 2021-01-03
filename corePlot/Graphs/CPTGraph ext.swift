@@ -642,8 +642,7 @@ extension CPTGraph {
         var handledEvent = false
         
         // Plots
-        let reversedCollection = plots.reversed()
-        
+        let reversedCollection = plots.reversed() 
         for plot in reversedCollection {
             if plot.pointingDeviceUpEvent(event: event, atPoint:interactionPoint ) {
                 handledEvent = true

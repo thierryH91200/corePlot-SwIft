@@ -58,14 +58,14 @@ extension CPTPlotArea {
         }
     }
 
-    override func sublayersExcludedFromAutomaticLayout()->CPTSublayerSet
+    override func sublayersExcludedFromAutomaticLayout()->CPTSublayerSet?
     {
         let minorGrid = self.minorGridLineGroup;
         let majorGrid = self.majorGridLineGroup;
-        let theAxisSet      = self.axisSet;
+        let theAxisSet = self.axisSet;
         let thePlotGroup  = self.plotGroup;
-        let labels   = self.axisLabelGroup;
-        let titles   = self.axisTitleGroup;
+        let labels = self.axisLabelGroup;
+        let titles = self.axisTitleGroup;
         
         if ( (minorGrid != nil) || (majorGrid != nil) || (theAxisSet != nil) || (thePlotGroup != nil) || (labels != nil) || (titles != nil) ) {
             var excludedSublayers = super.sublayersExcludedFromAutomaticLayout()
@@ -94,7 +94,7 @@ extension CPTPlotArea {
             return excludedSublayers!
         }
         else {
-            return super.sublayersExcludedFromAutomaticLayout()!
+            return super.sublayersExcludedFromAutomaticLayout()
         }
     }
 

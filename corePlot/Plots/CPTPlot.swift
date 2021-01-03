@@ -57,6 +57,14 @@ public class CPTPlot: CPTAnnotationHostLayer {
             }
         }
     }
+    
+    
+    var plotArea : CPTPlotArea? {
+        get {
+            let theGraph = self.graph
+            return theGraph?.plotAreaFrame.plotArea! }
+        set { }
+    }
 
     var attributedTitle : NSAttributedString?
     var plotSpace : CPTPlotSpace?

@@ -93,28 +93,30 @@ class CPTXYAxisSet: CPTAxisSet {
     {
         // If we have a border, the default layout will work. Otherwise, the axis set layer has zero size
         // and we need to calculate the correct size for the axis layers.
-        if (( self.borderLineStyle ) != nil) {
+        if ( self.borderLineStyle  != nil) {
             super.layoutSublayers()
         }
         else {
             let plotAreaFrame = self.superlayer?.superlayer;
-            CGRect sublayerBounds  = [self convertRect:plotAreaFrame.bounds fromLayer:plotAreaFrame];
+            var sublayerBounds  = self.convert(plotAreaFrame!.bounds, from:plotAreaFrame)
             sublayerBounds.origin = CGPoint()
-            CGPoint sublayerPosition = [self convertPoint:self.bounds.origin toLayer:plotAreaFrame];
-            sublayerPosition = CGPointMake(-sublayerPosition.x, -sublayerPosition.y);
-            CGRect subLayerFrame = CGRectMake(sublayerPosition.x, sublayerPosition.y, sublayerBounds.size.width, sublayerBounds.size.height);
+            var sublayerPosition = self.convert(self.bounds.origin, to:plotAreaFrame);
+            sublayerPosition = CGPoint(x: -sublayerPosition.x, y: -sublayerPosition.y);
             
-            CPTSublayerSet *excludedSublayers = self.sublayersExcludedFromAutomaticLayout;
-            Class layerClass                  = [CPTLayer class];
-            for ( CALayer *subLayer in self.sublayers ) {
-                if ( [subLayer isKindOfClass:layerClass] && ![excludedSublayers containsObject:subLayer] ) {
+            let subLayerFrame = CGRect(x: sublayerPosition.x,
+                                       y: sublayerPosition.y,
+                                       width: sublayerBounds.size.width,
+                                       height: sublayerBounds.size.height)
+            
+            let excludedSublayers = self.sublayersExcludedFromAutomaticLayout()
+
+            for subLayer in self.sublayers! {
+                if excludedSublayers?.contains(subLayer) == false {
                     subLayer.frame = subLayerFrame;
                 }
             }
         }
     }
-
-    /// @}
 
     // MARK: - Accessors
     

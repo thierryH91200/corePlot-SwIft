@@ -66,9 +66,9 @@ class CPTBorderLayer: CPTLayer {
         }
     }
     
-    override func sublayersExcludedFromAutomaticLayout() -> CPTSublayerSet
+    override func sublayersExcludedFromAutomaticLayout() -> CPTSublayerSet?
     {
-        var excludedLayer = self.maskedLayer;
+        let excludedLayer = self.maskedLayer;
     
         if (( excludedLayer ) != nil) {
             var excludedSublayers = super.sublayersExcludedFromAutomaticLayout()
@@ -79,7 +79,7 @@ class CPTBorderLayer: CPTLayer {
             return excludedSublayers!
         }
         else {
-            return super.sublayersExcludedFromAutomaticLayout
+            return super.sublayersExcludedFromAutomaticLayout()
         }
     }
     

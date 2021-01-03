@@ -40,20 +40,30 @@ class CPTTheme: NSObject {
         return themes?.sorted
     }
     
-    +(nullable instancetype)themeNamed:(nullable CPTThemeName)themeName
-    {
-        CPTTheme *newTheme = nil;
+//    +(nullable instancetype)themeNamed:(nullable CPTThemeName)themeName
+//    {
+//        CPTTheme *newTheme = nil;
+//
+//        for ( Class themeClass in themes ) {
+//            if ( [themeName isEqualToString:[themeClass name]] ) {
+//                newTheme = [[themeClass alloc] init];
+//                break;
+//            }
+//        }
+//        return newTheme;
+//    }
+    class func themeNamed(_ themeName: CPTThemeName?) -> CPTTheme? {
+        
+        var newTheme: CPTTheme?
 
-        for ( Class themeClass in themes ) {
-            if ( [themeName isEqualToString:[themeClass name]] ) {
-                newTheme = [[themeClass alloc] init];
-                break;
+        for themeClass in themes! {
+            if themeName?.isEqual(toString: themeClass.name()) != nil {
+                newTheme = themeClass.init() as? CPTTheme
+                break
             }
         }
-
-        return newTheme;
+        return newTheme
     }
-
     
     
     init (themeNamed: CPTThemeName)

@@ -1144,7 +1144,8 @@ public class CPTAxis : CPTLayer {
     //            return false
     //        }
     //
-    //        id<CPTAxisDelegate> theDelegate = (id<CPTAxisDelegate>)self.delegate;
+    //        weak var theDelegate = (id<CPTAxisDelegate>)self.delegate;
+    
     //
     //        // Tick labels
     //        if ( [theDelegate respondsToSelector:@selector(axis:labelTouchUp:)] ||

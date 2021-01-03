@@ -73,7 +73,7 @@ extension CPTPlot {
         
         var theLineStyle : CPTLineStyle?
         
-        if let method =  theDelegate?.legend?(legend: legend , lineStyleForSwatchAtIndex: idx, forPlot: self)  {
+        if let method =  theDelegate?.legend!(legend: legend , lineStyleForSwatchAtIndex: idx, forPlot: self)  {
             theLineStyle = method
         }
         if ( (theLineStyle == nil) ) {

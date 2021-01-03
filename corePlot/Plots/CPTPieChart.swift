@@ -845,24 +845,24 @@ public class CPTPieChart: CPTPlot {
     
     override func pointingDeviceDownEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint )-> Bool
     {
-        let theGraph       = self.graph
-        let thePlotArea = self.plotArea
+        let theGraph    = self.graph
+        let thePlotArea = self.plotArea()
         
         guard self.isHidden == false else { return false }
         guard theGraph != nil else { return false }
 
-        if !thePlotArea {
-            return false
-        }
+//        if thePlotArea == nil {
+//            return false
+//        }
         
-       var theDelegate = self.delegate as? CPTPieChartDelegate
+       weak var theDelegate = self.delegate as? CPTPieChartDelegate
         
         if ( [theDelegate respondsToSelector:@selector(pieChart:sliceTouchDownAtRecordIndex:)] ||
              [theDelegate respondsToSelector:@selector(pieChart:sliceTouchDownAtRecordIndex:withEvent:)] ||
              [theDelegate respondsToSelector:@selector(pieChart:sliceWasSelectedAtRecordIndex:)] ||
              [theDelegate respondsToSelector:@selector(pieChart:sliceWasSelectedAtRecordIndex:withEvent:)] ) {
             
-            let plotAreaPoint = theGraph?.convert(interactionPoint, to:thePlotArea())
+            let plotAreaPoint = theGraph?.convert(interactionPoint, to:thePlotArea)
             
             let idx = self.dataIndexFromInteractionPoint( point: plotAreaPoint!)
             self.pointingDeviceDownIndex = idx
@@ -914,65 +914,65 @@ public class CPTPieChart: CPTPlot {
     //     *  @param interactionPoint The coordinates of the interaction.
     //     *  @return Whether the event was handled or not.
     //     **/
-    //    -(BOOL)pointingDeviceUpEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
-    //    {
-    //        NSUInteger selectedDownIndex = self.pointingDeviceDownIndex;
-    //
-    //        self.pointingDeviceDownIndex = NSNotFound;
-    //
-    //        CPTGraph *theGraph       = self.graph;
-    //        CPTPlotArea *thePlotArea = self.plotArea;
-    //
-    //        if ( !theGraph || !thePlotArea || self.hidden ) {
-    //            return false
-    //        }
-    //
-    //        id<CPTPieChartDelegate> theDelegate = (id<CPTPieChartDelegate>)self.delegate;
-    //
-    //        if ( [theDelegate respondsToSelector:@selector(pieChart:sliceTouchUpAtRecordIndex:)] ||
-    //             [theDelegate respondsToSelector:@selector(pieChart:sliceTouchUpAtRecordIndex:withEvent:)] ||
-    //             [theDelegate respondsToSelector:@selector(pieChart:sliceWasSelectedAtRecordIndex:)] ||
-    //             [theDelegate respondsToSelector:@selector(pieChart:sliceWasSelectedAtRecordIndex:withEvent:)] ) {
-    //            CGPoint plotAreaPoint = [theGraph convertPoint:interactionPoint toLayer:thePlotArea)
-    //
-    //            NSUInteger idx = [self dataIndexFromInteractionPoint:plotAreaPoint)
-    //            if ( idx != NSNotFound ) {
-    //                BOOL handled = false
-    //
-    //                if ( [theDelegate respondsToSelector:@selector(pieChart:sliceTouchUpAtRecordIndex:)] ) {
-    //                    handled = true
-    //                    [theDelegate pieChart:self sliceTouchUpAtRecordIndex:idx)
-    //                }
-    //                if ( [theDelegate respondsToSelector:@selector(pieChart:sliceTouchUpAtRecordIndex:withEvent:)] ) {
-    //                    handled = true
-    //                    [theDelegate pieChart:self sliceTouchUpAtRecordIndex:idx withEvent:event)
-    //                }
-    //
-    //                if ( idx == selectedDownIndex ) {
-    //                    if ( [theDelegate respondsToSelector:@selector(pieChart:sliceWasSelectedAtRecordIndex:)] ) {
-    //                        handled = true
-    //                        [theDelegate pieChart:self sliceWasSelectedAtRecordIndex:idx)
-    //                    }
-    //
-    //                    if ( [theDelegate respondsToSelector:@selector(pieChart:sliceWasSelectedAtRecordIndex:withEvent:)] ) {
-    //                        handled = true
-    //                        [theDelegate pieChart:self sliceWasSelectedAtRecordIndex:idx withEvent:event)
-    //                    }
-    //                }
-    //
-    //                if ( handled ) {
-    //                    return true
-    //                }
-    //            }
-    //        }
-    //
-    //        return [super pointingDeviceUpEvent:event atPoint:interactionPoint)
-    //    }
-    //
-    //    /// @}
-    //
-    //    /// @cond
-    //
+    override func pointingDeviceUpEvent(event: CPTNativeEvent, atPoint interactionPoint : CGPoint)-> Bool
+    {
+        let selectedDownIndex = self.pointingDeviceDownIndex
+        self.pointingDeviceDownIndex = NSNotFound;
+        
+        let theGraph    = self.graph;
+        let thePlotArea = self.plotArea;
+        
+        guard self.isHidden == false else { return false }
+        guard theGraph != nil else { return false }
+        guard thePlotArea != nil else { return false }
+
+        let theDelegate = self.delegate as? CPTPieChartDelegate
+        
+        if 4 == 4 {
+            
+            //        if ( [theDelegate respondsToSelector:@selector(pieChart:sliceTouchUpAtRecordIndex:)] ||
+            //             [theDelegate respondsToSelector:@selector(pieChart:sliceTouchUpAtRecordIndex:withEvent:)] ||
+            //             [theDelegate respondsToSelector:@selector(pieChart:sliceWasSelectedAtRecordIndex:)] ||
+            //             [theDelegate respondsToSelector:@selector(pieChart:sliceWasSelectedAtRecordIndex:withEvent:)] ) {
+            
+            
+            //            let plotAreaPoint = theGraph?.convertPoint(interactionPoint, toLayer: thePlotArea)
+            //
+            //            let idx = self.dataIndexFromInteractionPoint(plotAreaPoint)
+            //            if ( idx != NSNotFound ) {
+            //                var handled = false
+            //
+            //                if ( [theDelegate respondsToSelector:@selector(pieChart:sliceTouchUpAtRecordIndex:)] ) {
+            //                    handled = true
+            //                    theDelegate pieChart(self sliceTouchUpAtRecordIndex:idx)
+            //                }
+            //                if ( [theDelegate respondsToSelector:@selector(pieChart:sliceTouchUpAtRecordIndex:withEvent:)] ) {
+            //                    handled = true
+            //                    theDelegate pieChart:self sliceTouchUpAtRecordIndex:idx withEvent:event)
+            //                }
+            //
+            //                if ( idx == selectedDownIndex ) {
+            //                    if ( [theDelegate respondsToSelector:@selector(pieChart:sliceWasSelectedAtRecordIndex:)] ) {
+            //                        handled = true
+            //                        theDelegate.pieChart:self sliceWasSelectedAtRecordIndex:idx)
+            //                    }
+            //
+            //                    if ( theDelegate.pieChart:sliceWasSelectedAtRecordIndex:withEvent:)] ) {
+            //                        handled = true
+            //                        theDelegate. pieChart:self sliceWasSelectedAtRecordIndex:idx withEvent:event)
+            //                    }
+        }
+        
+        if ( handled ) {
+            return true
+        }
+        //    }
+        //}
+        return super.pointingDeviceUpEvent(event: event, atPoint:interactionPoint)
+    }
+
+                    
+                    
     //    -(NSUInteger)dataIndexFromInteractionPoint:(CGPoint)point
     //    {
     //        CPTGraph *theGraph       = self.graph;
@@ -1131,16 +1131,15 @@ public class CPTPieChart: CPTPlot {
     
     
     //  MARK: - Accessors
-    func sliceWidths() -> [CGFloat]
-    {
-        return self.cachedNumbers( forField: CPTPieChartField.sliceWidth )
+    var _sliceWidths =  [CGFloat]()
+    var sliceWidths :  [CGFloat] {
+        get { self.cachedNumbers( forField: CPTPieChartField.sliceWidth.rawValue ) }
+        set {
+            self.cacheNumbers(numbers: newValue, forField: CPTPieChartField.sliceWidth.rawValue)
+            self.updateNormalizedData()
+        }
     }
     
-    func setSliceWidths(newSliceWidths:  [CGFloat] )
-    {
-        self.cacheNumbers(numbers: newSliceWidths, forField: CPTPieChartField.sliceWidth)
-        self.updateNormalizedData()
-    }
     
     func sliceFills() -> [CPTFill]
     {
