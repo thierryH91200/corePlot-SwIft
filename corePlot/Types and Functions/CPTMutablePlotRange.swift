@@ -5,7 +5,7 @@
 //  Created by thierryH24 on 04/12/2020.
 //
 
-import Cocoa
+import AppKit
 
 class CPTMutablePlotRange: CPTPlotRange {
     

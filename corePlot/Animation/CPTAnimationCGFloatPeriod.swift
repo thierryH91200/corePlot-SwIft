@@ -38,7 +38,6 @@ class CPTAnimationCGFloatPeriod: CPTAnimationPeriod {
             self.setStartValueFromObject(boundObject, propertyGetter:boundGetter)
         }
         
-        
         return ((current >= start) && (current <= end)) || ((current >= end) && (current <= start));
     }
     

@@ -25,10 +25,8 @@ extension CPTPlot {
         if ( newTitle != attributedTitle ) {
             attributedTitle = newTitle
             
-            if ( !self.inTitleUpdate == false) {
-                self.inTitleUpdate = true
+            if self.inTitleUpdate == true {
                 self.title         = attributedTitle?.string;
-                self.inTitleUpdate = false
                 
                 NotificationCenter.send(
                     name: .CPTLegendNeedsLayoutForPlotNotification,

@@ -58,21 +58,23 @@ extension CPTPlot {
 // **/
     func drawSwatchForLegend(legend: CPTLegend, atIndex idx:Int , inRect rect: CGRect, context: CGContext)
     {
-        let theDelegate = self.delegate as? CPTPlotDelegate
+        weak var theDelegate = self.delegate as? CPTLegendDelegate
         
         var theFill : CPTFill?
+//        let defaultHandler = {}
         
-        if ( theDelegate.respondsToSelector(to:: #selector(legend:fillForSwatchAtIndex:forPlot:) ) {
-            theFill = theDelegate.legend(legend, fillForSwatchAtIndex: idx, forPlot: self)
+        if let method = theDelegate?.legend?( legend: legend, fillForSwatchAtIndex: idx, forPlot: self) {
+            theFill =   method
         }
-        if ( (theFill == nil) ) {
-            theFill = legend.swatchFill;
+        
+        if ( theFill == nil ) {
+            theFill = legend.swatchFill
         }
         
         var theLineStyle : CPTLineStyle?
         
-        if ( theDelegate.respondsToSelector( to: #selector(legend:lineStyleForSwatchAtIndex:forPlot:)] ) {
-            theLineStyle = theDelegate.legend(legend:legend, lineStyleForSwatchAtIndex(idx, forPlot:self)
+        if let method =  theDelegate?.legend?(legend: legend , lineStyleForSwatchAtIndex: idx, forPlot: self)  {
+            theLineStyle = method
         }
         if ( (theLineStyle == nil) ) {
             theLineStyle = legend.swatchBorderLineStyle
@@ -83,17 +85,19 @@ extension CPTPlot {
             
             if (( theFill ) != nil) {
                 context.beginPath();
-                CPTPathExtensions.shared.CPTAddRoundedRectPath(context, CPTAlignIntegralRectToUserSpace(context, rect), radius);
+                CPTPathExtensions.shared.CPTAddRoundedRectPath(
+                    context: context,
+                    rect: CPTUtilities.shared.CPTAlignIntegralRectToUserSpace(context: context, rect: rect),
+                    cornerRadius: radius);
                 theFill?.fillPathInContext(context: context)
             }
             
-            if (( theLineStyle ) != nil) {
+            if ( theLineStyle != nil) {
                 theLineStyle?.setLineStyleInContext(context: context)
                 context.beginPath()
-                CPTPathExtensions.shared.CPTAddRoundedRectPath(context, CPTAlignBorderedRectToUserSpace(context, rect, theLineStyle), radius);
+                CPTPathExtensions.shared.CPTAddRoundedRectPath(context: context, rect: CPTUtilities.shared.CPTAlignBorderedRectToUserSpace(context: context, rect: rect, borderLineStyle: theLineStyle!), cornerRadius: radius);
                 theLineStyle?.strokePathInContext(context: context)
             }
         }
     }
-
 }

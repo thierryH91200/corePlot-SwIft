@@ -81,7 +81,7 @@ extension CPTPlot {
         
         for (  data in self.cachedData.allValues ) {
             if ( data isKindOfClass:numericClass] ) {
-                CPTMutableNumericData *numericData = (CPTMutableNumericData *)data;
+                let numericData = (CPTMutableNumericData *)data;
                 size_t sampleSize                  = numericData.sampleBytes;
                 int8_t *start                      = numericData mutableSamplePointer:indexRange.location];
                 size_t length                      = sampleSize * indexRange.length;
@@ -90,7 +90,7 @@ extension CPTPlot {
                     memmove(start, start + length, bytesToMove);
                 }
                 
-                NSMutableData *dataBuffer = (NSMutableData *)numericData.data;
+                let dataBuffer = numericData.data;
                 dataBuffer.length -= length;
             }
             else  {
@@ -369,9 +369,9 @@ extension CPTPlot {
                                 let tempData    = NSData alloc] initWithBytes:samples
                                                        length:bufferLength];
                                 
-                                CPTMutableNumericData *tempNumericData = CPTMutableNumericData alloc] initWithData:tempData
-                                dataType:dataType
-                                shape:nil];
+                                CPTMutableNumericData *tempNumericData = CPTMutableNumericData ( initWithData:tempData
+                                dataType:dataType,
+                                shape:nil)
                                 
                                 self cacheNumbers:tempNumericData forField:fieldNum atRecordIndex:indexRange.location];
                             }

@@ -20,9 +20,11 @@ import Cocoa
 
 
 class CPTTheme: NSObject {
-    
-    
+
     var graphClass : CPTGraph?
+    
+    private var themes: Set<CPTTheme>? = nil
+    typealias CPTThemeName = String
     
     // MARK: Init/Dealloc
     override init()
@@ -33,17 +35,33 @@ class CPTTheme: NSObject {
     // MARK: Theme management
     func themeClasses() -> Array<Any>
     {
-        let  nameSort = NSSortDescriptor( key: "name",ascending:true, selector:#selector(caseInsensitiveCompare:))
+//        let  nameSort = NSSortDescriptor( key: "name",ascending:true, selector:#selector(caseInsensitiveCompare:))
         
-        return themes.sortedArrayUsingDescriptors([nameSort])
+        return themes?.sorted
     }
+    
+    +(nullable instancetype)themeNamed:(nullable CPTThemeName)themeName
+    {
+        CPTTheme *newTheme = nil;
+
+        for ( Class themeClass in themes ) {
+            if ( [themeName isEqualToString:[themeClass name]] ) {
+                newTheme = [[themeClass alloc] init];
+                break;
+            }
+        }
+
+        return newTheme;
+    }
+
+    
     
     init (themeNamed: CPTThemeName)
     {
         let newTheme : CPTTheme?
         
-        for  themeClass in themes  {
-            if ( [themeName isEqualToString:[themeClass name]] ) {
+        for  themeClass in themes!  {
+            if ( themeName isEqualToString:[themeClass.name]] ) {
                 newTheme = [[themeClass alloc] init];
                 break;
             }
@@ -51,35 +69,35 @@ class CPTTheme: NSObject {
     }
     
     // MARK : Accessors
-    func setGraphClass(newGraphClass: Class)newGraphClass
+    func setGraphClass(newGraphClass: AnyClass?)
     {
-    if graphClass != newGraphClass ) {
-    if ( ![newGraphClass isSubclassOfClass:[CPTGraph class]] ) {
-    [NSException raise:CPTException format:@"Invalid graph class for theme; must be a subclass of CPTGraph"];
-    }
-    else if ( [newGraphClass isEqual:[CPTGraph class]] ) {
-    [NSException raise:CPTException format:@"Invalid graph class for theme; must be a subclass of CPTGraph"];
-    }
-    else {
-    graphClass = newGraphClass;
-    }
-    }
+        if graphClass != newGraphClass ) {
+            if ( !newGraphClass isSubclassOfClass:[CPTGraph class] ) {
+                print("NSException raise:CPTException format:@ Invalid graph class for theme; must be a subclass of CPTGraph")
+            }
+            else if ( newGraphClass is CPTGraph ) {
+                print("NSException raise:CPTException format:@Invalid graph class for theme; must be a subclass of CPTGraph")
+            }
+            else {
+                graphClass = newGraphClass;
+            }
+        }
     }
     
     // MARK: apply the theme
     /** @brief Applies the theme to the provided graph.
      *  @param graph The graph to style.
      **/
-    func applyThemeToGraph(graph: CPTGraph)    {
+    func applyThemeToGraph(graph: CPTGraph?)    {
         
-        self.applyThemeToBackground(graph: graph)
-        let plotAreaFrame = graph.plotAreaFrame;
+        self.applyThemeToBackground(graph: graph!)
+        let plotAreaFrame = graph?.plotAreaFrame
         
-        if ( plotAreaFrame ) {
-            self.applyThemeToPlotArea(plotAreaFrame: plotAreaFrame)
+        if (( plotAreaFrame ) != nil) {
+            self.applyThemeToPlotArea(plotAreaFrame: plotAreaFrame!)
         }
         
-        let axisSet = graph.axisSet
+        let axisSet = graph?.axisSet
         if  axisSet != nil  {
             self.applyThemeToAxisSet(axisSet: axisSet!)
         }

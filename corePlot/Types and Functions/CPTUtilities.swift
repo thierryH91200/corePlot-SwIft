@@ -929,7 +929,6 @@ class CPTUtilities : NSObject {
     
     func CPTAlignIntegralRectToUserSpace(context: CGContext , rect: CGRect )->CGRect
     {
-        
         var rect = rect
         rect = context.convertToDeviceSpace(rect);
         
@@ -944,7 +943,7 @@ class CPTUtilities : NSObject {
         return context.convertToUserSpace(rect);
     }
     
-    func CPTAlignBorderedRectToUserSpace(context: CGContext,rect:  CGRect ,  borderLineStyle: CPTLineStyle)-> CGRect
+    func CPTAlignBorderedRectToUserSpace(context: CGContext, rect: CGRect, borderLineStyle: CPTLineStyle)-> CGRect
     {
         var borderRect = CGRect.zero
         var contextScale = CGFloat(1.0);

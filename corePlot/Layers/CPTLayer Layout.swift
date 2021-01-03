@@ -10,8 +10,7 @@ import AppKit
 
 extension CPTLayer {
     
-    
-    // MARK: Layoutf
+    // MARK: Layout
     func pixelAlign()
     {
         let scale           = self.contentsScale;
@@ -62,9 +61,7 @@ extension CPTLayer {
                 newPosition.y = round(currentPosition.y * scale) / scale;
             }
         }
-        
         self.position = newPosition;
     }
-    
-    
+
 }

@@ -124,14 +124,14 @@ class CPTPlotSymbol: NSObject {
     //            self.cachedLayer    = nil
     //        }
     //    }
-    //
-    //    -
+    
+
     var _cachedSymbolPath : CGPath?
     var cachedSymbolPath : CGPath? {
         get {
-            //            if ( (_cachedSymbolPath == nil) ) {
-            //                _cachedSymbolPath =  newSymbolPath
-            //            }
+            if ( (_cachedSymbolPath == nil) ) {
+                _cachedSymbolPath =  newSymbolPath()
+            }
             return _cachedSymbolPath }
         set {
             if ( _cachedSymbolPath != newValue ) {
@@ -302,7 +302,6 @@ class CPTPlotSymbol: NSObject {
     //     *  @param aPath The bounding path for the custom symbol.
     //     *  @return A new CPTPlotSymbol instance initialized with a symbol type of #CPTPlotSymbolTypeCustom.
     //     **/
-    
     
     func customPlotSymbol(with aPath: CGPath?) -> CPTPlotSymbol {
         let symbol = CPTPlotSymbol()
@@ -543,10 +542,11 @@ class CPTPlotSymbol: NSObject {
             break;
             
         case .cross:
-            //                CGPathMoveToPoint(symbolPath, nil, -halfSize.width, halfSize.height);
-            //                CGPathAddLineToPoint(symbolPath, nil,halfSize.width, -halfSize.height);
-            //                CGPathMoveToPoint(symbolPath, nil, halfSize.width, halfSize.height);
-            //                CGPathAddLineToPoint(symbolPath, nil,-halfSize.width, -halfSize.height);
+            symbolPath.move(to: CGPoint( x: -halfSize.width, y: halfSize.height))
+            symbolPath.addLine(to: CGPoint( x: halfSize.width, y: -halfSize.height))
+            
+            symbolPath.move(to: CGPoint( x: halfSize.width, y: halfSize.height))
+            symbolPath.addLine(to: CGPoint( x: -halfSize.width, y: -halfSize.height))
             break;
             
         case .plus:

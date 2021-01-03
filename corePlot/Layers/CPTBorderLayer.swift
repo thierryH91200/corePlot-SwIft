@@ -75,11 +75,11 @@ class CPTBorderLayer: CPTLayer {
             if ( (excludedSublayers == nil) ) {
                 excludedSublayers = NSMutableSet() as? CPTLayer.CPTSublayerSet
             }
-            excludedSublayers.addObject(excludedLayer)
+            excludedSublayers!.insert(excludedLayer!)
             return excludedSublayers!
         }
         else {
-            return super.sublayersExcludedFromAutomaticLayout;
+            return super.sublayersExcludedFromAutomaticLayout
         }
     }
     

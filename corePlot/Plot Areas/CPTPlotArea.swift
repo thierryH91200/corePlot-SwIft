@@ -232,7 +232,7 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
                 }
                 
             case .axisTitles:
-                if  axis.axisTitle()  != nil {
+                if  axis.axisTitle  != nil {
                     needsLayer = true
                 }
                 
@@ -327,7 +327,7 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
                 }
                 
             case .axisTitles:
-                if ( currentAxis.axisTitle() != nil) {
+                if ( currentAxis.axisTitle != nil) {
                     idx += 1
                 }
                 

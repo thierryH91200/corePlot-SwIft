@@ -13,7 +13,7 @@ import AppKit
     func numbersForPlot( plot : CPTPlot, fieldEnum :Int, indexRange : NSRange) -> [Int]
     func numberForPlot(plot: CPTPlot, field:Int, recordIndex:Int) -> Double
     func doubleForPlot(plot: CPTPlot, fieldEnum:Int,  idx: Int) ->Double
-    func dataForPlot(plot: CPTPlot,  fieldEnum: Int, indexRange:NSRange ) -> CPTNumericData
+    func dataForPlot  (plot: CPTPlot, fieldEnum: Int, indexRange:NSRange ) -> CPTNumericData
     
     @objc optional func dataForPlot(plot : CPTPlot , indexRange:NSRange)-> [CPTNumericData]
     @objc optional func dataLabelForPlot(plot: CPTPlot, recordIndex:Int )-> CPTLayer

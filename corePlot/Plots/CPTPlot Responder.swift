@@ -34,59 +34,63 @@ extension CPTPlot {
 // *  @param interactionPoint The coordinates of the interaction.
 // *  @return Whether the event was handled or not.
 // **/
-//-(BOOL)pointingDeviceDownEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
-//{
-//    self.pointingDeviceDownLabelIndex = NSNotFound;
-//
-//    CPTGraph *theGraph = self.graph;
-//
-//    if ( !theGraph || self.hidden ) {
-//        return NO;
-//    }
-//
-//    id<CPTPlotDelegate> theDelegate = (id<CPTPlotDelegate>)self.delegate;
-//
-//    if ( [theDelegate respondsToSelector:@selector(plot:dataLabelTouchDownAtRecordIndex:)] ||
-//         [theDelegate respondsToSelector:@selector(plot:dataLabelTouchDownAtRecordIndex:withEvent:)] ||
-//         [theDelegate respondsToSelector:@selector(plot:dataLabelWasSelectedAtRecordIndex:)] ||
-//         [theDelegate respondsToSelector:@selector(plot:dataLabelWasSelectedAtRecordIndex:withEvent:)] ) {
-//        // Inform delegate if a label was hit
-//        CPTMutableAnnotationArray *labelArray = self.labelAnnotations;
-//        NSUInteger labelCount                 = labelArray.count;
-//        Class annotationClass                 = [CPTAnnotation class];
-//
-//        for ( NSUInteger idx = 0; idx < labelCount; idx++ ) {
-//            CPTPlotSpaceAnnotation *annotation = labelArray[idx];
-//            if ( [annotation isKindOfClass:annotationClass] ) {
-//                CPTLayer *labelLayer = annotation.contentLayer;
-//                if ( labelLayer && !labelLayer.hidden ) {
-//                    CGPoint labelPoint = [theGraph convertPoint:interactionPoint toLayer:labelLayer];
-//
-//                    if ( CGRectContainsPoint(labelLayer.bounds, labelPoint)) {
-//                        self.pointingDeviceDownLabelIndex = idx;
-//                        BOOL handled = NO;
-//
-//                        if ( [theDelegate respondsToSelector:@selector(plot:dataLabelTouchDownAtRecordIndex:)] ) {
-//                            handled = YES;
-//                            [theDelegate plot:self dataLabelTouchDownAtRecordIndex:idx];
-//                        }
-//
-//                        if ( [theDelegate respondsToSelector:@selector(plot:dataLabelTouchDownAtRecordIndex:withEvent:)] ) {
-//                            handled = YES;
-//                            [theDelegate plot:self dataLabelTouchDownAtRecordIndex:idx withEvent:event];
-//                        }
-//
-//                        if ( handled ) {
-//                            return YES;
-//                        }
-//                    }
+    override func pointingDeviceDownEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint)-> Bool
+    {
+        self.pointingDeviceDownLabelIndex = NSNotFound;
+        let theGraph = self.graph
+        
+        if  (theGraph == nil) || self.isHidden == true {
+            return false
+        }
+        
+        let theDelegate = self.delegate as? CPTPlotDelegate
+        
+//        if ( theDelegate.plot(:dataLabelTouchDownAtRecordIndex:) ||
+//             theDelegate respondsToSelector:@selector(plot:dataLabelTouchDownAtRecordIndex:withEvent:) ||
+//             theDelegate respondsToSelector:@selector(plot:dataLabelWasSelectedAtRecordIndex:) ||
+//             theDelegate respondsToSelector:@selector(plot:dataLabelWasSelectedAtRecordIndex:withEvent:) ) {
+            // Inform delegate if a label was hit
+            
+            let labelArray = self.labelAnnotations;
+            let labelCount                 = labelArray.count;
+            let annotationClass            = [CPTAnnotation]()
+            
+            for  idx in 0..<labelCount {
+                let annotation = labelArray[idx];
+//                if annotation is Array<CPTAnnotation> {
+                    
+                let labelLayer = annotation.contentLayer;
+                if ( (labelLayer != nil) && !labelLayer!.isHidden ) {
+                    let labelPoint = theGraph?.convert(interactionPoint, to:labelLayer)
+                        
+                    if  labelLayer!.bounds.contains( labelPoint!) == true{
+                            self.pointingDeviceDownLabelIndex = idx;
+                            var handled = false
+                            
+                        if theDelegate.plot:dataLabelTouchDownAtRecordIndex:) ) {
+                                handled = true
+                                theDelegate?.plot(plot:self, dataLabelTouchDownAtRecordIndex:idx)
+                            }
+                            
+                            if theDelegate.plot(plot:self, dataLabelTouchDownAtRecordIndex:idx, withEvent:event) {
+                                handled = true
+                                theDelegate!.plot(plot: self, dataLabelTouchDownAtRecordIndex:idx, event:event)
+                            }
+                            
+                            if ( handled ) {
+                                return true
+                            }
+                        }
+                    }
 //                }
-//            }
-//        }
-//    }
-//
-//    return [super pointingDeviceDownEvent:event atPoint:interactionPoint];
-//}
+            }
+        }
+        
+        return super.pointingDeviceDownEvent(event: event, atPoint:interactionPoint);
+    }
+    
+    
+    
 //
 ///**
 // *  @brief Informs the receiver that the user has
@@ -120,7 +124,7 @@ extension CPTPlot {
 //    CPTGraph *theGraph = self.graph;
 //
 //    if ( !theGraph || self.hidden ) {
-//        return NO;
+//        return false
 //    }
 //
 //    id<CPTPlotDelegate> theDelegate = (id<CPTPlotDelegate>)self.delegate;
@@ -142,32 +146,32 @@ extension CPTPlot {
 //                    CGPoint labelPoint = [theGraph convertPoint:interactionPoint toLayer:labelLayer];
 //
 //                    if ( CGRectContainsPoint(labelLayer.bounds, labelPoint)) {
-//                        BOOL handled = NO;
+//                        BOOL handled = false
 //
 //                        if ( [theDelegate respondsToSelector:@selector(plot:dataLabelTouchUpAtRecordIndex:)] ) {
-//                            handled = YES;
+//                            handled = true
 //                            [theDelegate plot:self dataLabelTouchUpAtRecordIndex:idx];
 //                        }
 //
 //                        if ( [theDelegate respondsToSelector:@selector(plot:dataLabelTouchUpAtRecordIndex:withEvent:)] ) {
-//                            handled = YES;
+//                            handled = true
 //                            [theDelegate plot:self dataLabelTouchUpAtRecordIndex:idx withEvent:event];
 //                        }
 //
 //                        if ( idx == selectedDownIndex ) {
 //                            if ( [theDelegate respondsToSelector:@selector(plot:dataLabelWasSelectedAtRecordIndex:)] ) {
-//                                handled = YES;
+//                                handled = true
 //                                [theDelegate plot:self dataLabelWasSelectedAtRecordIndex:idx];
 //                            }
 //
 //                            if ( [theDelegate respondsToSelector:@selector(plot:dataLabelWasSelectedAtRecordIndex:withEvent:)] ) {
-//                                handled = YES;
+//                                handled = true
 //                                [theDelegate plot:self dataLabelWasSelectedAtRecordIndex:idx withEvent:event];
 //                            }
 //                        }
 //
 //                        if ( handled ) {
-//                            return YES;
+//                            return true
 //                        }
 //                    }
 //                }
@@ -177,9 +181,4 @@ extension CPTPlot {
 //
 //    return [super pointingDeviceUpEvent:event atPoint:interactionPoint];
 //}
-//
-///// @}
-//
-//
-//@end
 }
