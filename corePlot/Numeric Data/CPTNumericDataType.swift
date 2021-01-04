@@ -5,7 +5,7 @@
 //  Created by thierryH24 on 13/12/2020.
 //
 
-import Foundation
+import AppKit
 
 enum CPTDataTypeFormat : Int {
     case undefined = 0 ///< Undefined

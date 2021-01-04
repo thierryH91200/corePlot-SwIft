@@ -244,122 +244,68 @@ extension CPTPlot {
         return mutableNumbers;
     }
     
-    //
-    //-(BOOL)doublePrecisionCache
-    //{
-    //    BOOL result = NO;
-    //
-    //    switch ( self.cachePrecision ) {
-    //        case CPTPlotCachePrecisionAuto:
-    //        {
-    //            NSMutableDictionary<NSString *, CPTNumericData *> *dataCache = self.cachedData;
-    //            Class numberClass                                            = [NSNumber class];
-    //            for ( id key in dataCache.allKeys ) {
-    //                if ( [key isKindOfClass:numberClass] ) {
-    //                    result = CPTDataTypeEqualToDataType(((CPTMutableNumericData *)dataCache[key]).dataType, self.doubleDataType);
-    //                    break;
-    //                }
-    //            }
-    //        }
-    //        break;
-    //
-    //        case CPTPlotCachePrecisionDouble:
-    //            result = YES;
-    //            break;
-    //
-    //        default:
-    //            // not double precision
-    //            break;
-    //    }
-    //    return result;
-    //}
-    //
-    ///** @brief Retrieves an array of numbers from the cache.
-    // *  @param fieldEnum The field enumerator identifying the field.
-    // *  @return The array of cached numbers.
-    // **/
-    //-(nullable CPTMutableNumericData *)cachedNumbersForField:(NSUInteger)fieldEnum
-    //{
-    //    return (self.cachedData)[@(fieldEnum)];
-    //}
-    //
-    ///** @brief Retrieves a single number from the cache.
-    // *  @param fieldEnum The field enumerator identifying the field.
-    // *  @param idx The index of the desired data value.
-    // *  @return The cached number.
-    // **/
-    //-(nullable NSNumber *)cachedNumberForField:(NSUInteger)fieldEnum recordIndex:(NSUInteger)idx
-    //{
-    //    CPTMutableNumericData *numbers = [self cachedNumbersForField:fieldEnum];
-    //
-    //    return [numbers sampleValue:idx];
-    //}
-    //
-    ///** @brief Retrieves a single number from the cache.
-    // *  @param fieldEnum The field enumerator identifying the field.
-    // *  @param idx The index of the desired data value.
-    // *  @return The cached number or @NAN if no data is cached for the requested field.
-    // **/
-    //-(double)cachedDoubleForField:(NSUInteger)fieldEnum recordIndex:(NSUInteger)idx
-    //{
-    //    CPTMutableNumericData *numbers = [self cachedNumbersForField:fieldEnum];
-    //
-    //    if ( numbers ) {
-    //        switch ( numbers.dataTypeFormat ) {
-    //            case CPTFloatingPointDataType:
-    //            {
-    //                const double *doubleNumber = (const double *)[numbers samplePointer:idx];
-    //                if ( doubleNumber ) {
-    //                    return *doubleNumber;
-    //                }
-    //            }
-    //            break;
-    //
-    //            case CPTDecimalDataType:
-    //            {
-    //                const NSDecimal *decimalNumber = (const NSDecimal *)[numbers samplePointer:idx];
-    //                if ( decimalNumber ) {
-    //                    return CPTDecimalDoubleValue(*decimalNumber);
-    //                }
-    //            }
-    //            break;
-    //
-    //            default:
-    //                [NSException raise:CPTException format:@"Unsupported data type format"];
-    //                break;
-    //        }
-    //    }
-    //    return (double)NAN;
-    //}
-    //
-    ///** @brief Retrieves a single number from the cache.
-    // *  @param fieldEnum The field enumerator identifying the field.
-    // *  @param idx The index of the desired data value.
-    // *  @return The cached number or @NAN if no data is cached for the requested field.
-    // **/
-    func cachedDecimalForField(fieldEnum: Int, recordIndex idx: Int) -> CGFloat
+    
+    func doublePrecisionCache()-> Bool
     {
-        let numbers = self.cachedNumbersForField(fieldEnum)
-        
-        if ( numbers ) {
-            switch ( numbers.dataTypeFormat ) {
-            case .floatingPoint:
-                let doubleNumber = numbers.samplePointer(idx)
-                if ( doubleNumber ) {
-                    return CGFloat(doubleNumber)
+        var result = false;
+    
+        switch ( self.cachePrecision ) {
+        case .auto:
+                var dataCache = self.cachedData
+//                Class numberClass                                            = [NSNumber class];
+                for ( key in dataCache.allKeys ) {
+                    if ( [key isKindOfClass:numberClass] ) {
+                        result = CPTDataTypeEqualToDataType(((CPTMutableNumericData *)dataCache[key]).dataType, self.doubleDataType);
+                        break;
+                    }
                 }
-                
-            case .decimal:
-                let decimalNumber = numbers.samplePointer(idx) as? Decimal
-                if let decimalNumber = decimalNumber {
-                    return decimalNumber
-                }
-                
+            break;
+    
+        case .double:
+                result = true
+                break;
+    
             default:
-                print("NSException raise:CPTException format:@Unsupported data type format")
-            }
+                // not double precision
+                break;
         }
-        return .nan
+        return result;
+    }
+    
+    /** @brief Retrieves an array of numbers from the cache.
+     *  @param fieldEnum The field enumerator identifying the field.
+     *  @return The array of cached numbers.
+     **/
+    func cachedNumbersForField(fieldEnum: Int) -> [Any]
+    {
+        return self.cachedData[String(fieldEnum)]!
+    }
+    
+    /** @brief Retrieves a single number from the cache.
+     *  @param fieldEnum The field enumerator identifying the field.
+     *  @param idx The index of the desired data value.
+     *  @return The cached number.
+     **/
+    
+    /** @brief Retrieves a single number from the cache.
+     *  @param fieldEnum The field enumerator identifying the field.
+     *  @param idx The index of the desired data value.
+     *  @return The cached number or @NAN if no data is cached for the requested field.
+     **/
+    
+    ///** @brief Retrieves a single number from the cache.
+    // *  @param fieldEnum The field enumerator identifying the field.
+    // *  @param idx The index of the desired data value.
+    // *  @return The cached number or @NAN if no data is cached for the requested field.
+    // **/
+    func cachedDecimalForField(fieldEnum: Int, recordIndex idx: Int) -> [CGFloat?]
+    {
+        let numbers = self.cachedNumbersForField(fieldEnum: fieldEnum) as! [CGFloat]
+        
+        if ( numbers.isEmpty == false  ) {
+            return numbers
+        }
+        return [nil]
     }
     
     //setDataLabels
@@ -369,10 +315,10 @@ extension CPTPlot {
         var dataDictionary = cachedData
         
         for key in dataDictionary.keys {
-            if key is numberClass {
+//            if key is numberClass {
                 let numericData = dataDictionary[key]
                 numericData.dataType = newDataType
-            }
+//            }
         }
     }
 
@@ -382,7 +328,16 @@ extension CPTPlot {
         static dispatch_once_t onceToken = 0;
     
         dispatch_once(&onceToken, ^{
-            dataType = CPTDataType(CPTFloatingPointDataType, sizeof(double), CFByteOrderGetCurrent());
+            dataType = CPTDataTypeFormat(//
+        //  CPTNumericDataType.swift
+        //  corePlot
+        //
+        //  Created by thierryH24 on 13/12/2020.
+        //
+
+        import Foundation
+
+        enum CPTDataTypeFormat, sizeof(double), CFByteOrderGetCurrent());
         });
     
         return dataType;

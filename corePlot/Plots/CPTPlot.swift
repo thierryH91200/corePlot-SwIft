@@ -46,9 +46,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
                 _title = newValue
                 
                 if self.inTitleUpdate == false {
-                    self.inTitleUpdate   = true
                     self.attributedTitle = nil;
-                    self.inTitleUpdate   = false
                     
                     NotificationCenter.send(
                         name: .CPTLegendNeedsLayoutForPlotNotification,
@@ -137,6 +135,8 @@ public class CPTPlot: CPTAnnotationHostLayer {
         }
     }
     
+
+    
     enum _CPTPlotCachePrecision: Int {
         case auto
         case double
@@ -220,7 +220,18 @@ public class CPTPlot: CPTAnnotationHostLayer {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
+//    +(nonnull id)nilData
+//    {
+//        static id nilObject              = nil;
+//        static dispatch_once_t onceToken = 0;
+//
+//        dispatch_once(&onceToken, ^{
+//            nilObject = [[NSObject alloc] init];
+//        });
+//
+//        return nilObject;
+//    }
+
 //    static let nilDataNilObject = { () -> <#Result#> in
 //        var nilObject = NSObject()
 //        return nilObject

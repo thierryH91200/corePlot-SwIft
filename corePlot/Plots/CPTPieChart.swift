@@ -7,16 +7,15 @@
 
 import AppKit
 
-public protocol CPTPieChartDataSource  {
+public protocol CPTPieChartDataSource : CPTPlotDataSource {
     
     func sliceFillsForPieChart (          _ pieChart: CPTPieChart, recordIndexRange:NSRange) -> [CPTFill?]
     func sliceFillForPieChart   (         _ pieChart: CPTPieChart, idx : Int) -> CPTFill
     func radialOffsetsForPieChart(        _ pieChart: CPTPieChart, indexRange:NSRange) -> [CGFloat]
     func radialOffsetForPieChart(         _ pieChart: CPTPieChart, idx:Int) -> CGFloat
-    func legendTitleForPieChart (         _ pieChart: CPTPieChart, idx: Int)-> String
+    func legendTitleForPieChart (         _ pieChart: CPTPieChart, idx: Int)-> String?
     func attributedLegendTitleForPieChart(_ pieChart: CPTPieChart, idx :Int)-> NSAttributedString
 }
-
 
 protocol CPTPieChartDelegate : CPTPlotDelegate {
 
@@ -145,7 +144,7 @@ public class CPTPieChart: CPTPlot {
         
         // Legend
         if let theDataSource = theDataSource {
-            if let _ = theDataSource.legendTitleForPieChart {
+            if let _ = theDataSource.legendTitleForPieChart(self, idx: 1) {
                 
                 NotificationCenter.send(
                     name: .CPTLegendNeedsRedrawForPlotNotification,
@@ -164,18 +163,17 @@ public class CPTPieChart: CPTPlot {
             // Pie slice widths
             if ( theDataSource != nil ) {
                 // Grab all values from the data source
-                let rawSliceValues = self.numbersFromDataSourceForField ( CPTPieChartField.sliceWidth,
+                let rawSliceValues = self.numbersFromDataSourceForField ( fieldEnum: CPTPieChartField.sliceWidth.rawValue,
                                                                           recordIndexRange:indexRange)
                 
                 self.cacheNumbers(rawSliceValues,
                                   forField: CPTPieChartField.sliceWidth.rawValue,
-                                  atRecordIndex: indexRange.location)
+                                  atRecordIndex: indexRange)
             }
             else {
                 self.cacheNumbers(numbers: nil, forField: CPTPieChartField.sliceWidth.rawValue)
             }
         }
-        
         self.updateNormalizedData()
     }
     
@@ -200,94 +198,96 @@ public class CPTPieChart: CPTPlot {
     func updateNormalizedData()
     {
         // Normalize these widths to 1.0 for the whole pie
-        //        let sampleCount = self.cachedDataCount;
-        //
-        //        if ( sampleCount > 0 ) {
-        //            let rawSliceValues = self.cachedNumbersForField(CPTPieChartFieldSliceWidth)
-        //            if ( self.doublePrecisionCache ) {
-        //                var valueSum         = 0.0;
-        //                let dataBytes = rawSliceValues.bytes;
-        //                let dataEnd   = dataBytes + sampleCount;
-        //
-        //                while dataBytes < dataEnd {
-        //                    let currentWidth = dataBytes += 1
-        //                    if !currentWidth.isNaN {
-        //                        valueSum += currentWidth
-        //                    }
-        //                }
-        //                let dataType = CPTDataType(CGFloatingPointDataType, sizeof(double), CFByteOrderGetCurrent());
-        //
-        //                CPTMutableNumericData *normalizedSliceValues = [[CPTMutableNumericData alloc] initWithData:[NSData data] dataType:dataType shape:nil)
-        //                    normalizedSliceValues.shape = @[@(sampleCount))
-        //                    let cumulativeSliceValues = [[CPTMutableNumericData alloc] initWithData:[NSData data] dataType:dataType shape:nil)
-        //                    cumulativeSliceValues.shape = @[@(sampleCount))
-        //
-        //                    let cumulativeSum = 0.0;
-        //
-        //                    dataBytes = (const double *)rawSliceValues.bytes;
-        //                    double *normalizedBytes = normalizedSliceValues.mutableBytes;
-        //                    double *cumulativeBytes = cumulativeSliceValues.mutableBytes;
-        //
-        //                    while dataBytes < dataEnd {
-        //                    let currentWidth = dataBytes += 1
-        //
-        //                    if currentWidth.isNaN {
-        //                    normalizedBytes += 1 = Double(.nan)
-        //                    } else {
-        //                    normalizedBytes += 1 = currentWidth / valueSum
-        //                    cumulativeSum += currentWidth
-        //                    }
-        //                    cumulativeBytes += 1 = cumulativeSum / valueSum
-        //                    }
-        //
-        //                    self.cacheNumbers(normalizedSliceValues forField:CPTPieChartFieldSliceWidthNormalized)
-        //                    self.cacheNumbers(cumulativeSliceValues forField:CPTPieChartFieldSliceWidthSum)
-        //                    } else {
-        //                    var valueSum         = 0
-        //                    let dataBytes = rawSliceValues.bytes;
-        //                    let dataEnd   = dataBytes + sampleCount;
-        //                    while ( dataBytes < dataEnd ) {
-        //                    var currentWidth = dataBytes++;
-        //                    if currentWidth.isNaN {
-        //                    valueSum = valueSum + currentWidth
-        //                    }
-        //                    }
-        //
-        //                    let dataType = CPTDataType(CPTDecimalDataType, sizeof(NSDecimal), CFByteOrderGetCurrent());
-        //                    let normalizedSliceValues = [[CPTMutableNumericData alloc] initWithData:[NSData data] dataType:dataType shape:nil)
-        //
-        //                    normalizedSliceValues.shape = @[@(sampleCount))
-        //                    let cumulativeSliceValues = [[CPTMutableNumericData alloc] initWithData:[NSData data] dataType:dataType shape:nil)
-        //                    cumulativeSliceValues.shape = @[@(sampleCount))
-        //
-        //                    let cumulativeSum = 0
-        //                    NSDecimal decimalNAN = CPTDecimalNaN();
-        //                    dataBytes = (const NSDecimal *)rawSliceValues.bytes;
-        //                    NSDecimal *normalizedBytes = normalizedSliceValues.mutableBytes;
-        //                    NSDecimal *cumulativeBytes = cumulativeSliceValues.mutableBytes;
-        //                    while ( dataBytes < dataEnd ) {
-        //                    let currentWidth = *dataBytes++;
-        //                    if ( NSDecimalIsNotANumber(&currentWidth)) {
-        //                    normalizedBytes++ = decimalNAN;
-        //                    } else {
-        //                    normalizedBytes++ = currentWidth / valueSum
-        //                    cumulativeSum      = cumulativeSum + currentWidth);
-        //                    }
-        //                    cumulativeBytes++ = cumulativeSum / valueSum);
-        //                    }
-        //                    self cacheNumbers:normalizedSliceValues forField:CPTPieChartFieldSliceWidthNormalized)
-        //                    self cacheNumbers:cumulativeSliceValues forField:CPTPieChartFieldSliceWidthSum)
-        //                    }
-        //                    } else {
-        //                    self.cacheNumbers(nil, forField:CPTPieChartFieldSliceWidthNormalized)
-        //                    self.cacheNumbers(nil, forField:CPTPieChartFieldSliceWidthSum)
-        //                    }
-        //
-        //                    // Labels
-        //                    var theDataSource = dataSource as? CPTPieChartDataSource?
-        //
-        //                    self relabelIndexRange:NSMakeRange(0, [theDataSource numberOfRecordsForPlot:self])
+        let sampleCount = self.cachedDataCount;
+        
+        if ( sampleCount > 0 ) {
+            let rawSliceValues = self.cachedNumbersForField(fieldEnum: CPTPieChartField.sliceWidth.rawValue)
+            //            if ( self.doublePrecisionCache ) {
+            var valueSum         = 0.0;
+            let dataBytes = rawSliceValues
+            let dataEnd   = dataBytes + sampleCount;
+            
+            while dataBytes < dataEnd {
+                let currentWidth = dataBytes += 1
+                if !currentWidth.isNaN {
+                    valueSum += currentWidth
+                }
+            }
+            //                let dataType = CPTDataType(CGFloatingPointDataType, sizeof(double), CFByteOrderGetCurrent());
+            //
+            //                CPTMutableNumericData *normalizedSliceValues = [[CPTMutableNumericData alloc] initWithData:[NSData data] dataType:dataType shape:nil)
+            //                    normalizedSliceValues.shape = @[@(sampleCount))
+            //                    let cumulativeSliceValues = [[CPTMutableNumericData alloc] initWithData:[NSData data] dataType:dataType shape:nil)
+            //                    cumulativeSliceValues.shape = @[@(sampleCount))
+            //
+            //                    let cumulativeSum = 0.0;
+            //
+            //                    dataBytes = (const double *)rawSliceValues.bytes;
+            //                    double *normalizedBytes = normalizedSliceValues.mutableBytes;
+            //                    double *cumulativeBytes = cumulativeSliceValues.mutableBytes;
+            //
+            //                    while dataBytes < dataEnd {
+            //                    let currentWidth = dataBytes += 1
+            //
+            //                    if currentWidth.isNaN {
+            //                    normalizedBytes += 1 = Double(.nan)
+            //                    } else {
+            //                    normalizedBytes += 1 = currentWidth / valueSum
+            //                    cumulativeSum += currentWidth
+            //                    }
+            //                    cumulativeBytes += 1 = cumulativeSum / valueSum
+            //                    }
+            //
+            //                    self.cacheNumbers(normalizedSliceValues forField:CPTPieChartFieldSliceWidthNormalized)
+            //                    self.cacheNumbers(cumulativeSliceValues forField:CPTPieChartFieldSliceWidthSum)
+            //                    } else {
+            //                    var valueSum         = 0
+            //                    let dataBytes = rawSliceValues.bytes;
+            //                    let dataEnd   = dataBytes + sampleCount;
+            //                    while ( dataBytes < dataEnd ) {
+            //                    var currentWidth = dataBytes++;
+            //                    if currentWidth.isNaN {
+            //                    valueSum = valueSum + currentWidth
+            //                    }
+            //                    }
+            //
+            //                    let dataType = CPTDataType(CPTDecimalDataType, sizeof(NSDecimal), CFByteOrderGetCurrent());
+            //                    let normalizedSliceValues = [[CPTMutableNumericData alloc] initWithData:[NSData data] dataType:dataType shape:nil)
+            //
+            //                    normalizedSliceValues.shape = @[@(sampleCount))
+            //                    let cumulativeSliceValues = [[CPTMutableNumericData alloc] initWithData:[NSData data] dataType:dataType shape:nil)
+            //                    cumulativeSliceValues.shape = @[@(sampleCount))
+            //
+            //                    let cumulativeSum = 0
+            //                    NSDecimal decimalNAN = CPTDecimalNaN();
+            //                    dataBytes = (const NSDecimal *)rawSliceValues.bytes;
+            //                    NSDecimal *normalizedBytes = normalizedSliceValues.mutableBytes;
+            //                    NSDecimal *cumulativeBytes = cumulativeSliceValues.mutableBytes;
+            //                    while ( dataBytes < dataEnd ) {
+            //                    let currentWidth = *dataBytes++;
+            //                    if ( NSDecimalIsNotANumber(&currentWidth)) {
+            //                    normalizedBytes++ = decimalNAN;
+            //                    } else {
+            //                    normalizedBytes++ = currentWidth / valueSum
+            //                    cumulativeSum      = cumulativeSum + currentWidth);
+            //                    }
+            //                    cumulativeBytes++ = cumulativeSum / valueSum);
+            //                    }
+            //                    self cacheNumbers:normalizedSliceValues forField:CPTPieChartFieldSliceWidthNormalized)
+            //                    self cacheNumbers:cumulativeSliceValues forField:CPTPieChartFieldSliceWidthSum)
+            //                    }
+            //                    } else {
+            //                    self.cacheNumbers(nil, forField:CPTPieChartFieldSliceWidthNormalized)
+            //                    self.cacheNumbers(nil, forField:CPTPieChartFieldSliceWidthSum)
+        }
+        
+        // Labels
+        var theDataSource = dataSource as? CPTPieChartDataSource?
+        self.relabelIndexRange(indexRange: NSRange(location: 0, length: theDataSource.numberOfRecordsForPlot(plot: self)))
+        
     }
+    
+    
     func reloadSliceFills()
     {
         self.reloadSliceFillsInIndexRange(indexRange: NSRange(location: 0, length: self.cachedDataCount))

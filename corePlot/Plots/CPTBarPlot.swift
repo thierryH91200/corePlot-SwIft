@@ -49,7 +49,7 @@ public class CPTBarPlot: CPTPlot {
     weak public var barDataSource : CPTBarPlotDataSource?
 
     var barLocations = [CGFloat]()
-    var barTips  = [CGFloat]()
+//    var barTips  = [CGFloat]()
     var barBases  = [CGFloat]()
     var barFills = [CPTFill]()
     var barLineStyles  = [CPTLineStyle]()
@@ -516,8 +516,8 @@ public class CPTBarPlot: CPTPlot {
             let originView = CGPoint()
             let displacedView = CGPoint(x: floatLength, y: floatLength)
 
-            var originPlot = [CGFloat]()
-            var displacedPlot  = [CGFloat]()
+            let originPlot = [CGFloat]()
+            let displacedPlot  = [CGFloat]()
             
             let thePlotSpace = self.plotSpace;
             thePlotSpace?.plotPoint(plotPoint: originPlot,    numberOfCoordinates: 2, forPlotAreaViewPoint:originView)
@@ -603,7 +603,7 @@ public class CPTBarPlot: CPTPlot {
             let horizontalBars = self.barsAreHorizontal;
             var range = CPTPlotRange(location: 0, length: 0)
     
-            if ( horizontalBars ) {
+            if horizontalBars == true {
                 range = self.plotRangeForCoordinate(coord: CPTCoordinate.y)!
             }
             else {
@@ -686,7 +686,7 @@ public class CPTBarPlot: CPTPlot {
         
         let thePlotSpace = self.plotSpace;
         
-        if ( self.doublePrecisionCache ) {
+        if self.doublePrecisionCache( ) = true {
             var plotPoint = [CGFloat]()
             
             plotPoint[independentCoord.rawValue] = self.cachedDoubleForField(CPTBarPlotField.location, recordIndex:idx)
@@ -711,11 +711,11 @@ public class CPTBarPlot: CPTPlot {
             if plotPoint[dependentCoord.rawValue].isNaN {
                 return false
             }
-            basePoint = thePlotSpace.plotAreaViewPointForDoublePrecisionPlotPoint(plotPoint, numberOfCoordinates:2)
+            basePoint = thePlotSpace!.plotAreaViewPointForDoublePrecisionPlotPoint(plotPoint, numberOfCoordinates:2)
         }
         else {
             var plotPoint = [CGFloat]()
-            plotPoint[independentCoord.rawValue] = self.cachedDecimalForField(CPTBarPlotField.location, recordIndex:idx)
+            plotPoint[independentCoord.rawValue] = self.cachedDecimalForField(fieldEnum: CPTBarPlotField.location.rawValue, recordIndex:idx)
             if plotPoint[independentCoord.rawValue].isNaN {
                 return false
             }
@@ -758,6 +758,7 @@ public class CPTBarPlot: CPTPlot {
     }
     
     func newBarPathWithContext( context: CGContext?, record recordIndex: Int) -> CGMutablePath? {
+        
     // Get base and tip points
         var basePoint: CGPoint
         var tipPoint: CGPoint
@@ -778,10 +779,10 @@ public class CPTBarPlot: CPTPlot {
     
     
     func newBarPathWithContext( context: CGContext?, basePoint: CGPoint, tip tipPoint: CGPoint, width: CGFloat?) -> CGMutablePath {
-
-            // drawing a bar and for doing hit-testing on a click/touch event
+        
+        // drawing a bar and for doing hit-testing on a click/touch event
         let horizontalBars = barsAreHorizontal
-
+        
         let barWidthLength = lengthInView( decimalLength: width!)
         let halfBarWidth = CGFloat(0.5) * barWidthLength
         
@@ -796,162 +797,169 @@ public class CPTBarPlot: CPTPlot {
         
         let widthNegative  = barRect.size.width.signbit()
         let heightNegative = barRect.size.height.signbit()
-//
-//            // Align to device pixels if there is a line border.
-//            // Otherwise, align to view space, so fills are sharp at edges.
-//            // Note: may not have a context if doing hit testing.
-//            if ( self.alignsPointsToPixels && context ) {
-//                // Round bar dimensions so adjacent bars always align to the right pixel position
-//                const CGFloat roundingPrecision = CGFloat(1.0e6);
-//
-//                barRect.origin.x    = round(barRect.origin.x * roundingPrecision) / roundingPrecision;
-//                barRect.origin.y    = round(barRect.origin.y * roundingPrecision) / roundingPrecision;
-//                barRect.size.width  = round(barRect.size.width * roundingPrecision) / roundingPrecision;
-//                barRect.size.height = round(barRect.size.height * roundingPrecision) / roundingPrecision;
-//
-//                CGContextRef theContext = context;
-//
-//                if ( self.lineStyle.lineWidth > CGFloat(0.0)) {
-//                    barRect = CPTAlignRectToUserSpace(theContext, barRect);
-//                }
-//                else {
-//                    barRect = CPTAlignIntegralRectToUserSpace(theContext, barRect);
-//                }
-//            }
-//
-        let radius = CGFloat(min(min(barCornerRadius, abs(barRect.size.width) * CGFloat(0.5)), abs(barRect.size.height) * CGFloat(0.5)))
-    let baseRadius = CGFloat(min(min(barBaseCornerRadius, abs(barRect.size.width) * CGFloat(0.5)), abs(barRect.size.height) * CGFloat(0.5)))
         
-        
-        
-            if ( widthNegative && (barRect.size.width > CGFloat(0.0))) {
-                barRect.origin.x  += barRect.size.width;
-                barRect.size.width = -barRect.size.width;
-            }
-            if ( heightNegative && (barRect.size.height > CGFloat(0.0))) {
-                barRect.origin.y   += barRect.size.height;
-                barRect.size.height = -barRect.size.height;
-            }
-
-        let path = CGMutablePath()
-//
-//            if ( radius == CGFloat(0.0)) {
-//                if ( baseRadius == CGFloat(0.0)) {
-//                    // square corners
-//                    CGPathAddRect(path, NULL, barRect);
-//                }
-//                else {
-//                    CGFloat tipX = barRect.origin.x + barRect.size.width;
-//                    CGFloat tipY = barRect.origin.y + barRect.size.height;
-//
-//                    // rounded at base end only
-//                    if ( horizontalBars ) {
-//                        CGPathMoveToPoint(path, NULL, tipX, tipY);
-//                        CGPathAddArcToPoint(path, NULL, barRect.origin.x, tipY, barRect.origin.x, CGRectGetMidY(barRect), baseRadius);
-//                        CGPathAddArcToPoint(path, NULL, barRect.origin.x, barRect.origin.y, tipX, barRect.origin.y, baseRadius);
-//                        CGPathAddLineToPoint(path, NULL, tipX, barRect.origin.y);
-//                    }
-//                    else {
-//                        CGPathMoveToPoint(path, NULL, barRect.origin.x, tipY);
-//                        CGPathAddArcToPoint(path, NULL, barRect.origin.x, barRect.origin.y, CGRectGetMidX(barRect), barRect.origin.y, baseRadius);
-//                        CGPathAddArcToPoint(path, NULL, tipX, barRect.origin.y, tipX, tipY, baseRadius);
-//                        CGPathAddLineToPoint(path, NULL, tipX, tipY);
-//                    }
-//                    CGPathCloseSubpath(path);
-//                }
-//            }
-//            else {
-//                CGFloat tipX = barRect.origin.x + barRect.size.width;
-//                CGFloat tipY = barRect.origin.y + barRect.size.height;
-//
-//                if ( baseRadius == CGFloat(0.0)) {
-//                    // rounded at tip end only
-//                    CGPathMoveToPoint(path, NULL, barRect.origin.x, barRect.origin.y);
-//                    if ( horizontalBars ) {
-//                        CGPathAddArcToPoint(path, NULL, tipX, barRect.origin.y, tipX, CGRectGetMidY(barRect), radius);
-//                        CGPathAddArcToPoint(path, NULL, tipX, tipY, barRect.origin.x, tipY, radius);
-//                        CGPathAddLineToPoint(path, NULL, barRect.origin.x, tipY);
-//                    }
-//                    else {
-//                        CGPathAddArcToPoint(path, NULL, barRect.origin.x, tipY, CGRectGetMidX(barRect), tipY, radius);
-//                        CGPathAddArcToPoint(path, NULL, tipX, tipY, tipX, barRect.origin.y, radius);
-//                        CGPathAddLineToPoint(path, NULL, tipX, barRect.origin.y);
-//                    }
-//                    CGPathCloseSubpath(path);
-//                }
-//                else {
-//                    // rounded at both ends
-//                    if ( horizontalBars ) {
-//                        CGPathMoveToPoint(path, NULL, barRect.origin.x, CGRectGetMidY(barRect));
-//                        CGPathAddArcToPoint(path, NULL, barRect.origin.x, tipY, CGRectGetMidX(barRect), tipY, baseRadius);
-//                        CGPathAddArcToPoint(path, NULL, tipX, tipY, tipX, CGRectGetMidY(barRect), radius);
-//                        CGPathAddArcToPoint(path, NULL, tipX, barRect.origin.y, CGRectGetMidX(barRect), barRect.origin.y, radius);
-//                        CGPathAddArcToPoint(path, NULL, barRect.origin.x, barRect.origin.y, barRect.origin.x, CGRectGetMidY(barRect), baseRadius);
-//                    }
-//                    else {
-        
-        
-//        path.move(to: CGPoint(x: barRect.origin.x, y: barRect.midY), transform: .identity)
-//    path.addArc(tangent1End: CGPoint(x: barRect.origin.x, y: tipY), tangent2End: CGPoint(x: barRect.midX, y: tipY), radius: radius, transform: .identity)
-//    path.addArc(tangent1End: CGPoint(x: tipX, y: tipY), tangent2End: CGPoint(x: tipX, y: barRect.midY), radius: radius, transform: .identity)
-//    path.addArc(tangent1End: CGPoint(x: tipX, y: barRect.origin.y), tangent2End: CGPoint(x: barRect.midX, y: barRect.origin.y), radius: baseRadius, transform: .identity)
-//    path.addArc(tangent1End: CGPoint(x: barRect.origin.x, y: barRect.origin.y), tangent2End: CGPoint(x: barRect.origin.x, y: barRect.midY), radius: baseRadius, transform: .identity)
-        
-//                    }
-//                    CGPathCloseSubpath(path);
-//                }
-//            }
-    
-            return path;
-        }
-    
-    //    -(BOOL)barIsVisibleWithBasePoint:(CGPoint)basePoint width:(NSNumber *)width
-    //    {
-    //        BOOL horizontalBars    = self.barsAreHorizontal;
-    //        CGFloat barWidthLength = [self lengthInView:width.decimalValue];
-    //        CGFloat halfBarWidth   = CGFloat(0.5) * barWidthLength;
-    //
-    //        CPTPlotArea *thePlotArea = self.plotArea;
-    //
-    //        CGFloat lowerBound = (horizontalBars ? CGRectGetMinY(thePlotArea.bounds) : CGRectGetMinX(thePlotArea.bounds));
-    //        CGFloat upperBound = (horizontalBars ? CGRectGetMaxY(thePlotArea.bounds) : CGRectGetMaxX(thePlotArea.bounds));
-    //        CGFloat base       = (horizontalBars ? basePoint.y : basePoint.x);
-    //
-    //        return (base + halfBarWidth >= lowerBound) && (base - halfBarWidth <= upperBound);
-    //    }
-    
-    func barFillForIndex(idx: Int)-> CPTFill
-    {
-        var theBarFill = self.cachedValueForKey(key: NSBindingName.BarFills.rawValue, recordIndex: idx)
-        
-        if theBarFill == nil || (theBarFill == [CPTPlot nilData] {
-            theBarFill = self.fill
-            }
+        // Align to device pixels if there is a line border.
+        // Otherwise, align to view space, so fills are sharp at edges.
+        // Note: may not have a context if doing hit testing.
+        if ( self.alignsPointsToPixels /*&& (context != nil)*/ ) {
+            // Round bar dimensions so adjacent bars always align to the right pixel position
             
-            return theBarFill;
+            let roundingPrecision = CGFloat(1.0e6);
+            
+            barRect.origin.x    = round(barRect.origin.x * roundingPrecision) / roundingPrecision
+            barRect.origin.y    = round(barRect.origin.y * roundingPrecision) / roundingPrecision
+            barRect.size.width  = round(barRect.size.width * roundingPrecision) / roundingPrecision
+            barRect.size.height = round(barRect.size.height * roundingPrecision) / roundingPrecision
+            
+            let theContext = context;
+            
+            if ( self.lineStyle.lineWidth > CGFloat(0.0)) {
+                barRect = CPTAlignRectToUserSpace(theContext, barRect);
+            }
+            else {
+                barRect = CPTAlignIntegralRectToUserSpace(theContext, barRect);
+            }
+        }
+        
+        let radius = CGFloat(min(min(barCornerRadius, abs(barRect.size.width) * CGFloat(0.5)), abs(barRect.size.height) * CGFloat(0.5)))
+        let baseRadius = CGFloat(min(min(barBaseCornerRadius, abs(barRect.size.width) * CGFloat(0.5)), abs(barRect.size.height) * CGFloat(0.5)))
+        
+        
+        
+        if ( widthNegative && (barRect.size.width > CGFloat(0.0))) {
+            barRect.origin.x  += barRect.size.width;
+            barRect.size.width = -barRect.size.width;
+        }
+        if ( heightNegative && (barRect.size.height > CGFloat(0.0))) {
+            barRect.origin.y   += barRect.size.height;
+            barRect.size.height = -barRect.size.height;
+        }
+        
+        let path = CGMutablePath()
+        
+        if ( radius == CGFloat(0.0)) {
+            if ( baseRadius == CGFloat(0.0)) {
+                // square corners
+                path.addRect( barRect)
+            }
+            else {
+                let tipX = barRect.origin.x + barRect.size.width;
+                let tipY = barRect.origin.y + barRect.size.height;
+                
+                // rounded at base end only
+                if ( horizontalBars == true ) {
+                    path.move(to: CGPoint( x: tipX, y: tipY))
+                    
+                    let point1 = CGPoint(x: barRect.origin.x, y: tipY)
+                    let point2 = CGPoint(x: barRect.origin.x, y: barRect.midY)
+                    path.addArc(tangent1End: point1, tangent2End: point2, radius: baseRadius)
+                    
+                    let point3 = CGPoint(x: barRect.origin.x, y: barRect.origin.y)
+                    let point4 = CGPoint(x: tipX, y: barRect.origin.y)
+                    path.addArc(tangent1End: point1, tangent2End: point2, radius: baseRadius,transform:  .identity)
+                    
+                    path.addLine(to: CGPoint( x: tipX, y: barRect.origin.y))
+                }
+                else {
+                    path.move(to: CGPoint(x: barRect.origin.x, y: tipY), transform: .identity)
+                    path.addArc(tangent1End: CGPoint(x: barRect.origin.x, y: barRect.origin.y), tangent2End: CGPoint(x: barRect.midX, y: barRect.origin.y), radius: baseRadius, transform: .identity)
+                    path.addArc(tangent1End: CGPoint(x: tipX, y: barRect.origin.y), tangent2End: CGPoint(x: tipX, y: tipY), radius: baseRadius, transform: .identity)
+                    path.addLine(to: CGPoint(x: tipX, y: tipY), transform: .identity)
+                }
+                path.closeSubpath();
+            }
+        }
+        else {
+            let tipX = barRect.origin.x + barRect.size.width;
+            let tipY = barRect.origin.y + barRect.size.height;
+            
+            if ( baseRadius == CGFloat(0.0)) {
+                // rounded at tip end only
+                path.move(to: CGPoint( x: barRect.origin.x, y: barRect.origin.y ))
+                
+                if ( horizontalBars == true) {
+                    
+                    path.addArc(tangent1End: CGPoint(x: tipX, y: barRect.origin.y), tangent2End: CGPoint(x: tipX, y: barRect.midY), radius: radius, transform: .identity)
+                    path.addArc(tangent1End: CGPoint(x: tipX, y: tipY), tangent2End: CGPoint(x: barRect.origin.x, y: tipY), radius: radius, transform: .identity)
+                    path.addLine(to: CGPoint(x: barRect.origin.x, y: tipY), transform: .identity)
+                }
+                else {
+                    
+                    
+                    path.addArc(tangent1End: CGPoint(x: barRect.origin.x, y: tipY), tangent2End: CGPoint(x: barRect.midX, y: tipY), radius: radius, transform: .identity)
+                    path.addArc(tangent1End: CGPoint(x: tipX, y: tipY), tangent2End: CGPoint(x: tipX, y: barRect.origin.y), radius: radius, transform: .identity)
+                    path.addLine(to: CGPoint(x: tipX, y: barRect.origin.y), transform: .identity)
+                    
+                }
+                path.closeSubpath();
+            }
+            else {
+                // rounded at both ends
+                if ( horizontalBars ) {
+                    path.move(to: CGPoint(x: barRect.origin.x, y: barRect.midY), transform: .identity)
+                    path.addArc(tangent1End: CGPoint(x: barRect.origin.x, y: tipY), tangent2End: CGPoint(x: barRect.midX, y: tipY), radius: baseRadius, transform: .identity)
+                    path.addArc(tangent1End: CGPoint(x: tipX, y: tipY), tangent2End: CGPoint(x: tipX, y: barRect.midY), radius: radius, transform: .identity)
+                    path.addArc(tangent1End: CGPoint(x: tipX, y: barRect.origin.y), tangent2End: CGPoint(x: barRect.midX, y: barRect.origin.y), radius: radius, transform: .identity)
+                    path.addArc(tangent1End: CGPoint(x: barRect.origin.x, y: barRect.origin.y), tangent2End: CGPoint(x: barRect.origin.x, y: barRect.midY), radius: baseRadius, transform: .identity)
+                }
+                else {
+                    path.move(to: CGPoint(x: barRect.origin.x, y: barRect.midY), transform: .identity)
+                    path.addArc(tangent1End: CGPoint(x: barRect.origin.x, y: tipY), tangent2End: CGPoint(x: barRect.midX, y: tipY), radius: radius, transform: .identity)
+                    path.addArc(tangent1End: CGPoint(x: tipX, y: tipY), tangent2End: CGPoint(x: tipX, y: barRect.midY), radius: radius, transform: .identity)
+                    path.addArc(tangent1End: CGPoint(x: tipX, y: barRect.origin.y), tangent2End: CGPoint(x: barRect.midX, y: barRect.origin.y), radius: baseRadius, transform: .identity)
+                    path.addArc(tangent1End: CGPoint(x: barRect.origin.x, y: barRect.origin.y), tangent2End: CGPoint(x: barRect.origin.x, y: barRect.midY), radius: baseRadius, transform: .identity)
+                }
+                path.closeSubpath();
+            }
+        }
+        return path;
+    }
+    
+    func barIsVisibleWithBasePoint(basePoint: CGPoint, width: CGFloat)-> Bool
+    {
+        let horizontalBars    = self.barsAreHorizontal
+        let barWidthLength = self.lengthInView(decimalLength: width)
+        let halfBarWidth   = CGFloat(0.5) * barWidthLength
+        
+        let thePlotArea = self.plotArea;
+        
+        let lowerBound = horizontalBars ? thePlotArea!.bounds.minY : thePlotArea?.bounds.minX
+        let upperBound = horizontalBars ? thePlotArea!.bounds.maxY : thePlotArea!.bounds.maxX
+        let base       = (horizontalBars ? basePoint.y : basePoint.x);
+        
+        return (base + halfBarWidth >= lowerBound!) && (base - halfBarWidth <= upperBound);
+    }
+    
+    func barFillForIndex(idx: Int)-> CPTFill?
+    {
+        var theBarFill = self.cachedValueForKey(key: NSBindingName.BarFills.rawValue, recordIndex: idx) as? CPTFill
+        
+        if theBarFill == nil /*|| (theBarFill == CPTPlot.nilData()*/ {
+            theBarFill = self.fill
+        }
+        return theBarFill
     }
     
     
     func barLineStyleForIndex(idx: Int) -> CPTLineStyle
     {
-        var theBarLineStyle = self.cachedValueForKey( key: NSBindingName.BarLineStyles.rawValue, recordIndex:idx)
+        var theBarLineStyle = self.cachedValueForKey( key: NSBindingName.BarLineStyles.rawValue, recordIndex:idx) as? CPTLineStyle
         
-        if ((theBarLineStyle == nil) || (theBarLineStyle == [CPTPlot nilData])) {
+        if theBarLineStyle == nil /*|| theBarLineStyle == CPTPlot.nilData()*/ {
             theBarLineStyle = self.lineStyle;
         }
         
-        return theBarLineStyle;
+        return theBarLineStyle!;
     }
     
     func barWidthForIndex(idx: Int)-> CGFloat
     {
-        let theBarWidth = self.cachedValueForKey(key: NSBindingName.BarWidths.rawValue, recordIndex:idx)
+        var theBarWidth = self.cachedValueForKey(key: NSBindingName.BarWidths.rawValue, recordIndex:idx) as? CGFloat
         
-        if ((theBarWidth == nil) || (theBarWidth == [CPTPlot nilData])) {
+        if theBarWidth == nil /*|| theBarWidth == CPTPlot.nilData()*/ {
             theBarWidth = self.barWidth;
         }
-        
-        return theBarWidth;
+        return theBarWidth!
     }
     
     func drawBarInContext(context: CGContext, recordIndex idx: Int)
@@ -966,35 +974,34 @@ public class CPTBarPlot: CPTPlot {
         let width = self.barWidthForIndex(idx: idx)
         
         // Return if bar is off screen
-        if self.barIsVisibleWithBasePoint(basePoint, width:width ) == false {
+        if self.barIsVisibleWithBasePoint(basePoint: basePoint, width:width ) == false {
             return
         }
         
-        let path = self.newBarPathWithContext(context,
+        let path = self.newBarPathWithContext(context: context,
                                               basePoint:basePoint,
-                                              tipPoint:tipPoint,
+                                              tip:tipPoint,
                                               width:width)
         
         if ( path ) {
             context.saveGState();
             
             let theBarFill = self.barFillForIndex(idx: idx)
-//            if ( theBarFill is CPTFill ) {
-                context.beginPath()
-                CGContextAddPath(context, path);
-                theBarFill.fillPathInContext(context: context)
-//            }
+            //            if ( theBarFill is CPTFill ) {
+            context.beginPath()
+            context.addPath( path )
+            theBarFill?.fillPathInContext(context: context)
+            //            }
             
             let theLineStyle = self.barLineStyleForIndex(idx: idx)
-//            if ( theLineStyle is CPTLineStyle ) {
-                context.beginPath();
-                CGContextAddPath(context, path);
-                theLineStyle.setLineStyleInContext(context: context)
-                theLineStyle.strokePathInContext(context: context)
-//            }
+            //            if ( theLineStyle is CPTLineStyle ) {
+            context.beginPath()
+            context.addPath( path )
+            theLineStyle.setLineStyleInContext(context: context)
+            theLineStyle.strokePathInContext(context: context)
+            //            }
             
             context.restoreGState();
-            
         }
     }
     
@@ -1003,7 +1010,7 @@ public class CPTBarPlot: CPTPlot {
         super.drawSwatchForLegend(legend: legend, atIndex  :atIndex, inRect: rect, context: context)
         
         if ( self.drawLegendSwatchDecoration ) {
-            let theFill    = self.barFillForIndex( idx: atIndex)
+            let theFill      = self.barFillForIndex( idx: atIndex)
             let theLineStyle = self.barLineStyleForIndex(idx: atIndex)
             
             if ( theFill || theLineStyle ) {
@@ -1049,11 +1056,9 @@ public class CPTBarPlot: CPTPlot {
 
     //    #pragma mark -
     // MARK: Data Labels
-    //
-    //    /// @cond
-    //
-    //    func positionLabelAnnotation:(nonnull CPTPlotSpaceAnnotation *)label forIndex:(NSUInteger)idx
-    //    {
+    override func positionLabelAnnotation(label: CPTPlotSpaceAnnotation, forIndex idx: Int)
+        {
+}
     //        NSDecimal theBaseDecimalValue;
     //
     //        if ( !self.barBasesVary ) {
@@ -1113,10 +1118,7 @@ public class CPTBarPlot: CPTPlot {
     //
     //    /// @endcond
     //
-    //    #pragma mark -
-    //    #pragma mark Legends
-    //
-    //    /// @cond
+    // MARK: -  Legends
     //
     //    /** @internal
     //     *  @brief The number of legend entries provided by this plot.
@@ -1185,47 +1187,20 @@ public class CPTBarPlot: CPTPlot {
     override func dataIndexFromInteractionPoint( point:CGPoint)->Int
     {
         var idx      = NSNotFound;
-        let barCount = self.cachedDataCount;
-        let ii       = 0;
+        let barCount = self.cachedDataCount
+        var ii       = 0;
         
-        while ((ii < barCount) && (idx == NSNotFound)) {
-            let path = self.newBarPathWithContext(nil, recordIndex:ii)
+        while (ii < barCount && idx == NSNotFound) {
+            let path = self.newBarPathWithContext(context: nil, record:ii)
             
-            if path.c {
-                //                                ( CGPathContainsPoint(path, NULL, point, false)) {
+            if path?.contains(point) == false {
                 idx = ii;
             }
-            
-            
             ii += 1
         }
-        
         return idx;
     }
-    //
-    //    /// @endcond
-    //
-    //    /// @name User Interaction
-    //    /// @{
-    //
-    //    /**
-    //     *  @brief Informs the receiver that the user has
-    //     *  @if MacOnly pressed the mouse button. @endif
-    //     *  @if iOSOnly started touching the screen. @endif
-    //     *
-    //     *
-    //     *  If this plot has a delegate that responds to the
-    //     *  @link CPTBarPlotDelegate::barPlot:barTouchDownAtRecordIndex: -barPlot:barTouchDownAtRecordIndex: @endlink or
-    //     *  @link CPTBarPlotDelegate::barPlot:barTouchDownAtRecordIndex:withEvent: -barPlot:barTouchDownAtRecordIndex:withEvent: @endlink
-    //     *  methods, the @par{interactionPoint} is compared with each bar in index order.
-    //     *  The delegate method will be called and this method returns @YES for the first
-    //     *  index where the @par{interactionPoint} is inside a bar.
-    //     *  This method returns @NO if the @par{interactionPoint} is outside all of the bars.
-    //     *
-    //     *  @param event The OS event.
-    //     *  @param interactionPoint The coordinates of the interaction.
-    //     *  @return Whether the event was handled or not.
-    //     **/
+    
     override func pointingDeviceDownEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint)-> Bool
     {
         let theGraph    = self.graph
@@ -1314,18 +1289,16 @@ public class CPTBarPlot: CPTPlot {
     
 
     // MARK: - Accessors
-    //
-    //    /// @cond
-    //
-    //    -(nullable CPTNumberArray *)barTips
-    //    {
-    //        return [[self cachedNumbersForField:CPTBarPlotFieldBarTip] sampleArray];
-    //    }
-    //
-    //    func setBarTips:(nullable CPTNumberArray *)newTips
-    //    {
-    //        [self cacheNumbers:newTips forField:CPTBarPlotFieldBarTip];
-    //    }
+    
+    func barTips()-> CPTNumberArray
+        {
+        return self.cachedNumbers(CPTBarPlotField.tip)
+        }
+    
+    func setBarTips(newTips: CPTNumberArray )
+        {
+        self.cachedNumberForField( forField:CPTBarPlotField.tip)
+        }
     //
     //    -(nullable CPTNumberArray *)barBases
     //    {
@@ -1364,10 +1337,10 @@ public class CPTBarPlot: CPTPlot {
     //    }
     //
     func setBarLineStyles(newBarLineStyles: [CPTLineStyle] )
-        {
-    self.cacheArray( newBarLineStyles, forKey:NSBindingName.CPTBarPlotBindingBarLineStyles.rawValue)
+    {
+        self.cacheArray( newBarLineStyles, forKey:NSBindingName.BarLineStyles.rawValue)
         self.setNeedsDisplay()
-        }
+    }
     
     func setLineStyle(newLineStyle: CPTLineStyle )
     {

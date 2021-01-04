@@ -114,3 +114,5 @@ class CPTLegendEntry : ok
 28-12-20protocol CPTAxisDelegate : CPTLayerDelegate {
 
 add protocol CPTAxisDelegate : CPTLayerDelegate {
+
+### 03-01-21 modify CPTBarPlot big job
