@@ -75,11 +75,11 @@ class CPTMutablePlotRange: CPTPlotRange {
         
         let min1    = self.minLimitDecimal;
         let min2    = (other?.minLimitDecimal)!
-        let minimum = min(min1, min2);
+        var minimum = min(min1, min2);
         
         let max1    = self.maxLimitDecimal;
         let max2    = (other?.maxLimitDecimal)!;
-        let maximum = max(max1, max2);
+        var maximum = max(max1, max2);
         
         if ( self.isInfinite && other!.isInfinite ) {
             if ( self.lengthSign == other?.lengthSign ) {
@@ -154,7 +154,7 @@ class CPTMutablePlotRange: CPTPlotRange {
         
         let min1    = self.minLimitDecimal
         let min2    = other?.minLimitDecimal;
-        let minimum = max(min1, min2!);
+        var minimum = max(min1, min2!);
         
         let max1    = self.maxLimitDecimal
         let max2    = (other?.maxLimitDecimal)!
@@ -248,11 +248,11 @@ class CPTMutablePlotRange: CPTPlotRange {
     func shiftLocationToFitInRange(otherRange: CPTPlotRange )
     {
         switch otherRange.compareToDecimal(self.locationDecimal ) {
-        case CPTPlotRangeComparisonResultNumberBelowRange:
+        case .numberBelowRange:
             self.locationDecimal = otherRange.minLimitDecimal;
             break;
             
-        case CPTPlotRangeComparisonResultNumberAboveRange:
+        case .numberAboveRange:
             self.locationDecimal = otherRange.maxLimitDecimal;
             break;
             

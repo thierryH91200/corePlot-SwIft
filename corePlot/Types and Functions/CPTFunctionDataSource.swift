@@ -169,7 +169,7 @@ class CPTFunctionDataSource: NSObject <CPTPlotDataSource> {
                     if ( count > self.cachedCount ) {
                         self.dataCount   = count;
                         self.cachedCount = count;
-                        self.cachedStep = Double(plotSpace.xRange.lengthDouble / count);
+                        self.cachedStep = Double(plotSpace.xRange.length / count);
                         plot?.reloadData()
                     }
                 }
@@ -266,104 +266,104 @@ class CPTFunctionDataSource: NSObject <CPTPlotDataSource> {
     
     // MARK: - KVO Methods
 
-    func observeValueForKeyPath(keyPath: String, ofObject object: Any, change:(NSDictionary<NSString *, CPTPlotSpace *> *)change context:(nullable void *)
-                                
-    func hello()
-    {
-        if ((context == CPTFunctionDataSourceKVOContext) && [keyPath isEqualToString:@"plotSpace"] && [object isEqual:self.dataPlot] ) {
-            let oldSpace = change[NSKeyValueChangeOldKey];
-            let newSpace = change[NSKeyValueChangeNewKey];
-
-            if ( oldSpace ) {
-                NotificationCenter.defaultCenter.remove(
-                                Observer:self,
-                                name: .CPTPlotSpaceCoordinateMappingDidChangeNotification,
-                                object:oldSpace)
-            }
-
-            if ( newSpace ) {
-                NotificationCenter.defaultCenter.receive(
-                                self
-                                selector:#selector(plotSpaceChanged),
-                                name:.CPTPlotSpaceCoordinateMappingDidChangeNotification,
-                                object:newSpace)
-            }
-
-            self.cachedPlotRange = nil
-                self.plotSpaceChanged()
-        }
-        else {
-            super.observeValueForKeyPath(keyPath, ofObject:object, change:change, context:context)
-        }
-    }
-    // MARK: - CPTScatterPlotDataSource Methods
-func numberOfRecordsForPlot(plot: CPTPlot )-> Int
-{
-    var count = 0;
-    
-    if plot.isEqual(self.dataPlot ) {
-        count = self.dataCount
-    }
-    return count;
-}
-
-    -(nullable CPTNumericData *)dataForPlot:(nonnull CPTPlot *)plot recordIndexRange:(NSRange)indexRange
-    {
-        CPTNumericData *numericData = nil;
-
-        if ( [plot isEqual:self.dataPlot] ) {
-            NSUInteger count = self.dataCount;
-
-            if ( count > 0 ) {
-                CPTPlotRange *xRange = self.cachedPlotRange;
-
-                if ( !xRange ) {
-                    [self plotSpaceChanged];
-                    xRange = self.cachedPlotRange;
-                }
-
-                NSMutableData *data = [[NSMutableData alloc] initWithLength:indexRange.length * 2 * sizeof(double)];
-
-                double *xBytes = data.mutableBytes;
-                double *yBytes = data.mutableBytes + (indexRange.length * sizeof(double));
-
-                double location = xRange.locationDouble;
-                double length   = xRange.lengthDouble;
-                double denom    = (double)(count - ((count > 1) ? 1 : 0));
-
-                NSUInteger lastIndex = NSMaxRange(indexRange);
-
-                CPTDataSourceFunction function = self.dataSourceFunction;
-
-                if ( function ) {
-                    for ( NSUInteger i = indexRange.location; i < lastIndex; i++ ) {
-                        double x = location + ((double)i / denom) * length;
-
-                        *xBytes++ = x;
-                        *yBytes++ = function(x);
-                    }
-                }
-                else {
-                    CPTDataSourceBlock functionBlock = self.dataSourceBlock;
-
-                    if ( functionBlock ) {
-                        for ( NSUInteger i = indexRange.location; i < lastIndex; i++ ) {
-                            double x = location + ((double)i / denom) * length;
-
-                            *xBytes++ = x;
-                            *yBytes++ = functionBlock(x);
-                        }
-                    }
-                }
-
-                numericData = [CPTNumericData numericDataWithData:data
-                                                         dataType:CPTDataType(CPTFloatingPointDataType, sizeof(double), CFByteOrderGetCurrent())
-                                                            shape:@[@(indexRange.length), @2]
-                                                        dataOrder:CPTDataOrderColumnsFirst];
-            }
-        }
-
-        return numericData;
-    }
+//    func observeValueForKeyPath(keyPath: String, ofObject object: Any, change:(NSDictionary<NSString *, CPTPlotSpace *> *)change context:(nullable void *)
+//                                
+//    func hello()
+//    {
+//        if ((context == CPTFunctionDataSourceKVOContext) && [keyPath isEqualToString:@"plotSpace"] && [object isEqual:self.dataPlot] ) {
+//            let oldSpace = change[NSKeyValueChangeOldKey];
+//            let newSpace = change[NSKeyValueChangeNewKey];
+//
+//            if ( oldSpace ) {
+//                NotificationCenter.defaultCenter.remove(
+//                                Observer:self,
+//                                name: .CPTPlotSpaceCoordinateMappingDidChangeNotification,
+//                                object:oldSpace)
+//            }
+//
+//            if ( newSpace ) {
+//                NotificationCenter.defaultCenter.receive(
+//                                self
+//                                selector:#selector(plotSpaceChanged),
+//                                name:.CPTPlotSpaceCoordinateMappingDidChangeNotification,
+//                                object:newSpace)
+//            }
+//
+//            self.cachedPlotRange = nil
+//                self.plotSpaceChanged()
+//        }
+//        else {
+//            super.observeValueForKeyPath(keyPath, ofObject:object, change:change, context:context)
+//        }
+//    }
+//    // MARK: - CPTScatterPlotDataSource Methods
+//func numberOfRecordsForPlot(plot: CPTPlot )-> Int
+//{
+//    var count = 0;
+//    
+//    if plot.isEqual(self.dataPlot ) {
+//        count = self.dataCount
+//    }
+//    return count;
+//}
+//
+//    -(nullable CPTNumericData *)dataForPlot:(nonnull CPTPlot *)plot recordIndexRange:(NSRange)indexRange
+//    {
+//        CPTNumericData *numericData = nil;
+//
+//        if ( [plot isEqual:self.dataPlot] ) {
+//            NSUInteger count = self.dataCount;
+//
+//            if ( count > 0 ) {
+//                CPTPlotRange *xRange = self.cachedPlotRange;
+//
+//                if ( !xRange ) {
+//                    [self plotSpaceChanged];
+//                    xRange = self.cachedPlotRange;
+//                }
+//
+//                NSMutableData *data = [[NSMutableData alloc] initWithLength:indexRange.length * 2 * sizeof(double)];
+//
+//                double *xBytes = data.mutableBytes;
+//                double *yBytes = data.mutableBytes + (indexRange.length * sizeof(double));
+//
+//                double location = xRange.locationDouble;
+//                double length   = xRange.lengthDouble;
+//                double denom    = (double)(count - ((count > 1) ? 1 : 0));
+//
+//                NSUInteger lastIndex = NSMaxRange(indexRange);
+//
+//                CPTDataSourceFunction function = self.dataSourceFunction;
+//
+//                if ( function ) {
+//                    for ( NSUInteger i = indexRange.location; i < lastIndex; i++ ) {
+//                        double x = location + ((double)i / denom) * length;
+//
+//                        *xBytes++ = x;
+//                        *yBytes++ = function(x);
+//                    }
+//                }
+//                else {
+//                    CPTDataSourceBlock functionBlock = self.dataSourceBlock;
+//
+//                    if ( functionBlock ) {
+//                        for ( NSUInteger i = indexRange.location; i < lastIndex; i++ ) {
+//                            double x = location + ((double)i / denom) * length;
+//
+//                            *xBytes++ = x;
+//                            *yBytes++ = functionBlock(x);
+//                        }
+//                    }
+//                }
+//
+//                numericData = [CPTNumericData numericDataWithData:data
+//                                                         dataType:CPTDataType(CPTFloatingPointDataType, sizeof(double), CFByteOrderGetCurrent())
+//                                                            shape:@[@(indexRange.length), @2]
+//                                                        dataOrder:CPTDataOrderColumnsFirst];
+//            }
+//        }
+//
+//        return numericData;
+//    }
 
 }

@@ -447,21 +447,22 @@ extension CPTGraph {
             
             if self.inTitleUpdate == false {
                 self.inTitleUpdate   = true
-                self.attributedTitle = nil;
+                self.attributedTitle = NSAttributedString(string: "")
                 self.inTitleUpdate   = false
                 
                 let theTitleAnnotation = self.titleAnnotation
                 
                 if title != "" {
                     if (( theTitleAnnotation ) != nil) {
-                        theTitleAnnotation?.contentLayer.text = title
+                        let textLayer = theTitleAnnotation?.contentLayer as! CPTTextLayer
+                        textLayer.text = title
                     }
                     else {
                         let frameLayer = self.plotAreaFrame
                         if ( frameLayer ) {
                             let newTitleAnnotation = CPTLayerAnnotation( newAnchorLayer: frameLayer)
                             
-                            let newTextLayer             = CPTTextLayer(newText: title, newStyle: titleTextStyle)
+                            let newTextLayer = CPTTextLayer(newText: title, newStyle: titleTextStyle)
                             
                             newTitleAnnotation.contentLayer       = newTextLayer
                             newTitleAnnotation.displacement       = self.titleDisplacement
@@ -492,9 +493,8 @@ extension CPTGraph {
                 
                 var theTitleAnnotation = self.titleAnnotation;
                 
-                if ( attributedTitle ) {
-                    //                self.titleTextStyle = [CPTTextStyle textStyleWithAttributes:[attributedTitle attributesAtIndex:0
-                    //                                       effectiveRange:NULL]];
+                if ( attributedTitle.string != "" ) {
+                    self.titleTextStyle = CPTTextStyle( textStyleWithAttributes:[attributedTitle attributesAtIndex:0, effectiveRange:nil)
                     self.title = attributedTitle.string
                     
                     if (( theTitleAnnotation ) != nil) {
@@ -503,20 +503,20 @@ extension CPTGraph {
                     else {
                         let frameLayer = self.plotAreaFrame;
                         if ( frameLayer ) {
-                            //                        let newTitleAnnotation = CPTLayerAnnotation( alloc] initWithAnchorLayer:frameLayer];
-                            //                            let newTextLayer             = [[CPTTextLayer alloc] initWithAttributedText:attributedTitle];
-                            //                            newTitleAnnotation.contentLayer       = newTextLayer;
-                            //                            newTitleAnnotation.displacement       = self.titleDisplacement;
-                            //                            newTitleAnnotation.rectAnchor         = self.titlePlotAreaFrameAnchor;
-                            //                            newTitleAnnotation.contentAnchorPoint = [self contentAnchorForRectAnchor:self.titlePlotAreaFrameAnchor];
-                            //                            [self addAnnotation:newTitleAnnotation];
-                            //                            self.titleAnnotation = newTitleAnnotation;
+                        let newTitleAnnotation = CPTLayerAnnotation( frameLayer)
+                        let newTextLayer             = [[CPTTextLayer alloc] initWithAttributedText:attributedTitle];
+                        newTitleAnnotation.contentLayer       = newTextLayer;
+                        newTitleAnnotation.displacement       = self.titleDisplacement;
+                        newTitleAnnotation.rectAnchor         = self.titlePlotAreaFrameAnchor;
+                        newTitleAnnotation.contentAnchorPoint = self.contentAnchorForRectAnchor(self.titlePlotAreaFrameAnchor)
+                        self.addAnnotation(newTitleAnnotation)
+                        self.titleAnnotation = newTitleAnnotation;
                         }
                     }
                 }
                 else {
                     self.titleTextStyle = nil;
-                    self.title          = nil;
+                    self.title          = ""
                     
                     if (( theTitleAnnotation ) != nil) {
                         self.removeAnnotation(theTitleAnnotation)
@@ -534,14 +534,12 @@ extension CPTGraph {
             titleTextStyle = newStyle
             
             if self.inTitleUpdate == false {
-                self.inTitleUpdate   = true
-                self.attributedTitle = nil
-                self.inTitleUpdate   = false
+                self.attributedTitle = NSAttributedString(string: "")
                 
-                let titleLayer = self.titleAnnotation?.contentLayer
-                if ( titleLayer is CPTTextLayer) {
-                    titleLayer.textStyle = titleTextStyle
-                }
+                let titleLayer = self.titleAnnotation?.contentLayer as! CPTTextLayer
+//                if ( titleLayer is CPTTextLayer) {
+                    titleLayer.textStyle = titleTextStyle!
+//                }
             }
         }
     }

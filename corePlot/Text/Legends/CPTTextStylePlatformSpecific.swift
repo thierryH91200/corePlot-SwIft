@@ -9,7 +9,10 @@ import AppKit
 
 
 
-//@implementation CPTTextStyle(CPTPlatformSpecificTextStyleExtensions)
+extension CPTTextStyle//(CPTPlatformSpecificTextStyleExtensions)
+{
+    
+}
 //
 ///** @property nonnull CPTDictionary *attributes
 // *  @brief A dictionary of standard text attributes suitable for formatting an NSAttributedString.
@@ -21,8 +24,9 @@ import AppKit
 // **/
 //@dynamic attributes;
 //
-//#pragma mark -
-//#pragma mark Init/Dealloc
+
+
+// MARK: - Init/Dealloc
 //
 ///** @brief Creates and returns a new CPTTextStyle instance initialized from a dictionary of text attributes.
 // *

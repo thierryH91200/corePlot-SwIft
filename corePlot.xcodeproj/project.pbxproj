@@ -71,7 +71,6 @@
 		035C8A90256D82C700954017 /* CPTPlot Dtat Source.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035C8A8F256D82C700954017 /* CPTPlot Dtat Source.swift */; };
 		035C8A96256D836E00954017 /* CPTPlot Data Caching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035C8A95256D836E00954017 /* CPTPlot Data Caching.swift */; };
 		035C8A9A256D83EE00954017 /* CPTPlot Data Range.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035C8A99256D83EE00954017 /* CPTPlot Data Range.swift */; };
-		035C8A9E256D847700954017 /* CPTPlot Legend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035C8A9D256D847700954017 /* CPTPlot Legend.swift */; };
 		035C8AA2256D85ED00954017 /* CPTPlot Responder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035C8AA1256D85ED00954017 /* CPTPlot Responder.swift */; };
 		037244412545FE4600B59C97 /* corePlot.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 037244372545FE4600B59C97 /* corePlot.framework */; };
 		037244462545FE4600B59C97 /* corePlotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037244452545FE4600B59C97 /* corePlotTests.swift */; };
@@ -191,7 +190,6 @@
 		035C8A8F256D82C700954017 /* CPTPlot Dtat Source.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTPlot Dtat Source.swift"; sourceTree = "<group>"; };
 		035C8A95256D836E00954017 /* CPTPlot Data Caching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTPlot Data Caching.swift"; sourceTree = "<group>"; };
 		035C8A99256D83EE00954017 /* CPTPlot Data Range.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTPlot Data Range.swift"; sourceTree = "<group>"; };
-		035C8A9D256D847700954017 /* CPTPlot Legend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTPlot Legend.swift"; sourceTree = "<group>"; };
 		035C8AA1256D85ED00954017 /* CPTPlot Responder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPTPlot Responder.swift"; sourceTree = "<group>"; };
 		037244372545FE4600B59C97 /* corePlot.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = corePlot.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0372443A2545FE4600B59C97 /* corePlot.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = corePlot.h; sourceTree = "<group>"; };
@@ -516,7 +514,6 @@
 				035C8A95256D836E00954017 /* CPTPlot Data Caching.swift */,
 				035C8A99256D83EE00954017 /* CPTPlot Data Range.swift */,
 				035C8A8F256D82C700954017 /* CPTPlot Dtat Source.swift */,
-				035C8A9D256D847700954017 /* CPTPlot Legend.swift */,
 				035C8AA1256D85ED00954017 /* CPTPlot Responder.swift */,
 				0320B013255C8CA400D32BF9 /* CPTPlot.swift */,
 				03E3D50225683D4200FB3F07 /* CPTPlotAccessors.swift */,
@@ -763,7 +760,6 @@
 				030E06A1259365EA006CE062 /* CPTPieChart reload.swift in Sources */,
 				0320B018255C8CF500D32BF9 /* CPTBarPlot.swift in Sources */,
 				03A9CCF6255973CD0096853D /* CPTGradient.swift in Sources */,
-				035C8A9E256D847700954017 /* CPTPlot Legend.swift in Sources */,
 				037244542545FF1700B59C97 /* CPTLayer.swift in Sources */,
 				0320AFB5255C0EA100D32BF9 /* CPTConstraints.swift in Sources */,
 				0320AFCC255C515800D32BF9 /* CPTSlateTheme.swift in Sources */,

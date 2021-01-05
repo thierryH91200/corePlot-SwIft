@@ -36,15 +36,15 @@ class CPTMaskLayer: CPTLayer {
         super.renderAsVectorInContext(context: context)
 
         let theMaskedLayer = superlayer as? CPTLayer
-        if (( theMaskedLayer ) != nil) {
+        if ( theMaskedLayer != nil) {
             
             context.setFillColor(red: CGFloat(0.0), green: CGFloat(0.0), blue: CGFloat(0.0), alpha: CGFloat(1.0));
 
             if theMaskedLayer != nil {
-                let maskingPath = theMaskedLayer.sublayerMaskingPath
+                let maskingPath = theMaskedLayer?.sublayerMaskingPath()
 
-                if ( maskingPath ) {
-                    CGContextAddPath(context, maskingPath as! CGPath);
+                if (( maskingPath ) != nil) {
+                    context.addPath(maskingPath!);
                     context.fillPath();
                 }
             }

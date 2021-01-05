@@ -61,7 +61,7 @@ extension CPTAxis {
                 if ( minorTickCount > 0 ) {
                     var minorCoord = coord + minorInterval
                     
-                    for minorTickIndex in 0..<Int(minorTickCount) {
+                    for _ in 0..<Int(minorTickCount) {
                         if minorCoord > CGFloat(rangeMax) {
                             break
                         }
@@ -69,7 +69,6 @@ extension CPTAxis {
                         minorCoord = minorCoord + minorInterval
                     }
                 }
-                
                 coord = coord + majorInterval
             }
         }

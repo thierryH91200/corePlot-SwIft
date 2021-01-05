@@ -11,39 +11,43 @@ import Foundation
 extension CPTPlot {
 
 
-//#pragma mark -
-//#pragma mark Responder Chain and User interaction
-//
-///// @name User Interaction
-///// @{
-//
-///**
-// *  @brief Informs the receiver that the user has
-// *  @if MacOnly pressed the mouse button. @endif
-// *  @if iOSOnly started touching the screen. @endif
-// *
-// *
-// *  If this plot has a delegate that responds to the
-// *  @link CPTPlotDelegate::plot:dataLabelTouchDownAtRecordIndex: -plot:dataLabelTouchDownAtRecordIndex: @endlink or
-// *  @link CPTPlotDelegate::plot:dataLabelTouchDownAtRecordIndex:withEvent: -plot:dataLabelTouchDownAtRecordIndex:withEvent: @endlink
-// *  methods, the data labels are searched to find the index of the one containing the @par{interactionPoint}.
-// *  The delegate method will be called and this method returns @YES if the @par{interactionPoint} is within a label.
-// *  This method returns @NO if the @par{interactionPoint} is too far away from all of the data labels.
-// *
-// *  @param event The OS event.
-// *  @param interactionPoint The coordinates of the interaction.
-// *  @return Whether the event was handled or not.
-// **/
+    // MARK: - Responder Chain and User interaction
+
+/// @name User Interaction
+/// @{
+
+/**
+ *  @brief Informs the receiver that the user has
+ *  @if MacOnly pressed the mouse button. @endif
+ *  @if iOSOnly started touching the screen. @endif
+ *
+ *
+ *  If this plot has a delegate that responds to the
+ *  @link CPTPlotDelegate::plot:dataLabelTouchDownAtRecordIndex: -plot:dataLabelTouchDownAtRecordIndex: @endlink or
+ *  @link CPTPlotDelegate::plot:dataLabelTouchDownAtRecordIndex:withEvent: -plot:dataLabelTouchDownAtRecordIndex:withEvent: @endlink
+ *  methods, the data labels are searched to find the index of the one containing the @par{interactionPoint}.
+ *  The delegate method will be called and this method returns @YES if the @par{interactionPoint} is within a label.
+ *  This method returns @NO if the @par{interactionPoint} is too far away from all of the data labels.
+ *
+ *  @param event The OS event.
+ *  @param interactionPoint The coordinates of the interaction.
+ *  @return Whether the event was handled or not.
+ **/
     override func pointingDeviceDownEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint)-> Bool
     {
         self.pointingDeviceDownLabelIndex = NSNotFound;
-        let theGraph = self.graph
         
-        if  (theGraph == nil) || self.isHidden == true {
+        guard self.isHidden == false else { return false }
+        
+        let theGraph = self.graph
+
+
+        
+        if  (theGraph == nil) {
             return false
         }
         
-        let theDelegate = self.delegate as? CPTPlotDelegate
+        weak var theDelegate = self.delegate as? CPTPlotDelegate
         
 //        if ( theDelegate.plot(:dataLabelTouchDownAtRecordIndex:) ||
 //             theDelegate respondsToSelector:@selector(plot:dataLabelTouchDownAtRecordIndex:withEvent:) ||
@@ -67,7 +71,7 @@ extension CPTPlot {
                             self.pointingDeviceDownLabelIndex = idx;
                             var handled = false
                             
-                        if theDelegate.plot:dataLabelTouchDownAtRecordIndex:) ) {
+                        if let method = theDelegate.plot(self, dataLabelTouchDownAtRecordIndex:idx)  {
                                 handled = true
                                 theDelegate?.plot(plot:self, dataLabelTouchDownAtRecordIndex:idx)
                             }
@@ -85,7 +89,6 @@ extension CPTPlot {
 //                }
             }
         }
-        
         return super.pointingDeviceDownEvent(event: event, atPoint:interactionPoint);
     }
     

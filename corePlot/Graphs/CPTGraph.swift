@@ -23,7 +23,7 @@ public class CPTGraph: CPTBorderedLayer {
 
     var title = ""
     var attributedTitle = NSAttributedString()
-    var titleTextStyle : CPTTextStyle
+    var titleTextStyle : CPTTextStyle?
     var titleDisplacement : CGPoint?
     var titlePlotAreaFrameAnchor : CPTRectAnchor?
     
@@ -32,7 +32,7 @@ public class CPTGraph: CPTBorderedLayer {
     var plotSpaces = [CPTPlotSpace]()
     var  titleAnnotation: CPTLayerAnnotation?
     var legendAnnotation: CPTLayerAnnotation?
-    var  inTitleUpdate = false
+    var inTitleUpdate = false
 
     
     // MARK: Layers

@@ -9,7 +9,7 @@ import AppKit
 
 extension CPTAxis {
     
-    // MARK: Accessors
+    // MARK: - Accessors
     func setAxisLabels(newLabels : CPTAxisLabelSet )
     {
         if ( newLabels != axisLabels ) {
@@ -623,40 +623,38 @@ extension CPTAxis {
     //        }
     //    }
     //
-    //    -(void)setTickDirection:(CPTSign)newDirection
-    //    {
-    //        if ( newDirection != tickDirection ) {
-    //            tickDirection = newDirection;
-    //
-    //            [self updateMajorTickLabelOffsets];
-    //            [self updateMinorTickLabelOffsets];
-    //
-    //            [self setNeedsDisplay];
-    //            [self updateMajorTickLabels];
-    //            [self updateMinorTickLabels];
-    //        }
-    //    }
-    //
-    //    -(void)setTickLabelDirection:(CPTSign)newDirection
-    //    {
-    //        if ( newDirection != tickLabelDirection ) {
-    //            tickLabelDirection = newDirection;
-    //
-    //            [self updateMajorTickLabelOffsets];
-    //            [self updateMajorTickLabels];
-    //        }
-    //    }
-    //
-    //    -(void)setMinorTickLabelDirection:(CPTSign)newDirection
-    //    {
-    //        if ( newDirection != minorTickLabelDirection ) {
-    //            minorTickLabelDirection = newDirection;
-    //
-    //            [self updateMinorTickLabelOffsets];
-    //            [self updateMinorTickLabels];
-    //        }
-    //    }
-    //
+    func setTickDirection(_ newDirection: CPTSign) {
+        if newDirection != tickDirection {
+            tickDirection = newDirection
+            
+            updateMajorTickLabelOffsets()
+            updateMinorTickLabelOffsets()
+            
+            setNeedsDisplay()
+            updateMajorTickLabels()
+            updateMinorTickLabels()
+        }
+    }
+    
+    func setTickLabelDirection(_ newDirection: CPTSign) {
+        if newDirection != tickLabelDirection {
+            tickLabelDirection = newDirection
+            
+            updateMajorTickLabelOffsets()
+            updateMajorTickLabels()
+        }
+    }
+
+    func setMinorTickLabelDirection(newDirection: CPTSign)
+    {
+        if ( newDirection != minorTickLabelDirection ) {
+            minorTickLabelDirection = newDirection;
+            
+            self.updateMinorTickLabelOffsets()
+            self.updateMinorTickLabels()
+        }
+    }
+    
     //    -(void)setGridLinesRange:(nullable CPTPlotRange *)newRange
     //    {
     //        if ( gridLinesRange != newRange ) {
@@ -775,36 +773,34 @@ extension CPTAxis {
         }
     }
     
+    func setSeparateLayers(newSeparateLayers: Bool)
+    {
+        if ( newSeparateLayers != separateLayers ) {
+            separateLayers = newSeparateLayers;
+            if separateLayers == true  {
+                if (( self.minorGridLineStyle ) != nil) {
+                    let gridLines = CPTGridLines()
+                    self.minorGridLines = gridLines;
+                }
+                if (( self.majorGridLineStyle ) != nil) {
+                    let gridLines = CPTGridLines()
+                    self.majorGridLines = gridLines;
+                }
+            }
+            else {
+                let thePlotArea = self.plotArea;
+                self.minorGridLines = nil;
+                if (( self.minorGridLineStyle ) != nil) {
+                    thePlotArea?.minorGridLineGroup?.setNeedsDisplay()
+                }
+                self.majorGridLines = nil;
+                if (self.majorGridLineStyle != nil)  {
+                    thePlotArea?.majorGridLineGroup?.setNeedsDisplay()
+                }
+            }
+        }
+    }
     
-    
-    //    -(void)setSeparateLayers:(BOOL)newSeparateLayers
-    //    {
-    //        if ( newSeparateLayers != separateLayers ) {
-    //            separateLayers = newSeparateLayers;
-    //            if ( separateLayers ) {
-    //                if ( self.minorGridLineStyle ) {
-    //                    CPTGridLines *gridLines = [[CPTGridLines alloc] init];
-    //                    self.minorGridLines = gridLines;
-    //                }
-    //                if ( self.majorGridLineStyle ) {
-    //                    CPTGridLines *gridLines = [[CPTGridLines alloc] init];
-    //                    self.majorGridLines = gridLines;
-    //                }
-    //            }
-    //            else {
-    //                CPTPlotArea *thePlotArea = self.plotArea;
-    //                self.minorGridLines = nil;
-    //                if ( self.minorGridLineStyle ) {
-    //                    [thePlotArea.minorGridLineGroup setNeedsDisplay];
-    //                }
-    //                self.majorGridLines = nil;
-    //                if ( self.majorGridLineStyle ) {
-    //                    [thePlotArea.majorGridLineGroup setNeedsDisplay];
-    //                }
-    //            }
-    //        }
-    //    }
-    //
     func setMinorGridLines(_ newGridLines: CPTGridLines) {
         let oldGridLines = minorGridLines
         
@@ -819,32 +815,32 @@ extension CPTAxis {
                 gridLines.axis = self
                 
                 let thePlotArea = plotArea
-                thePlotArea?.minorGridLineGroup!.insertSublayer(gridLines, at: (thePlotArea?.sublayerIndex(forAxis: self, layerType: .minorGridLines))!)
+                let index = (thePlotArea?.sublayerIndexForAxis(axis: self, layerType: .minorGridLines))!
+                thePlotArea?.minorGridLineGroup!.insertSublayer(gridLines, at: UInt32(index))
             }
         }
     }
     
     
-    //    -(void)setMajorGridLines:(nullable CPTGridLines *)newGridLines
-    //    {
-    //        CPTGridLines *oldGridLines = majorGridLines;
-    //
-    //        if ( newGridLines != oldGridLines ) {
-    //            [oldGridLines removeFromSuperlayer];
-    //            majorGridLines = newGridLines;
-    //
-    //            if ( newGridLines ) {
-    //                CPTGridLines *gridLines = newGridLines;
-    //
-    //                gridLines.major = YES;
-    //                gridLines.axis  = self;
-    //
-    //                CPTPlotArea *thePlotArea = self.plotArea;
-    //                [thePlotArea.majorGridLineGroup insertSublayer:gridLines atIndex:[thePlotArea sublayerIndexForAxis:self layerType:CPTGraphLayerTypeMajorGridLines]];
-    //            }
-    //        }
-    //    }
-    //
+    func setMajorGridLines(newGridLines: CPTGridLines )
+        {
+            let oldGridLines = majorGridLines;
+    
+            if ( newGridLines != oldGridLines ) {
+                oldGridLines?.removeFromSuperlayer()
+                majorGridLines = newGridLines;
+    
+                let gridLines = newGridLines;
+    
+                gridLines.major = true
+                gridLines.axis  = self;
+                
+                let thePlotArea = self.plotArea;
+                let index = thePlotArea?.sublayerIndexForAxis(axis: self, layerType:CPTGraphLayerType.majorGridLines)
+                thePlotArea?.majorGridLineGroup?.insertSublayer(gridLines, at:UInt32(index!))
+            }
+        }
+    
     //    -(void)setAlternatingBandFills:(nullable CPTFillArray *)newFills
     //    {
     //        if ( newFills != alternatingBandFills ) {
@@ -943,19 +939,19 @@ extension CPTAxis {
         }
     }
     
-    
     func updateCustomTickLabels()
     {
-        //        let range = NSRange(location: 0,length: 0) //self.plotSpace.plotRangeForCoordinate(self.coordinate)
-        let range = self.plotSpace?.plotRangeForCoordinate(coordinate: self.coordinate) as! CPTMutablePlotRange
+        //        let range = NSRange(location: 0,length: 0)
+        //self.plotSpace.plotRangeForCoordinate(self.coordinate)
+        let range = self.plotSpace?.plotRangeForCoordinate(coordinate: self.coordinate) as? CPTMutablePlotRange
         
         if (( range ) != nil) {
             let theVisibleRange = self.visibleRange;
             if (( theVisibleRange ) != nil) {
-                range.intersectionPlotRange(other: theVisibleRange!)
+                range?.intersectionPlotRange(other: theVisibleRange!)
             }
             
-            if ( range.lengthDouble != 0.0 ) {
+            if ( range?.lengthDouble != 0.0 ) {
                 let orthogonalCoordinate = CPTUtilities.shared.CPTOrthogonalCoordinate(self.coordinate)
                 
                 var direction = self.tickLabelDirection;
@@ -965,8 +961,8 @@ extension CPTAxis {
                 }
                 
                 for label in self.axisLabels {
-                    let isVisible = range.containsNumber(number: label.tickLocation)
-                    label.contentLayer.isHidden = !isVisible;
+                    let isVisible = range?.containsNumber(number: label.tickLocation)
+                    label.contentLayer.isHidden = !isVisible!;
                     if ( isVisible == true) {
                         let tickBasePoint = self.viewPointForCoordinateValue(coordinateValue: label.tickLocation)
                         label.positionRelativeToViewPoint(point: tickBasePoint, coordinate:orthogonalCoordinate, direction:direction)
@@ -974,8 +970,8 @@ extension CPTAxis {
                 }
                 
                 for label in self.minorTickAxisLabels {
-                    let isVisible = range.containsNumber(number: label.tickLocation)
-                    label.contentLayer.isHidden = !isVisible
+                    let isVisible = range?.containsNumber(number: label.tickLocation)
+                    label.contentLayer.isHidden = !isVisible!
                     if ( isVisible == true) {
                         let tickBasePoint = self.viewPointForCoordinateValue(coordinateValue: label.tickLocation)
                         label.positionRelativeToViewPoint(point: tickBasePoint, coordinate:orthogonalCoordinate, direction:direction)
@@ -1025,9 +1021,9 @@ extension CPTAxis {
         }
     }
     
-    
-    //     @brief Update the major tick mark labels.
-    //     **/
+    /**
+     * @brief Update the major tick mark labels.
+     **/
     func updateMajorTickLabels()
     {
         let orthogonalCoordinate = CPTUtilities.shared.CPTOrthogonalCoordinate(self.coordinate);
@@ -1044,9 +1040,9 @@ extension CPTAxis {
         }
     }
     
-    //    /**
-    //     *  @brief Update the minor tick mark labels.
-    //     **/
+    /**
+     *  @brief Update the minor tick mark labels.
+     **/
     func updateMinorTickLabels() {
         
         let orthogonalCoordinate = CPTUtilities.shared.CPTOrthogonalCoordinate(coordinate)

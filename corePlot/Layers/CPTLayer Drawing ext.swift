@@ -148,7 +148,7 @@ extension CPTLayer {
         let pdfData = Data()
         var dataConsumer: CGDataConsumer? = nil
         if let data = pdfData  {
-            dataConsumer = CGDataConsumer(data: data)
+            dataConsumer = CGDataConsumer(data: data as! CFMutableData)
         }
         
         var mediaBox = CGRect(x: 0.0, y: 0.0, width: bounds.size.width, height: bounds.size.height)

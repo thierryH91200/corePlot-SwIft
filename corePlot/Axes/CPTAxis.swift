@@ -568,10 +568,10 @@ public class CPTAxis : CPTLayer {
         
         if ((locations.count == 0) || !theLabelTextStyle || !theLabelFormatter ) {
             if ( useMajorAxisLabels ) {
-                self.axisLabels = nil;
+                self.axisLabels.removeAll()
             }
             else {
-                self.minorTickAxisLabels = nil;
+                self.minorTickAxisLabels.removeAll()
             }
             return
         }
@@ -582,12 +582,12 @@ public class CPTAxis : CPTLayer {
         
         let thePlotSpace = self.plotSpace;
         let myCoordinate = self.coordinate;
-        var hasCategories         = thePlotSpace?.scaleTypeForCoordinate(coordinate: myCoordinate) == CPTScaleType.category
+        var hasCategories = thePlotSpace?.scaleTypeForCoordinate(coordinate: myCoordinate) == CPTScaleType.category
         
         let direction = self.tickDirection;
         
         if ( theLabelDirection == CPTSign.none ) {
-            theLabelDirection = direction;
+            theLabelDirection = direction
         }
         
         if ((direction == CPTSign.none) || (theLabelDirection == direction)) {
@@ -596,19 +596,18 @@ public class CPTAxis : CPTLayer {
         
         let thePlotArea = self.plotArea;
         
-        thePlotArea.setAxisSetLayersForType(layerType: CPTGraphLayerType.AxisLabels)
+        thePlotArea?.setAxisSetLayersForType(layerType: CPTGraphLayerType.axisLabels)
         
-        let oldAxisLabels;
-        
+        var oldAxisLabels = Set<CPTAxisLabel>()
         if ( useMajorAxisLabels == true ) {
-            oldAxisLabels = self.axisLabels
+            oldAxisLabels.insert( self.axisLabels )
         }
         else {
-            oldAxisLabels = self.minorTickAxisLabels
+            oldAxisLabels.insert( self.minorTickAxisLabels )
         }
         
-        CPTMutableAxisLabelSet newAxisLabels = [[NSMutableSet alloc] initWithCapacity:locations.count];
-        let blankLabel          = CPTAxisLabel(newText: nil, newStyle:nil);
+        var newAxisLabels = Set<CPTAxisLabel>()
+        let blankLabel         = CPTAxisLabel(newText: nil, newStyle:nil);
         let axisLabelGroup     = thePlotArea!.axisLabelGroup;
         var lastLayer          : CPTLayer?
         
@@ -1838,40 +1837,7 @@ public class CPTAxis : CPTLayer {
     //        }
     //    }
     //
-    //   func setTickDirection:(CPTSign)newDirection
-    //    {
-    //        if ( newDirection != tickDirection ) {
-    //            tickDirection = newDirection;
-    //
-    //            [self updateMajorTickLabelOffsets];
-    //            [self updateMinorTickLabelOffsets];
-    //
-    //            [self setNeedsDisplay];
-    //            [self updateMajorTickLabels];
-    //            [self updateMinorTickLabels];
-    //        }
-    //    }
-    //
-    //   func setTickLabelDirection:(CPTSign)newDirection
-    //    {
-    //        if ( newDirection != tickLabelDirection ) {
-    //            tickLabelDirection = newDirection;
-    //
-    //            [self updateMajorTickLabelOffsets];
-    //            [self updateMajorTickLabels];
-    //        }
-    //    }
-    //
-    //   func setMinorTickLabelDirection:(CPTSign)newDirection
-    //    {
-    //        if ( newDirection != minorTickLabelDirection ) {
-    //            minorTickLabelDirection = newDirection;
-    //
-    //            [self updateMinorTickLabelOffsets];
-    //            [self updateMinorTickLabels];
-    //        }
-    //    }
-    //
+
     //   func setGridLinesRange:(nullable CPTPlotRange *)newRange
     //    {
     //        if ( gridLinesRange != newRange ) {

@@ -17,7 +17,6 @@ enum CPTGraphLayerType : String, CaseIterable {
     case axisTitles     = "axisTitles"
 }
 
-
 @objc
 public protocol CPTPlotAreaDelegate: CALayerDelegate {
     

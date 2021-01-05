@@ -22,7 +22,6 @@ public class CPTLayer : CALayer
     var graph  : CPTGraph?     = nil
     var identifier  : Any?
 
-    
     var maskingPath :  CGPath? {
         set {   }
         get {
@@ -165,7 +164,6 @@ public class CPTLayer : CALayer
         }
     }
 
-    
     init ( frame : CGRect) {
         
         paddingLeft          = 0.0

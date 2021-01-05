@@ -443,21 +443,21 @@
     //     *  @return The plot with the given identifier or nil if it was not found.
     //     **/
     func plotWithIdentifier(identifier: Any) ->CPTPlot?
-        {
+    {
         let identifier = identifier as! UUID
-            for plot in self.plots {
-                if plot.identifier == identifier {
-                    return plot
-                }
+        for plot in self.plots {
+            if plot.identifier == identifier {
+                return plot
             }
-            return nil;
         }
+        return nil;
+    }
     
     // MARK:  Organizing Plots
-    //
-    //    /** @brief Add a plot to the legend.
-    //     *  @param plot The plot.
-    //     **/
+    
+        /** @brief Add a plot to the legend.
+         *  @param plot The plot.
+         **/
     func addPlot(plot : CPTPlot)
     {
         self.plots.append(plot)
@@ -765,7 +765,7 @@
                     theDelegate?.legend?( legend: self, legendEntryForPlot:legendPlot!, touchDownAtIndex:legendEntry.index, withEvent:event)
                     handled = true
                     
-                    theDelegate?.legend(legend: self, legendEntryForPlot:legendPlot!, wasSelectedAtIndex:legendEntry.index, withEvent:event)
+                    theDelegate?.legend!(legend: self, legendEntryForPlot:legendPlot!, wasSelectedAtIndex:legendEntry.index, withEvent:event)
                     handled = true
                     
                     if handled == true {
