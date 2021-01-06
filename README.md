@@ -43,16 +43,10 @@ CPTFunctionDataSource/observeValueForKeyPath
 Swift has inherited the support for the KVO from Objective-C, but unlike the latter, KVO is disabled in Swift classes by default.
 
 
-## class CPTMutablePlotRange
+## respondsToSelector
 
-// https://izziswift.com/what-is-the-swift-equivalent-of-respondstoselector/
-func pointingDeviceDownEven(event: CPTNativeEvent, atPoint interactionPoint:CGPoint)-> Bool
-{
-    let theDelegate = self.delegate
-    guard let handledByDelegate = theDelegate?.plotSpace(space: self, shouldHandlePointingDeviceDownEvent: event, atPoint: interactionPoint)
-    else { return false}
-    return handledByDelegate;
-}
+ https://izziswift.com/what-is-the-swift-equivalent-of-respondstoselector/
+https://webdevdesigner.com/q/what-is-the-swift-equivalent-of-respondstoselector-16899/
 
 
 
@@ -116,3 +110,4 @@ class CPTLegendEntry : ok
 add protocol CPTAxisDelegate : CPTLayerDelegate {
 
 ### 03-01-21 modify CPTBarPlot big job
+### 06-01-211 CPTPieChart

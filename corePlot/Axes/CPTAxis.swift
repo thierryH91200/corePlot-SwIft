@@ -895,21 +895,22 @@ public class CPTAxis : CPTLayer {
     //    /**
     //     *  @brief Update the minor tick mark labels.
     //     **/
-    //   func updateMinorTickLabels
-    //    {
-    //        CPTCoordinate orthogonalCoordinate = CPTOrthogonalCoordinate(self.coordinate);
-    //
-    //        CPTSign direction = self.minorTickLabelDirection;
-    //
-    //        if ( direction == CPTSignNone ) {
-    //            direction = self.tickDirection;
-    //        }
-    //
-    //        for ( CPTAxisLabel *label in self.minorTickAxisLabels ) {
-    //            CGPoint tickBasePoint = [self viewPointForCoordinateValue:label.tickLocation];
-    //            [label positionRelativeToViewPoint:tickBasePoint forCoordinate:orthogonalCoordinate inDirection:direction];
-    //        }
-    //    }
+//    func updateMinorTickLabels()
+//    {
+//        let orthogonalCoordinate = CPTOrthogonalCoordinate(coordinate)
+//
+//        var direction = minorTickLabelDirection
+//
+//        if direction == CPTSign.none {
+//            direction = tickDirection
+//        }
+//
+//        for label in minorTickAxisLabels {
+//            let tickBasePoint = viewPoint(forCoordinateValue: label.tickLocation)
+//            label.positionRelative(toViewPoint: tickBasePoint, for: orthogonalCoordinate, inDirection: direction)
+//        }
+//
+//    }
     
     //
     // MARK: - Titles
@@ -938,23 +939,19 @@ public class CPTAxis : CPTLayer {
                                                     direction:direction)
     }
 
-
-    
-    
 // MARK: - Layout
-    //   func layoutSublayers
-    //    {
-    //        if ( self.needsRelabel ) {
-    //            [self relabel];
-    //        }
-    //        else {
-    //            [self updateMajorTickLabels];
-    //            [self updateMinorTickLabels];
-    //        }
-    //        [self updateAxisTitle];
-    //    }
-
-
+    public override func layoutSublayers()
+    {
+        if self.needsRelabel == true {
+            self.relabel()
+        }
+        else {
+            self.updateMajorTickLabels();
+            self.updateMinorTickLabel()
+        }
+        self.updateAxisTitle()
+    }
+    
     // MARK: -  Background Bands
     //
     //    /** @brief Add a background limit band.
@@ -999,108 +996,68 @@ public class CPTAxis : CPTLayer {
     }
     
     // MARK: -  Responder Chain and User Interaction
-    //
-    //    /**
-    //     *  @brief Informs the receiver that the user has
-    //     *  @if MacOnly pressed the mouse button. @endif
-    //     *  @if iOSOnly started touching the screen. @endif
-    //     *
-    //     *
-    //     *  If this axis has a delegate that responds to either
-    //     *  @link CPTAxisDelegate::axis:labelTouchDown: -axis:labelTouchDown: @endlink or
-    //     *  @link CPTAxisDelegate::axis:labelTouchDown:withEvent: -axis:labelTouchDown:withEvent: @endlink
-    //     *  methods, the axis labels are searched to find the one containing the @par{interactionPoint}.
-    //     *  The delegate method will be called and this method returns @true if the @par{interactionPoint} is within a label.
-    //     *
-    //     *  If this axis has a delegate that responds to either
-    //     *  @link CPTAxisDelegate::axis:minorTickTouchDown: -axis:minorTickTouchDown: @endlink or
-    //     *  @link CPTAxisDelegate::axis:minorTickTouchDown:withEvent: -axis:minorTickTouchDown:withEvent: @endlink
-    //     *  methods, the minor tick axis labels are searched to find the one containing the @par{interactionPoint}.
-    //     *  The delegate method will be called and this method returns @true if the @par{interactionPoint} is within a label.
-    //     *
-    //     *  This method returns @NO if the @par{interactionPoint} is outside all of the labels.
-    //     *
-    //     *  @param event The OS event.
-    //     *  @param interactionPoint The coordinates of the interaction.
-    //     *  @return Whether the event was handled or not.
-    //     **/
-    //    -(BOOL)pointingDeviceDownEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
-    //    {
-    //        CPTGraph *theGraph = self.graph;
-    //
-    //        if ( !theGraph || self.hidden ) {
-    //            return false
-    //        }
-    //
-    //        id<CPTAxisDelegate> theDelegate = (id<CPTAxisDelegate>)self.delegate;
-    //
-    //        // Tick labels
-    //        if ( [theDelegate respondsToSelector:@selector(axis:labelTouchDown:)] ||
-    //             [theDelegate respondsToSelector:@selector(axis:labelTouchDown:withEvent:)] ||
-    //             [theDelegate respondsToSelector:@selector(axis:labelWasSelected:)] ||
-    //             [theDelegate respondsToSelector:@selector(axis:labelWasSelected:withEvent:)] ) {
-    //            for ( CPTAxisLabel *label in self.axisLabels ) {
-    //                CPTLayer *contentLayer = label.contentLayer;
-    //                if ( contentLayer && !contentLayer.hidden ) {
-    //                    CGPoint labelPoint = [theGraph convertPoint:interactionPoint toLayer:contentLayer];
-    //
-    //                    if ( CGRectContainsPoint(contentLayer.bounds, labelPoint)) {
-    //                        self.pointingDeviceDownLabel = label;
-    //                        var handled = false
-    //
-    //                        if ( [theDelegate respondsToSelector:@selector(axis:labelTouchDown:)] ) {
-    //                            handled = true;
-    //                            [theDelegate axis:self labelTouchDown:label];
-    //                        }
-    //
-    //                        if ( [theDelegate respondsToSelector:@selector(axis:labelTouchDown:withEvent:)] ) {
-    //                            handled = true;
-    //                            [theDelegate axis:self labelTouchDown:label withEvent:event];
-    //                        }
-    //
-    //                        if ( handled ) {
-    //                            return true;
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //        }
-    //
-    //        // Minor tick labels
-    //        if ( [theDelegate respondsToSelector:@selector(axis:minorTickTouchDown:)] ||
-    //             [theDelegate respondsToSelector:@selector(axis:minorTickTouchDown:withEvent:)] ||
-    //             [theDelegate respondsToSelector:@selector(axis:minorTickLabelWasSelected:)] ||
-    //             [theDelegate respondsToSelector:@selector(axis:minorTickLabelWasSelected:withEvent:)] ) {
-    //            for ( CPTAxisLabel *label in self.minorTickAxisLabels ) {
-    //                CPTLayer *contentLayer = label.contentLayer;
-    //                if ( contentLayer && !contentLayer.hidden ) {
-    //                    CGPoint labelPoint = [theGraph convertPoint:interactionPoint toLayer:contentLayer];
-    //
-    //                    if ( CGRectContainsPoint(contentLayer.bounds, labelPoint)) {
-    //                        self.pointingDeviceDownTickLabel = label;
-    //                        var handled = false
-    //
-    //                        if ( [theDelegate respondsToSelector:@selector(axis:minorTickTouchDown:)] ) {
-    //                            handled = true;
-    //                            [theDelegate axis:self minorTickTouchDown:label];
-    //                        }
-    //
-    //                        if ( [theDelegate respondsToSelector:@selector(axis:minorTickTouchDown:withEvent:)] ) {
-    //                            handled = true;
-    //                            [theDelegate axis:self minorTickTouchDown:label withEvent:event];
-    //                        }
-    //
-    //                        if ( handled ) {
-    //                            return true;
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //        }
-    //
-    //        return [super pointingDeviceDownEvent:event atPoint:interactionPoint];
-    //    }
-    //
+    override func pointingDeviceDownEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint)-> Bool
+    {
+        guard self.isHidden == false else { return false }
+        
+        let theGraph = self.graph;
+        guard theGraph != nil else { return false }
+        
+        weak var theDelegate = self.delegate as? CPTAxisDelegate
+        
+        // Tick labels
+        
+        for label in self.axisLabels {
+            let contentLayer = label.contentLayer;
+            if contentLayer.isHidden == false {
+                let labelPoint = theGraph?.convert(interactionPoint, to:contentLayer)
+                
+                if contentLayer.bounds.contains( labelPoint!) == true {
+                    self.pointingDeviceDownLabel = label;
+                    var handled = false
+                    
+                    if ((theDelegate?.axis(axis:labelTouchDown:)) != nil) {
+                        handled = true;
+                        theDelegate?.axis(axis: self, labelTouchDown:label)
+                    }
+                    
+                    if ((theDelegate?.axis(axis:labelTouchDown:withEvent:)) != nil) {
+                        handled = true;
+                        theDelegate?.axis(axis:self, labelTouchDown:label, withEvent:event)
+                    }
+                    guard handled == false else { return true }
+                }
+            }
+        }
+        
+        // Minor tick labels
+        for label in self.minorTickAxisLabels {
+            let contentLayer = label.contentLayer;
+            if ( !contentLayer.isHidden ) {
+                
+                let labelPoint = theGraph?.convert(interactionPoint, to:contentLayer)
+                
+                if contentLayer.bounds.contains(labelPoint!) == true {
+                    self.pointingDeviceDownTickLabel = label;
+                    var handled = false
+                    
+                    if ((theDelegate?.axis(axis: minorTickTouchDown:)) != nil) {
+                        handled = true;
+                        theDelegate?.axis(axis:self, minorTickTouchDown:label)
+                    }
+                    
+                    if ((theDelegate?.axis(axis:minorTickTouchDown:withEvent:)) != nil) {
+                        handled = true;
+                        theDelegate?.axis(axis: self, minorTickTouchDown:label, withEvent:event)
+                    }
+                    guard handled == false else { return true }
+                }
+            }
+        }
+        return super.pointingDeviceDownEvent(event: event, atPoint:interactionPoint)
+    }
+
+    
     //    /**
     //     *  @brief Informs the receiver that the user has
     //     *  @if MacOnly released the mouse button. @endif
@@ -1237,8 +1194,7 @@ public class CPTAxis : CPTLayer {
     //
     //    /// @}
     //
-    //    #pragma mark -
-    //    #pragma mark Accessors
+    // MARK: - Accessors
     //
     //    /// @cond
     //
@@ -1396,24 +1352,25 @@ public class CPTAxis : CPTLayer {
     //        }
     //    }
     //
-    //   func setTitleRotation:(CGFloat)newRotation
-    //    {
-    //        if ( newRotation != titleRotation ) {
-    //            titleRotation = newRotation;
-    //
-    //            self.axisTitle.rotation = titleRotation;
-    //            [self updateAxisTitle];
-    //        }
-    //    }
-    //
-    //   func setTitleDirection:(CPTSign)newDirection
-    //    {
-    //        if ( newDirection != titleDirection ) {
-    //            titleDirection = newDirection;
-    //
-    //            [self updateAxisTitle];
-    //        }
-    //    }
+    
+    func setTitleRotation(newRotation: CGFloat)
+        {
+            if ( newRotation != titleRotation ) {
+                titleRotation = newRotation;
+    
+                self.axisTitle?.rotation = titleRotation!;
+                self.updateAxisTitle()
+            }
+        }
+    
+    func setTitleDirection(newDirection: CPTSign)
+        {
+            if ( newDirection != titleDirection ) {
+                titleDirection = newDirection;
+    
+                self.updateAxisTitle()
+            }
+        }
     //
     //   func setTitle:(nullable NSString *)newTitle
     //    {

@@ -9,179 +9,106 @@ import Foundation
 
 
 extension CPTPlot {
-
-
+    
+    
     // MARK: - Responder Chain and User interaction
-
-/// @name User Interaction
-/// @{
-
-/**
- *  @brief Informs the receiver that the user has
- *  @if MacOnly pressed the mouse button. @endif
- *  @if iOSOnly started touching the screen. @endif
- *
- *
- *  If this plot has a delegate that responds to the
- *  @link CPTPlotDelegate::plot:dataLabelTouchDownAtRecordIndex: -plot:dataLabelTouchDownAtRecordIndex: @endlink or
- *  @link CPTPlotDelegate::plot:dataLabelTouchDownAtRecordIndex:withEvent: -plot:dataLabelTouchDownAtRecordIndex:withEvent: @endlink
- *  methods, the data labels are searched to find the index of the one containing the @par{interactionPoint}.
- *  The delegate method will be called and this method returns @YES if the @par{interactionPoint} is within a label.
- *  This method returns @NO if the @par{interactionPoint} is too far away from all of the data labels.
- *
- *  @param event The OS event.
- *  @param interactionPoint The coordinates of the interaction.
- *  @return Whether the event was handled or not.
- **/
     override func pointingDeviceDownEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint)-> Bool
     {
         self.pointingDeviceDownLabelIndex = NSNotFound;
         
         guard self.isHidden == false else { return false }
         
-        let theGraph = self.graph
-
-
-        
-        if  (theGraph == nil) {
-            return false
-        }
+        let theGraph = self.graph;
+        guard theGraph != nil else { return false }
         
         weak var theDelegate = self.delegate as? CPTPlotDelegate
         
-//        if ( theDelegate.plot(:dataLabelTouchDownAtRecordIndex:) ||
-//             theDelegate respondsToSelector:@selector(plot:dataLabelTouchDownAtRecordIndex:withEvent:) ||
-//             theDelegate respondsToSelector:@selector(plot:dataLabelWasSelectedAtRecordIndex:) ||
-//             theDelegate respondsToSelector:@selector(plot:dataLabelWasSelectedAtRecordIndex:withEvent:) ) {
-            // Inform delegate if a label was hit
+        // Inform delegate if a label was hit
+        let labelArray = self.labelAnnotations;
+        let labelCount = labelArray.count
+        
+        for  idx in 0..<labelCount {
             
-            let labelArray = self.labelAnnotations;
-            let labelCount                 = labelArray.count;
-            let annotationClass            = [CPTAnnotation]()
+            let annotation = labelArray[idx];
             
-            for  idx in 0..<labelCount {
-                let annotation = labelArray[idx];
-//                if annotation is Array<CPTAnnotation> {
+            let labelLayer = annotation.contentLayer;
+            if ( (labelLayer != nil) && !labelLayer!.isHidden ) {
+                let labelPoint = theGraph?.convert(interactionPoint, to:labelLayer)
+                
+                if  labelLayer!.bounds.contains( labelPoint!) == true{
+                    self.pointingDeviceDownLabelIndex = idx;
+                    var handled = false
                     
-                let labelLayer = annotation.contentLayer;
-                if ( (labelLayer != nil) && !labelLayer!.isHidden ) {
-                    let labelPoint = theGraph?.convert(interactionPoint, to:labelLayer)
-                        
-                    if  labelLayer!.bounds.contains( labelPoint!) == true{
-                            self.pointingDeviceDownLabelIndex = idx;
-                            var handled = false
-                            
-                        if let method = theDelegate.plot(self, dataLabelTouchDownAtRecordIndex:idx)  {
-                                handled = true
-                                theDelegate?.plot(plot:self, dataLabelTouchDownAtRecordIndex:idx)
-                            }
-                            
-                            if theDelegate.plot(plot:self, dataLabelTouchDownAtRecordIndex:idx, withEvent:event) {
-                                handled = true
-                                theDelegate!.plot(plot: self, dataLabelTouchDownAtRecordIndex:idx, event:event)
-                            }
-                            
-                            if ( handled ) {
-                                return true
-                            }
-                        }
+                    if (theDelegate?.plot(plot: dataLabelTouchDownAtRecordIndex:)) != nil  {
+                        handled = true
+                        theDelegate?.plot(plot:self, dataLabelTouchDownAtRecordIndex: idx)
                     }
-//                }
+                    
+                    if (theDelegate?.plot(plot:  dataLabelTouchDownAtRecordIndex: event:)) != nil {
+                        handled = true
+                        theDelegate?.plot(plot: self, dataLabelTouchDownAtRecordIndex: idx, event: event)
+                    }
+                    
+                    guard handled == false else { return true }
+                }
             }
         }
         return super.pointingDeviceDownEvent(event: event, atPoint:interactionPoint);
     }
     
-    
-    
-//
-///**
-// *  @brief Informs the receiver that the user has
-// *  @if MacOnly pressed the mouse button. @endif
-// *  @if iOSOnly ended touching the screen. @endif
-// *
-// *
-// *  If this plot has a delegate that responds to the
-// *  @link CPTPlotDelegate::plot:dataLabelTouchUpAtRecordIndex: -plot:dataLabelTouchUpAtRecordIndex: @endlink or
-// *  @link CPTPlotDelegate::plot:dataLabelTouchUpAtRecordIndex:withEvent: -plot:dataLabelTouchUpAtRecordIndex:withEvent: @endlink
-// *  methods, the data labels are searched to find the index of the one containing the @par{interactionPoint}.
-// *  The delegatfloadNumbersForAllFieldsFromDataSourceInRecordIndexRangeffe method will be called and this method returns @YES if the @par{interactionPoint} is within a label.
-// *  This method returns @NO if the @par{interactionPoint} is too far away from all of the data labels.
-// *
-// *  If the data label being released is the same as the one that was pressed (see
-// *  @link CPTPlot::pointingDeviceDownEvent:atPoint: -pointingDeviceDownEvent:atPoint: @endlink), if the delegate responds to the
-// *  @link CPTPlotDelegate::plot:dataLabelWasSelectedAtRecordIndex: -plot:dataLabelWasSelectedAtRecordIndex: @endlink and/or
-// *  @link CPTPlotDelegate::plot:dataLabelWasSelectedAtRecordIndex:withEvent: -plot:dataLabelWasSelectedAtRecordIndex:withEvent: @endlink
-// *  methods, these will be called.
-// *
-// *  @param event The OS event.
-// *  @param interactionPoint The coordinates of the interaction.
-// *  @return Whether the event was handled or not.
-// **/
-//-(BOOL)pointingDeviceUpEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
-//{
-//    NSUInteger selectedDownIndex = self.pointingDeviceDownLabelIndex;
-//
-//    self.pointingDeviceDownLabelIndex = NSNotFound;
-//
-//    CPTGraph *theGraph = self.graph;
-//
-//    if ( !theGraph || self.hidden ) {
-//        return false
-//    }
-//
-//    id<CPTPlotDelegate> theDelegate = (id<CPTPlotDelegate>)self.delegate;
-//
-//    if ( [theDelegate respondsToSelector:@selector(plot:dataLabelTouchUpAtRecordIndex:)] ||
-//         [theDelegate respondsToSelector:@selector(plot:dataLabelTouchUpAtRecordIndex:withEvent:)] ||
-//         [theDelegate respondsToSelector:@selector(plot:dataLabelWasSelectedAtRecordIndex:)] ||
-//         [theDelegate respondsToSelector:@selector(plot:dataLabelWasSelectedAtRecordIndex:withEvent:)] ) {
-//        // Inform delegate if a label was hit
-//        CPTMutableAnnotationArray *labelArray = self.labelAnnotations;
-//        NSUInteger labelCount                 = labelArray.count;
-//        Class annotationClass                 = [CPTAnnotation class];
-//
-//        for ( NSUInteger idx = 0; idx < labelCount; idx++ ) {
-//            CPTPlotSpaceAnnotation *annotation = labelArray[idx];
-//            if ( [annotation isKindOfClass:annotationClass] ) {
-//                CPTLayer *labelLayer = annotation.contentLayer;
-//                if ( labelLayer && !labelLayer.hidden ) {
-//                    CGPoint labelPoint = [theGraph convertPoint:interactionPoint toLayer:labelLayer];
-//
-//                    if ( CGRectContainsPoint(labelLayer.bounds, labelPoint)) {
-//                        BOOL handled = false
-//
-//                        if ( [theDelegate respondsToSelector:@selector(plot:dataLabelTouchUpAtRecordIndex:)] ) {
-//                            handled = true
-//                            [theDelegate plot:self dataLabelTouchUpAtRecordIndex:idx];
-//                        }
-//
-//                        if ( [theDelegate respondsToSelector:@selector(plot:dataLabelTouchUpAtRecordIndex:withEvent:)] ) {
-//                            handled = true
-//                            [theDelegate plot:self dataLabelTouchUpAtRecordIndex:idx withEvent:event];
-//                        }
-//
-//                        if ( idx == selectedDownIndex ) {
-//                            if ( [theDelegate respondsToSelector:@selector(plot:dataLabelWasSelectedAtRecordIndex:)] ) {
-//                                handled = true
-//                                [theDelegate plot:self dataLabelWasSelectedAtRecordIndex:idx];
-//                            }
-//
-//                            if ( [theDelegate respondsToSelector:@selector(plot:dataLabelWasSelectedAtRecordIndex:withEvent:)] ) {
-//                                handled = true
-//                                [theDelegate plot:self dataLabelWasSelectedAtRecordIndex:idx withEvent:event];
-//                            }
-//                        }
-//
-//                        if ( handled ) {
-//                            return true
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    return [super pointingDeviceUpEvent:event atPoint:interactionPoint];
-//}
+    override func pointingDeviceUpEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint)-> Bool
+    {
+        let selectedDownIndex = self.pointingDeviceDownLabelIndex;
+        
+        self.pointingDeviceDownLabelIndex = NSNotFound;
+        
+        guard self.isHidden == false else { return false }
+        
+        let theGraph = self.graph;
+        guard theGraph != nil else { return false }
+        
+        weak var theDelegate = self.delegate as? CPTPlotDelegate
+        
+        // Inform delegate if a label was hit
+        let labelArray = self.labelAnnotations;
+        let labelCount = labelArray.count;
+        
+        for idx in 0..<labelCount {
+            let annotation = labelArray[idx];
+            
+            let labelLayer = annotation.contentLayer;
+            if ( (labelLayer != nil) && !labelLayer!.isHidden ) {
+                let labelPoint = theGraph?.convert(interactionPoint, to:labelLayer)
+                
+                if labelLayer!.bounds.contains( labelPoint!)
+                {
+                    var handled = false
+                    
+                    if (theDelegate?.plot(plot:  dataLabelTouchUpAtRecordIndex: )) != nil {
+                        handled = true
+                        theDelegate?.plot(plot: self, dataLabelTouchUpAtRecordIndex: idx)
+                    }
+                    
+                    if (theDelegate?.plot(plot: dataLabelTouchUpAtRecordIndex: event: )) != nil {
+                        handled = true
+                        theDelegate?.plot(plot: self, dataLabelTouchUpAtRecordIndex:idx, event:event)
+                    }
+                    
+                    if ( idx == selectedDownIndex ) {
+                        if (theDelegate?.plot(plot: dataLabelWasSelectedAtRecordIndex:)) != nil {
+                            handled = true
+                            theDelegate?.plot(plot: self, dataLabelWasSelectedAtRecordIndex:idx)
+                        }
+                        
+                        if (theDelegate?.plot(plot: dataLabelWasSelectedAtRecordIndex: event: )) != nil {
+                            handled = true
+                            theDelegate?.plot(plot: self, dataLabelWasSelectedAtRecordIndex:idx, event:event)
+                        }
+                    }
+                    guard handled == false else { return true }
+                }
+            }
+        }
+        return super.pointingDeviceUpEvent(event: event, atPoint:interactionPoint)
+    }
 }

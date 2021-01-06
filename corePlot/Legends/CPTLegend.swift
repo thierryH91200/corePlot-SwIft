@@ -29,7 +29,7 @@
     @objc optional func legend( legend: CPTLegend, legendEntryForPlot plot: CPTPlot, wasSelectedAtIndex:Int, withEvent: CPTNativeEvent)
     
     @objc optional func legend( legend: CPTLegend, legendEntryForPlot plot: CPTPlot, touchDownAtIndex:Int)
-    @objc optional func legend( legend: CPTLegend, legendEntryForPlot plot: CPTPlot, touchDownAtIndex:Int, withEvent:CPTNativeEvent )
+    @objc optional func legend( legend: CPTLegend, legendEntryForPlot plot: CPTPlot, touchDownAtIndex:Int, withEvent: CPTNativeEvent )
     @objc optional func legend( legend: CPTLegend, legendEntryForPlot plot: CPTPlot, touchUpAtIndex: Int)
     @objc optional func legend( legend: CPTLegend, legendEntryForPlot plot: CPTPlot, touchUpAtIndex:Int, withEvent: CPTNativeEvent)
  }
@@ -438,13 +438,13 @@
         }
     }
     
-    //    /** @brief Gets the plot with the given identifier from the plot array.
-    //     *  @param identifier A plot identifier.
-    //     *  @return The plot with the given identifier or nil if it was not found.
-    //     **/
-    func plotWithIdentifier(identifier: Any) ->CPTPlot?
+    /** @brief Gets the plot with the given identifier from the plot array.
+     *  @param identifier A plot identifier.
+     *  @return The plot with the given identifier or nil if it was not found.
+     **/
+    func plotWithIdentifier(identifier: String) ->CPTPlot?
     {
-        let identifier = identifier as! UUID
+        let identifier = identifier
         for plot in self.plots {
             if plot.identifier == identifier {
                 return plot
@@ -741,7 +741,7 @@
     {
         guard  self.isHidden == false || (self.plots.count != 0) else { return false }
         
-        let theDelegate = self.delegate as? CPTLegendDelegate
+        weak var theDelegate = self.delegate as? CPTLegendDelegate
         
         var row = NSNotFound
         var col = NSNotFound
@@ -757,103 +757,103 @@
                     let legendPlot = legendEntry.plot
                     var handled = false
                     
-                    //                        if ( [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:touchDownAtIndex:)] ) {
-                    
-                    theDelegate?.legend?( legend: self, legendEntryForPlot:legendPlot!, touchDownAtIndex:legendEntry.index)
-                    handled = true
-                    
-                    theDelegate?.legend?( legend: self, legendEntryForPlot:legendPlot!, touchDownAtIndex:legendEntry.index, withEvent:event)
-                    handled = true
-                    
-                    theDelegate?.legend!(legend: self, legendEntryForPlot:legendPlot!, wasSelectedAtIndex:legendEntry.index, withEvent:event)
-                    handled = true
-                    
-                    if handled == true {
-                        return true
+                    if ((theDelegate?.legend( legend: legendEntryForPlot: touchDownAtIndex:)) != nil) {
+                        
+                        theDelegate?.legend?( legend: self, legendEntryForPlot:legendPlot!, touchDownAtIndex:legendEntry.index)
+                        handled = true
                     }
+                    
+                    if ((theDelegate?.legend( legend: legendEntryForPlot: touchDownAtIndex: withEvent:)) != nil) {
+                        
+                        theDelegate?.legend?( legend: self, legendEntryForPlot:legendPlot!, touchDownAtIndex:legendEntry.index, withEvent:event)
+                        handled = true
+                    }
+                    
+                    if ((theDelegate?.legend!(legend: self, legendEntryForPlot:legendPlot!, wasSelectedAtIndex:legendEntry.index, withEvent:event)) != nil) {
+                        theDelegate?.legend!(legend: self, legendEntryForPlot:legendPlot!, wasSelectedAtIndex:legendEntry.index, withEvent:event)
+                        handled = true
+                    }
+                    
+                    guard handled == false else { return true }
+                    
                 }
             }
         }
         return super.pointingDeviceDownEvent(event: event, atPoint:interactionPoint)
     }
     
-//        -(BOOL)pointingDeviceUpEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
-//        {
-//            CPTLegendEntry *selectedDownEntry = self.pointingDeviceDownEntry;
-//
-//            self.pointingDeviceDownEntry = nil;
-//
-//            if ( self.hidden || (self.plots.count == 0)) {
-//                return false
-//            }
-//
-//            theDelegate = self.delegate
-//
-//            if ( [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:touchUpAtIndex:)] ||
-//                 [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:touchUpAtIndex:withEvent:)] ||
-//                 [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:wasSelectedAtIndex:)] ||
-//                 [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:wasSelectedAtIndex:withEvent:)] ) {
-//                NSUInteger row = NSNotFound;
-//                NSUInteger col = NSNotFound;
-//                [self legendEntryForInteractionPoint:interactionPoint row:&row col:&col];
-//
-//                // Notify the delegate if we found a hit
-//                if ((row != NSNotFound) && (col != NSNotFound)) {
-//                    for ( CPTLegendEntry *legendEntry in self.legendEntries ) {
-//                        if ((legendEntry.row == row) && (legendEntry.column == col)) {
-//                            BOOL handled = false
-//
-//                            CPTPlot *entryPlot = legendEntry.plot;
-//
-//                            if ( [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:touchUpAtIndex:)] ) {
-//                                handled = true
-//                                [theDelegate legend:self legendEntryForPlot:entryPlot touchUpAtIndex:legendEntry.index];
-//                            }
-//                            if ( [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:touchUpAtIndex:withEvent:)] ) {
-//                                handled = true
-//                                [theDelegate legend:self legendEntryForPlot:entryPlot touchUpAtIndex:legendEntry.index withEvent:event];
-//                            }
-//
-//                            if ( legendEntry == selectedDownEntry ) {
-//                                if ( [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:wasSelectedAtIndex:)] ) {
-//                                    handled = true
-//                                    [theDelegate legend:self legendEntryForPlot:entryPlot wasSelectedAtIndex:legendEntry.index];
-//                                }
-//
-//                                if ( [theDelegate respondsToSelector:@selector(legend:legendEntryForPlot:wasSelectedAtIndex:withEvent:)] ) {
-//                                    handled = true
-//                                    [theDelegate legend:self legendEntryForPlot:entryPlot wasSelectedAtIndex:legendEntry.index withEvent:event];
-//                                }
-//                            }
-//
-//                            if ( handled ) {
-//                                return true
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//
-//            return [super pointingDeviceUpEvent:event atPoint:interactionPoint];
-//        }
+    override func pointingDeviceUpEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint ) -> Bool
+    {
+        let selectedDownEntry = self.pointingDeviceDownEntry
+        
+        self.pointingDeviceDownEntry = nil;
+        
+        guard self.isHidden == false else { return false }
+        guard self.plots.count != 0 else { return false }
+        
+        
+        weak var theDelegate = self.delegate as? CPTLegendDelegate
+        
+        var row = NSNotFound
+        var col = NSNotFound
+        
+        self.legendEntryForInteractionPoint (interactionPoint: interactionPoint, row:&row, col:&col)
+        
+        // Notify the delegate if we found a hit
+        if ((row != NSNotFound) && (col != NSNotFound)) {
+            
+            for legendEntry in self.legendEntries {
+                
+                if ((legendEntry.row == row) && (legendEntry.column == col)) {
+                    var handled = false
+                    
+                    let entryPlot = legendEntry.plot;
+                    
+                    if ((theDelegate?.legend( legend: legendEntryForPlot: touchUpAtIndex:)) != nil) {
+                        handled = true
+                        theDelegate?.legend?(legend:self, legendEntryForPlot:entryPlot!, touchUpAtIndex:legendEntry.index)
+                    }
+                    
+                    if ((theDelegate?.legend(legend: legendEntryForPlot: touchUpAtIndex: withEvent:)) != nil) {
+                        handled = true
+                        theDelegate?.legend?(legend: self, legendEntryForPlot:entryPlot!, touchUpAtIndex:legendEntry.index, withEvent:event)
+                    }
+                    
+                    if ( legendEntry == selectedDownEntry ) {
+                        if ((theDelegate?.legend(legend: legendEntryForPlot: wasSelectedAtIndex:)) != nil) {
+                            handled = true
+                            theDelegate?.legend!(legend: self , legendEntryForPlot:entryPlot!, wasSelectedAtIndex:legendEntry.index)
+                        }
+                        
+                        if (( theDelegate?.legend(legend: legendEntryForPlot: wasSelectedAtIndex: withEvent:)) != nil) {
+                            handled = true
+                            theDelegate?.legend!(legend: self, legendEntryForPlot:entryPlot!, wasSelectedAtIndex:legendEntry.index, withEvent:event)
+                        }
+                    }
+                    guard handled == false else { return true }
+                }
+            }
+        }
+        
+        return super.pointingDeviceUpEvent(event: event, atPoint:interactionPoint)
+    }
     
 
     // MARK: - Accessors
-//        func setTextStyle(newTextStyle: CPTTextStyle)
-//        {
-//            if ( newTextStyle != textStyle ) {
-//                textStyle = newTextStyle
-//
-//                self.legendEntries.makeObjectsPerformSelector:@selector(setTextStyle:) withObject:textStyle];
-//
-//                for legendEntry in self.legendEntries {
-//                    legendEntry.setTextStyle(w)
-//                }
-//
-//                self.layoutChanged = true
-//            }
-//        }
-    
+    func setTextStyle(newTextStyle: CPTTextStyle)
+    {
+        if ( newTextStyle != textStyle ) {
+            textStyle = newTextStyle
+            
+            self.legendEntries.makeObjectsPerformSelector:@selector(setTextStyle:) withObject:textStyle];
+            
+            for legendEntry in self.legendEntries {
+                legendEntry.setTextStyle(w)
+            }
+            self.layoutChanged = true
+        }
+    }
+
     var  _swatchSize = CGSize()
     var swatchSize : CGSize {
         get {
@@ -862,7 +862,7 @@
             if theSwatchSize.equalTo( CGSize()) {
                 let theTextStyle = textStyle
                 var fontSize        = theTextStyle.fontSize
-                if ( fontSize > CGFloat(0.0)) {
+                if fontSize > CGFloat(0.0) {
                     fontSize     *= CGFloat(1.5)
                     fontSize      = round(fontSize)
                     theSwatchSize = CGSize(width: fontSize, height: fontSize)
