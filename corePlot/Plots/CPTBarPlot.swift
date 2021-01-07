@@ -22,9 +22,8 @@ import AppKit
     
     func legendTitleForBarPlot  (plot: CPTBarPlot, index:Int) -> String
     
-    func attributedLegendTitleForBarPlot(plot: CPTBarPlot, idx:Int )-> NSAttributedString
+    func attributedLegendTitleForBarPlot(plot: CPTBarPlot, index:Int )-> NSAttributedString
 }
-
 
 // MARK:  Bar plot delegate
 @objc protocol CPTBarPlotDelegate: CPTPlotDelegate {
@@ -37,10 +36,10 @@ import AppKit
     @objc optional func barPlot( plot: CPTBarPlot, barTouchUpAtRecordIndex     idx: Int, withEvent event: CPTNativeEvent )
 }
 
-enum  CPTBarPlotField  :Int {
+enum  CPTBarPlotField : Int {
     case location ///< Bar location on independent coordinate axis.
     case tip      ///< Bar tip value.
-    case base      ///< Bar base (used only if @link CPTBarPlot::barBasesVary barBasesVary @endlink is YES).
+    case base     ///< Bar base (used only if @link CPTBarPlot::barBasesVary barBasesVary @endlink is YES).
 }
 
 
@@ -284,15 +283,15 @@ public class CPTBarPlot: CPTPlot {
         
         var needsLegendUpdate = false
         
-        if let barFillsForBarPlot = theDataSource?.barFillsForBarPlot {
+        if (theDataSource?.barFillsForBarPlot) != nil {
             needsLegendUpdate = true
             
-            self.cacheArray(array: (theDataSource?.barFillsForBarPlot(barPlot: self, recordIndexRange:indexRange))!,
+            self.cacheArray(array: (theDataSource?.barFillsForBarPlot(plot: self, indexRange:indexRange))!,
                             forKey: NSBindingName.BarFills.rawValue,
                             atRecordIndex:indexRange.location)
         }
         else
-        if let barFillsForBarPlot = theDataSource?.barFillsForBarPlot {
+        if (theDataSource?.barFillsForBarPlot) != nil {
             needsLegendUpdate = true
             
             let nilObject               : CPTFill?
@@ -301,9 +300,9 @@ public class CPTBarPlot: CPTPlot {
             let location = indexRange.location
             
             for  idx in location..<maxIndex {
-                let dataSourceFill = theDataSource?.barFillForBarPlot(barPlot: self, recordIndex:idx)
+                let dataSourceFill = theDataSource?.barFillForBarPlot(plot: self, index:idx)
                 if dataSourceFill  != nil {
-                    array.append( dataSourceFill!)
+                    array.append( contentsOf: dataSourceFill!)
                 }
                 else {
                     array.append(nilObject!)
@@ -490,7 +489,7 @@ public class CPTBarPlot: CPTPlot {
             if barsAreHorizontal == true {
                 lengthDouble = Double(displacedPlotPoint[CPTCoordinate.y.rawValue] - originPlotPoint[CPTCoordinate.y.rawValue])
             } else {
-                lengthDouble = displacedPlotPoint[CPTCoordinate.x.rawValue] - originPlotPoint[CPTCoordinate.x.rawValue]
+                lengthDouble = Double(displacedPlotPoint[CPTCoordinate.x.rawValue] - originPlotPoint[CPTCoordinate.x.rawValue])
             }
         } else {
             lengthDouble = Double(length)
@@ -552,7 +551,6 @@ public class CPTBarPlot: CPTPlot {
                                                 range = newRange;
                     }
                 }
-                break;
                 
             case CPTCoordinate.y:
                 if ( !self.barsAreHorizontal == true ) {
@@ -563,10 +561,9 @@ public class CPTBarPlot: CPTPlot {
                         range = newRange;
                     }
                 }
-                break;
                 
             default:
-                break;
+                break
             }
         }
         return range!;
@@ -1010,22 +1007,24 @@ public class CPTBarPlot: CPTPlot {
             let theFill      = self.barFillForIndex( idx: atIndex)
             let theLineStyle = self.barLineStyleForIndex(idx: atIndex)
             
-            if ( theFill || theLineStyle ) {
+//            if ( theFill || theLineStyle ) {
                 let radius = max(self.barCornerRadius, self.barBaseCornerRadius);
                 
                 //                if ( [theFill isKindOfClass:[CPTFill class]] ) {
                 context.beginPath();
-                CPTAddRoundedRectPath(context, CPTAlignIntegralRectToUserSpace(context, rect), radius);
+                let rect =  CPTUtilities.shared.CPTAlignIntegralRectToUserSpace(context: context, rect: rect)
+                CPTPathExtensions.shared.CPTAddRoundedRectPath(context: context, rect: rect, cornerRadius: radius)
                 theFill!.fillPathInContext(context: context)
                 //                }
                 
                 //                if ( theLineStyle is CPTLineStyle ) {
                 theLineStyle.setLineStyleInContext(context: context)
                 context.beginPath();
-                CPTAddRoundedRectPath(context, CPTUtilities.shared.CPTAlignBorderedRectToUserSpace(context, rect, theLineStyle), radius);
+                let rect1 = CPTUtilities.shared.CPTAlignBorderedRectToUserSpace(context: context, rect: rect, borderLineStyle: theLineStyle)
+                CPTPathExtensions.shared.CPTAddRoundedRectPath(context: context, rect: rect1, cornerRadius: radius);
                 theLineStyle.strokePathInContext(context: context)
                 //                }
-            }
+//            }
         }
     }
     
@@ -1125,8 +1124,8 @@ public class CPTBarPlot: CPTPlot {
         
         weak var  theDataSource = self.dataSource as? CPTBarPlotDataSource
         
-        if ( [theDataSource respondsToSelector:@selector(legendTitleForBarPlot:recordIndex:)] ||
-             [theDataSource respondsToSelector:@selector(barFillForBarPlot:recordIndex:)] ) {
+        if (theDataSource?.legendTitleForBarPlot(_: index:))! ||
+            ((theDataSource?.barFillForBarPlot(_:index:)) != nil) {
             self.reloadDataIfNeeded()
             entryCount = self.cachedDataCount;
         }
@@ -1142,10 +1141,10 @@ public class CPTBarPlot: CPTPlot {
     {
         var legendTitle = ""
         
-        weak var theDataSource = self.dataSource as? CPTBarPlotDataSource?
+        weak var theDataSource = self.dataSource as? CPTBarPlotDataSource
         
-        if ( [theDataSource respondsToSelector:@selector(legendTitleForBarPlot:recordIndex:)] ) {
-            legendTitle = [theDataSource legendTitleForBarPlot:self recordIndex:idx];
+        if ((theDataSource?.legendTitleForBarPlot(_: index:)) != nil) {
+            legendTitle = (theDataSource?.legendTitleForBarPlot(plot: self, index:idx))!
         }
         else {
             legendTitle = super.titleForLegendEntryAtIndex(idx: idx)
@@ -1162,13 +1161,13 @@ public class CPTBarPlot: CPTPlot {
     {
         var legendTitle : NSAttributedString
         
-        weak var theDataSource = dataSource as? CPTBarPlotDataSource?
+        weak var theDataSource = dataSource as? CPTBarPlotDataSource
         
-        if ( [theDataSource respondsToSelector:@selector(attributedLegendTitleForBarPlot:recordIndex:)] ) {
-            legendTitle = [theDataSource attributedLegendTitleForBarPlot:self recordIndex:idx];
+        if ((theDataSource?.attributedLegendTitleForBarPlot(_: recordIndex:)) != nil) {
+            legendTitle = (theDataSource?.attributedLegendTitleForBarPlot( plot: self, index:idx))!
         }
         else {
-            legendTitle = [super attributedTitleForLegendEntryAtIndex:idx];
+            legendTitle = super.attributedTitleForLegendEntryAtIndex(idx: idx)
         }
         
         return legendTitle;
@@ -1421,11 +1420,9 @@ public class CPTBarPlot: CPTPlot {
     //            [self setNeedsLayout];
     //        }
     //    }
-    //
-    //    /// @endcond
-    //
-    //    #pragma mark -
-    //    #pragma mark Fields
+
+
+    // MARK: - Fields
     //
     //    /// @cond
     //
@@ -1481,30 +1478,26 @@ public class CPTBarPlot: CPTPlot {
     //        return result;
     //    }
     //
-    //    -(CPTCoordinate)coordinateForFieldIdentifier:(NSUInteger)field
-    //    {
-    //        CPTCoordinate coordinate = CPTCoordinateNone;
-    //
-    //        switch ( field ) {
-    //            case CPTBarPlotFieldBarLocation:
-    //                coordinate = (self.barsAreHorizontal ? CPTCoordinateY : CPTCoordinateX);
-    //                break;
-    //
-    //            case CPTBarPlotFieldBarTip:
-    //            case CPTBarPlotFieldBarBase:
-    //                coordinate = (self.barsAreHorizontal ? CPTCoordinateX : CPTCoordinateY);
-    //                break;
-    //
-    //            default:
-    //                break;
-    //        }
-    //
-    //        return coordinate;
-    //    }
-    //
-    //    /// @endcond
-    //
-    //    @end
+    override func coordinateForFieldIdentifier(field: Int) -> CPTCoordinate
+        {
+        let coordinate = CPTCoordinate.none;
+    
+            switch ( field ) {
+            case CPTBarPlotFieldBar.location.rawValue:
+                coordinate = (self.barsAreHorizontal ? CPTCoordinate.y : CPTCoordinate.x);
+                    break;
+    
+            case CPTBarPlotFieldBar.tip.rawValue:
+            case CPTBarPlotFieldBar.base.rawValue:
+                coordinate = (self.barsAreHorizontal ? CPTCoordinate.x : CPTCoordinate.y);
+                    break;
+    
+                default:
+                    break;
+            }
+    
+            return coordinate;
+        }
     
 }
 

@@ -38,11 +38,11 @@ extension CPTPlot {
                 fallthrough
             case .logModulus:
                 let theNumbers = numbers;
-                let mutableNumbers = self.numericDataForNumbers(theNumbers)
+                let mutableNumbers = self.numericDataForNumbers(numbers: theNumbers)
                 
                 let  sampleCount = mutableNumbers.numberOfSamples;
                 if sampleCount > 0  {
-                    (self.cachedData)[cacheKey] = mutableNumbers;
+                    (self.cachedData)[cacheKey] = mutableNumbers as! [Any];
                 }
                 else {
                     self.cachedData.removeValue(forKey: cacheKey)
@@ -104,172 +104,161 @@ extension CPTPlot {
     // *  @param fieldEnum The field enumerator identifying the field.
     // *  @param idx The index of the first data point to replace.
     // **/
-    //-(void)cacheNumbers:(nullable id)numbers forField:(NSUInteger)fieldEnum atRecordIndex:(NSUInteger)idx
-    //{
-    //    if ( numbers ) {
-    //        NSNumber *cacheKey     = @(fieldEnum);
-    //        NSUInteger sampleCount = 0;
-    //
-    //        CPTCoordinate coordinate   = [self coordinateForFieldIdentifier:fieldEnum];
-    //        CPTPlotSpace *thePlotSpace = self.plotSpace;
-    //
-    //        CPTMutableNumericData *mutableNumbers = nil;
-    //
-    //        switch ( [thePlotSpace scaleTypeForCoordinate:coordinate] ) {
-    //            case CPTScaleTypeLinear:
-    //            case CPTScaleTypeLog:
-    //            case CPTScaleTypeLogModulus:
-    //            {
-    //                id theNumbers = numbers;
-    //                mutableNumbers = [self numericDataForNumbers:theNumbers];
-    //
-    //                sampleCount = mutableNumbers.numberOfSamples;
-    //                if ( sampleCount > 0 ) {
-    //                    // Ensure the new data is the same type as the cache
-    //                    switch ( self.cachePrecision ) {
-    //                        case CPTPlotCachePrecisionAuto:
-    //                            [self setCachedDataType:mutableNumbers.dataType];
-    //                            break;
-    //
-    //                        case CPTPlotCachePrecisionDouble:
-    //                        {
-    //                            CPTNumericDataType newType = self.doubleDataType;
-    //                            [self setCachedDataType:newType];
-    //                            mutableNumbers.dataType = newType;
-    //                        }
-    //                        break;
-    //
-    //                        case CPTPlotCachePrecisionDecimal:
-    //                        {
-    //                            CPTNumericDataType newType = self.decimalDataType;
-    //                            [self setCachedDataType:newType];
-    //                            mutableNumbers.dataType = newType;
-    //                        }
-    //                        break;
-    //                    }
-    //                }
-    //            }
-    //            break;
-    //
-    //            case CPTScaleTypeCategory:
-    //            {
-    //                CPTStringArray *samples = (CPTStringArray *)numbers;
-    //                if ( [samples isKindOfClass:[NSArray class]] ) {
-    //                    sampleCount = samples.count;
-    //                    if ( sampleCount > 0 ) {
-    //                        CPTMutableNumberArray *indices = [[NSMutableArray alloc] initWithCapacity:sampleCount];
-    //
-    //                        for ( NSString *category in samples ) {
-    //                            [thePlotSpace addCategory:category forCoordinate:coordinate];
-    //                            [indices addObject:@([thePlotSpace indexOfCategory:category forCoordinate:coordinate])];
-    //                        }
-    //
-    //                        CPTNumericDataType dataType = (self.cachePrecision == CPTPlotCachePrecisionDecimal ? self.decimalDataType : self.doubleDataType);
-    //
-    //                        mutableNumbers = [[CPTMutableNumericData alloc] initWithArray:indices
-    //                                                                             dataType:dataType
-    //                                                                                shape:nil];
-    //                    }
-    //                }
-    //            }
-    //            break;
-    //
-    //            default:
-    //                [self.cachedData removeObjectForKey:cacheKey];
-    //                break;
-    //        }
-    //
-    //        if ( mutableNumbers && (sampleCount > 0)) {
-    //            // Ensure the data cache exists and is the right size
-    //            CPTMutableNumericData *cachedNumbers = (self.cachedData)[cacheKey];
-    //            if ( !cachedNumbers ) {
-    //                cachedNumbers = [CPTMutableNumericData numericDataWithData:[NSData data]
-    //                                                                  dataType:mutableNumbers.dataType
-    //                                                                     shape:nil];
-    //                (self.cachedData)[cacheKey] = cachedNumbers;
-    //            }
-    //            id<CPTPlotDataSource> theDataSource = self.dataSource;
-    //            NSUInteger numberOfRecords          = [theDataSource numberOfRecordsForPlot:self];
-    //            cachedNumbers.shape = @[@(numberOfRecords)];
-    //
-    //            // Update the cache
-    //            self.cachedDataCount = numberOfRecords;
-    //
-    //            NSUInteger startByte = idx * cachedNumbers.sampleBytes;
-    //            void *cachePtr       = (int8_t *)(cachedNumbers.mutableBytes) + startByte;
-    //            size_t numberOfBytes = MIN(mutableNumbers.data.length, cachedNumbers.data.length - startByte);
-    //            memcpy(cachePtr, mutableNumbers.bytes, numberOfBytes);
-    //
-    //            [self relabelIndexRange:NSMakeRange(idx, sampleCount)];
-    //        }
-    //
-    //        [self setNeedsDisplay];
-    //    }
-    //}
-    //
-    ///// @cond
-    //
-    func numericDataForNumbers(numbers:Any?) -> CPTMutableNumericData
+    func cacheNumbers(numbers : Any?, forField fieldEnum: Int, atRecordIndexidx :Int)
     {
-        let mutableNumbers : CPTMutableNumericData? = nil
-        var loadedDataType : CPTNumericDataType?
-    
-        if numbers is CPTNumericData  {
-            mutableNumbers = numbers
-            // ensure the numeric data is in a supported format; default to double if not already NSDecimal
-            if ( mutableNumbers.dataType !=  self.decimalDataType && mutableNumbers.dataType != self.doubleDataType {
-                    mutableNumbers.dataType = self.doubleDataType;
-            }
-        }
-        else if numbers is Data {
-            loadedDataType = self.doubleDataType();
-            mutableNumbers = CPTMutableNumericData(  initWithData:numbers dataType:loadedDataType shape:nil];
-        }
-        else if let numbers = numbers as? [Any] {
-            if numbers.count == 0  {
-                loadedDataType = self.doubleDataType
-            }
-            else if ( [((NSArray<NSNumber *> *)numbers)[0] is [NSDecimalNumber class]] ) {
-                loadedDataType = self.decimalDataType;
-            }
-            else {
-                loadedDataType = self.doubleDataType();
-            }
-    
-            mutableNumbers = [[CPTMutableNumericData alloc] initWithArray:numbers dataType:loadedDataType shape:nil];
-        }
-        else {
-            print("NSException raise:CPTException format:@Unsupported number array format")
-        }
-        return mutableNumbers;
+//        if (( numbers ) != nil) {
+//            let cacheKey     = fieldEnum
+//            let sampleCount = 0;
+//
+//            let coordinate   = self.coordinateForFieldIdentifier(field: fieldEnum)
+//            let thePlotSpace = self.plotSpace;
+//
+//            let mutableNumbers = nil;
+//
+//            switch ( thePlotSpace?.scaleTypeForCoordinate(coordinate: coordinate)) {
+//            case .linear:
+//                fallthrough
+//            case .log:
+//                    fallthrough
+//            case .logModulus:
+//                    let theNumbers = numbers;
+//                mutableNumbers = self.numericDataForNumbers(theNumbers)
+//
+//                    sampleCount = mutableNumbers.numberOfSamples;
+//                    if ( sampleCount > 0 ) {
+//                        // Ensure the new data is the same type as the cache
+//                        switch ( self.cachePrecision ) {
+//                        case .auto:
+//                            self.setCachedDataType(mutableNumbers.dataType)
+//                                break;
+//
+//                        case .double:
+//                                let newType = self.doubleDataType;
+//                                [self setCachedDataType:newType];
+//                                mutableNumbers.dataType = newType;
+//
+//                            case CPTPlotCachePrecisionDecimal:
+//                                CPTNumericDataType newType = self.decimalDataType;
+//                                [self setCachedDataType:newType];
+//                                mutableNumbers.dataType = newType;
+//                break;
+//
+//                        case .category:
+//                    let samples = numbers as! [String]
+//                    if ( [samples isKindOfClass:[NSArray class]] ) {
+//                        sampleCount = samples.count;
+//                        if ( sampleCount > 0 ) {
+//                            var indices = [CGFloat]()
+//
+//                            for  category in samples {
+//                                [thePlotSpace addCategory:category forCoordinate:coordinate];
+//                                [indices addObject:@([thePlotSpace indexOfCategory:category forCoordinate:coordinate])];
+//                            }
+//
+//                            CPTNumericDataType dataType = self.cachePrecision == CPTPlotCachePrecisionDecimal ? self.decimalDataType : self.doubleDataType
+//
+//                            mutableNumbers = [[CPTMutableNumericData alloc] initWithArray:indices
+//                                                                                 dataType:dataType
+//                                                                                    shape:nil];
+//                        }
+//                    }
+//
+//                default:
+//                    self.cachedData.removeObjectForKey(cacheKey)
+//                    break;
+//            }
+//
+//            if ( mutableNumbers && (sampleCount > 0)) {
+//                // Ensure the data cache exists and is the right size
+//                let cachedNumbers = self.cachedData[cacheKey]
+//                if ( !cachedNumbers ) {
+//                    cachedNumbers = [CPTMutableNumericData numericDataWithData:[NSData data]
+//                                                                      dataType:mutableNumbers.dataType
+//                                                                         shape:nil];
+//                    (self.cachedData)[cacheKey] = cachedNumbers;
+//                }
+//                let theDataSource = self.dataSource
+//                let numberOfRecords          = theDataSource?.numberOfRecordsForPlot(plot: self)
+//                cachedNumbers.shape = numberOfRecords
+//
+//                // Update the cache
+//                self.cachedDataCount = numberOfRecords!;
+//
+//                NSUInteger startByte = idx * cachedNumbers.sampleBytes;
+//                void *cachePtr       = (int8_t *)(cachedNumbers.mutableBytes) + startByte;
+//                size_t numberOfBytes = MIN(mutableNumbers.data.length, cachedNumbers.data.length - startByte);
+//                memcpy(cachePtr, mutableNumbers.bytes, numberOfBytes);
+//
+//                self.relabelIndexRange(NSRange(idx, sampleCount)
+//            }
+//
+//                self.setNeedsDisplay()
+//        }
+    }
+
+
+    func numericDataForNumbers(numbers:Any?) -> Any?
+    {
+//        let mutableNumbers : CPTMutableNumericData? = nil
+//        var loadedDataType : CPTNumericDataType?
+//
+//        if numbers is CPTNumericData  {
+//            mutableNumbers = numbers
+//            // ensure the numeric data is in a supported format; default to double if not already NSDecimal
+//            if ( mutableNumbers.dataType !=  self.decimalDataType && mutableNumbers.dataType != self.doubleDataType {
+//                    mutableNumbers.dataType = self.doubleDataType;
+//            }
+//        }
+//        else if numbers is Data {
+//            loadedDataType = self.doubleDataType();
+//            mutableNumbers = CPTMutableNumericData(  initWithData:numbers dataType:loadedDataType shape:nil];
+//        }
+//        else if let numbers = numbers as? [Any] {
+//            if numbers.count == 0  {
+//                loadedDataType = self.doubleDataType
+//            }
+//            else if ( [((NSArray<NSNumber *> *)numbers)[0] is [NSDecimalNumber class]] ) {
+//                loadedDataType = self.decimalDataType;
+//            }
+//            else {
+//                loadedDataType = self.doubleDataType();
+//            }
+//
+//            mutableNumbers = [[CPTMutableNumericData alloc] initWithArray:numbers dataType:loadedDataType shape:nil];
+//        }
+//        else {
+//            print("NSException raise:CPTException format:@Unsupported number array format")
+//        }
+//        return mutableNumbers;
+        return nil
     }
     
     
     func doublePrecisionCache()-> Bool
     {
-        var result = false;
-    
-        switch ( self.cachePrecision ) {
-        case .auto:
-                var dataCache = self.cachedData
-//                Class numberClass                                            = [NSNumber class];
-                for ( key in dataCache.allKeys ) {
-                    if ( [key isKindOfClass:numberClass] ) {
-                        result = CPTDataTypeEqualToDataType(((CPTMutableNumericData *)dataCache[key]).dataType, self.doubleDataType);
-                        break;
-                    }
-                }
-            break;
-    
-        case .double:
-                result = true
-                break;
-    
-            default:
-                // not double precision
-                break;
-        }
-        return result;
+//        var result = false;
+//
+//        switch ( self.cachePrecision ) {
+//        case .auto:
+//                var dataCache = self.cachedData
+////                Class numberClass                                            = [NSNumber class];
+//                for ( key in dataCache.allKeys ) {
+//                    if ( [key isKindOfClass:numberClass] ) {
+//                        result = CPTDataTypeEqualToDataType(((CPTMutableNumericData *)dataCache[key]).dataType, self.doubleDataType);
+//                        break;
+//                    }
+//                }
+//            break;
+//
+//        case .double:
+//                result = true
+//                break;
+//
+//            default:
+//                // not double precision
+//                break;
+//        }
+        return false;
     }
     
     /** @brief Retrieves an array of numbers from the cache.
