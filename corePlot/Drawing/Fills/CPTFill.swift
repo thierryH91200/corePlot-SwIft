@@ -9,17 +9,19 @@ import AppKit
 
 public class CPTFill: NSObject  {
     
-// MARK: - Init/Dealloc
-    class func fill(with   aColor: NSColor)->CPTColor  {
+    static let shared = CPTFill()
+    
+    // MARK: - Init/Dealloc
+    func fill(with   aColor: NSColor) -> CPTColor  {
         let result = CPTFillColor(aColor: aColor)
         print (result)
     }
-
-    class func fill(with aGradient: CPTGradient) -> CPTFillGradient {
-        return CPTFillGradient(aGradient: aGradient)
+    
+    func fill( gradient: CPTGradient) -> CPTFillGradient {
+        return CPTFillGradient(gradient: gradient)
     }
     
-    class func fill(with anImage: CPTImage) -> CPTFillImage {
+    func fill(with anImage: CPTImage) -> CPTFillImage {
         return CPTFillImage(anImage: anImage)
     }
     
@@ -39,12 +41,12 @@ public class CPTFill: NSObject  {
         get { return false }
         set { }
     }
-
+    
     // MARK: - Color
     func cgColor() -> CGColor? {
         // do nothing--subclasses override to describe the color
         return nil
     }
-
+    
     
 }

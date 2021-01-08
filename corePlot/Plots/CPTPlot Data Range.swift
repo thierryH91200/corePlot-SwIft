@@ -5,7 +5,7 @@
 //  Created by thierryH24 on 24/11/2020.
 //
 
-import Foundation
+import AppKit
 
 
 extension CPTPlot {
@@ -141,68 +141,67 @@ extension CPTPlot {
         
         self.needsRelabel = false
         
-        let  nullObject         = [NSNull null];
-        //    Class nullClass       = [NSNull class];
-        //    Class annotationClass = [CPTAnnotation class];
+        let  nullObject         : String?
         
-        let dataLabelTextStyle = self.labelTextStyle;
-        let dataLabelFormatter  = self.labelFormatter;
-        let plotProvidesLabels  = dataLabelTextStyle && dataLabelFormatter
+        let dataLabelTextStyle = self.labelTextStyle
+        let boolLabel = labelTextStyle != nil ? true : false
+
+        let dataLabelFormatter = self.labelFormatter
+        var boolFormat = dataLabelFormatter != nil ? true : false
         
-        var hasCachedLabels               = false
-        var cachedLabels = (CPTMutableLayerArray *)[self.cachedArrayForKey:CPTPlotBindingDataLabels];
+        let plotProvidesLabels = boolLabel && boolFormat
+
+        var hasCachedLabels    = false
+        var cachedLabels = self.cachedArrayForKey(key: NSBindingName.PlotDataLabels.rawValue)
         
-        for ( CPTLayer label in cachedLabels ) {
-            if ( !label isKindOfClass:nullClass] ) {
+        for  label in cachedLabels {
+            if ( label == nil) {
                 hasCachedLabels = true
                 break
             }
         }
         
         if ( !self.showLabels || (!hasCachedLabels && !plotProvidesLabels)) {
-            for ( CPTAnnotation *annotation in self.labelAnnotations ) {
-                if ( [annotation isKindOfClass:annotationClass] ) {
-                    self.removeAnnotation(annotation)
-                }
+            for annotation in self.labelAnnotations  {
+                self.removeAnnotation(annotation)
             }
-            self.labelAnnotations = nil;
-            return;
+            self.labelAnnotations.removeAll()
+            return
         }
         
         let textAttributes = dataLabelTextStyle?.attributes
-        let hasAttributedFormatter   = ([dataLabelFormatter.attributedStringForObjectValue:[NSDecimalNumber zero]
-                                         withDefaultAttributes:textAttributes] != nil);
+        let hasAttributedFormatter   = dataLabelFormatter.attributedStringForObjectValue( 0, withDefaultAttributes: textAttributes) != nil
         
         let sampleCount = self.cachedDataCount;
         let indexRange     = self.labelIndexRange;
         let maxIndex    = NSMaxRange(indexRange)
         
         if ( !self.labelAnnotations.isEmpty ) {
-            self.labelAnnotations = []()
+            self.labelAnnotations.removeAll()
         }
         
-        let thePlotSpace            = self.plotSpace;
-        let theRotation              = self.labelRotation;
-        var labelArray = self.labelAnnotations;
-        let oldLabelCount    = labelArray.count;
-        let nilObject         = [CPTPlot nilData];
+        let thePlotSpace = self.plotSpace;
+        let theRotation  = self.labelRotation;
+        var labelArray  = self.labelAnnotations;
+        let oldLabelCount = labelArray.count;
+        let nilObject         : CPTPlot?
         
-        CPTMutableNumericData *labelFieldDataCache = [self.cachedNumbersForField:self.labelField];
-        let theShadow                       = self.labelShadow;
+        let labelFieldDataCache = self.cachedNumbersForField(fieldEnum: self.labelField)
+        let theShadow = self.labelShadow;
         
         for i in indexRange.location..<maxIndex {
             let dataValue = labelFieldDataCache (sampleValue:i)
             
-            let newLabelLayer = CPTLayer()
-            if ( isnan([dataValue doubleValue])) {
+            let newLabelLayer : CPTLayer?
+            if dataValue.isNan  {
                 newLabelLayer = nil;
             }
             else {
-                newLabelLayer = self.cachedValueForKey(CPTPlotBindingDataLabels recordIndex:i)
+                newLabelLayer = self.cachedValueForKey(key: NSBindingName.PlotDataLabels.rawValue, recordIndex:i) as? CPTLayer
                 
                 if (((newLabelLayer == nil) || (newLabelLayer == nilObject)) && plotProvidesLabels ) {
                     if ( hasAttributedFormatter ) {
-                        let labelString = [dataLabelFormatter attributedStringForObjectValue:dataValue withDefaultAttributes:textAttributes];
+                        let labelString = dataLabelFormatter.attributedStringForObjectValue(dataValue, withDefaultAttributes:textAttributes)
                         newLabelLayer = CPTTextLayer(newText: labelString)
                     }
                     else {
@@ -211,62 +210,64 @@ extension CPTPlot {
                     }
                 }
                 
-                if ( newLabelLayer is nullClass || (newLabelLayer == nilObject)) {
+                if ( newLabelLayer is nullClass || newLabelLayer == nilObject) {
                     newLabelLayer = nil;
                 }
             }
-            newLabelLayer.shadow = theShadow;
+            newLabelLayer?.shadow = theShadow
             
+            let nullClass : CPTPlotSpaceAnnotation? = nil
             var labelAnnotation : CPTPlotSpaceAnnotation
-            if ( i < oldLabelCount ) {
-                labelAnnotation = labelArray[i]
-                if ( newLabelLayer ) {
-                    if ( [labelAnnotation is nullClass] ) {
-                        labelAnnotation = [[CPTPlotSpaceAnnotation alloc] initWithPlotSpace:thePlotSpace anchorPlotPoint:nil];
+            
+            if i < oldLabelCount {
+                
+                labelAnnotation = labelArray[i] as! CPTPlotSpaceAnnotation
+                if newLabelLayer != nil {
+                    if labelAnnotation == nullClass {
+                        labelAnnotation = CPTPlotSpaceAnnotation(plotSpace: thePlotSpace, anchorPlotPoint: nil)
                         labelArray[i]   = labelAnnotation;
-                        [self addAnnotation:labelAnnotation];
+                        self.addAnnotation(labelAnnotation)
                     }
                 }
-                else {
-                    if ( labelAnnotation is annotationClass) {
+                else
+                {
+                    if labelAnnotation is annotationClass {
                         labelArray[i] = nullObject;
                         self.removeAnnotation(labelAnnotation)
                     }
                 }
             }
             else {
-                if ( newLabelLayer ) {
-                    labelAnnotation = [[CPTPlotSpaceAnnotation alloc] initWithPlotSpace:thePlotSpace anchorPlotPoint:nil];
-                    [labelArray addObject:labelAnnotation];
-                    [self addAnnotation:labelAnnotation];
+                if (( newLabelLayer ) != nil) {
+                    labelAnnotation = CPTPlotSpaceAnnotation(newPlotSpace: thePlotSpace, newPlotPoint:[])
+                    labelArray.append(labelAnnotation)
+                    self.addAnnotation(labelAnnotation)
                 }
                 else {
                     labelArray.apppend(nullObject)
                 }
             }
             
-            if ( newLabelLayer ) {
+            if (( newLabelLayer ) != nil) {
                 labelAnnotation.contentLayer = newLabelLayer;
                 labelAnnotation.rotation     = theRotation;
-                [self.positionLabelAnnotationlabelAnnotation, for Index:i)
-                    self.updateContentAnchorForLabel(labelAnnotation)
+                self.positionLabelAnnotation( label: labelAnnotation, forIndex:i)
+                self.updateContentAnchorForLabel(label: labelAnnotation)
             }
         }
         
         // remove labels that are no longer needed
         while ( labelArray.count > sampleCount ) {
             let oldAnnotation = labelArray[labelArray.count - 1];
-            if oldAnnotation is annotationClass {
-                self.removeAnnotation(oldAnnotation)
-            }
+            self.removeAnnotation(oldAnnotation)
             labelArray.removeLast()
         }
     }
-    //
-    ///** @brief Marks the receiver as needing to update a range of data labels before the content is next drawn.
-    // *  @param indexRange The index range needing update.
-    // *  @see setNeedsRelabel()
-    // **/
+    
+    /** @brief Marks the receiver as needing to update a range of data labels before the content is next drawn.
+     *  @param indexRange The index range needing update.
+     *  @see setNeedsRelabel()
+     **/
     func relabelIndexRange(indexRange: NSRange)
     {
         self.labelIndexRange = indexRange;
@@ -283,34 +284,34 @@ extension CPTPlot {
                 displacement?.y = CGFloat(1.0); // put the label above the data point if zero displacement
             }
             var angle      = CGFloat(M_PI) + atan2(displacement?.y, displacement?.x) - label.rotation
-            var newAnchorX = cos(angle);
-            var newAnchorY = sin(angle);
-            
-            if ( abs(newAnchorX) <= abs(newAnchorY)) {
-                newAnchorX /= abs(newAnchorY);
-                newAnchorY  = signbit(newAnchorY) ? CGFloat(-1.0) : CGFloat(1.0);
-            }
-            else {
-                newAnchorY /= abs(newAnchorX);
-                newAnchorX  = signbit(newAnchorX) ? CGFloat(-1.0) : CGFloat(1.0);
-            }
-            
-            label.contentAnchorPoint = CGPoint((newAnchorX + CGFloat(1.0)) / CGFloat(2.0), (newAnchorY + CGFloat(1.0)) / CGFloat(2.0));
-        }
-    }
-    
-    func repositionAllLabelAnnotations()
-    {
-        let annotations = self.labelAnnotations;
-        let labelCount           = annotations.count;
-        _           = CPTAnnotation()
-        
-        for  i in 0..<labelCount {
-            let annotation = annotations[i]
-            if annotation is CPTPlotSpaceAnnotation {
-                self.positionLabelAnnotation(label:annotation as! CPTPlotSpaceAnnotation, forIndex:i)
-                self.updateContentAnchorForLabel(label:annotation as! CPTPlotSpaceAnnotation)
-            }
-        }
-    }
-}
+                        var newAnchorX = cos(angle);
+                        var newAnchorY = sin(angle);
+                        
+                        if ( abs(newAnchorX) <= abs(newAnchorY)) {
+                        newAnchorX /= abs(newAnchorY);
+                        newAnchorY  = signbit(newAnchorY) ? CGFloat(-1.0) : CGFloat(1.0);
+                        }
+                        else {
+                        newAnchorY /= abs(newAnchorX);
+                        newAnchorX  = signbit(newAnchorX) ? CGFloat(-1.0) : CGFloat(1.0);
+                        }
+                        
+                        label.contentAnchorPoint = CGPoint((newAnchorX + CGFloat(1.0)) / CGFloat(2.0), (newAnchorY + CGFloat(1.0)) / CGFloat(2.0));
+                        }
+                        }
+                        
+                        func repositionAllLabelAnnotations()
+                        {
+                        let annotations = self.labelAnnotations;
+                        let labelCount           = annotations.count;
+                        _           = CPTAnnotation()
+                        
+                        for  i in 0..<labelCount {
+                        let annotation = annotations[i]
+                        if annotation is CPTPlotSpaceAnnotation {
+                        self.positionLabelAnnotation(label:annotation as! CPTPlotSpaceAnnotation, forIndex:i)
+                        self.updateContentAnchorForLabel(label:annotation as! CPTPlotSpaceAnnotation)
+                        }
+                        }
+                        }
+                    }

@@ -202,64 +202,67 @@ extension CPTPlot {
     // **/
     func numbersFromDataSourceForField(fieldEnum : Int, recordIndexRange indexRange:NSRange)->Any?
     {
-        let  numbers : Any // can be CPTNumericData, NSArray, or NSData
-        let theDataSource = self.dataSource as CPTPlotDtaSource
-    
-        if ( theDataSource ) {
-            if ( theDataSource respondsToSelector:@selector(dataForPlot:field:recordIndexRange:)] ) {
-                numbers = theDataSource dataForPlot:self field:fieldEnum recordIndexRange:indexRange];
-            }
-            else if ( theDataSource respondsToSelector:@selector(doublesForPlot:field:recordIndexRange:)] ) {
-                numbers = NSMutableData dataWithLength:sizeof(double) * indexRange.length];
-                double *fieldValues  = numbers mutableBytes];
-                double *doubleValues = theDataSource doublesForPlot:self field:fieldEnum recordIndexRange:indexRange];
-                memcpy(fieldValues, doubleValues, sizeof(double) * indexRange.length);
-            }
-            else if ( theDataSource respondsToSelector:@selector(numbersForPlot:field:recordIndexRange:)] ) {
-                NSArray *numberArray = theDataSource numbersForPlot:self field:fieldEnum recordIndexRange:indexRange];
-                if ( numberArray ) {
-                    numbers = NSArray arrayWithArray:numberArray];
-                }
-                else {
-                    numbers = nil;
-                }
-            }
-            else if ( theDataSource respondsToSelector:@selector(doubleForPlot:field:recordIndex:)] ) {
-                NSUInteger recordIndex;
-                NSMutableData *fieldData = NSMutableData dataWithLength:sizeof(double) * indexRange.length];
-                double *fieldValues      = fieldData.mutableBytes;
-                for ( recordIndex = indexRange.location; recordIndex < indexRange.location + indexRange.length; ++recordIndex ) {
-                    double number = theDataSource doubleForPlot:self field:fieldEnum recordIndex:recordIndex];
-                    *fieldValues++ = number;
-                }
-                numbers = fieldData;
+        let  numbers : Any // can be CPTNumericData, Array, or Data
+        
+        weak var theDataSource = self.dataSource as? CPTPlotDtaSource
+        
+        if theDataSource.dataForPlot(plot: field: recordIndexRange:) {
+            numbers = theDataSource.dataForPlot(self, field:fieldEnum, recordIndexRange:indexRange)
+        }
+        else if theDataSource?.doublesForPlot(plot: field: recordIndexRange:) {
+            numbers = NSMutableData dataWithLength:sizeof(double) * indexRange.length];
+            var fieldValues  = numbers
+            var doubleValues = theDataSource.doublesForPlot(self field:fieldEnum recordIndexRange:indexRange)
+            //                memcpy(fieldValues, doubleValues, MemoryLayout<Double>.size * indexRange.length)
+            fieldValues = [Double](repeating: doubleValues, count: indexRange.length )
+            
+        }
+        else if theDataSource?.numbersForPlot(plot: field: recordIndexRange:) {
+            let numberArray = theDataSource.numbersForPlot(self, field:fieldEnum, recordIndexRange:indexRange)
+            
+            if ( numberArray ) {
+                numbers = NSArray arrayWithArray:numberArray;
             }
             else {
-                BOOL respondsToSingleValueSelector = theDataSource respondsToSelector:@selector(numberForPlot:field:recordIndex:)];
-                NSNull *nullObject                 = NSNull null];
-                NSUInteger recordIndex;
+                
+                numbers = nil
+            }
+            
+        }
+        else if ( theDataSource respondsToSelector:@selector(doubleForPlot:field:recordIndex:)] ) {
+            var recordIndex = 0
+            NSMutableData *fieldData = NSMutableData dataWithLength:sizeof(double) * indexRange.length];
+            double *fieldValues      = fieldData.mutableBytes;
+            for ( recordIndex = indexRange.location; recordIndex < indexRange.location + indexRange.length; ++recordIndex ) {
+                double number = theDataSource doubleForPlot:self field:fieldEnum recordIndex:recordIndex];
+                *fieldValues++ = number;
+            }
+            numbers = fieldData;
+        }
+        else {
+            if theDataSource?.numberForPlot(plot: field: recordIndex:) {
+                
+                let nullObject                 = NSNull null;
+                let recordIndex = 0
                 let fieldValues = NSMutableArray arrayWithCapacity:indexRange.length];
-                for ( recordIndex = indexRange.location; recordIndex < indexRange.location + indexRange.length; recordIndex++ ) {
+                for recordIndex in indexRange.location..<(indexRange.location + indexRange.length) {
                     if ( respondsToSingleValueSelector ) {
-                        id number = theDataSource numberForPlot:self field:fieldEnum recordIndex:recordIndex];
+                        let number = theDataSource.numberForPlot:self field:fieldEnum recordIndex:recordIndex];
                         if ( number ) {
-                            fieldValues addObject:number];
+                            fieldValues.addObject(number)
                         }
                         else {
-                            fieldValues addObject:nullObject];
+                            fieldValues.addObject(nullObject)
                         }
                     }
                     else {
-                        fieldValues addObject:NSDecimalNumber zero]];
+                        fieldValues.addObject(NSDecimalNumber zero)
                     }
                 }
-                numbers = fieldValues;
+                numbers = fieldValues
             }
         }
-        else {
-            numbers = @];
-        }
-    
+        
         return numbers;
     }
     //

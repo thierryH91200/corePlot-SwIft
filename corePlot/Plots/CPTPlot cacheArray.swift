@@ -14,8 +14,8 @@ extension CPTPlot {
         return cachedArray(forKey: key)?[idx]
     }
     
-    func cachedArray(forKey key: String) -> [String]? {
-        return cachedData[key] as? [String]
+    func cachedArray(forKey key: String) -> [Any]? {
+        return cachedData[key]
     }
     
     func cacheArray(_ array: [Any], forKey key: String) {
@@ -36,7 +36,7 @@ extension CPTPlot {
         if sampleCount > 0 {
             
             // Ensure the data cache exists and is the right size
-            let theDataSource = self.dataSource
+            weak var theDataSource = self.dataSource
             let numberOfRecords = theDataSource?.numberOfRecordsForPlot(plot: self)
             
             var cachedValues = self.cachedData[key]

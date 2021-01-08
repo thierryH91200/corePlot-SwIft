@@ -35,7 +35,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
     
     var cachedData: [String : [Any]] = [:]
         
-    @objc open weak var dataSource : CPTPlotDataSource?
+    @objc open weak var dataSource  : CPTPlotDataSource?
     @objc open weak var delegatePlot: CPTPlotDelegate?
     
     var _title : String?
@@ -72,7 +72,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
     
     var labelField : Int
     var labelTextStyle: CPTTextStyle?
-    var labelFormatter = Formatter()
+    var labelFormatter : Formatter?
     
     var dataNeedsReloading = false
     

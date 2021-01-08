@@ -29,10 +29,8 @@ class CPTPlotSpaceAnnotation: CPTAnnotation {
     }
     
     override init() {
-        super.init()
-        
-        let plotSpace = CPTPlotSpace()
-        self.init( newPlotSpace: plotSpace, newPlotPoint: [])
+        super.init()        
+        plotSpace = CPTPlotSpace()
     }
     
     // MARK: Layout

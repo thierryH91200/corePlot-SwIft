@@ -339,21 +339,15 @@ extension CPTPlot {
         return dataType;
     }
     
-    //
-    ///** @brief Retrieves an array of values from the cache.
-    // *  @param key The key identifying the field.
-    // *  @return The array of cached values.
-    // **/
-    //-(nullable NSArray *)cachedArrayForKey:(nonnull NSString *)key
-    //{
-    //    return (self.cachedData)[key];
-    //}
-    //
-    ///** @brief Retrieves a single value from the cache.
-    // *  @param key The key identifying the field.
-    // *  @param idx The index of the desired data value.
-    // *  @return The cached value or @nil if no data is cached for the requested key.
-    // **/
+    
+    /** @brief Retrieves an array of values from the cache.
+     *  @param key The key identifying the field.
+     *  @return The array of cached values.
+     **/
+    func cachedArrayForKey(key: String)-> [Any]
+    {
+        return self.cachedData[key]!
+    }
 }
 
 

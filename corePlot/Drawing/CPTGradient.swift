@@ -29,6 +29,8 @@ class CPTGradientElement {
 
 class CPTGradient: NSObject {
     
+    static let shared = CPTGradient()
+    
     // Enumeration of gradient types
     enum  CPTGradientType: Int  {
         case axial             ///< Axial gradient
@@ -39,8 +41,7 @@ class CPTGradient: NSObject {
         case linear          ///< Linear blending mode
         case chromatic       ///< Chromatic blending mode
         case inverseChromatic ///< Inverse chromatic blending mode
-    };
-    
+    }
     
     var colorspace : CPTColorSpace?
     var blendingMode:  CPTGradientBlendingMode?
@@ -133,7 +134,7 @@ class CPTGradient: NSObject {
     }
     
     
-    func addElement( newElement: CPTGradientElement )
+    func addElement( newElement: inout CPTGradientElement )
     {
         var curElement = self.elementList
         
@@ -160,33 +161,28 @@ class CPTGradient: NSObject {
         }
     }
     
-//    (nonnull instancetype)gradientWithBeginningColor:(nonnull CPTColor *)begin endingColor:(nonnull CPTColor *)end
-//    {
-//        return [self gradientWithBeginningColor:begin endingColor:end beginningPosition:CPTFloat(0.0) endingPosition:CPTFloat(1.0)];
-//    }
-
-//    /** @brief Creates and returns a new CPTGradient instance initialized with an axial linear gradient between two given colors, at two given normalized positions.
-//     *  @param begin The beginning color.
-//     *  @param end The ending color.
-//     *  @param beginningPosition The beginning position (@num{0} ≤ @par{beginningPosition} ≤ @num{1}).
-//     *  @param endingPosition The ending position (@num{0} ≤ @par{endingPosition} ≤ @num{1}).
-//     *  @return A new CPTGradient instance initialized with an axial linear gradient between the two given colors, at two given normalized positions.
-//     **/
-    class func gradient(withBeginning begin: CPTColor, ending end: CPTColor, beginningPosition: CGFloat, endingPosition: CGFloat) -> CPTGradient {
+    /** @brief Creates and returns a new CPTGradient instance initialized with an axial linear gradient between two given colors, at two given normalized positions.
+     *  @param begin The beginning color.
+     *  @param end The ending color.
+     *  @param beginningPosition The beginning position (@num{0} ≤ @par{beginningPosition} ≤ @num{1}).
+     *  @param endingPosition The ending position (@num{0} ≤ @par{endingPosition} ≤ @num{1}).
+     *  @return A new CPTGradient instance initialized with an axial linear gradient between the two given colors, at two given normalized positions.
+     **/
+    func gradient( beginColor: NSUIColor, endColor: NSUIColor, beginPosition: CGFloat = CGFloat(0), endPosition: CGFloat = CGFloat(1.0)) -> CPTGradient {
 
         let newInstance = CPTGradient()
 
-        let color1 = CPTGradientElement()
-        let color2 = CPTGradientElement()
+        var color1 = CPTGradientElement()
+        var color2 = CPTGradientElement()
 
-        color1.color = CPTRGBAColorFromCGColor(begin.cgColor);
-        color2.color = CPTRGBAColorFromCGColor(end.cgColor);
+        color1.color = CPTRGBAColorFromCGColor(beginColor.cgColor);
+        color2.color = CPTRGBAColorFromCGColor(endColor.cgColor);
 
-        color1.position = beginningPosition;
-        color2.position = endingPosition;
+        color1.position = beginPosition;
+        color2.position = endPosition;
 
-        newInstance.addElement(&color1)
-        newInstance.addElement(&color2)
+        newInstance.addElement(newElement: &color1)
+        newInstance.addElement(newElement: &color2)
 
         return newInstance
     }
