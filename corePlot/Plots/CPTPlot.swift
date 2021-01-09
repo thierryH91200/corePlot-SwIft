@@ -11,12 +11,13 @@ import AppKit
     
     func numberOfRecordsForPlot ( plot:  CPTPlot) -> Int
     func numbersForPlot         ( plot : CPTPlot, fieldEnum :Int, indexRange : NSRange) -> [Int]
-    func numberForPlot          ( plot: CPTPlot, field:Int, recordIndex:Int) -> Double
-    func doubleForPlot          ( plot: CPTPlot, fieldEnum:Int,  idx: Int) ->Double
-    func dataForPlot            ( plot: CPTPlot, fieldEnum: Int, indexRange:NSRange ) -> CPTNumericData
+    func numberForPlot          ( plot: CPTPlot, field:Int, index: Int) -> Double
+    func doubleForPlot          ( plot: CPTPlot, fieldEnum:Int,  index: Int) ->Double
     
-    @objc optional func dataForPlot(plot : CPTPlot , indexRange:NSRange)-> [CPTNumericData]
-    @objc optional func dataLabelForPlot(plot: CPTPlot, recordIndex:Int )-> CPTLayer
+    func dataForPlot            ( plot: CPTPlot, fieldEnum: Int, indexRange:NSRange ) -> CGFloat
+    @objc optional func dataForPlot(plot : CPTPlot , indexRange:NSRange)-> [CGFloat]
+    @objc optional func dataLabelForPlot(plot: CPTPlot, index:Int )-> CPTLayer
+    @objc optional func dataLabelsForPlot(plot: CPTPlot,  indexRange: NSRange)-> [CPTLayer]
 }
 
 @objc public protocol CPTPlotDelegate {
@@ -35,7 +36,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
     
     var cachedData: [String : [Any]] = [:]
         
-    @objc open weak var dataSource  : CPTPlotDataSource?
+    open weak var dataSource  : CPTPlotDataSource?
     @objc open weak var delegatePlot: CPTPlotDelegate?
     
     var _title : String?

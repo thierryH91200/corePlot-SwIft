@@ -12,35 +12,35 @@ extension CPTPlot {
     
     
     // MARK:  Data Ranges
-    //
-    ///** @brief Determines the smallest plot range that fully encloses the data for a particular field.
-    // *  @param fieldEnum The field enumerator identifying the field.
-    // *  @return The plot range enclosing the data.
-    // **/
+    
+    /** @brief Determines the smallest plot range that fully encloses the data for a particular field.
+     *  @param fieldEnum The field enumerator identifying the field.
+     *  @return The plot range enclosing the data.
+     **/
     func plotRangeForField(fieldEnum: Int )-> CPTPlotRange
     {
         if self.dataNeedsReloading == true {
             self.reloadData()
         }
-        let numbers = self.cachedNumbersForField(fieldEnum)
+        let numbers = self.cachedNumbersForField(fieldEnum: fieldEnum)
         let range            : CPTPlotRange?
         
-        let numberOfSamples = numbers.numberOfSamples;
+        let numberOfSamples = numbers.count
         
         if ( numberOfSamples > 0 ) {
-            if ( self.doublePrecisionCache ) {
-                let min = Double.infinity
-                let max = -Double.infinity
+            if ( self.doublePrecisionCache )() {
+                var min = Double.infinity
+                var max = -Double.infinity
                 
-                let doubles    = numbers.bytes;
-                let lastSample = doubles + numberOfSamples;
+                let doubles    = numbers
+                let lastSample = doubles + numberOfSamples
                 
                 while ( doubles < lastSample ) {
                     doubles += 1
                     var value = doubles
                     
                     
-                    if ( !isnan(value)) {
+                    if ( !isnan(value) {
                         if ( value < min ) {
                             min = value;
                         }
@@ -48,24 +48,24 @@ extension CPTPlot {
                             max = value;
                         }
                     }
-                }
+                    }
                 
                 if ( max >= min ) {
-                    range = [CPTPlotRange plotRangeWithLocation:@(min) length:max - min);
+                    range = plotRangeWithLocation(min, length: max - min);
                 }
             }
             else {
-                let min = [NSDecimalNumber maximumDecimalNumber].decimalValue;
-                let max = [NSDecimalNumber minimumDecimalNumber].decimalValue;
+                let min = maximumDecimalNumber
+                let max = minimumDecimalNumber
                 
-                let decimals   = (const NSDecimal *)numbers.bytes;
+                let decimals   = numbers
                 let lastSample = decimals + numberOfSamples;
                 
                 while ( decimals < lastSample ) {
                     value = decimals
                     decimals += 1
                     
-                    if ( !value.isNaN) {
+                    if ( !value!!.isNaN) {
                         if value < min {
                             min = value;
                         }
@@ -82,16 +82,16 @@ extension CPTPlot {
         }
         return range!
     }
-    //
-    ///** @brief Determines the smallest plot range that fully encloses the data for a particular coordinate.
-    // *  @param coord The coordinate identifier.
-    // *  @return The plot range enclosing the data.
-    // **/
-    //
-    ///** @brief Determines the smallest plot range that fully encloses the entire plot for a particular field.
-    // *  @param fieldEnum The field enumerator identifying the field.
-    // *  @return The plot range enclosing the data.
-    // **/
+    
+    /** @brief Determines the smallest plot range that fully encloses the data for a particular coordinate.
+     *  @param coord The coordinate identifier.
+     *  @return The plot range enclosing the data.
+     **/
+    
+    /** @brief Determines the smallest plot range that fully encloses the entire plot for a particular field.
+     *  @param fieldEnum The field enumerator identifying the field.
+     *  @return The plot range enclosing the data.
+     **/
     func plotRangeEnclosingField(fieldEnum: Int)-> CPTPlotRange?
     {
         return self.plotRangeForField(fieldEnum: fieldEnum)
@@ -103,29 +103,29 @@ extension CPTPlot {
     // **/
     func plotRangeEnclosingCoordinate(coord: CPTCoordinate)-> CPTPlotRange?
     {
-        var fields = self.fieldIdentifiersForCoordinate(coord: coord)
+        let fields = self.fieldIdentifiersForCoordinate(coord: coord)
         guard fields.isEmpty == false else  { return nil }
         
-        var unionRange = [CPTPlotRange]()
+        var unionRange : CPTMutablePlotRange?
         
         for field in fields {
             let currentRange = self.plotRangeEnclosingField(fieldEnum: Int(field))
-            if  unionRange.isEmpty == false  {
-                unionRange = currentRange
+            if  (unionRange != nil)  {
+                unionRange = currentRange as? CPTMutablePlotRange
             }
             else {
-                unionRange.unionPlotRange(self.plotRangeEnclosingField(fieldEnum: Int(field)))
+                unionRange?.unionPlotRange(other: self.plotRangeEnclosingField(fieldEnum: Int(field)))
             }
         }
         return unionRange;
     }
     
     // MARK: -  Data Labels
-    //
-    ///**
-    // *  @brief Marks the receiver as needing to update all data labels before the content is next drawn.
-    // *  @see @link CPTPlot::relabelIndexRange: -relabelIndexRange: @endlink
-    // **/
+    
+    /**
+     *  @brief Marks the receiver as needing to update all data labels before the content is next drawn.
+     *  @see @link CPTPlot::relabelIndexRange: -relabelIndexRange: @endlink
+     **/
     func setNeedsRelabel()
     {
         self.labelIndexRange = NSRange(location: 0, length: self.cachedDataCount);
@@ -145,23 +145,30 @@ extension CPTPlot {
         
         let dataLabelTextStyle = self.labelTextStyle
         let boolLabel = labelTextStyle != nil ? true : false
-
+        
         let dataLabelFormatter = self.labelFormatter
         var boolFormat = dataLabelFormatter != nil ? true : false
         
         let plotProvidesLabels = boolLabel && boolFormat
-
+        
         var hasCachedLabels    = false
         var cachedLabels = self.cachedArrayForKey(key: NSBindingName.PlotDataLabels.rawValue)
         
-        for  label in cachedLabels {
-            if ( label == nil) {
+        for  label in cachedLabels as? [CPTLayer] {
+            if ( label != nil) {
+                hasCachedLabels = true
+                break
+            }
+        }
+        let nullClass = NSNull.self
+        for label in cachedLabels {
+            if !(label is NSNull) {
                 hasCachedLabels = true
                 break
             }
         }
         
-        if ( !self.showLabels || (!hasCachedLabels && !plotProvidesLabels)) {
+        if ( !self.showLabels || (hasCachedLabels == false && plotProvidesLabels == false )) {
             for annotation in self.labelAnnotations  {
                 self.removeAnnotation(annotation)
             }
@@ -233,13 +240,13 @@ extension CPTPlot {
                 {
                     if labelAnnotation is annotationClass {
                         labelArray[i] = nullObject;
-                        self.removeAnnotation(labelAnnotation)
+                        self.removeAnnotation(labelAnnotation )
                     }
                 }
             }
             else {
                 if (( newLabelLayer ) != nil) {
-                    labelAnnotation = CPTPlotSpaceAnnotation(newPlotSpace: thePlotSpace, newPlotPoint:[])
+                    labelAnnotation = CPTPlotSpaceAnnotation(newPlotSpace: thePlotSpace!, newPlotPoint:[])
                     labelArray.append(labelAnnotation)
                     self.addAnnotation(labelAnnotation)
                 }
@@ -275,43 +282,44 @@ extension CPTPlot {
     }
     
     
-    func updateContentAnchorForLabel(label: CPTPlotSpaceAnnotation )
+    func updateContentAnchorForLabel(label: CPTPlotSpaceAnnotation? )
     {
-        if ( label && self.adjustLabelAnchors == true ) {
-            var displacement = label.displacement
+        if ( (label != nil) && self.adjustLabelAnchors == true ) {
+            var displacement = label?.displacement
             
             if ( displacement!.equalTo(CGPoint())) {
                 displacement?.y = CGFloat(1.0); // put the label above the data point if zero displacement
             }
-            var angle      = CGFloat(M_PI) + atan2(displacement?.y, displacement?.x) - label.rotation
-                        var newAnchorX = cos(angle);
-                        var newAnchorY = sin(angle);
-                        
-                        if ( abs(newAnchorX) <= abs(newAnchorY)) {
-                        newAnchorX /= abs(newAnchorY);
-                        newAnchorY  = signbit(newAnchorY) ? CGFloat(-1.0) : CGFloat(1.0);
-                        }
-                        else {
-                        newAnchorY /= abs(newAnchorX);
-                        newAnchorX  = signbit(newAnchorX) ? CGFloat(-1.0) : CGFloat(1.0);
-                        }
-                        
-                        label.contentAnchorPoint = CGPoint((newAnchorX + CGFloat(1.0)) / CGFloat(2.0), (newAnchorY + CGFloat(1.0)) / CGFloat(2.0));
-                        }
-                        }
-                        
-                        func repositionAllLabelAnnotations()
-                        {
-                        let annotations = self.labelAnnotations;
-                        let labelCount           = annotations.count;
-                        _           = CPTAnnotation()
-                        
-                        for  i in 0..<labelCount {
-                        let annotation = annotations[i]
-                        if annotation is CPTPlotSpaceAnnotation {
-                        self.positionLabelAnnotation(label:annotation as! CPTPlotSpaceAnnotation, forIndex:i)
-                        self.updateContentAnchorForLabel(label:annotation as! CPTPlotSpaceAnnotation)
-                        }
-                        }
-                        }
-                    }
+            let atn = CGFloat(atan2(displacement!.y, displacement!.x))
+            let angle      = CGFloat.pi + atn - CGFloat((label?.rotation!)!)
+            var newAnchorX = cos(angle);
+            var newAnchorY = sin(angle);
+            
+            if ( abs(newAnchorX) <= abs(newAnchorY)) {
+                newAnchorX /= abs(newAnchorY);
+                newAnchorY  = newAnchorY.signbit() ? CGFloat(-1.0) : CGFloat(1.0);
+            }
+            else {
+                newAnchorY /= abs(newAnchorX);
+                newAnchorX  = newAnchorX.signbit() ? CGFloat(-1.0) : CGFloat(1.0);
+            }
+            
+            label?.contentAnchorPoint = CGPoint(x: (newAnchorX + CGFloat(1.0)) / CGFloat(2.0), y: (newAnchorY + CGFloat(1.0)) / CGFloat(2.0));
+        }
+    }
+    
+    func repositionAllLabelAnnotations()
+    {
+        let annotations = self.labelAnnotations;
+        let labelCount           = annotations.count;
+        _           = CPTAnnotation()
+        
+        for  i in 0..<labelCount {
+            let annotation = annotations[i]
+            if annotation is CPTPlotSpaceAnnotation {
+                self.positionLabelAnnotation(label:annotation as! CPTPlotSpaceAnnotation, forIndex:i)
+                self.updateContentAnchorForLabel(label:annotation as? CPTPlotSpaceAnnotation)
+            }
+        }
+    }
+}

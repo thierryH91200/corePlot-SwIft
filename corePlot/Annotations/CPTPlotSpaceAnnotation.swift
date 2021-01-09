@@ -51,7 +51,7 @@ class CPTPlotSpaceAnnotation: CPTAnnotation {
                     // Get plot area point
                     let thePlotSpace      = self.plotSpace;
                     let plotAreaViewAnchorPoint = thePlotSpace.plotAreaViewPointForPlotPoint(
-                        self.decimalAnchor,
+                        plotPoint: self.decimalAnchor,
                         numberOfCoordinates:self.anchorCount)
                     
                     var newPosition = CGPoint()

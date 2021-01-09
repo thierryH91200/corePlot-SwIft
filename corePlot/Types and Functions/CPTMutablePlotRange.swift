@@ -62,8 +62,6 @@ class CPTMutablePlotRange: CPTPlotRange {
         set { super.lengthDouble = newValue }
     }
     
-    
-    
     // MARK: -  Combining ranges
     
     /** @brief Extends the range to include another range. The sign of @ref length is unchanged.

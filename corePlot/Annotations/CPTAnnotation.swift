@@ -16,11 +16,11 @@ class CPTAnnotation: NSObject {
     
     override init()
     {
-        annotationHostLayer = nil;
-        contentLayer        = nil;
-        displacement        = .zero;
-        contentAnchorPoint  = CGPoint(x: 0.5, y: 0.5);
-        rotation            = CGFloat(0.0);
+        annotationHostLayer = ni;
+        contentLayer        = nil
+        displacement        = .zero
+        contentAnchorPoint  = CGPoint(x: 0.5, y: 0.5)
+        rotation            = CGFloat(0.0)
     }
     
 

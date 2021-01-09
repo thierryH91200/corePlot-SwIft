@@ -59,9 +59,9 @@ public class CPTAnnotationHostLayer: CPTLayer {
     }
     
     // Removes an annotation from the receiver.
-    func removeAnnotation(_ annotation: CPTAnnotation?) {
+    func removeAnnotation(_ annotation: CPTAnnotation) {
         
-        if let index = annotations.firstIndex(of: annotation!) {
+        if let index = annotations.firstIndex(of: annotation) {
             annotations.remove(at: index)
         }
     }
