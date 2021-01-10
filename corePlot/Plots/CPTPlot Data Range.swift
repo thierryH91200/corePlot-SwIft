@@ -138,7 +138,6 @@ extension CPTPlot {
     func relabel()
     {
         guard self.needsRelabel == true else { return }
-        
         self.needsRelabel = false
         
         let  nullObject         : String?
@@ -282,16 +281,16 @@ extension CPTPlot {
     }
     
     
-    func updateContentAnchorForLabel(label: CPTPlotSpaceAnnotation? )
+    func updateContentAnchorForLabel(label: CPTPlotSpaceAnnotation)
     {
-        if ( (label != nil) && self.adjustLabelAnchors == true ) {
-            var displacement = label?.displacement
+        if ( self.adjustLabelAnchors == true ) {
+            var displacement = label.displacement
             
             if ( displacement!.equalTo(CGPoint())) {
                 displacement?.y = CGFloat(1.0); // put the label above the data point if zero displacement
             }
             let atn = CGFloat(atan2(displacement!.y, displacement!.x))
-            let angle      = CGFloat.pi + atn - CGFloat((label?.rotation!)!)
+            let angle      = CGFloat.pi + atn - CGFloat((label.rotation!))
             var newAnchorX = cos(angle);
             var newAnchorY = sin(angle);
             
@@ -304,7 +303,7 @@ extension CPTPlot {
                 newAnchorX  = newAnchorX.signbit() ? CGFloat(-1.0) : CGFloat(1.0);
             }
             
-            label?.contentAnchorPoint = CGPoint(x: (newAnchorX + CGFloat(1.0)) / CGFloat(2.0), y: (newAnchorY + CGFloat(1.0)) / CGFloat(2.0));
+            label.contentAnchorPoint = CGPoint(x: (newAnchorX + CGFloat(1.0)) / CGFloat(2.0), y: (newAnchorY + CGFloat(1.0)) / CGFloat(2.0));
         }
     }
     
@@ -318,7 +317,7 @@ extension CPTPlot {
             let annotation = annotations[i]
             if annotation is CPTPlotSpaceAnnotation {
                 self.positionLabelAnnotation(label:annotation as! CPTPlotSpaceAnnotation, forIndex:i)
-                self.updateContentAnchorForLabel(label:annotation as? CPTPlotSpaceAnnotation)
+                self.updateContentAnchorForLabel(label:(annotation as? CPTPlotSpaceAnnotation)!)
             }
         }
     }

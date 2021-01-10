@@ -10,12 +10,16 @@ import AppKit
 @objc public protocol CPTPlotDataSource: NSObjectProtocol {
     
     func numberOfRecordsForPlot ( plot:  CPTPlot) -> Int
-    func numbersForPlot         ( plot : CPTPlot, fieldEnum :Int, indexRange : NSRange) -> [Int]
-    func numberForPlot          ( plot: CPTPlot, field:Int, index: Int) -> Double
-    func doubleForPlot          ( plot: CPTPlot, fieldEnum:Int,  index: Int) ->Double
+
+    @objc optional func numberForPlot  ( plot: CPTPlot, fieldEnum:Int, index: Int) -> Int
+    @objc optional func numbersForPlot ( plot: CPTPlot, fieldEnum :Int, indexRange : NSRange) -> [Int]
+
+    @objc optional func doubleForPlot ( plot: CPTPlot, fieldEnum:Int,  index: Int) ->Double
+    @objc optional func doublesForPlot( plot: CPTPlot, fieldEnum:Int, indexRange:NSRange)->[Double]
+
+    @objc optional func dataForPlot     ( plot : CPTPlot, fieldEnum: Int, indexRange:NSRange ) -> CGFloat
+    @objc optional func dataForPlot     ( plot : CPTPlot , indexRange:NSRange)-> [CGFloat]
     
-    func dataForPlot            ( plot: CPTPlot, fieldEnum: Int, indexRange:NSRange ) -> CGFloat
-    @objc optional func dataForPlot(plot : CPTPlot , indexRange:NSRange)-> [CGFloat]
     @objc optional func dataLabelForPlot(plot: CPTPlot, index:Int )-> CPTLayer
     @objc optional func dataLabelsForPlot(plot: CPTPlot,  indexRange: NSRange)-> [CPTLayer]
 }
@@ -102,7 +106,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
                 
                 for  label in self.labelAnnotations  {
                     label.rotation = labelRotation;
-                    self.updateContentAnchorForLabel(label: label as! CPTPlotSpaceAnnotation)
+                    self.updateContentAnchorForLabel(label: label as! CPTPlotSpaceAnnotation )
                 }
             }
         }
@@ -184,7 +188,6 @@ public class CPTPlot: CPTAnnotationHostLayer {
         self.needsDisplayOnBoundsChange = true
     }
     
-    
     override init(layer: Any)
     {
         super.init(layer: layer)
@@ -264,14 +267,14 @@ public class CPTPlot: CPTAnnotationHostLayer {
         return unionRange;
     }
 
-    
     func reloadDataInIndexRange(indexRange :NSRange)
     {
+        assert(NSMaxRange(indexRange) <= numberOfRecords, "Invalid parameter not satisfying: NSMaxRange(indexRange) <= numberOfRecords")
         self.dataNeedsReloading = false;
-        self.reloadPlotData(indexRange: indexRange)
+        self.reloadDataInIndexRange(indexRange: indexRange)
         
         // Data labels
-        self.reloadDataLabels( indexRange: indexRange)
+        self.reloadDataLabelsInIndexRange( indexRange: indexRange)
     }
 
     
@@ -282,11 +285,9 @@ public class CPTPlot: CPTAnnotationHostLayer {
         self.reloadDataIfNeeded()
         super.draw(in: context)
         
-        let  theDelegate = self.delegatePlot
+        weak var  theDelegate = self.delegatePlot
         
-        //        if ( [theDelegate respondsToSelector:@selector(didFinishDrawing:)] ) {
         theDelegate?.didFinishDrawing(plot: self)
-        //        }
     }
     
     // MARK: - Animation
@@ -381,7 +382,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
     {
         self.cachedData.removeAll()
         self.cachedDataCount = 0;
-        self.reloadData( indexRange: NSRange(location: 0, length: self.numberOfRecords))
+        self.reloadDataInIndexRange( indexRange: NSRange(location: 0, length: self.numberOfRecords))
     }
     
     /**
@@ -397,12 +398,13 @@ public class CPTPlot: CPTAnnotationHostLayer {
     /** @brief Reload plot data, labels, and plot-specific information in the given index range from the data source immediately.
      *  @param indexRange The index range to load.
      **/
-    func reloadData( indexRange: NSRange) {
-        
-        dataNeedsReloading = false
-        reloadPlotData(indexRange: indexRange)
-        reloadDataLabels(indexRange: indexRange)
-    }
+//    func reloadDataInIndexRange( indexRange: NSRange) {
+//        NSParameterAssert(NSMaxRange(indexRange) <= self.numberOfRecords);
+//
+//        dataNeedsReloading = false
+//        reloadPlotDataInIndexRange(indexRange: indexRange)
+//        reloadDataLabelsInIndexRange(indexRange: indexRange)
+//    }
     
     // MARK: - Legends
     func numberOfLegendEntries()->Int

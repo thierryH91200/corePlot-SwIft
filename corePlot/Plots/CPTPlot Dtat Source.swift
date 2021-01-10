@@ -189,21 +189,22 @@ extension CPTPlot {
         
         weak var theDataSource = self.dataSource
         
-        if theDataSource.dataForPlot(plot: field: recordIndexRange:) {
-            numbers = theDataSource.dataForPlot(self, field:fieldEnum, recordIndexRange:indexRange)
+        if ((theDataSource?.dataForPlot(plot: fieldEnum: indexRange:)) != nil) {
+            numbers = theDataSource?.dataForPlot( plot:self, fieldEnum:fieldEnum, indexRange:indexRange) as! [CPTLayer]
         }
-        else if theDataSource?.doublesForPlot(plot: field: recordIndexRange:) {
+        else if ((theDataSource?.doublesForPlot(plot: fieldEnum: indexRange:)) != nil) {
             numbers = NSMutableData dataWithLength:sizeof(double) * indexRange.length];
             var fieldValues  = numbers
-            var doubleValues = theDataSource.doublesForPlot(plot:self, field:fieldEnum, IndexRange:indexRange)
+            
+            var doubleValues = theDataSource?.doublesForPlot(plot:self, fieldEnum:fieldEnum, indexRange:indexRange)
             //                memcpy(fieldValues, doubleValues, MemoryLayout<Double>.size * indexRange.length)
-            fieldValues = [Double](repeating: doubleValues, count: indexRange.length )
+            fieldValues = [Double](repeating: doubleValues!.first!, count: indexRange.length )
             
         }
-        else if theDataSource?.numbersForPlot(plot: field: recordIndexRange:) {
-            let numberArray = theDataSource.numbersForPlot(self, field:fieldEnum, recordIndexRange:indexRange)
+        else if ((theDataSource?.numbersForPlot(plot: field: fieldEnum: indexRange:)) != nil) {
+            let numberArray = theDataSource?.numbersForPlot(plot: self, fieldEnum: fieldEnum, indexRange:indexRange)
             
-            if ( numberArray ) {
+            if (( numberArray ) != nil) {
                 numbers = NSArray arrayWithArray:numberArray;
             }
             else {
@@ -212,40 +213,41 @@ extension CPTPlot {
             }
             
         }
-        else if ( theDataSource.doubleForPlot(:field:recordIndex:)) {
+        else if  theDataSource?.doubleForPlot(plot : fieldEnum: index:) != nil {
+           
             var recordIndex = 0
-            NSMutableData *fieldData = NSMutableData dataWithLength:sizeof(double) * indexRange.length];
-            double *fieldValues      = fieldData.mutableBytes;
-            for ( recordIndex = indexRange.location; recordIndex < indexRange.location + indexRange.length; ++recordIndex ) {
-                double number = theDataSource doubleForPlot:self field:fieldEnum recordIndex:recordIndex];
-                *fieldValues++ = number;
+            var fieldData = NSMutableData(length: indexRange.length)
+            var fieldValues      = fieldData
+            for recordIndex in indexRange.location..<indexRange.location + indexRange.length {
+                let number = theDataSource?.doubleForPlot(plot: self, fieldEnum:fieldEnum, index:recordIndex)
+                fieldValues = number! + 1.0
             }
+            
             numbers = fieldData;
         }
         else {
-            if theDataSource?.numberForPlot(plot: field: recordIndex:) {
+            if ((theDataSource?.numberForPlot(plot: fieldEnum: index:)) != nil) {
                 
                 let nullObject                 = NSNull null;
                 let recordIndex = 0
-                let fieldValues = NSMutableArray arrayWithCapacity:indexRange.length];
+                let fieldValues = [CGFloat]()
                 for recordIndex in indexRange.location..<(indexRange.location + indexRange.length) {
                     if ( respondsToSingleValueSelector ) {
-                        let number = theDataSource.numberForPlot:self field:fieldEnum recordIndex:recordIndex];
+                        let number = theDataSource?.numberForPlot(plot: self, fieldEnum:fieldEnum, index:recordIndex)
                         if ( number ) {
-                            fieldValues.addObject(number)
+                            fieldValues.append(number)
                         }
                         else {
                             fieldValues.append(nullObject)
                         }
                     }
                     else {
-                        fieldValues.addObject(NSDecimalNumber zero)
+                        fieldValues.append( zero)
                     }
                 }
                 numbers = fieldValues
             }
         }
-        
         return numbers;
     }
     //
@@ -258,10 +260,10 @@ extension CPTPlot {
     func loadNumbersForAllFieldsFromDataSourceInRecordIndexRange(indexRange: NSRange) -> Bool
     {
         var hasData = false;
-        weak var theDataSource = self.dataSource as? CPTPlotDataSource
+        weak var theDataSource = self.dataSource
         
-        if ( theDataSource?.dataForPlot?(plot: fieldEnum: indexRange:) ) {
-            let data = theDataSource.dataForPlot(self, fieldEnum: ,indexRange:)
+        if (( theDataSource?.dataForPlot(plot: indexRange:) ) != nil) {
+            let data = theDataSource?.dataForPlot!(plot: self, indexRange:indexRange)
             
             if data is CPTNumericData  {
                 let sampleCount = data.numberOfSamples;
@@ -351,14 +353,13 @@ extension CPTPlot {
                         case .columnsFirst:
                             for  fieldNum in 0..<fieldCount {
                                 let samples = data.samplePointerAtIndex(0, fieldNum)
-                                let tempData    = NSData alloc] initWithBytes:samples
-                                length:bufferLength];
+                                let tempData    = NSData(bytes: samples,  length:bufferLength)
                                 
                                 CPTMutableNumericData *tempNumericData = CPTMutableNumericData ( initWithData:tempData
                                 dataType:dataType,
                                 shape:nil)
                                 
-                                self cacheNumbers:tempNumericData forField:fieldNum atRecordIndex:indexRange.location];
+                                self.cacheNumbers:tempNumericData forField:fieldNum atRecordIndex:indexRange.location];
                             }
                             hasData = true
                         }
