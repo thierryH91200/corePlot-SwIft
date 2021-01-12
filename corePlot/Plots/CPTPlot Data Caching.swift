@@ -270,18 +270,6 @@ extension CPTPlot {
         return self.cachedData[String(fieldEnum)]!
     }
     
-    /** @brief Retrieves a single number from the cache.
-     *  @param fieldEnum The field enumerator identifying the field.
-     *  @param idx The index of the desired data value.
-     *  @return The cached number.
-     **/
-    
-    /** @brief Retrieves a single number from the cache.
-     *  @param fieldEnum The field enumerator identifying the field.
-     *  @param idx The index of the desired data value.
-     *  @return The cached number or @NAN if no data is cached for the requested field.
-     **/
-    
     ///** @brief Retrieves a single number from the cache.
     // *  @param fieldEnum The field enumerator identifying the field.
     // *  @param idx The index of the desired data value.
@@ -324,7 +312,6 @@ extension CPTPlot {
         //  Created by thierryH24 on 13/12/2020.
         //
 
-        import Foundation
 
         enum CPTDataTypeFormat, sizeof(double), CFByteOrderGetCurrent());
         });
@@ -344,11 +331,18 @@ extension CPTPlot {
      *  @param key The key identifying the field.
      *  @return The array of cached values.
      **/
-    func cachedArrayForKey(key: String)-> [Any]
+    func cachedArrayForKey(key: String)-> [Any?]
     {
         return self.cachedData[key]!
     }
 }
 
+
+// https://stackoverflow.com/questions/28190631/creating-an-extension-to-filter-nils-from-an-array-in-swift
+extension Array {
+    static func filterNils(_ array: [Element?]) -> [Element] {
+        return array.filter { $0 != nil }.map { $0! }
+    }
+}
 
 

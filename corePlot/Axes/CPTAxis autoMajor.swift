@@ -221,20 +221,20 @@ extension CPTAxis {
                     // Determine interval value
                     length = log10(maxLimit / minLimit);
                     
-                    let interval = (length.signbit() != 0) ? -1.0 : 1.0
+                    let interval = length.signbit() ? -1.0 : 1.0
                     let intervalStep = pow(10.0, fabs(interval));
                     
                     // Determine minor interval
-                    let minorInterval = intervalStep * 0.9 * pow(10.0, floor(log10(minLimit))) / minorTicks;
+                    var minorInterval = CGFloat(intervalStep * 0.9) * pow(10.0, floor(log10(minLimit))) / minorTicks;
                     
                     // Determine the initial and final major indexes for the actual visible range
-                    let initialIndex = lrint(floor(log10(minLimit / fabs(interval)))) // can be negative
-                    let finalIndex   = lrint(ceil(log10(maxLimit / fabs(interval))))  // can be negative
+                    let initialIndex = lrint(floor(log10(Double(minLimit) / fabs(interval)))) // can be negative
+                    let finalIndex   = lrint(ceil(log10(Double(maxLimit) / fabs(interval))))  // can be negative
                     
                     // Iterate through the indexes with visible ticks and build the locations sets
                     for i in initialIndex..<finalIndex + 1 {
                         
-                        let pointLocation = pow(10.0, i * interval);
+                        let pointLocation = pow(10.0, Double(i) * interval);
                         
                         for j in 1..<minorTicks {
                             
@@ -248,7 +248,7 @@ extension CPTAxis {
                             }
                             minorLocations.addObject(minorPointLocation)
                         }
-                        minorInterval *= intervalStep;
+                        minorInterval *= CGFloat(intervalStep);
                         
                         if ( pointLocation < minLimit ) {
                             continue

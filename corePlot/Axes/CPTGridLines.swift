@@ -10,8 +10,6 @@
 // 16/12/20
 //==============================
 
-
-
 import AppKit
 
 class CPTGridLines: CPTLayer {

@@ -16,7 +16,7 @@ protocol CPTAxisDelegate : CPTLayerDelegate {
     func axis(axis:  CPTAxis, shouldUpdateAxisLabelsAtLocations locations: CPTNumberSet ) -> Bool
     func axis(axis:  CPTAxis, shouldUpdateMinorAxisLabelsAtLocations locations: CPTNumberSet ) -> Bool
     
-    func axis(axis:  CPTAxis, labelWasSelected label: CPTAxisLabel ) -> Bool
+    func axis(axis:  CPTAxis, labelWasSelected label: CPTAxisLabel )
     func axis(axis:  CPTAxis, labelWasSelected label: CPTAxisLabel, withEvent event: CPTNativeEvent )
     
     func axis(axis:  CPTAxis, minorTickLabelWasSelected label: CPTAxisLabel )
@@ -25,7 +25,7 @@ protocol CPTAxisDelegate : CPTLayerDelegate {
     func axis(axis:  CPTAxis, labelTouchDown label: CPTAxisLabel )
     func axis(axis:  CPTAxis, labelTouchDown label: CPTAxisLabel, withEvent event: CPTNativeEvent )
     
-    func axis(axis:  CPTAxis, labelTouchUplabel label: CPTAxisLabel );
+    func axis(axis:  CPTAxis, labelTouchUp label: CPTAxisLabel );
     func axis(axis:  CPTAxis, labelTouchUp label: CPTAxisLabel, withEvent event: CPTNativeEvent)
     
     func axis(axis:  CPTAxis, minorTickTouchDown label: CPTAxisLabel)
@@ -89,7 +89,7 @@ public class CPTAxis : CPTLayer {
     
     // MARK: Title
     var titleTextStyle = CPTTextStyle()
-    var titleOffset =  CGFloat(0)
+//    var titleOffset =  CGFloat(0)
     var title = "title"
     var attributedTitle =  NSAttributedString(string: "")
     var titleRotation :  CGFloat?
@@ -891,28 +891,12 @@ public class CPTAxis : CPTLayer {
     //            [label positionRelativeToViewPoint:tickBasePoint forCoordinate:orthogonalCoordinate inDirection:direction];
     //        }
     //    }
-    //
-    //    /**
-    //     *  @brief Update the minor tick mark labels.
-    //     **/
-//    func updateMinorTickLabels()
-//    {
-//        let orthogonalCoordinate = CPTOrthogonalCoordinate(coordinate)
-//
-//        var direction = minorTickLabelDirection
-//
-//        if direction == CPTSign.none {
-//            direction = tickDirection
-//        }
-//
-//        for label in minorTickAxisLabels {
-//            let tickBasePoint = viewPoint(forCoordinateValue: label.tickLocation)
-//            label.positionRelative(toViewPoint: tickBasePoint, for: orthogonalCoordinate, inDirection: direction)
-//        }
-//
-//    }
     
-    //
+        /**
+         *  @brief Update the minor tick mark labels.
+         **/
+    
+    
     // MARK: - Titles
 
     //    -(nonnull NSNumber *)defaultTitleLocation
@@ -947,7 +931,7 @@ public class CPTAxis : CPTLayer {
         }
         else {
             self.updateMajorTickLabels();
-            self.updateMinorTickLabel()
+            self.updateMinorTickLabels()
         }
         self.updateAxisTitle()
     }
@@ -1086,208 +1070,105 @@ public class CPTAxis : CPTLayer {
     //     *  @param interactionPoint The coordinates of the interaction.
     //     *  @return Whether the event was handled or not.
     //     **/
-    //    -(BOOL)pointingDeviceUpEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
-    //    {
-    //        CPTAxisLabel *selectedDownLabel     = self.pointingDeviceDownLabel;
-    //        CPTAxisLabel *selectedDownTickLabel = self.pointingDeviceDownTickLabel;
-    //
-    //        self.pointingDeviceDownLabel     = nil;
-    //        self.pointingDeviceDownTickLabel = nil;
-    //
-    //        CPTGraph *theGraph = self.graph;
-    //
-    //        if ( !theGraph || self.hidden ) {
-    //            return false
-    //        }
-    //
-    //        weak var theDelegate = (id<CPTAxisDelegate>)self.delegate;
-    
-    //
-    //        // Tick labels
-    //        if ( [theDelegate respondsToSelector:@selector(axis:labelTouchUp:)] ||
-    //             [theDelegate respondsToSelector:@selector(axis:labelTouchUp:withEvent:)] ||
-    //             [theDelegate respondsToSelector:@selector(axis:labelWasSelected:)] ||
-    //             [theDelegate respondsToSelector:@selector(axis:labelWasSelected:withEvent:)] ) {
-    //            for ( CPTAxisLabel *label in self.axisLabels ) {
-    //                CPTLayer *contentLayer = label.contentLayer;
-    //                if ( contentLayer && !contentLayer.hidden ) {
-    //                    CGPoint labelPoint = [theGraph convertPoint:interactionPoint toLayer:contentLayer];
-    //
-    //                    if ( CGRectContainsPoint(contentLayer.bounds, labelPoint)) {
-    //                        var handled = false
-    //
-    //                        if ( [theDelegate respondsToSelector:@selector(axis:labelTouchUp:)] ) {
-    //                            handled = true;
-    //                            [theDelegate axis:self labelTouchUp:label];
-    //                        }
-    //
-    //                        if ( [theDelegate respondsToSelector:@selector(axis:labelTouchUp:withEvent:)] ) {
-    //                            handled = true;
-    //                            [theDelegate axis:self labelTouchUp:label withEvent:event];
-    //                        }
-    //
-    //                        if ( label == selectedDownLabel ) {
-    //                            if ( [theDelegate respondsToSelector:@selector(axis:labelWasSelected:)] ) {
-    //                                handled = true;
-    //                                [theDelegate axis:self labelWasSelected:label];
-    //                            }
-    //
-    //                            if ( [theDelegate respondsToSelector:@selector(axis:labelWasSelected:withEvent:)] ) {
-    //                                handled = true;
-    //                                [theDelegate axis:self labelWasSelected:label withEvent:event];
-    //                            }
-    //                        }
-    //
-    //                        if ( handled ) {
-    //                            return true;
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //        }
-    //
-    //        // Minor tick labels
-    //        if ( [theDelegate respondsToSelector:@selector(axis:minorTickTouchUp:)] ||
-    //             [theDelegate respondsToSelector:@selector(axis:minorTickTouchUp:withEvent:)] ||
-    //             [theDelegate respondsToSelector:@selector(axis:minorTickLabelWasSelected:)] ||
-    //             [theDelegate respondsToSelector:@selector(axis:minorTickLabelWasSelected:withEvent:)] ) {
-    //            for ( CPTAxisLabel *label in self.minorTickAxisLabels ) {
-    //                CPTLayer *contentLayer = label.contentLayer;
-    //                if ( contentLayer && !contentLayer.hidden ) {
-    //                    CGPoint labelPoint = [theGraph convertPoint:interactionPoint toLayer:contentLayer];
-    //
-    //                    if ( CGRectContainsPoint(contentLayer.bounds, labelPoint)) {
-    //                        var handled = false
-    //
-    //                        if ( [theDelegate respondsToSelector:@selector(axis:minorTickTouchUp:)] ) {
-    //                            handled = true;
-    //                            [theDelegate axis:self minorTickTouchUp:label];
-    //                        }
-    //
-    //                        if ( [theDelegate respondsToSelector:@selector(axis:minorTickTouchUp:withEvent:)] ) {
-    //                            handled = true;
-    //                            [theDelegate axis:self minorTickTouchUp:label withEvent:event];
-    //                        }
-    //
-    //                        if ( label == selectedDownTickLabel ) {
-    //                            if ( [theDelegate respondsToSelector:@selector(axis:minorTickLabelWasSelected:)] ) {
-    //                                handled = true;
-    //                                [theDelegate axis:self minorTickLabelWasSelected:label];
-    //                            }
-    //
-    //                            if ( [theDelegate respondsToSelector:@selector(axis:minorTickLabelWasSelected:withEvent:)] ) {
-    //                                handled = true;
-    //                                [theDelegate axis:self minorTickLabelWasSelected:label withEvent:event];
-    //                            }
-    //                        }
-    //
-    //                        if ( handled ) {
-    //                            return true;
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //        }
-    //
-    //        return [super pointingDeviceUpEvent:event atPoint:interactionPoint];
-    //    }
-    //
-    //    /// @}
-    //
+    override func pointingDeviceUpEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint )-> Bool
+    {
+        let selectedDownLabel     = self.pointingDeviceDownLabel;
+        let selectedDownTickLabel = self.pointingDeviceDownTickLabel;
+        
+        self.pointingDeviceDownLabel     = nil;
+        self.pointingDeviceDownTickLabel = nil;
+        
+        let theGraph = self.graph;
+        
+        guard self.isHidden == false else { return false }
+//        guard self.plots.count != 0 else { return false }
+        
+        weak var theDelegate = self.delegate as? CPTAxisDelegate
+        
+        
+        // Tick labels
+        for label in self.axisLabels {
+            let contentLayer = label.contentLayer;
+            if ( !contentLayer.isHidden ) {
+                let labelPoint = theGraph?.convert(interactionPoint, to:contentLayer)
+                
+                if ( contentLayer.bounds.contains(labelPoint!)) {
+                    var handled = false
+                    
+                    if ((theDelegate?.axis(axis: labelTouchUp:)) != nil) {
+                        handled = true
+                        theDelegate?.axis(axis:self, labelTouchUp:label)
+                        
+                    }
+                    
+                    if ((theDelegate?.axis( axis: labelTouchUp: withEvent:)) != nil) {
+                        handled = true
+                        theDelegate?.axis(axis:self, labelTouchUp:label, withEvent:event)
+                    }
+                    
+                    if ( label == selectedDownLabel ) {
+                        if (theDelegate?.axis(axis: labelWasSelected:) != nil) {
+                            handled = true;
+                            theDelegate?.axis(axis:self, labelWasSelected:label)
+                        }
+                        
+                        if ((theDelegate?.axis(axis: labelWasSelected: withEvent:)) != nil) {
+                            handled = true
+                            theDelegate?.axis(axis:self, labelWasSelected:label, withEvent:event)
+                        }
+                    }
+                    
+                    if ( handled ) {
+                        return true;
+                    }
+                }
+            }
+            
+        }
+        
+        // Minor tick labels
+        for label in self.minorTickAxisLabels {
+            let contentLayer = label.contentLayer;
+            if (  !contentLayer.isHidden ) {
+                let labelPoint = theGraph!.convert(interactionPoint, to:contentLayer)
+                
+                if ( contentLayer.bounds.contains(labelPoint)) {
+                    var handled = false
+                    
+                    if ((theDelegate?.axis(axis: minorTickTouchUp:)) != nil) {
+                        handled = true;
+                        theDelegate?.axis(axis:self, minorTickTouchUp:label)
+                    }
+                    
+                    if ((theDelegate?.axis(axis: minorTickTouchUp: withEvent:)) != nil) {
+                        handled = true;
+                        theDelegate?.axis(axis:self, minorTickTouchUp:label, withEvent:event)
+                    }
+                    
+                    if label == selectedDownTickLabel  {
+                        if ((theDelegate?.axis(axis: minorTickLabelWasSelected:)) != nil) {
+                            handled = true;
+                            theDelegate?.axis(axis:self, minorTickLabelWasSelected:label)
+                        }
+                        
+                        if ((theDelegate?.axis(axis: minorTickLabelWasSelected: withEvent:)) != nil) {
+                            handled = true;
+                            theDelegate?.axis(axis:self, minorTickLabelWasSelected:label, withEvent:event)
+                        }
+                    }
+                    
+                    if ( handled ) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return super.pointingDeviceUpEvent(event:event, atPoint:interactionPoint)
+    }
+
     // MARK: - Accessors
-    //
-    //    /// @cond
-    //
-    //   func setAxisLabels:(nullable CPTAxisLabelSet *)newLabels
-    //    {
-    //        if ( newLabels != axisLabels ) {
-    //            if ( self.labelsUpdated ) {
-    //                axisLabels = newLabels;
-    //            }
-    //            else {
-    //                for ( CPTAxisLabel *label in axisLabels ) {
-    //                    [label.contentLayer removeFromSuperlayer];
-    //                }
-    //
-    //                axisLabels = newLabels;
-    //
-    //                CPTPlotArea *thePlotArea = self.plotArea;
-    //                [thePlotArea updateAxisSetLayersForType:CPTGraphLayerTypeAxisLabels];
-    //
-    //                if ( axisLabels ) {
-    //                    CPTAxisLabelGroup *axisLabelGroup = thePlotArea.axisLabelGroup;
-    //                    CALayer *lastLayer                = nil;
-    //
-    //                    for ( CPTAxisLabel *label in axisLabels ) {
-    //                        CPTLayer *contentLayer = label.contentLayer;
-    //                        if ( contentLayer ) {
-    //                            if ( lastLayer ) {
-    //                                [axisLabelGroup insertSublayer:contentLayer below:lastLayer];
-    //                            }
-    //                            else {
-    //                                [axisLabelGroup insertSublayer:contentLayer atIndex:[thePlotArea sublayerIndexForAxis:self layerType:CPTGraphLayerTypeAxisLabels]];
-    //                            }
-    //
-    //                            lastLayer = contentLayer;
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //
-    //            if ( self.labelingPolicy == CPTAxisLabelingPolicyNone ) {
-    //                [self updateCustomTickLabels];
-    //            }
-    //            else {
-    //                [self updateMajorTickLabels];
-    //            }
-    //        }
-    //    }
-    //
-    //   func setMinorTickAxisLabels:(nullable CPTAxisLabelSet *)newLabels
-    //    {
-    //        if ( newLabels != minorTickAxisLabels ) {
-    //            if ( self.labelsUpdated ) {
-    //                minorTickAxisLabels = newLabels;
-    //            }
-    //            else {
-    //                for ( CPTAxisLabel *label in minorTickAxisLabels ) {
-    //                    [label.contentLayer removeFromSuperlayer];
-    //                }
-    //
-    //                minorTickAxisLabels = newLabels;
-    //
-    //                CPTPlotArea *thePlotArea = self.plotArea;
-    //                [thePlotArea updateAxisSetLayersForType:CPTGraphLayerTypeAxisLabels];
-    //
-    //                if ( minorTickAxisLabels ) {
-    //                    CPTAxisLabelGroup *axisLabelGroup = thePlotArea.axisLabelGroup;
-    //                    CALayer *lastLayer                = nil;
-    //
-    //                    for ( CPTAxisLabel *label in minorTickAxisLabels ) {
-    //                        CPTLayer *contentLayer = label.contentLayer;
-    //                        if ( contentLayer ) {
-    //                            if ( lastLayer ) {
-    //                                [axisLabelGroup insertSublayer:contentLayer below:lastLayer];
-    //                            }
-    //                            else {
-    //                                [axisLabelGroup insertSublayer:contentLayer atIndex:[thePlotArea sublayerIndexForAxis:self layerType:CPTGraphLayerTypeAxisLabels]];
-    //                            }
-    //
-    //                            lastLayer = contentLayer;
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //
-    //            if ( self.labelingPolicy == CPTAxisLabelingPolicyNone ) {
-    //                [self updateCustomTickLabels];
-    //            }
-    //            else {
-    //                [self updateMinorTickLabels];
-    //            }
-    //        }
-    //    }
-    //
+    
+    
     //   func setLabelTextStyle:(nullable CPTTextStyle *)newStyle
     //    {
     //        if ( labelTextStyle != newStyle ) {
@@ -1341,18 +1222,19 @@ public class CPTAxis : CPTLayer {
     //            }
     //        }
     //    }
-    //
-    //   func setTitleOffset:(CGFloat)newOffset
-    //    {
-    //        if ( newOffset != titleOffset ) {
-    //            titleOffset = newOffset;
-    //
-    //            self.axisTitle.offset = titleOffset;
-    //            [self updateAxisTitle];
-    //        }
-    //    }
-    //
-    
+    var _titleOffset =  CGFloat(0)
+    var titleOffset :  CGFloat {
+        get { return _titleOffset}
+        set {
+            if ( newValue != _titleOffset ) {
+                _titleOffset = newValue;
+                
+                self.axisTitle?.offset = _titleOffset;
+                self.updateAxisTitle()
+            }
+        }
+    }
+
     func setTitleRotation(newRotation: CGFloat)
         {
             if ( newRotation != titleRotation ) {

@@ -7,7 +7,6 @@
 
 import AppKit
 
-
 enum CPTGraphLayerType : String, CaseIterable {
     case minorGridLines = "minorGridLines"   //< Minor grid lines.
     case majorGridLines = "majorGridLines"
@@ -21,11 +20,13 @@ enum CPTGraphLayerType : String, CaseIterable {
 public protocol CPTPlotAreaDelegate: CALayerDelegate {
     
     @objc optional func plotAreaWasSelected( plotArea: CPTPlotArea )
-    func plotAreaWasSelected( plotArea: CPTPlotArea, withEvent event: CPTNativeEvent )
+    @objc optional func plotAreaWasSelected( plotArea: CPTPlotArea, withEvent event: CPTNativeEvent )
+    
     @objc optional func plotAreaTouchDown  ( plotArea: CPTPlotArea )
     @objc optional func plotAreaTouchDown  ( plotArea: CPTPlotArea, withEvent event: CPTNativeEvent)
-    func plotAreaTouchUp    ( plotArea: CPTPlotArea)
-    func plotAreaTouchUp    ( plotArea: CPTPlotArea, withEvent event: CPTNativeEvent)
+    
+    @objc optional func plotAreaTouchUp    ( plotArea: CPTPlotArea)
+    @objc optional func plotAreaTouchUp    ( plotArea: CPTPlotArea, withEvent event: CPTNativeEvent)
 }
 
 public class CPTPlotArea: CPTAnnotationHostLayer {
@@ -377,54 +378,48 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
 //     *  @param interactionPoint The coordinates of the interaction.
 //     *  @return Whether the event was handled or not.
 //     **/
-//    -(BOOL)pointingDeviceUpEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
-//    {
-//        CPTGraph *theGraph = self.graph;
-//
-//        if ( !theGraph || self.hidden ) {
-//            return false
-//        }
-//
-//        CGPoint lastPoint = self.touchedPoint;
-//
-//        self.touchedPoint = CPTPointMake(NAN, NAN);
-//
-//        id<CPTPlotAreaDelegate> theDelegate = (id<CPTPlotAreaDelegate>)self.delegate;
-//
-//        if ( [theDelegate respondsToSelector:@selector(plotAreaTouchUp:)] ||
-//             [theDelegate respondsToSelector:@selector(plotAreaTouchUp:withEvent:)] ||
-//             [theDelegate respondsToSelector:@selector(plotAreaWasSelected:)] ||
-//             [theDelegate respondsToSelector:@selector(plotAreaWasSelected:withEvent:)] ) {
-//            // Inform delegate if a point was hit
-//            CGPoint plotAreaPoint = [theGraph convertPoint:interactionPoint toLayer:self];
-//
-//            if ( CGRectContainsPoint(self.bounds, plotAreaPoint)) {
-//                CGVector offset = CGVectorMake(plotAreaPoint.x - lastPoint.x, plotAreaPoint.y - lastPoint.y);
-//                if ((offset.dx * offset.dx + offset.dy * offset.dy) <= CPTFloat(25.0)) {
-//                    if ( [theDelegate respondsToSelector:@selector(plotAreaTouchUp:)] ) {
-//                        [theDelegate plotAreaTouchUp:self];
-//                    }
-//
-//                    if ( [theDelegate respondsToSelector:@selector(plotAreaTouchUp:withEvent:)] ) {
-//                        [theDelegate plotAreaTouchUp:self withEvent:event];
-//                    }
-//
-//                    if ( [theDelegate respondsToSelector:@selector(plotAreaWasSelected:)] ) {
-//                        [theDelegate plotAreaWasSelected:self];
-//                    }
-//
-//                    if ( [theDelegate respondsToSelector:@selector(plotAreaWasSelected:withEvent:)] ) {
-//                        [theDelegate plotAreaWasSelected:self withEvent:event];
-//                    }
-//
-//                    return false // don't block other events in the responder chain
-//                }
-//            }
-//        }
-//
-//        return [super pointingDeviceUpEvent:event atPoint:interactionPoint];
-//    }
-
+    override func pointingDeviceUpEvent(event: CPTNativeEvent, atPoint interactionPoint : CGPoint)-> Bool
+    {
+        
+        let theGraph = self.graph;
+        
+        guard self.isHidden == false else { return false }
+        guard theGraph != nil else { return false }
+        
+        let lastPoint = self.touchedPoint;
+        self.touchedPoint = CGPoint(x: 0, y: 0);
+        weak var theDelegate = self.delegate as? CPTPlotAreaDelegate
+        
+        
+        // Inform delegate if a point was hit
+        let plotAreaPoint = theGraph?.convert(interactionPoint, to:self)
+        
+        if self.bounds.contains(plotAreaPoint!) {
+            let offset = CGVector(dx: plotAreaPoint!.x - lastPoint.x, dy: plotAreaPoint!.y - lastPoint.y);
+            if ((offset.dx * offset.dx + offset.dy * offset.dy) <= CGFloat(25.0)) {
+                if ((theDelegate?.plotAreaTouchUp(plotArea:)) != nil) {
+                    theDelegate?.plotAreaTouchUp!(plotArea: self)
+                }
+                
+                if ((theDelegate?.plotAreaTouchUp(plotArea: withEvent:)) != nil) {
+                    theDelegate?.plotAreaTouchUp!(plotArea:self, withEvent:event)
+                }
+                
+                if ((theDelegate?.plotAreaWasSelected(plotArea:)) != nil)  {
+                    theDelegate?.plotAreaWasSelected!(plotArea: self)
+                }
+                
+                if theDelegate?.plotAreaWasSelected(plotArea: withEvent:) != nil {
+                    theDelegate?.plotAreaWasSelected!(plotArea: self, withEvent:event)
+                }
+                
+                return false // don't block other events in the responder chain
+            }
+        }
+        
+        return super.pointingDeviceUpEvent(event: event, atPoint:interactionPoint)
+    }
+    
     
     
     // MARK: - Accessors

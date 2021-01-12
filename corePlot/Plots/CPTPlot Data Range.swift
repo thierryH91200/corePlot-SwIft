@@ -151,17 +151,11 @@ extension CPTPlot {
         let plotProvidesLabels = boolLabel && boolFormat
         
         var hasCachedLabels    = false
-        var cachedLabels = self.cachedArrayForKey(key: NSBindingName.PlotDataLabels.rawValue)
+        var cachedLabels = self.cachedArrayForKey(key: NSBindingName.PlotDataLabels.rawValue) as! [CPTLayer?]
         
-        for  label in cachedLabels as? [CPTLayer] {
-            if ( label != nil) {
-                hasCachedLabels = true
-                break
-            }
-        }
-        let nullClass = NSNull.self
+        let nilCPTLayer : CPTLayer? = nil
         for label in cachedLabels {
-            if !(label is NSNull) {
+            if (label == nilCPTLayer) == false {
                 hasCachedLabels = true
                 break
             }
@@ -179,24 +173,24 @@ extension CPTPlot {
         let hasAttributedFormatter   = dataLabelFormatter.attributedStringForObjectValue( 0, withDefaultAttributes: textAttributes) != nil
         
         let sampleCount = self.cachedDataCount;
-        let indexRange     = self.labelIndexRange;
+        let indexRange  = self.labelIndexRange;
         let maxIndex    = NSMaxRange(indexRange)
         
         if ( !self.labelAnnotations.isEmpty ) {
             self.labelAnnotations.removeAll()
         }
         
-        let thePlotSpace = self.plotSpace;
-        let theRotation  = self.labelRotation;
-        var labelArray  = self.labelAnnotations;
+        let thePlotSpace  = self.plotSpace;
+        let theRotation   = self.labelRotation;
+        var labelArray    = self.labelAnnotations;
         let oldLabelCount = labelArray.count;
-        let nilObject         : CPTPlot?
+        let nilCPTPlot    : CPTPlot? = nil
         
         let labelFieldDataCache = self.cachedNumbersForField(fieldEnum: self.labelField)
         let theShadow = self.labelShadow;
         
         for i in indexRange.location..<maxIndex {
-            let dataValue = labelFieldDataCache (sampleValue:i)
+            let dataValue = labelFieldDataCache[ i ] as? CPTLayer
             
             let newLabelLayer : CPTLayer?
             if dataValue.isNan  {
@@ -205,18 +199,21 @@ extension CPTPlot {
             else {
                 newLabelLayer = self.cachedValueForKey(key: NSBindingName.PlotDataLabels.rawValue, recordIndex:i) as? CPTLayer
                 
-                if (((newLabelLayer == nil) || (newLabelLayer == nilObject)) && plotProvidesLabels ) {
-                    if ( hasAttributedFormatter ) {
-                        let labelString = dataLabelFormatter.attributedStringForObjectValue(dataValue, withDefaultAttributes:textAttributes)
+                if ((( newLabelLayer == nilCPTLayer) || (newLabelLayer == nilCPTPlot)) && plotProvidesLabels == true) {
+                    if hasAttributedFormatter == true  {
+                        let labelString = dataLabelFormatter?.attributedString(
+                            for: dataValue,
+                            withDefaultAttributes: textAttributes)
+                        
                         newLabelLayer = CPTTextLayer(newText: labelString)
                     }
                     else {
-                        let labelString = dataLabelFormatter.stringForObjectValue(dataValue)
+                        let labelString = dataLabelFormatter?.string(for: dataValue)
                         newLabelLayer = CPTTextLayer(newText: labelString, style:dataLabelTextStyle)
                     }
                 }
                 
-                if ( newLabelLayer is nullClass || newLabelLayer == nilObject) {
+                if ( newLabelLayer == nil || newLabelLayer == nilCPTPlot) {
                     newLabelLayer = nil;
                 }
             }
@@ -238,7 +235,7 @@ extension CPTPlot {
                 else
                 {
                     if labelAnnotation is annotationClass {
-                        labelArray[i] = nullObject;
+                        labelArray.insert(nullObject, at:i)
                         self.removeAnnotation(labelAnnotation )
                     }
                 }

@@ -20,7 +20,7 @@ public class CPTLayer : CALayer
     typealias CPTSublayerSet = Set<CALayer>
     
     var graph  : CPTGraph?     = nil
-    var identifier  : Any?
+    var identifier  : String?
 
     var maskingPath :  CGPath? {
         set {   }

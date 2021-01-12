@@ -126,7 +126,7 @@ extension CPTLegend {
                 // draw background
                 let theFill : CPTFill?
                 if ( delegateProvidesFills == true ) {
-                    theFill = theDelegate?.legend(legend:self,
+                    theFill = theDelegate?.legend!(legend:self,
                                                   fillForEntryAtIndex:entryIndex,
                                                   forPlot:entryPlot!)
                 }
@@ -145,7 +145,10 @@ extension CPTLegend {
                 
                 let theLineStyle : CPTLineStyle?
                 if ( delegateProvidesLines == true) {
-                    theLineStyle = theDelegate?.legend(legend: self, lineStyleForSwatchAtIndex:entryIndex, forPlot:entryPlot!)
+                    theLineStyle = theDelegate?.legend!(
+                        legend: self,
+                        lineStyleForSwatchAtIndex:entryIndex,
+                        forPlot:entryPlot!)
                 }
                 if ( (theLineStyle == nil) ) {
                     theLineStyle = theEntryLineStyle;
@@ -202,7 +205,7 @@ extension CPTLegend {
                 
                 var legendShouldDrawSwatch : Bool?
                 if ( delegateCanDraw == true) {
-                    legendShouldDrawSwatch = theDelegate?.legend(
+                    legendShouldDrawSwatch = theDelegate?.legend!(
                         legend: self,
                         shouldDrawSwatchAtIndex: entryIndex,
                         forPlot: entryPlot!,

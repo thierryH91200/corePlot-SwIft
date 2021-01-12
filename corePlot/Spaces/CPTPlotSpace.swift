@@ -24,13 +24,14 @@ protocol CPTPlotSpaceDelegate: NSObject {
 
 class CPTPlotSpace: NSObject {
     
+    weak var delegate : CPTPlotSpaceDelegate?
+    
     let CPTPlotSpaceCoordinateKey   = "CPTPlotSpaceCoordinateKey";
     let CPTPlotSpaceScrollingKey    = "CPTPlotSpaceScrollingKey";
     let CPTPlotSpaceDisplacementKey = "CPTPlotSpaceDisplacementKey";
     
-    var categoryNames : Dictionary<Int, String >? = [:]
-    weak var delegate : CPTPlotSpaceDelegate?
-    var identifier : UUID?
+    var categoryNames : Dictionary<Int, Set<String>>? = [:]
+    var identifier : String?
     var allowsUserInteraction : Bool?
     var isDragging : Bool
     var graph : CPTGraph?
@@ -38,7 +39,7 @@ class CPTPlotSpace: NSObject {
     override init()
     {
         super.init()
-        identifier            = UUID();
+        identifier            = ""
         allowsUserInteraction = false
         isDragging            = false
         graph                 = nil
@@ -47,7 +48,11 @@ class CPTPlotSpace: NSObject {
     }
     
     // MARK: - Categorical Data
-    func orderedSet(for coordinate: CPTCoordinate) -> [String] {
+    func orderedSetForCoordinate( coordinate: CPTCoordinate) -> NSMutableOrderedSet {
+        
+//        typedef NSMutableOrderedSet<NSString *> CPTMutableCategorySet;
+
+        var categoryNames: [Int :  NSMutableOrderedSet]?
         var names = categoryNames
         
         if names == nil {
@@ -68,41 +73,40 @@ class CPTPlotSpace: NSObject {
     
     func addCategory(_ category: String, for coordinate: CPTCoordinate) {
         
-        var categories = orderedSet(for: coordinate)
-        categories.append(category)
+        let categories = orderedSetForCoordinate(coordinate: coordinate)
+        categories.insert(category, at: 0)
     }
     
     func removeCategory(category: String, forCoordinate coordinate:CPTCoordinate)
     {
-        var categories = orderedSet(for: coordinate)
+        let categories = orderedSetForCoordinate(coordinate: coordinate)
         categories.remove( category)
     }
     
     func insertCategory(category: String, forCoordinate coordinate :CPTCoordinate, atIndex idx:Int)
     {
-        var categories = self.orderedSet(for:coordinate)
-        categories.insert(category, at:idx)
+        let categories = self.orderedSetForCoordinate(coordinate:coordinate)
+        categories.insert(category, at: 0)
     }
     
     func setCategories(newCategories: [String],  forCoordinate coordinate:CPTCoordinate)
     {
-        let names = self.categoryNames;
+        var names = self.categoryNames
         
-        if ( (names == nil) ) {
-            names = [String]()
-            
+        if ( names?.isEmpty == true ) {
+            names = (NSMutableDictionary() as! Dictionary<Int, Set<String>>)
             self.categoryNames = names;
         }
         
         let cacheKey = coordinate
         
-        if newCategories is [String] {
+        if newCategories is Array<String> {
             let categories = newCategories;
-            
-            names[cacheKey] = orderedSetWithArray(categories)
-        }
+            names?[cacheKey.rawValue] = NSMutableOrderedSet(array: categories)        }
         else {
+
             names.removeObjectForKey(cacheKey)
+
         }
     }
     
@@ -111,34 +115,34 @@ class CPTPlotSpace: NSObject {
         list = list.filter { $0 !== element }
     }
     
-    //    /**
-    // brief Remove all categories for every coordinate.
-    //     */
+    /**
+     brief Remove all categories for every coordinate.
+     */
     func removeAllCategories()
     {
         self.categoryNames = [:]
     }
     
-    func categoriesForCoordinate(coordinate: CPTCoordinate)->[String]
+    func categoriesForCoordinate( coordinate: CPTCoordinate)->[String]
     {
-        let categories = self.orderedSet(for: coordinate)
+        let categories = self.orderedSetForCoordinate(coordinate: coordinate)
         return categories
     }
     
-    func category(for coordinate: CPTCoordinate, at index: Int) -> String?
+    func categoriesForCoordinate( coordinate: CPTCoordinate, at index: Int) -> [String]?
     {
-        let categories = orderedSet(for: coordinate)
+        let categories = orderedSetForCoordinate(coordinate: coordinate)
         return categories[index]
     }
     
     func indexOfCategory(_ category: String, for coordinate: CPTCoordinate) -> Int {
         guard category != "" else {
             
-            let categories = self.orderedSet(for:coordinate)
+            let categories = self.orderedSetForCoordinate(coordinate:coordinate)
             return categories.indexOfObject(category)
         }
         
-        let categories = orderedSet(for: coordinate)
+        let categories = orderedSetForCoordinate(coordinate: coordinate)
         return categories.indexOfObject(category) ?? 0
     }
     
@@ -147,30 +151,30 @@ class CPTPlotSpace: NSObject {
     // https://izziswift.com/what-is-the-swift-equivalent-of-respondstoselector/
     func pointingDeviceDownEvent(event: CPTNativeEvent, atPoint interactionPoint : CGPoint)-> Bool
     {
-        let theDelegate = self.delegate
+        weak var theDelegate = self.delegate
         
         guard let handledByDelegate = theDelegate?.plotSpace(space: self, shouldHandlePointingDeviceDownEvent: event, atPoint: interactionPoint)
         else { return false}
         return handledByDelegate;
     }
     
-    //
-    //    /**
-    //     *  @brief Informs the receiver that the user has
-    //     *  @if MacOnly released the mouse button. @endif
-    //     *  @if iOSOnly lifted their finger off the screen. @endif
-    //     *
-    //     *
-    //     *  If the receiver does not have a @link CPTPlotSpace::delegate delegate @endlink,
-    //     *  this method always returns @NO. Otherwise, the
-    //     *  @link CPTPlotSpaceDelegate::plotSpace:shouldHandlePointingDeviceUpEvent:atPoint: -plotSpace:shouldHandlePointingDeviceUpEvent:atPoint: @endlink
-    //     *  delegate method is called. If it returns @NO, this method returns @YES
-    //     *  to indicate that the event has been handled and no further processing should occur.
-    //     *
-    //     *  @param event The OS event.
-    //     *  @param interactionPoint The coordinates of the interaction.
-    //     *  @return Whether the event was handled or not.
-    //     **/
+    
+    /**
+     *  @brief Informs the receiver that the user has
+     *  @if MacOnly released the mouse button. @endif
+     *  @if iOSOnly lifted their finger off the screen. @endif
+     *
+     *
+     *  If the receiver does not have a @link CPTPlotSpace::delegate delegate @endlink,
+     *  this method always returns @NO. Otherwise, the
+     *  @link CPTPlotSpaceDelegate::plotSpace:shouldHandlePointingDeviceUpEvent:atPoint: -plotSpace:shouldHandlePointingDeviceUpEvent:atPoint: @endlink
+     *  delegate method is called. If it returns @NO, this method returns @YES
+     *  to indicate that the event has been handled and no further processing should occur.
+     *
+     *  @param event The OS event.
+     *  @param interactionPoint The coordinates of the interaction.
+     *  @return Whether the event was handled or not.
+     **/
     func pointingDeviceUpEvent(event:CPTNativeEvent,atPoint interactionPoint:CGPoint)-> Bool
     {
         let theDelegate = self.delegate
@@ -182,8 +186,8 @@ class CPTPlotSpace: NSObject {
     
     func pointingDeviceDraggedEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint) -> Bool
     {
-        let theDelegate = self.delegate
-        
+        weak var theDelegate = self.delegate
+
         guard let handledByDelegate = theDelegate?.plotSpace(space: self, shouldHandlePointingDeviceDraggedEvent: event, atPoint: interactionPoint)
         else { return false}
         return handledByDelegate;
@@ -191,8 +195,8 @@ class CPTPlotSpace: NSObject {
     }
     func pointingDeviceCancelledEvent(event : CPTNativeEvent )->Bool
     {
-        let theDelegate = self.delegate
-        
+        weak var theDelegate = self.delegate
+
         guard let handledByDelegate = theDelegate?.plotSpace(space: self, shouldHandlePointingDeviceCancelledEvent: event)
         else { return false}
         return handledByDelegate;

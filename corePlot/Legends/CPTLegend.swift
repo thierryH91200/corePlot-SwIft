@@ -85,7 +85,7 @@
     //        return self.init(plots: newPlots!)
     //    }
     
-
+    
     //    /** @brief Creates and returns a new CPTLegend instance with legend entries for each plot in the given graph.
     //     *  @param graph The graph.
     //     *  @return A new CPTLegend instance.
@@ -145,15 +145,15 @@
     //     *  @return The initialized CPTLegend object.
     //     **/
     
-//    convenience init(plots newPlots: [CPTPlot]) {
-//        self.init(newFrame: CGRect.zero)
-//        if let newPlots = newPlots {
-//            for plot in newPlots {
-//                guard let plot = plot as? CPTPlot else {   continue }
-//                self.add(plot)
-//            }
-//        }
-//    }
+    //    convenience init(plots newPlots: [CPTPlot]) {
+    //        self.init(newFrame: CGRect.zero)
+    //        if let newPlots = newPlots {
+    //            for plot in newPlots {
+    //                guard let plot = plot as? CPTPlot else {   continue }
+    //                self.add(plot)
+    //            }
+    //        }
+    //    }
     
     
     //    /** @brief Initializes a newly allocated CPTLegend object and adds legend entries for each plot in the given graph.
@@ -400,7 +400,7 @@
             let vertical = (self.entryPaddingBottom + self.entryPaddingTop) * CGFloat(rowCount)
             
             legendSize.height += vertical + (self.rowMargin * CGFloat((rows - 1)))
-
+            
             if ( !isHorizontalLayout == false ) {
                 legendSize.height += (theSwatchSize.height + self.titleOffset) * CGFloat(rowCount);
             }
@@ -412,22 +412,21 @@
         
         self.layoutChanged = false
     }
-
-    //  MARK: - Plots
-    //
-    //    /** @brief All plots associated with the legend.
-    //     *  @return An array of all plots associated with the legend.
-    //     **/
-        func allPlots() -> [ CPTPlot]
-        {
-            return self.plots
-        }
-    //
-    //    /** @brief Gets the plot at the given index in the plot array.
-    //     *  @param idx An index within the bounds of the plot array.
-    //     *  @return The plot at the given index.
-    //     **/
     
+    // MARK: - Plots
+    
+    /** @brief All plots associated with the legend.
+     *  @return An array of all plots associated with the legend.
+     **/
+    func allPlots() -> [ CPTPlot]
+    {
+        return self.plots
+    }
+    
+    /** @brief Gets the plot at the given index in the plot array.
+     *  @param idx An index within the bounds of the plot array.
+     *  @return The plot at the given index.
+     **/
     func plotAtIndex(idx : Int)-> CPTPlot?
     {
         if ( idx < self.plots.count ) {
@@ -455,9 +454,9 @@
     
     // MARK:  Organizing Plots
     
-        /** @brief Add a plot to the legend.
-         *  @param plot The plot.
-         **/
+    /** @brief Add a plot to the legend.
+     *  @param plot The plot.
+     **/
     func addPlot(plot : CPTPlot)
     {
         self.plots.append(plot)
@@ -493,12 +492,11 @@
             selector:#selector(legendNeedsReloadEntries(_:)))
     }
     
-    //
-    //    /** @brief Add a plot to the legend at the given index in the plot array.
-    //     *  @param plot The plot.
-    //     *  @param idx An index within the bounds of the plot array.
-    //     **/
     
+    /** @brief Add a plot to the legend at the given index in the plot array.
+     *  @param plot The plot.
+     *  @param idx An index within the bounds of the plot array.
+     **/
     func insertPlot(plot: CPTPlot, atIndex idx :Int)
     {
         var thePlots = self.plots;
@@ -555,9 +553,9 @@
             object:plot)
     }
     
-    //    /** @brief Remove a plot from the legend.
-    //     *  @param plot The plot to remove.
-    //     **/
+    /** @brief Remove a plot from the legend.
+     *  @param plot The plot to remove.
+     **/
     func removePlot(plot: CPTPlot)
     {
         if ( self.plots.contains(plot) ) {
@@ -584,16 +582,16 @@
             print("CPTException format:@Tried to remove CPTPlot which did not exist.")
         }
     }
-    //
-    //    /** @brief Remove a plot from the legend.
-    //     *  @param identifier The identifier of the plot to remove.
-    //     **/
-    func removePlotWithIdentifier(identifier: Any)
+    
+    /** @brief Remove a plot from the legend.
+     *  @param identifier The identifier of the plot to remove.
+     **/
+    func removePlotWithIdentifier(identifier: String)
     {
         let plotToRemove = self.plotWithIdentifier(identifier: identifier)
         
         if (( plotToRemove ) != nil) {
-//            self.plots.removeObjectIdenticalTo(plotToRemove)
+            //            self.plots.removeObjectIdenticalTo(plotToRemove)
             self.plots.removeObject(plotToRemove!)
             self.removeLegendEntriesForPlot(plot: plotToRemove!)
             self.layoutChanged = true
@@ -614,7 +612,7 @@
                 object:plotToRemove)
         }
     }
-
+    
     func removeLegendEntriesForPlot(plot: CPTPlot)
     {
         var theLegendEntries = self.legendEntries;
@@ -625,7 +623,7 @@
             }
         }
     }
-
+    
     // MARK: Notifications
     @objc func legendNeedsRedraw(_ notif: Notification )
     {
@@ -674,7 +672,7 @@
     func legendEntryForInteractionPoint(interactionPoint:CGPoint, row: inout Int, col: inout Int )
     {
         var interactionPoint = interactionPoint
-
+        
         // Convert the interaction point to the local coordinate system
         let theGraph = self.graph;
         
@@ -838,22 +836,26 @@
         return super.pointingDeviceUpEvent(event: event, atPoint:interactionPoint)
     }
     
-
+    
     // MARK: - Accessors
     func setTextStyle(newTextStyle: CPTTextStyle)
     {
         if ( newTextStyle != textStyle ) {
             textStyle = newTextStyle
             
-            self.legendEntries.makeObjectsPerformSelector:@selector(setTextStyle:) withObject:textStyle];
             
-            for legendEntry in self.legendEntries {
-                legendEntry.setTextStyle(w)
-            }
+//            legendEntries.forEach { $0.setTextStyle() }
+//            legendEntries.makeObjectsPerform(#selector(setter: CPTextButton.textStyle), withObject: textStyle)
+//
+//            self.legendEntries.makeObjectsPerformSelector( to: #selector(setTextStyle:), withObject:textStyle)
+            
+//            for legendEntry in self.legendEntries {
+//                legendEntry.setTextStyle(textStyle)
+//            }
             self.layoutChanged = true
         }
     }
-
+    
     var  _swatchSize = CGSize()
     var swatchSize : CGSize {
         get {
@@ -907,13 +909,13 @@
     }
     
     func setEntryBorderLineStyle(newEntryBorderLineStyle: CPTLineStyle )
-        {
-            if ( newEntryBorderLineStyle != entryBorderLineStyle ) {
-                entryBorderLineStyle = newEntryBorderLineStyle
-                self.setNeedsDisplay()
-            }
+    {
+        if ( newEntryBorderLineStyle != entryBorderLineStyle ) {
+            entryBorderLineStyle = newEntryBorderLineStyle
+            self.setNeedsDisplay()
         }
-
+    }
+    
     func setEntryCornerRadius(newEntryCornerRadius: CGFloat)
     {
         if ( newEntryCornerRadius != entryCornerRadius ) {
@@ -923,68 +925,68 @@
     }
     
     func setEntryFill(newEntryFill: CPTFill )
-        {
-            if ( newEntryFill != entryFill ) {
-                entryFill = newEntryFill
-                self.setNeedsDisplay()
-            }
+    {
+        if ( newEntryFill != entryFill ) {
+            entryFill = newEntryFill
+            self.setNeedsDisplay()
         }
+    }
     
     func setEntryPaddingLeft(newPadding: CGFloat)
-        {
-            if ( newPadding != entryPaddingLeft ) {
-                entryPaddingLeft   = newPadding;
-                self.layoutChanged = true
-            }
+    {
+        if ( newPadding != entryPaddingLeft ) {
+            entryPaddingLeft   = newPadding;
+            self.layoutChanged = true
         }
+    }
     
     func setEntryPaddingTop(newPadding: CGFloat)
-        {
-            if ( newPadding != entryPaddingTop ) {
-                entryPaddingTop    = newPadding;
-                self.layoutChanged = true
-            }
+    {
+        if ( newPadding != entryPaddingTop ) {
+            entryPaddingTop    = newPadding;
+            self.layoutChanged = true
         }
+    }
     
     func setEntryPaddingRight(newPadding: CGFloat)
-        {
-            if ( newPadding != entryPaddingRight ) {
-                entryPaddingRight  = newPadding;
-                self.layoutChanged = true
-            }
+    {
+        if ( newPadding != entryPaddingRight ) {
+            entryPaddingRight  = newPadding;
+            self.layoutChanged = true
         }
+    }
     
     func setEntryPaddingBottom(newPadding: CGFloat)
-        {
-            if ( newPadding != entryPaddingBottom ) {
-                entryPaddingBottom = newPadding;
-                self.layoutChanged = true
-            }
+    {
+        if ( newPadding != entryPaddingBottom ) {
+            entryPaddingBottom = newPadding;
+            self.layoutChanged = true
         }
+    }
     
     func setNumberOfRows(newNumberOfRows: Int)
-        {
-            if ( newNumberOfRows != numberOfRows ) {
-                numberOfRows       = newNumberOfRows
-                self.layoutChanged = true
-            }
+    {
+        if ( newNumberOfRows != numberOfRows ) {
+            numberOfRows       = newNumberOfRows
+            self.layoutChanged = true
         }
+    }
     
     func setNumberOfColumns(newNumberOfColumns: Int)
-        {
-            if ( newNumberOfColumns != numberOfColumns ) {
-                numberOfColumns    = newNumberOfColumns
-                self.layoutChanged = true
-            }
+    {
+        if ( newNumberOfColumns != numberOfColumns ) {
+            numberOfColumns    = newNumberOfColumns
+            self.layoutChanged = true
         }
+    }
     
     func setEqualRows(newEqualRows: Bool)
-        {
-            if ( newEqualRows != equalRows ) {
-                equalRows = newEqualRows;
-                self.layoutChanged = true
-            }
+    {
+        if ( newEqualRows != equalRows ) {
+            equalRows = newEqualRows;
+            self.layoutChanged = true
         }
+    }
     
     func setEqualColumns(newEqualColumns : Bool)
     {

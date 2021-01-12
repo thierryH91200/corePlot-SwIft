@@ -56,9 +56,11 @@ class CPTTextLayer: CPTBorderedLayer {
      *  @return The initialized CPTTextLayer object.
      **/
     convenience init(attributedText newText: NSAttributedString) {
-        let newStyle = CPTTextStyle(attributes: newText.attributes(at: 0, effectiveRange: nil))
         
-        self.init(text: newText.string, style: newStyle)
+        let attrs = newText.attributes(at: 0, effectiveRange: nil)
+        let newStyle = CPTTextStyle()
+        newStyle.attributes = attrs
+        self.init(newText: newText.string, newStyle: newStyle)
         attributedText = newText
         
         sizeToFit()
@@ -107,19 +109,17 @@ class CPTTextLayer: CPTBorderedLayer {
         
         // Color
         let styleColor = attributes?[NSAttributedString.Key.foregroundColor] as? NSColor
-        
-        if let styleColor = styleColor {
-            newStyle.color = CPTColor(cgColor: styleColor.cgColor)
-        }
+//        if let styleColor = styleColor {
+//            newStyle.color = CPTColor(cgColor: styleColor.cgColor)
+//        }
         
         // Text alignment and line break mode
         let paragraphStyle = attributes?[NSAttributedString.Key.paragraphStyle] as? NSParagraphStyle
         
         if let paragraphStyle = paragraphStyle {
-            newStyle.textAlignment = paragraphStyle.alignment as? CPTTextAlignment
+            newStyle.textAlignment = paragraphStyle.alignment
             newStyle.lineBreakMode = paragraphStyle.lineBreakMode
         }
-        
         return newStyle
     }
 
@@ -128,7 +128,7 @@ class CPTTextLayer: CPTBorderedLayer {
     func sizeThatFits() -> CGSize
     {
         var textSize  = CGSize()
-        var myText = self.text
+        let myText = self.text
         
         if  myText.count > 0  {
             let styledText = self.attributedText
@@ -137,9 +137,8 @@ class CPTTextLayer: CPTBorderedLayer {
             }
             else
             {
-                textSize = myText.sizeWithTextStyle(self.textStyle)
-                
-                textSize = myText.size(withTextStyle: textStyle)
+                textSize = myText.sizeWithTextStyle(style: self.textStyle)
+//                textSize = myText.size(withTextStyle: textStyle)
             }
             
             // Add small margin
@@ -149,7 +148,6 @@ class CPTTextLayer: CPTBorderedLayer {
             textSize.height += kCPTTextLayerMarginWidth * CGFloat(2.0);
             textSize.height  = ceil(textSize.height);
         }
-        
         return textSize;
     }
     

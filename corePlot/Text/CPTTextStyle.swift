@@ -41,28 +41,32 @@ class CPTTextStyle: NSObject {
         font          = NSFont();
         fontName      = "Helvetica"
         fontSize      = CGFloat(12.0);
-        color         = NSColor.black
+        color         = NSColor.blue
         textAlignment = NSTextAlignment.left
         lineBreakMode = NSLineBreakMode.byWordWrapping
     }
     
     // MARK: - Accessors
-    func attributes()-> [NSAttributedString.Key: Any]
+    var _attributes : [NSAttributedString.Key: Any]
+    var attributes :  [NSAttributedString.Key: Any]
     {
-        var myAttributes = [NSAttributedString.Key: Any]()
-
-        // Text alignment and line break mode
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineBreakMode = .byClipping
-        paragraphStyle.alignment = .left
-        
-        paragraphStyle.alignment     = self.textAlignment;
-        paragraphStyle.lineBreakMode = self.lineBreakMode;
-        
-        myAttributes = [.font: NSFont( name:fontName, size:self.fontSize)!,
-                        .foregroundColor : color,
-                        .backgroundColor : NSColor.black,
-                        .paragraphStyle  : paragraphStyle]
-        return myAttributes
+        get { return _attributes }
+        set {
+            var myAttributes = [NSAttributedString.Key: Any]()
+            
+            // Text alignment and line break mode
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineBreakMode = .byClipping
+            paragraphStyle.alignment = .left
+            
+            paragraphStyle.alignment     = self.textAlignment;
+            paragraphStyle.lineBreakMode = self.lineBreakMode;
+            
+            myAttributes = [.font: NSFont( name:fontName, size:self.fontSize)!,
+                            .foregroundColor : color,
+                            .backgroundColor : NSColor.black,
+                            .paragraphStyle  : paragraphStyle]
+            _attributes = myAttributes
+        }
     }
 }
