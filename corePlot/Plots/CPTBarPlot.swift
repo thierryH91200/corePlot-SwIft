@@ -908,7 +908,6 @@ public class CPTBarPlot: CPTPlot {
         return theBarFill
     }
     
-    
     func barLineStyleForIndex(idx: Int) -> CPTLineStyle
     {
         var theBarLineStyle = self.cachedValueForKey( key: NSBindingName.BarLineStyles.rawValue, recordIndex:idx) as? CPTLineStyle
@@ -916,7 +915,6 @@ public class CPTBarPlot: CPTPlot {
         if theBarLineStyle == nil /*|| theBarLineStyle == CPTPlot.nilData()*/ {
             theBarLineStyle = self.lineStyle;
         }
-        
         return theBarLineStyle!;
     }
     
@@ -999,9 +997,7 @@ public class CPTBarPlot: CPTPlot {
             theLineStyle.strokePathInContext(context: context)
         }
     }
-    
-    /// @endcond
-    
+
     // MARK: - Animation
     override func needsDisplayForKey(forKey aKey: String) -> Bool
     {
@@ -1024,7 +1020,6 @@ public class CPTBarPlot: CPTPlot {
     // MARK: - Data Labels
     override func positionLabelAnnotation(label: CPTPlotSpaceAnnotation, forIndex idx: Int)
     {
-        
         var  theBaseDecimalValue = 0
         
         if barBasesVary == false {
@@ -1033,8 +1028,8 @@ public class CPTBarPlot: CPTPlot {
             theBaseDecimalValue = cachedDecimal(forField: CPTBarPlotFieldBarBase, recordIndex: idx)
         }
         
-        let location = cachedNumber(forField: CPTBarPlotFieldBarLocation, recordIndex: idx)
-        let length = cachedNumber(forField: CPTBarPlotFieldBarTip, recordIndex: idx)
+        let location = cachedNumber(forField: CPTBarPlotField.location, recordIndex: idx)
+        let length = cachedNumber(forField: CPTBarPlotField.tip, recordIndex: idx)
         
         let positiveDirection = (length?.decimalValue >= theBaseDecimalValue)
         let horizontalBars = barsAreHorizontal
@@ -1044,7 +1039,7 @@ public class CPTBarPlot: CPTPlot {
             positiveDirection = !positiveDirection;
         }
         
-        NSNumber *offsetLocation;
+        var offsetLocation = 0.0
         
         if ( self.doublePrecisionCache ) {
             offsetLocation = @(location.doubleValue + [self doubleLengthInPlotCoordinates:self.barOffset.decimalValue]);
@@ -1095,7 +1090,7 @@ public class CPTBarPlot: CPTPlot {
         weak var  theDataSource = self.dataSource as? CPTBarPlotDataSource
         
         if theDataSource?.legendTitleForBarPlot(plot: index:) ||
-            ((theDataSource?.barFillForBarPlot(_:index:)) != nil) {
+            ((theDataSource?.barFillForBarPlot(plot: index:)) != nil) {
             self.reloadDataIfNeeded()
             entryCount = self.cachedDataCount
         }
@@ -1250,40 +1245,41 @@ public class CPTBarPlot: CPTPlot {
     
     // MARK: - Accessors
     var barTips : CPTNumberArray {
-        get { self.cachedNumbersForField( fieldEnum: CPTBarPlotField.tip.rawValue) }
+        get { return (self.cachedNumbersForField( fieldEnum: CPTBarPlotField.tip.rawValue) as? [CGFloat])!}
         set { self.cachedNumbers ( newValue , fieldEnum: CPTBarPlotField.tip.rawValue)}
     }
     var barBases : CPTNumberArray {
-        get { self.cachedNumbersForField( fieldEnum: CPTBarPlotField.base.rawValue) }
+        get { (self.cachedNumbersForField( fieldEnum: CPTBarPlotField.base.rawValue) as? [CGFloat])!  }
         set { self.cachedNumbers ( newValue , fieldEnum: CPTBarPlotField.base.rawValue)}
     }
     var barLocations : CPTNumberArray {
-        get { self.cachedNumbersForField( fieldEnum: CPTBarPlotField.location.rawValue) }
+        get { (self.cachedNumbersForField( fieldEnum: CPTBarPlotField.location.rawValue) as? [CGFloat])! }
         set { self.cachedNumbers ( newValue , fieldEnum: CPTBarPlotField.location.rawValue)}
     }
     var barFills : CPTNumberArray {
-        get { self.cachedNumbersForField( fieldEnum: CPTBarPlotField) }
+        get { self.cachedNumbersForField( fieldEnum: CPTBarPlotField) as? [CGFloat]}
         set { self.cachedNumbers ( newValue , fieldEnum: CPTBarPlotField.location.rawValue)}
     }
     
     
     
     
+//    typealias CPTFillArray = [CPTFill]
+
+//            func barFills()->[CPTFill]
+//            {
+//                return self.cachedArrayForKey(NSBindingName.BarFills.rawValue)
+//            }
     
-    //        -(nullable CPTFillArray *)barFills
-    //        {
-    //            return [self cachedArrayForKey:CPTBarPlotBindingBarFills];
-    //        }
-    //
-    //        func setBarFills:(nullable CPTFillArray *)newBarFills
-    //        {
-    //            [self cacheArray:newBarFills forKey:CPTBarPlotBindingBarFills];
-    //            [self setNeedsDisplay];
-    //        }
-    
-    -(nullable CPTLineStyleArray *)barLineStyles
+    func setBarFills(newBarFills: [CPTFill])
     {
-    return [self cachedArrayForKey:CPTBarPlotBindingBarLineStyles];
+        self.cacheArray(newBarFills, forKey:NSBindingName.BarFills.rawValue)
+        self.setNeedsDisplay()
+    }
+    
+    func barLineStyles() ->[CPTLineStyle]
+    {
+        return self.cachedArrayForKey(key: NSBindingName.BarLineStyles.rawValue) as! [CPTLineStyle]
     }
     
     func setBarLineStyles(newBarLineStyles: [CPTLineStyle] )
@@ -1362,102 +1358,99 @@ public class CPTBarPlot: CPTPlot {
         }
     }
     
-    //    func setBarBasesVary:(BOOL)newBasesVary
-    //    {
-    //        if ( newBasesVary != barBasesVary ) {
-    //            barBasesVary = newBasesVary;
-    //            [self setDataNeedsReloading];
-    //            [self setNeedsDisplay];
-    //            [self setNeedsLayout];
-    //        }
-    //    }
-    //
-    //    func setBarsAreHorizontal:(BOOL)newBarsAreHorizontal
-    //    {
-    //        if ( barsAreHorizontal != newBarsAreHorizontal ) {
-    //            barsAreHorizontal = newBarsAreHorizontal;
-    //            [self setNeedsDisplay];
-    //            [self setNeedsLayout];
-    //        }
-    //    }
+    func setBarBasesVary(newBasesVary: Bool)
+    {
+        if ( newBasesVary != barBasesVary ) {
+            barBasesVary = newBasesVary;
+            self.setDataNeedsReloading()
+            self.setNeedsDisplay()
+            self.setNeedsLayout()
+        }
+    }
     
+    
+    func setBarsAreHorizontal(newBarsAreHorizontal: Bool)
+    {
+        if ( barsAreHorizontal != newBarsAreHorizontal ) {
+            barsAreHorizontal = newBarsAreHorizontal;
+            self.setNeedsDisplay()
+            self.setNeedsLayout()
+        }
+    }
+
     
     // MARK: - Fields
-    
-    /// @cond
-    
-    func numberOfFields() -> Int {
+    override func numberOfFields() -> Int {
         return 3
     }
-    func fieldIdentifiers() -> [CGFloat] {
+    
+    func fieldIdentifiers() -> [Int] {
         return [
-            CPTBarPlotFieldBarLocation,
-            CPTBarPlotFieldBarTip,
-            CPTBarPlotFieldBarBase
+            CPTBarPlotField.location.rawValue,
+            CPTBarPlotField.tip.rawValue,
+            CPTBarPlotField.base.rawValue
         ]
     }
     
-    //
-    //    -(nonnull CPTNumberArray *)fieldIdentifiersForCoordinate:(CPTCoordinate)coord
-    //    {
-    //        CPTNumberArray *result = nil;
-    //
-    //        switch ( coord ) {
-    //            case CPTCoordinateX:
-    //                if ( self.barsAreHorizontal ) {
-    //                    if ( self.barBasesVary ) {
-    //                        result = @[@(CPTBarPlotFieldBarTip), @(CPTBarPlotFieldBarBase)];
-    //                    }
-    //                    else {
-    //                        result = @[@(CPTBarPlotFieldBarTip)];
-    //                    }
-    //                }
-    //                else {
-    //                    result = @[@(CPTBarPlotFieldBarLocation)];
-    //                }
-    //                break;
-    //
-    //            case CPTCoordinateY:
-    //                if ( self.barsAreHorizontal ) {
-    //                    result = @[@(CPTBarPlotFieldBarLocation)];
-    //                }
-    //                else {
-    //                    if ( self.barBasesVary ) {
-    //                        result = @[@(CPTBarPlotFieldBarTip), @(CPTBarPlotFieldBarBase)];
-    //                    }
-    //                    else {
-    //                        result = @[@(CPTBarPlotFieldBarTip)];
-    //                    }
-    //                }
-    //                break;
-    //
-    //            default:
-    //                [NSException raise:CPTException format:@"Invalid coordinate passed to fieldIdentifiersForCoordinate:"];
-    //                break;
-    //        }
-    //        return result;
-    //    }
-    //
+    override func fieldIdentifiersForCoordinate( coord: CPTCoordinate ) ->[Int]
+    {
+        var result = [Int]()
+        
+        switch ( coord ) {
+        case CPTCoordinate.x:
+            if ( self.barsAreHorizontal ) {
+                if ( self.barBasesVary ) {
+                    result.append(CPTBarPlotField.tip.rawValue)
+                    result.append(CPTBarPlotField.base.rawValue)
+                    
+                }
+                else {
+                    result.append(CPTBarPlotField.tip.rawValue)
+                }
+            }
+            else {
+                result.append(CPTBarPlotField.location.rawValue)
+            }
+            
+        case CPTCoordinate.y:
+            if ( self.barsAreHorizontal ) {
+                result.append(CPTBarPlotField.location.rawValue)
+            }
+            else {
+                if ( self.barBasesVary ) {
+                    result.append(CPTBarPlotField.tip.rawValue)
+                    result.append(CPTBarPlotField.base.rawValue)
+                }
+                else {
+                    result.append(CPTBarPlotField.tip.rawValue)
+                }
+            }
+            
+        default:
+            print("NSException.raise(CPTException, format: Invalid coordinate passed to fieldIdentifiersForCoordinate:", #function)
+        }
+        return result;
+    }
+    
     override func coordinateForFieldIdentifier(field: Int) -> CPTCoordinate
     {
-        let coordinate = CPTCoordinate.none;
+        var coordinate = CPTCoordinate.none;
         
         switch ( field ) {
-        case CPTBarPlotFieldBar.location.rawValue:
+        case CPTBarPlotField.location.rawValue:
             coordinate = (self.barsAreHorizontal ? CPTCoordinate.y : CPTCoordinate.x);
             break;
             
-        case CPTBarPlotFieldBar.tip.rawValue:
-        case CPTBarPlotFieldBar.base.rawValue:
+        case CPTBarPlotField.tip.rawValue:
+            fallthrough
+        case CPTBarPlotField.base.rawValue:
             coordinate = (self.barsAreHorizontal ? CPTCoordinate.x : CPTCoordinate.y);
             break;
             
         default:
             break;
         }
-        
         return coordinate;
     }
-    
 }
 

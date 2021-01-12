@@ -236,29 +236,27 @@ extension CPTPlot {
     
     func doublePrecisionCache()-> Bool
     {
-//        var result = false;
-//
-//        switch ( self.cachePrecision ) {
-//        case .auto:
-//                var dataCache = self.cachedData
-////                Class numberClass                                            = [NSNumber class];
-//                for ( key in dataCache.allKeys ) {
-//                    if ( [key isKindOfClass:numberClass] ) {
-//                        result = CPTDataTypeEqualToDataType(((CPTMutableNumericData *)dataCache[key]).dataType, self.doubleDataType);
-//                        break;
-//                    }
-//                }
-//            break;
-//
-//        case .double:
-//                result = true
-//                break;
-//
-//            default:
-//                // not double precision
-//                break;
-//        }
-        return false;
+        var result = false;
+        
+        switch ( self.cachePrecision ) {
+        case .auto:
+            var dataCache = self.cachedData
+            //                Class numberClass                                            = [NSNumber class];
+            for key in dataCache.keys {
+                if ( key is String ) {
+                    result = dataCache[key].dataType == self.doubleDataType
+                    break
+                }
+            }
+            
+        case .double:
+            result = true
+            
+        default:
+            // not double precision
+            break;
+        }
+        return result;
     }
     
     /** @brief Retrieves an array of numbers from the cache.
@@ -270,11 +268,11 @@ extension CPTPlot {
         return self.cachedData[String(fieldEnum)]!
     }
     
-    ///** @brief Retrieves a single number from the cache.
-    // *  @param fieldEnum The field enumerator identifying the field.
-    // *  @param idx The index of the desired data value.
-    // *  @return The cached number or @NAN if no data is cached for the requested field.
-    // **/
+    /** @brief Retrieves a single number from the cache.
+     *  @param fieldEnum The field enumerator identifying the field.
+     *  @param idx The index of the desired data value.
+     *  @return The cached number or @NAN if no data is cached for the requested field.
+     **/
     func cachedDecimalForField(fieldEnum: Int, recordIndex idx: Int) -> [CGFloat?]
     {
         let numbers = self.cachedNumbersForField(fieldEnum: fieldEnum) as! [CGFloat]
@@ -293,8 +291,8 @@ extension CPTPlot {
         
         for key in dataDictionary.keys {
 //            if key is numberClass {
-                let numericData = dataDictionary[key]
-                numericData.dataType = newDataType
+            var numericData = dataDictionary[key]
+                numericData = newDataType
 //            }
         }
     }
@@ -306,11 +304,6 @@ extension CPTPlot {
     
         dispatch_once(&onceToken, ^{
             dataType = CPTDataTypeFormat(//
-        //  CPTNumericDataType.swift
-        //  corePlot
-        //
-        //  Created by thierryH24 on 13/12/2020.
-        //
 
 
         enum CPTDataTypeFormat, sizeof(double), CFByteOrderGetCurrent());

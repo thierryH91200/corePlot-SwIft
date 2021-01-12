@@ -57,7 +57,6 @@ class CPTPlotSpace: NSObject {
         
         if names == nil {
             names = [:]
-            
             categoryNames = names
         }
         
@@ -104,9 +103,7 @@ class CPTPlotSpace: NSObject {
             let categories = newCategories;
             names?[cacheKey.rawValue] = NSMutableOrderedSet(array: categories)        }
         else {
-
             names.removeObjectForKey(cacheKey)
-
         }
     }
     
@@ -123,27 +120,27 @@ class CPTPlotSpace: NSObject {
         self.categoryNames = [:]
     }
     
-    func categoriesForCoordinate( coordinate: CPTCoordinate)->[String]
+    func categoriesForCoordinate( coordinate: CPTCoordinate)->NSMutableOrderedSet
     {
         let categories = self.orderedSetForCoordinate(coordinate: coordinate)
         return categories
     }
     
-    func categoriesForCoordinate( coordinate: CPTCoordinate, at index: Int) -> [String]?
+    func categoriesForCoordinate( coordinate: CPTCoordinate, at index: Int) -> String?
     {
         let categories = orderedSetForCoordinate(coordinate: coordinate)
-        return categories[index]
+        return categories[index] as? String
     }
     
     func indexOfCategory(_ category: String, for coordinate: CPTCoordinate) -> Int {
         guard category != "" else {
             
             let categories = self.orderedSetForCoordinate(coordinate:coordinate)
-            return categories.indexOfObject(category)
+            return categories.index(of: category)
         }
         
         let categories = orderedSetForCoordinate(coordinate: coordinate)
-        return categories.indexOfObject(category) ?? 0
+        return categories.index(of: category)
     }
     
     
@@ -227,65 +224,64 @@ class CPTPlotSpace: NSObject {
     {
         return CGPoint()
     }
-    //
-    //    /** @brief Converts a data point to plot area drawing coordinates.
-    //     *  @param plotPoint A c-style array of data point coordinates (as NSDecimal structs).
-    //     *  @param count The number of coordinate values in the @par{plotPoint} array.
-    //     *  @return The drawing coordinates of the data point.
-    //     **/
+    
+    /** @brief Converts a data point to plot area drawing coordinates.
+     *  @param plotPoint A c-style array of data point coordinates (as NSDecimal structs).
+     *  @param count The number of coordinate values in the @par{plotPoint} array.
+     *  @return The drawing coordinates of the data point.
+     **/
     func plotAreaViewPointForPlotPoint(plotPoint: [CGFloat], numberOfCoordinates count :Int)->CGPoint
     {
         return CGPoint()
     }
-    //
-    //    /** @brief Converts a data point to plot area drawing coordinates.
-    //     *  @param plotPoint A c-style array of data point coordinates (as @double values).
-    //     *  @param count The number of coordinate values in the @par{plotPoint} array.
-    //     *  @return The drawing coordinates of the data point.
-    //     **/
-    func plotAreaViewPointForDoublePrecisionPlotPoint(plotPoint: Double, numberOfCoordinates count:Int)-> CGPoint
-        {
-            return CGPoint()
-        }
-
+    
+    /** @brief Converts a data point to plot area drawing coordinates.
+     *  @param plotPoint A c-style array of data point coordinates (as @double values).
+     *  @param count The number of coordinate values in the @par{plotPoint} array.
+     *  @return The drawing coordinates of the data point.
+     **/
+    func plotAreaViewPointForDoublePrecisionPlotPoint(plotPoint: [Double], numberOfCoordinates count:Int)-> CGPoint
+    {
+        return CGPoint()
+    }
+    
     func plotPointForPlotAreaViewPoint(point: CGPoint ) -> CPTNumberArray?
     {
         return nil
     }
-    //
-    //    /** @brief Converts a point given in plot area drawing coordinates to the data coordinate space.
-    //     *  @param plotPoint A c-style array of data point coordinates (as NSDecimal structs).
-    //     *  @param count The number of coordinate values in the @par{plotPoint} array.
-    //     *  @param point The drawing coordinates of the data point.
-    //     **/
+    
+    /** @brief Converts a point given in plot area drawing coordinates to the data coordinate space.
+     *  @param plotPoint A c-style array of data point coordinates (as NSDecimal structs).
+     *  @param count The number of coordinate values in the @par{plotPoint} array.
+     *  @param point The drawing coordinates of the data point.
+     **/
     func plotPoint(plotPoint: [CGFloat],  numberOfCoordinates count :Int , forPlotAreaViewPoint point: CGPoint)
     {
         assert(count == self.numberOfCoordinates())
     }
-    //
-    //    /** @brief Converts a point given in drawing coordinates to the data coordinate space.
-    //     *  @param plotPoint A c-style array of data point coordinates (as @double values).
-    //     *  @param count The number of coordinate values in the @par{plotPoint} array.
-    //     *  @param point The drawing coordinates of the data point.
-    //     **/
-    //    -(void)doublePrecisionPlotPoint:(nonnull double *__unused)plotPoint numberOfCoordinates:(NSUInteger cpt_unused)count forPlotAreaViewPoint:(CGPoint __unused)point
-    //    {
-    //        NSParameterAssert(count == self.numberOfCoordinates);
-    //    }
-    //
-    //    /** @brief Converts the interaction point of an OS event to plot area drawing coordinates.
-    //     *  @param event The event.
-    //     *  @return The drawing coordinates of the point.
-    //     **/
-    //    -(CGPoint)plotAreaViewPointForEvent:(nonnull CPTNativeEvent *__unused)event
-    //    {
-    //        return CGPointZero;
-    //    }
-    //
-    //    /** @brief Converts the interaction point of an OS event to the data coordinate space.
-    //     *  @param event The event.
-    //     *  @return An array of data point coordinates (as NSNumber values).
-    //     **/
+    
+    /** @brief Converts a point given in drawing coordinates to the data coordinate space.
+     *  @param plotPoint A c-style array of data point coordinates (as @double values).
+     *  @param count The number of coordinate values in the @par{plotPoint} array.
+     *  @param point The drawing coordinates of the data point.
+     **/
+    func doublePrecisionPlotPoint(_ plotPoint: Double, numberOfCoordinates count: Int, forPlotAreaViewPoint point: CGPoint) {
+        assert(count == count, "Invalid parameter not satisfying: count == numberOfCoordinates")
+    }
+    
+    /** @brief Converts the interaction point of an OS event to plot area drawing coordinates.
+     *  @param event The event.
+     *  @return The drawing coordinates of the point.
+     **/
+//        -(CGPoint)plotAreaViewPointForEvent:(nonnull CPTNativeEvent *__unused)event
+//        {
+//            return CGPointZero;
+//        }
+//
+        /** @brief Converts the interaction point of an OS event to the data coordinate space.
+         *  @param event The event.
+         *  @return An array of data point coordinates (as NSNumber values).
+         **/
     //    -(nullable CPTNumberArray *)plotPointForEvent:(nonnull CPTNativeEvent *__unused)event
     //    {
     //        return nil;
@@ -310,11 +306,11 @@ class CPTPlotSpace: NSObject {
     //    {
     //        NSParameterAssert(count == self.numberOfCoordinates);
     //    }
-    //
-    //    /** @brief Sets the range of values for a given coordinate.
-    //     *  @param newRange The new plot range.
-    //     *  @param coordinate The axis coordinate.
-    //     **/
+    
+    /** @brief Sets the range of values for a given coordinate.
+     *  @param newRange The new plot range.
+     *  @param coordinate The axis coordinate.
+     **/
     func  setPlotRange(newRange:  CPTPlotRange, forCoordinate coordinate :CPTCoordinate)
     {
     }

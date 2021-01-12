@@ -324,7 +324,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
      *  @param coord The coordinate for which the corresponding field identifiers are desired.
      *  @return Array of NSNumber objects for the field identifiers.
      **/
-    func fieldIdentifiersForCoordinate( coord: CPTCoordinate ) ->[CGFloat]
+    func fieldIdentifiersForCoordinate( coord: CPTCoordinate ) ->[Int]
     {
         return []
     }
