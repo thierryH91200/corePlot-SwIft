@@ -510,7 +510,9 @@
 			isa = PBXGroup;
 			children = (
 				0320B017255C8CF500D32BF9 /* CPTBarPlot.swift */,
+				030E06A0259365EA006CE062 /* CPTPieChart reload.swift */,
 				030A651B255FD024002B3D13 /* CPTPieChart.swift */,
+				03783480259F7D0B002447D3 /* CPTPlot cacheArray.swift */,
 				035C8A95256D836E00954017 /* CPTPlot Data Caching.swift */,
 				035C8A99256D83EE00954017 /* CPTPlot Data Range.swift */,
 				035C8A8F256D82C700954017 /* CPTPlot Dtat Source.swift */,
@@ -518,8 +520,6 @@
 				0320B013255C8CA400D32BF9 /* CPTPlot.swift */,
 				03E3D50225683D4200FB3F07 /* CPTPlotAccessors.swift */,
 				0320B00F255C8C4300D32BF9 /* CPTPlotGroup.swift */,
-				030E06A0259365EA006CE062 /* CPTPieChart reload.swift */,
-				03783480259F7D0B002447D3 /* CPTPlot cacheArray.swift */,
 			);
 			path = Plots;
 			sourceTree = "<group>";

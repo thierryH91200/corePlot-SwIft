@@ -576,7 +576,7 @@ public class CPTAxis : CPTLayer {
             return
         }
         
-        CPTDictionary textAttributes = theLabelTextStyle.attributes;
+        let textAttributes = theLabelTextStyle.attributes;
         var hasAttributedFormatter   = ([theLabelFormatter attributedStringForObjectValue:[NSDecimalNumber zero]
                                          withDefaultAttributes:textAttributes] != nil);
         
@@ -1117,10 +1117,7 @@ public class CPTAxis : CPTLayer {
                             theDelegate?.axis(axis:self, labelWasSelected:label, withEvent:event)
                         }
                     }
-                    
-                    if ( handled ) {
-                        return true;
-                    }
+                    guard handled == false else { return true }
                 }
             }
             

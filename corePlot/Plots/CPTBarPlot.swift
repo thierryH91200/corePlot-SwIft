@@ -61,7 +61,7 @@ public class CPTBarPlot: CPTPlot {
     var barsAreHorizontal : Bool
     var baseValue : CGFloat
     var barBasesVary : Bool
-    var plotRange : CPTPlotRange
+    var plotRange : CPTPlotRange?
     
     // MARK: Drawing
     var  lineStyle : CPTLineStyle
@@ -103,11 +103,10 @@ public class CPTBarPlot: CPTPlot {
     }
     
     //    func legendTitleForBarPlot(barPlot: CPTBarPlot, recordIndex idx:Int) -> String
-    
     // https://ask.xiaolee.net/questions/1044854
-    override func reloadData(indexRange: NSRange)
+    override func reloadDataInIndexRange(indexRange: NSRange)
     {
-        super.reloadData(indexRange: indexRange)
+        super.reloadDataInIndexRange(indexRange: indexRange)
         
         // Bar fills
         self.reloadBarFills(indexRange: indexRange)
@@ -139,13 +138,19 @@ public class CPTBarPlot: CPTPlot {
             
             // Bar lengths
             if ( theDataSource ) != nil {
-                let newBarLengths = self.numbersFromDataSourceForField(fieldEnum: .barTip., recordIndexRange:indexRange)
-                self.cacheNumbers(newBarLengths, forField:.barTip, atRecordIndex:indexRange.location)
+                let newBarLengths = self.numbersFromDataSourceForField(fieldEnum: CPTBarPlotField.tip.rawValue, recordIndexRange:indexRange)
+                
+                self.cacheNumbers(numbers: newBarLengths,
+                                  forField: CPTBarPlotField.tip.rawValue,
+                                  atRecordIndexidx: indexRange.location)
                 
                 
                 if  self.barBasesVary  {
-                    let newBarBases = self.numbersFromDataSourceForField( fieldEnum: .barBase, recordIndexRange:indexRange)
-                    self.cacheNumbers(newBarBases, forField:.barBase, atRecordIndex:indexRange.location)
+                    let newBarBases = self.numbersFromDataSourceForField( fieldEnum: CPTBarPlotField.base.rawValue,
+                                                                          recordIndexRange:indexRange)
+                    self.cacheNumbers(numbers: newBarBases,
+                                      forField: CPTBarPlotField.base.rawValue,
+                                      atRecordIndexidx:indexRange.location)
                 }
                 else {
                     self.barBases = nil
@@ -157,7 +162,8 @@ public class CPTBarPlot: CPTPlot {
             }
             
             // Locations of bars
-            if self.plotRange {
+            if (self.plotRange != nil) {
+                
                 // Spread bars evenly over the plot range
                 var locationData = nil;
                 if ( self.doublePrecisionCache ) {
@@ -1042,47 +1048,49 @@ public class CPTBarPlot: CPTPlot {
         var offsetLocation = 0.0
         
         if ( self.doublePrecisionCache ) {
-            offsetLocation = @(location.doubleValue + [self doubleLengthInPlotCoordinates:self.barOffset.decimalValue]);
+            offsetLocation = (location.doubleValue + self.doubleLengthInPlotCoordinates(self.barOffset.decimalValue))
         }
         else {
-            NSDecimal decimalLocation = location.decimalValue;
-            NSDecimal offset          = [self lengthInPlotCoordinates:self.barOffset.decimalValue];
-            offsetLocation = [NSDecimalNumber decimalNumberWithDecimal:CPTDecimalAdd(decimalLocation, offset)];
+            decimalLocation = location
+            let offset = self.lengthInPlotCoordinates(self.barOffset.decimalValue)
+            offsetLocation = decimalLocation + offset;
         }
         
-        //        // Offset
-        //        if ( horizontalBars ) {
-        //            label.anchorPlotPoint = @[length, offsetLocation];
-        //
-        //            if ( positiveDirection ) {
-        //                label.displacement = CPTPointMake(self.labelOffset, 0.0);
-        //            }
-        //            else {
-        //                label.displacement = CPTPointMake(-self.labelOffset, 0.0);
-        //            }
-        //        }
-        //        else {
-        //            label.anchorPlotPoint = @[offsetLocation, length];
-        //
-        //            if ( positiveDirection ) {
-        //                label.displacement = CPTPointMake(0.0, self.labelOffset);
-        //            }
-        //            else {
-        //                label.displacement = CPTPointMake(0.0, -self.labelOffset);
-        //            }
-        //        }
-        //
-        //        label.contentLayer.hidden = self.hidden || isnan([location doubleValue]) || isnan([length doubleValue]);
+        // Offset
+        if ( horizontalBars ) {
+            label.anchorPlotPoint.append(length)
+            label.anchorPlotPoint.append(offsetLocation)
+            
+            if ( positiveDirection ) {
+                label.displacement = CGPoint(self.labelOffset, 0.0);
+            }
+            else {
+                label.displacement = CGPoint(-self.labelOffset, 0.0);
+            }
+        }
+        else {
+            label.anchorPlotPoint.append(length)
+            label.anchorPlotPoint.append(offsetLocation)
+
+            
+            if ( positiveDirection ) {
+                label.displacement = CGPoint(0.0, self.labelOffset);
+            }
+            else {
+                label.displacement = CGPoint(0.0, -self.labelOffset);
+            }
+        }
+        
+//        label.contentLayer.hidden = self.hidden || isnan([location doubleValue]) || isnan([length doubleValue]);
     }
     
-    
-    
+
     // MARK: -  Legends
-    //
-    //    /** @internal
-    //     *  @brief The number of legend entries provided by this plot.
-    //     *  @return The number of legend entries.
-    //     **/
+    
+    /** @internal
+     *  @brief The number of legend entries provided by this plot.
+     *  @return The number of legend entries.
+     **/
     override func numberOfLegendEntries() -> Int
     {
         var entryCount = 1;
@@ -1184,10 +1192,7 @@ public class CPTBarPlot: CPTPlot {
                 theDelegate?.barPlot?(plot: self, barTouchUpAtRecordIndex: idx, withEvent: event)
                 handled = true
             }
-            
-            if handled == true {
-                return true
-            }
+            guard handled == false else { return true }
         }
         return super.pointingDeviceDownEvent(event: event, atPoint:interactionPoint)
     }
@@ -1234,31 +1239,31 @@ public class CPTBarPlot: CPTPlot {
                     handled = true
                 }
             }
-            
-            if ( handled == true) {
-                return true
-            }
+            guard handled == false else { return true }
         }
         return super.pointingDeviceUpEvent(event: event, atPoint:interactionPoint)
     }
     
     
     // MARK: - Accessors
-    var barTips : CPTNumberArray {
+    var barTips : CPTNumberArray? {
         get { return (self.cachedNumbersForField( fieldEnum: CPTBarPlotField.tip.rawValue) as? [CGFloat])!}
-        set { self.cachedNumbers ( newValue , fieldEnum: CPTBarPlotField.tip.rawValue)}
+        set { self.cacheNumbers ( numbers: newValue! , fieldEnum: CPTBarPlotField.tip.rawValue)}
     }
-    var barBases : CPTNumberArray {
-        get { (self.cachedNumbersForField( fieldEnum: CPTBarPlotField.base.rawValue) as? [CGFloat])!  }
-        set { self.cachedNumbers ( newValue , fieldEnum: CPTBarPlotField.base.rawValue)}
+    
+    var barBases : CPTNumberArray? {
+        get { (self.cachedNumbersForField(    fieldEnum: CPTBarPlotField.base.rawValue) as? [CGFloat])!  }
+        set { self.cacheNumbers ( numbers: newValue! , fieldEnum: CPTBarPlotField.base.rawValue)}
     }
-    var barLocations : CPTNumberArray {
+    
+    var barLocations : [CGFloat] {
         get { (self.cachedNumbersForField( fieldEnum: CPTBarPlotField.location.rawValue) as? [CGFloat])! }
-        set { self.cachedNumbers ( newValue , fieldEnum: CPTBarPlotField.location.rawValue)}
+        set { self.cacheNumbers (  numbers: newValue , fieldEnum: CPTBarPlotField.location.rawValue) }
     }
-    var barFills : CPTNumberArray {
-        get { self.cachedNumbersForField( fieldEnum: CPTBarPlotField) as? [CGFloat]}
-        set { self.cachedNumbers ( newValue , fieldEnum: CPTBarPlotField.location.rawValue)}
+    
+    var barFills : CPTNumberArray? {
+        get { self.cachedNumbersForField(  fieldEnum: CPTBarPlotField) as? [CGFloat]}
+        set { self.cacheNumbers ( numbers: newValue! , fieldEnum: CPTBarPlotField.location.rawValue)}
     }
     
     
@@ -1367,7 +1372,6 @@ public class CPTBarPlot: CPTPlot {
             self.setNeedsLayout()
         }
     }
-    
     
     func setBarsAreHorizontal(newBarsAreHorizontal: Bool)
     {

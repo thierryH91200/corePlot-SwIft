@@ -808,7 +808,6 @@ public class CPTPieChart: CPTPlot {
         return result
     }
     
-    
     func angle(_ touchedAngle: CGFloat, betweenStartAngle startingAngle: CGFloat, endAngle endingAngle: CGFloat) -> Bool {
         switch sliceDirection {
         case .clockwise:
@@ -865,8 +864,6 @@ public class CPTPieChart: CPTPlot {
         return super.pointingDeviceDownEvent(event: event, atPoint: interactionPoint)
     }
                 
-                
-    
     /**
      *  @brief Informs the receiver that the user has
      *  @if MacOnly released the mouse button. @endif
@@ -932,10 +929,7 @@ public class CPTPieChart: CPTPlot {
                     theDelegate?.pieChart(plot: self, sliceWasSelectedAtRecordIndex:idx, withEvent:event)
                 }
             }
-            
-            if ( handled ) {
-                return true
-            }
+            guard handled == false else { return true }
         }
         return super.pointingDeviceUpEvent(event: event, atPoint:interactionPoint)
     }
@@ -1210,6 +1204,5 @@ public class CPTPieChart: CPTPlot {
             }
         }
     }
-    
-    
+
 }

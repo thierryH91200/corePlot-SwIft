@@ -48,7 +48,7 @@ class CPTDarkGradientTheme: CPTXYTheme {
         let majorLineStyle = CPTLineStyle()
         
         majorLineStyle.lineCap   = CGLineCap.square
-        majorLineStyle.lineColor = [CPTColor colorWithGenericGray:CGFloat(0.5)];
+        majorLineStyle.lineColor = CPTColor( colorWithGenericGray:CGFloat(0.5))
         majorLineStyle.lineWidth = CGFloat(2.0)
         
         let minorLineStyle = CPTLineStyle()

@@ -30,9 +30,9 @@ extension CPTPlot {
         for  idx in 0..<labelCount {
             
             let annotation = labelArray[idx];
-            
             let labelLayer = annotation.contentLayer;
             if ( (labelLayer != nil) && !labelLayer!.isHidden ) {
+                
                 let labelPoint = theGraph?.convert(interactionPoint, to:labelLayer)
                 
                 if  labelLayer!.bounds.contains( labelPoint!) == true{

@@ -25,6 +25,7 @@ extension CPTPieChart {
             needsLegendUpdate = true
             
             let nilObject = (CPTPlot nilData)
+            let nilFill : CPTFill?
             var array = [Any]()
             var maxIndex = NSMaxRange(indexRange);
             
@@ -34,7 +35,7 @@ extension CPTPieChart {
                     array.append(fill as Any)
                 }
                 else {
-                    array.append(nilObject)
+                    array.append(nilFill)
                 }
             }
             

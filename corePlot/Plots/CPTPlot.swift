@@ -11,10 +11,10 @@ import AppKit
     
     func numberOfRecordsForPlot ( plot:  CPTPlot) -> Int
 
-    @objc optional func numberForPlot  ( plot: CPTPlot, fieldEnum:Int, index: Int) -> Int
-    @objc optional func numbersForPlot ( plot: CPTPlot, fieldEnum :Int, indexRange : NSRange) -> [Int]
+    @objc optional func numberForPlot  ( plot: CPTPlot, fieldEnum: Int, index: Int) -> Int
+    @objc optional func numbersForPlot ( plot: CPTPlot, fieldEnum: Int, indexRange : NSRange) -> [Int]
 
-    @objc optional func doubleForPlot ( plot: CPTPlot, fieldEnum:Int,  index: Int) ->Double
+    @objc optional func doubleForPlot ( plot: CPTPlot, fieldEnum:Int, index: Int) ->Double
     @objc optional func doublesForPlot( plot: CPTPlot, fieldEnum:Int, indexRange:NSRange)->[Double]
 
     @objc optional func dataForPlot     ( plot : CPTPlot, fieldEnum: Int, indexRange:NSRange ) -> CGFloat

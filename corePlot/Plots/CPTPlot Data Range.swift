@@ -277,7 +277,6 @@ extension CPTPlot {
         self.needsRelabel    = true;
     }
     
-    
     func updateContentAnchorForLabel(label: CPTPlotSpaceAnnotation)
     {
         if ( self.adjustLabelAnchors == true ) {

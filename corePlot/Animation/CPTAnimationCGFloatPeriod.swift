@@ -5,7 +5,7 @@
 //  Created by thierryH24 on 14/11/2020.
 //
 
-import CocAppKitoa
+import AppKit
 
 class CPTAnimationCGFloatPeriod: CPTAnimationPeriod {
     

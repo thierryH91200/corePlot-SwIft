@@ -20,13 +20,13 @@ class CPTPlotRange: NSObject {
     var length: CGFloat = 0.0
     var  end: CGFloat = 0.0
     
-    var locationDecimal:  CGFloat = 0.0
+//    var locationDecimal:  CGFloat = 0.0
     var lengthDecimal: CGFloat = 0.0
     var endDecimal: CGFloat = 0.0
     
-    var locationDouble : CGFloat = 0.0
-    var lengthDouble: CGFloat = 0.0
-    var endDouble: CGFloat = 0.0
+//    var locationDouble : Double = 0.0
+    var lengthDouble: Double = 0.0
+    var endDouble: Double = 0.0
     
     var minLimit = CGFloat(0.0)
     var midPoint = CGFloat(0.0);
@@ -86,9 +86,27 @@ class CPTPlotRange: NSObject {
     {
         super.init()
         locationDecimal = location
-        locationDouble  = location
+//        locationDouble  = location
         
         lengthDecimal = length
+//        lengthDouble  = length
+        
+        if lengthDouble.isNaN {
+            isInfinite = false
+            lengthSign = CPTSign.none
+        }
+        else {
+            isInfinite = lengthDecimal.isInfinite
+            lengthSign = lengthDecimal.signbit() ? CPTSign.negative : CPTSign.positive
+        }
+    }
+    init(location: Double, length:Double)
+    {
+        super.init()
+//        locationDecimal = location
+        locationDouble  = location
+        
+//        lengthDecimal = length
         lengthDouble  = length
         
         if lengthDouble.isNaN {
@@ -100,7 +118,7 @@ class CPTPlotRange: NSObject {
             lengthSign = lengthDouble.signbit() ? CPTSign.negative : CPTSign.positive
         }
     }
-    
+
     ////    /** @brief Initializes a newly allocated CPTPlotRange object with the provided location and length.
     ////     *  @param loc The starting location of the range.
     ////     *  @param len The length of the range.
@@ -134,33 +152,28 @@ class CPTPlotRange: NSObject {
     }
     
     // MARK: - Accessors
-    
-    func location() -> CGFloat? {
-        return NSDecimalNumber(decimal: locationDecimal)
+    var _locationDecimal:  CGFloat = 0.0
+    var locationDecimal: CGFloat {
+        get { return _locationDecimal }
+        set {
+            if _locationDecimal != newValue {
+                _locationDecimal = newValue
+                locationDouble = Double(newValue)
+            }
+        }
     }
-
-    func setLocationDecimal(_ newLocation: CGFloat) {
-        if locationDecimal != newLocation {
-            locationDecimal = newLocation
-            locationDouble = Double(newLocation)
+    var _locationDouble:  Double = 0.0
+    var locationDouble: Double {
+        get { return _locationDouble }
+        set {
+            if _locationDouble != newValue {
+                _locationDouble = newValue
+                locationDecimal = CGFloat(newValue)
+            }
         }
     }
     
     ////
-    ////    -(void)setLocationDouble:(double)newLocation
-    ////    {
-    ////        if ( locationDouble != newLocation ) {
-    ////            locationDouble = newLocation;
-    ////
-    ////            if ( !self.inValueUpdate ) {
-    ////                self.inValueUpdate = YES;
-    ////
-    ////                self.locationDecimal = CPTDecimalFromDouble(newLocation);
-    ////
-    ////                self.inValueUpdate = false
-    ////            }
-    ////        }
-    ////    }
     ////
     ////    -(NSNumber *)length
     ////    {
@@ -435,23 +448,25 @@ class CPTPlotRange: NSObject {
         return result;
     }
     
-    //    /** @brief Compares a number to the range, determining if it is in the range, or above or below it.
-    //     *  @param number The number to check.
-    //     *  @return The comparison result.
-    //     **/
-    //    -(CPTPlotRangeComparisonResult)compareToNumber:(nonnull NSNumber *)number
-    //    {
-    //        CPTPlotRangeComparisonResult result;
-    //
-    //        if ( [number isKindOfClass:[NSDecimalNumber class]] ) {
-    //            result = [self compareToDecimal:number.decimalValue];
-    //        }
-    //        else {
-    //            result = [self compareToDouble:number.doubleValue];
-    //        }
-    //        return result;
-    //    }
-    
+    /** @brief Compares a number to the range, determining if it is in the range, or above or below it.
+     *  @param number The number to check.
+     *  @return The comparison result.
+     **/
+    func compareToNumber(number: Any )-> CPTPlotRangeComparisonResult
+    {
+        var  result : CPTPlotRangeComparisonResult
+        
+        if number  is CGFloat {
+            let number = number as! CGFloat
+            result = self.compareToDecimal(number: number )
+        }
+        else {
+            let number = number as! Double
+            result = self.compareToDouble(number : number)
+        }
+        return result;
+    }
+
     /** @brief Compares a number to the range, determining if it is in the range, or above or below it.
      *  @param number The number to check.
      *  @return The comparison result.
@@ -475,29 +490,29 @@ class CPTPlotRange: NSObject {
         return result;
     }
     
-    //    /** @brief Compares a number to the range, determining if it is in the range, or above or below it.
-    //     *  @param number The number to check.
-    //     *  @return The comparison result.
-    //     **/
-    //    -(CPTPlotRangeComparisonResult)compareToDouble:(double)number
-    //    {
-    //        CPTPlotRangeComparisonResult result;
-    //
-    //        if ( isnan(number)) {
-    //            result = CPTPlotRangeComparisonResultNumberUndefined;
-    //        }
-    //        else if ( number < self.minLimitDouble ) {
-    //            result = CPTPlotRangeComparisonResultNumberBelowRange;
-    //        }
-    //        else if ( number > self.maxLimitDouble ) {
-    //            result = CPTPlotRangeComparisonResultNumberAboveRange;
-    //        }
-    //        else {
-    //            result = CPTPlotRangeComparisonResultNumberInRange;
-    //        }
-    //        return result;
-    //    }
-    //
+        /** @brief Compares a number to the range, determining if it is in the range, or above or below it.
+         *  @param number The number to check.
+         *  @return The comparison result.
+         **/
+    func compareToDouble(number: Double)-> CPTPlotRangeComparisonResult
+    {
+        var result : CPTPlotRangeComparisonResult
+        
+        if number.isNaN {
+            result = .undefined;
+        }
+        else if ( number < self.minLimitDouble ) {
+            result = .belowRange
+        }
+        else if ( number > self.maxLimitDouble ) {
+            result = .aboveRange
+        }
+        else {
+            result = .inRange
+        }
+        return result;
+    }
+    
     // MARK: -  Label comparison
     //    -(BOOL)isEqual:(nullable id)object
     //    {

@@ -20,8 +20,7 @@ class CPTPlotAreaFrame: CPTBorderedLayer {
             plotArea = nil;
 
             let newPlotArea = CPTPlotArea(frame:newFrame)
-            self.plotArea = newPlotArea;
-
+            self.plotArea = CPTPlotArea(frame:newFrame)
             self.masksToBorder = true
     }
 
@@ -39,7 +38,7 @@ class CPTPlotAreaFrame: CPTBorderedLayer {
     
     // MARK: - Event Handling
 
-    func pointingDeviceDownEvent(event: CPTNativeEvent, interactionPoint:CGPoint) -> Bool
+    func pointingDeviceDownEvent(event: CPTNativeEvent, atPoint interactionPoint: CGPoint) -> Bool
     {
         if ((self.plotArea?.pointingDeviceDownEvent(event: event, atPoint:interactionPoint)) != nil) {
             return true

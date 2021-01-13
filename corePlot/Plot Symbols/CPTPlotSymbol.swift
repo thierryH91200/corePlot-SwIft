@@ -566,24 +566,25 @@ class CPTPlotSymbol: NSObject {
             break;
             
         case .star:
-            //                CGPathMoveToPoint(symbolPath, nil, CGFloat(0.0), halfSize.height);
-            //                CGPathAddLineToPoint(symbolPath, nil, halfSize.width * CGFloat(0.22451398829), halfSize.height * CGFloat(0.30901699437));
-            //                CGPathAddLineToPoint(symbolPath, nil, halfSize.width * CGFloat(0.95105651630), halfSize.height * CGFloat(0.30901699437));
-            //                CGPathAddLineToPoint(symbolPath, nil, halfSize.width * CGFloat(0.36327126400), -halfSize.height * CGFloat(0.11803398875));
-            //                CGPathAddLineToPoint(symbolPath, nil, halfSize.width * CGFloat(0.58778525229), -halfSize.height * CGFloat(0.80901699437));
-            //                CGPathAddLineToPoint(symbolPath, nil, CGFloat(0.0), -halfSize.height * CGFloat(0.38196601125));
-            //                CGPathAddLineToPoint(symbolPath, nil, -halfSize.width * CGFloat(0.58778525229), -halfSize.height * CGFloat(0.80901699437));
-            //                CGPathAddLineToPoint(symbolPath, nil, -halfSize.width * CGFloat(0.36327126400), -halfSize.height * CGFloat(0.11803398875));
-            //                CGPathAddLineToPoint(symbolPath, nil, -halfSize.width * CGFloat(0.95105651630), halfSize.height * CGFloat(0.30901699437));
-            //                CGPathAddLineToPoint(symbolPath, nil, -halfSize.width * CGFloat(0.22451398829), halfSize.height * CGFloat(0.30901699437));
+            symbolPath.move(to: CGPoint(x: CGFloat(0.0), y: halfSize.height), transform: .identity)
+            symbolPath.addLine(to: CGPoint(x: halfSize.width * CGFloat(0.22451398829), y: halfSize.height * CGFloat(0.30901699437)), transform: .identity)
+            symbolPath.addLine(to: CGPoint(x: halfSize.width * CGFloat(0.95105651630), y: halfSize.height * CGFloat(0.30901699437)), transform: .identity)
+            symbolPath.addLine(to: CGPoint(x: halfSize.width * CGFloat(0.36327126400), y: -halfSize.height * CGFloat(0.11803398875)), transform: .identity)
+            symbolPath.addLine(to: CGPoint(x: halfSize.width * CGFloat(0.58778525229), y: -halfSize.height * CGFloat(0.80901699437)), transform: .identity)
+            symbolPath.addLine(to: CGPoint(x: CGFloat(0.0), y: -halfSize.height * CGFloat(0.38196601125)), transform: .identity)
+            symbolPath.addLine(to: CGPoint(x: -halfSize.width * CGFloat(0.58778525229), y: -halfSize.height * CGFloat(0.80901699437)), transform: .identity)
+            symbolPath.addLine(to: CGPoint(x: -halfSize.width * CGFloat(0.36327126400), y: -halfSize.height * CGFloat(0.11803398875)), transform: .identity)
+            symbolPath.addLine(to: CGPoint(x: -halfSize.width * CGFloat(0.95105651630), y: halfSize.height * CGFloat(0.30901699437)), transform: .identity)
+            symbolPath.addLine(to: CGPoint(x: -halfSize.width * CGFloat(0.22451398829), y: halfSize.height * CGFloat(0.30901699437)), transform: .identity)
+            
             symbolPath.closeSubpath();
             break;
             
         case .diamond:
-            //                CGPathMoveToPoint(symbolPath, nil, CGFloat(0.0), halfSize.height);
-            //                CGPathAddLineToPoint(symbolPath, nil, halfSize.width, CGFloat(0.0));
-            //                CGPathAddLineToPoint(symbolPath, nil, CGFloat(0.0), -halfSize.height);
-            //                CGPathAddLineToPoint(symbolPath, nil, -halfSize.width, CGFloat(0.0));
+            symbolPath.move(to: CGPoint(x: CGFloat(0.0), y: halfSize.height), transform: .identity)
+            symbolPath.addLine(to: CGPoint(x: halfSize.width, y: CGFloat(0.0)), transform: .identity)
+            symbolPath.addLine(to: CGPoint(x: CGFloat(0.0), y: -halfSize.height), transform: .identity)
+            symbolPath.addLine(to: CGPoint(x: -halfSize.width, y: CGFloat(0.0)), transform: .identity)
             symbolPath.closeSubpath();
             break;
             
@@ -645,9 +646,6 @@ class CPTPlotSymbol: NSObject {
         }
         return symbolPath;
     }
-    //
-    //    /// @endcond
-    
     
     // MARK: - Debugging
     //

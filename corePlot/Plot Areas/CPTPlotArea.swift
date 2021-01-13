@@ -296,11 +296,11 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
         }
     }
 
-//    /** @brief Computes the sublayer index for the given layer type and axis.
-//     *  @param axis The axis of interest.
-//     *  @param layerType The layer type being updated.
-//     *  @return The sublayer index for the given layer type.
-//     **/
+    /** @brief Computes the sublayer index for the given layer type and axis.
+     *  @param axis The axis of interest.
+     *  @param layerType The layer type being updated.
+     *  @return The sublayer index for the given layer type.
+     **/
     func sublayerIndexForAxis(axis: CPTAxis , layerType: CPTGraphLayerType)->Int
     {
         var idx = 0;
@@ -360,27 +360,26 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
         return super.pointingDeviceDownEvent(event: event, atPoint: interactionPoint)
     }
 
-//    /**
-//     *  @brief Informs the receiver that the user has
-//     *  @if MacOnly released the mouse button. @endif
-//     *  @if iOSOnly ended touching the screen. @endif
-//     *
-//     *
-//     *  If this plot area has a delegate that responds to the
-//     *  @link CPTPlotAreaDelegate::plotAreaTouchUp: -plotAreaTouchUp: @endlink,
-//     *  @link CPTPlotAreaDelegate::plotAreaTouchUp:withEvent: -plotAreaTouchUp:withEvent: @endlink,
-//     *  @link CPTPlotAreaDelegate::plotAreaWasSelected: -plotAreaWasSelected: @endlink, and/or
-//     *  @link CPTPlotAreaDelegate::plotAreaWasSelected:withEvent: -plotAreaWasSelected:withEvent: @endlink
-//     *  methods, the delegate method will be called and this method returns @true if the @par{interactionPoint} is within the
-//     *  plot area bounds.
-//     *
-//     *  @param event The OS event.
-//     *  @param interactionPoint The coordinates of the interaction.
-//     *  @return Whether the event was handled or not.
-//     **/
+    /**
+     *  @brief Informs the receiver that the user has
+     *  @if MacOnly released the mouse button. @endif
+     *  @if iOSOnly ended touching the screen. @endif
+     *
+     *
+     *  If this plot area has a delegate that responds to the
+     *  @link CPTPlotAreaDelegate::plotAreaTouchUp: -plotAreaTouchUp: @endlink,
+     *  @link CPTPlotAreaDelegate::plotAreaTouchUp:withEvent: -plotAreaTouchUp:withEvent: @endlink,
+     *  @link CPTPlotAreaDelegate::plotAreaWasSelected: -plotAreaWasSelected: @endlink, and/or
+     *  @link CPTPlotAreaDelegate::plotAreaWasSelected:withEvent: -plotAreaWasSelected:withEvent: @endlink
+     *  methods, the delegate method will be called and this method returns @true if the @par{interactionPoint} is within the
+     *  plot area bounds.
+     *
+     *  @param event The OS event.
+     *  @param interactionPoint The coordinates of the interaction.
+     *  @return Whether the event was handled or not.
+     **/
     override func pointingDeviceUpEvent(event: CPTNativeEvent, atPoint interactionPoint : CGPoint)-> Bool
     {
-        
         let theGraph = self.graph;
         
         guard self.isHidden == false else { return false }
@@ -416,7 +415,6 @@ public class CPTPlotArea: CPTAnnotationHostLayer {
                 return false // don't block other events in the responder chain
             }
         }
-        
         return super.pointingDeviceUpEvent(event: event, atPoint:interactionPoint)
     }
     

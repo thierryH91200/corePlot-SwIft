@@ -171,8 +171,8 @@ extension CPTPlot {
                     array.append(nilObject)
                 }
             }
-            cacheArray( array: array,
-                        forKey: CPTPlotBinding.DataLabels,
+            cacheArray( array: array as [Any],
+                        forKey: NSBindingName.PlotDataLabels.rawValue,
                         atRecordIndex: indexRange.location)
         }
         self.relabelIndexRange(indexRange: indexRange)
@@ -190,7 +190,7 @@ extension CPTPlot {
         weak var theDataSource = self.dataSource
         
         if ((theDataSource?.dataForPlot(plot: fieldEnum: indexRange:)) != nil) {
-            numbers = theDataSource?.dataForPlot( plot:self, fieldEnum:fieldEnum, indexRange:indexRange) as! [CPTLayer]
+            numbers = theDataSource?.dataForPlot?( plot:self, fieldEnum:fieldEnum, indexRange:indexRange) as? [CGFloat]
         }
         else if ((theDataSource?.doublesForPlot(plot: fieldEnum: indexRange:)) != nil) {
             numbers = NSMutableData dataWithLength:sizeof(double) * indexRange.length];
@@ -201,8 +201,8 @@ extension CPTPlot {
             fieldValues = [Double](repeating: doubleValues!.first!, count: indexRange.length )
             
         }
-        else if ((theDataSource?.numbersForPlot(plot: field: fieldEnum: indexRange:)) != nil) {
-            let numberArray = theDataSource?.numbersForPlot(plot: self, fieldEnum: fieldEnum, indexRange:indexRange)
+        else if ((theDataSource?.numbersForPlot?(plot: fieldEnum: indexRange:)) != nil) {
+            let numberArray = theDataSource?.numbersForPlot!(plot: self, fieldEnum: fieldEnum, indexRange:indexRange )
             
             if (( numberArray ) != nil) {
                 numbers = NSArray arrayWithArray:numberArray;
@@ -332,8 +332,8 @@ extension CPTPlot {
                                     }
                                 }
                                 else {
-                                    const NSDecimal *sourceData = data samplePointerAtIndex:0, fieldNum];
-                                    NSDecimal *destData         = tempData.mutableBytes;
+                                    let sourceData = data.samplePointerAtIndex(0, fieldNum)
+                                    let destData         = tempData
                                     
                                     while sourceData < sourceEnd {
                                         *destData++ = *sourceData;
@@ -355,11 +355,13 @@ extension CPTPlot {
                                 let samples = data.samplePointerAtIndex(0, fieldNum)
                                 let tempData    = NSData(bytes: samples,  length:bufferLength)
                                 
-                                CPTMutableNumericData *tempNumericData = CPTMutableNumericData ( initWithData:tempData
+                                let tempNumericData = CPTMutableNumericData ( initWithData:tempData,
                                 dataType:dataType,
                                 shape:nil)
                                 
-                                self.cacheNumbers:tempNumericData forField:fieldNum atRecordIndex:indexRange.location];
+                                self.cacheNumbers(tempNumericData,
+                                                  forField:fieldNum,
+                                                  atRecordIndex:indexRange.location)
                             }
                             hasData = true
                         }

@@ -49,7 +49,7 @@ class CPTMutablePlotRange: CPTPlotRange {
      *  @brief The starting value of the range as a @double.
      *  @see @ref location, @ref locationDecimal
      **/
-    override var locationDouble : CGFloat {
+    override var locationDouble : Double {
         get { return super.locationDouble  }
         set { super.locationDouble = newValue }
     }
@@ -57,7 +57,7 @@ class CPTMutablePlotRange: CPTPlotRange {
      *  @brief The length of the range as a @double.
      *  @see @ref length, @ref lengthDecimal
      **/
-    override var lengthDouble : CGFloat {
+    override var lengthDouble : Double {
         get { return super.lengthDouble  }
         set { super.lengthDouble = newValue }
     }
@@ -73,11 +73,11 @@ class CPTMutablePlotRange: CPTPlotRange {
         
         let min1    = self.minLimitDecimal;
         let min2    = (other?.minLimitDecimal)!
-        var minimum = min(min1, min2);
+        let minimum = min(min1, min2);
         
         let max1    = self.maxLimitDecimal;
         let max2    = (other?.maxLimitDecimal)!;
-        var maximum = max(max1, max2);
+        let maximum = max(max1, max2);
         
         if ( self.isInfinite && other!.isInfinite ) {
             if ( self.lengthSign == other?.lengthSign ) {
@@ -127,7 +127,7 @@ class CPTMutablePlotRange: CPTPlotRange {
                 break;
             }
         }
-        else if ( NSDecimalIsNotANumber(&minimum) || NSDecimalIsNotANumber(&maximum)) {
+        else if minimum.isNaN || maximum.isNaN  {
             self.locationDecimal = CGFloat.nan
             self.lengthDecimal   = CGFloat.nan
         }
@@ -152,11 +152,11 @@ class CPTMutablePlotRange: CPTPlotRange {
         
         let min1    = self.minLimitDecimal
         let min2    = other?.minLimitDecimal;
-        var minimum = max(min1, min2!);
+        let minimum = max(min1, min2!);
         
         let max1    = self.maxLimitDecimal
         let max2    = (other?.maxLimitDecimal)!
-        var maximum = min(max1, max2)
+        let maximum = min(max1, max2)
         
         if !self.intersectsRange(otherRange: other ) {
             self.locationDecimal = CGFloat.nan
@@ -204,7 +204,7 @@ class CPTMutablePlotRange: CPTPlotRange {
                 break;
             }
         }
-        else if ( NSDecimalIsNotANumber(&minimum) || NSDecimalIsNotANumber(&maximum)) {
+        else if minimum.isNaN || maximum.isNaN  {
             self.locationDecimal = CGFloat.nan
             self.lengthDecimal   = CGFloat.nan
         }
@@ -245,12 +245,12 @@ class CPTMutablePlotRange: CPTPlotRange {
      **/
     func shiftLocationToFitInRange(otherRange: CPTPlotRange )
     {
-        switch otherRange.compareToDecimal(self.locationDecimal ) {
-        case .numberBelowRange:
+        switch otherRange.compareToDecimal(number: self.locationDecimal ) {
+        case .belowRange:
             self.locationDecimal = otherRange.minLimitDecimal;
             break;
             
-        case .numberAboveRange:
+        case .aboveRange:
             self.locationDecimal = otherRange.maxLimitDecimal;
             break;
             
@@ -266,10 +266,10 @@ class CPTMutablePlotRange: CPTPlotRange {
      **/
     func shiftEndToFitInRange( otherRange: CPTPlotRange) {
         
-        switch otherRange.compare(toDecimal: endDecimal) {
-        case .numberBelowRange:
+        switch otherRange.compareToDecimal( number: endDecimal) {
+        case .belowRange:
             locationDecimal = otherRange.minLimitDecimal - lengthDecimal
-        case .numberAboveRange:
+        case .aboveRange:
             locationDecimal = otherRange.maxLimitDecimal - lengthDecimal
         default:
             // in range--do nothing

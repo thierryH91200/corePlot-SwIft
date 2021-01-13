@@ -9,19 +9,19 @@ import Foundation
 
 extension CPTPlot {
     
-    // MARK: -//-(NSUInteger)
-    
-    // func   cachedDataCount()
-    //{
-    //    self.reloadDataIfNeeded()
-    //    return cachedDataCount
-    //}
-    
-    ///** @brief Copies an array of numbers to the cache.
-    // *  @param numbers An array of numbers to cache. Can be a CPTNumericData, NSArray, or NSData (NSData is assumed to be a c-style array of type @double).
-    // *  @param fieldEnum The field enumerator identifying the field.
-    // **/
-    func cacheNumbers(numbers : Any?, forField fieldEnum: Int)
+    // MARK: - cacheNumbers
+        
+//    func cachedDataCount() -> Int
+//    {
+//        self.reloadDataIfNeeded()
+//        return cachedDataCount
+//    }
+//
+    /** @brief Copies an array of numbers to the cache.
+     *  @param numbers An array of numbers to cache. Can be a CPTNumericData, NSArray, or NSData (NSData is assumed to be a c-style array of type @double).
+     *  @param fieldEnum The field enumerator identifying the field.
+     **/
+    func cacheNumbers(numbers : [CGFloat?], fieldEnum: Int)
     {
         var cacheKey = String(fieldEnum)
         
@@ -39,16 +39,16 @@ extension CPTPlot {
             case .logModulus:
                 let theNumbers = numbers;
                 let mutableNumbers = self.numericDataForNumbers(numbers: theNumbers)
+                let  sampleCount = mutableNumbers
                 
-                let  sampleCount = mutableNumbers.numberOfSamples;
-                if sampleCount > 0  {
+                if sampleCount as! Int > 0  {
                     (self.cachedData)[cacheKey] = mutableNumbers as! [Any];
                 }
                 else {
                     self.cachedData.removeValue(forKey: cacheKey)
                 }
                 
-                self.cachedDataCount = sampleCount;
+                self.cachedDataCount = sampleCount as! Int;
                 
                 switch ( self.cachePrecision ) {
                 case .auto:
