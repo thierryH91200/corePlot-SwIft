@@ -106,18 +106,14 @@ class CPTFunctionDataSource: NSObject <CPTPlotDataSource> {
     }
 
 
-//
-//    // function and plot are required; this will fail the assertions in -initForPlot:withFunction:
-//    -(nonnull instancetype)init
-//    {
-//        [NSException raise:CPTException format:@"%@ must be initialized with a function or a block.", NSStringFromClass([self class])];
-//        return [self initForPlot:[CPTScatterPlot layer] withFunction:sin];
-//    }
-//
-//
-//    /// @endcond
-//
-//    #pragma mark -
+
+    // function and plot are required; this will fail the assertions in -initForPlot:withFunction:
+    convenience init() {
+        NSException.raise(CPTException, format: "%@ must be initialized with a function or a block.", NSStringFromClass(type(of: self).self))
+        self.init(for: CPTScatterPlot.layer(), withFunction: sin)
+    }
+    
+    
 // MARK: - Accessors
     var _resolution = CGFloat(0)
     var resolution : CGFloat {
@@ -142,18 +138,16 @@ class CPTFunctionDataSource: NSObject <CPTPlotDataSource> {
                 self.cachedCount     = 0;
                 self.cachedPlotRange = nil;
 
-                [self plotBoundsChanged];
+                self.plotBoundsChanged()
             }
         }
     }
 
 // MARK: - Notifications
-//
-//    /// @cond
-//
-//    /** @internal
-//     *  @brief Reloads the plot with more closely spaced data points when needed.
-//     **/
+    
+    /** @internal
+     *  @brief Reloads the plot with more closely spaced data points when needed.
+     **/
     @objc func plotBoundsChanged()
     {
         let plot = self.dataPlot;
@@ -181,10 +175,10 @@ class CPTFunctionDataSource: NSObject <CPTPlotDataSource> {
             }
         }
     }
-//
-//    /** @internal
-//     *  @brief Adds new data points as needed while scrolling.
-//     **/
+
+    /** @internal
+     *  @brief Adds new data points as needed while scrolling.
+     **/
 //    -(void)plotSpaceChanged
 //    {
 //        CPTPlot *plot = self.dataPlot;

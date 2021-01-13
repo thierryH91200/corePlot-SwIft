@@ -220,7 +220,7 @@ class CPTMutablePlotRange: CPTPlotRange {
         }
     }
     
-    // mark Expanding/Contracting ranges
+    // MARK: - Expanding/Contracting ranges
     
     /** @brief Extends/contracts the range by a given factor.
      *  @param factor Factor used. A value of @num{1.0} gives no change.
@@ -264,7 +264,7 @@ class CPTMutablePlotRange: CPTPlotRange {
      *  @param otherRange Other range.
      *  The minimum possible shift is made. The range @ref length is unchanged.
      **/
-    func shiftEndToFit(in otherRange: CPTPlotRange) {
+    func shiftEndToFitInRange( otherRange: CPTPlotRange) {
         
         switch otherRange.compare(toDecimal: endDecimal) {
         case .numberBelowRange:
@@ -276,7 +276,8 @@ class CPTMutablePlotRange: CPTPlotRange {
             break
         }
     }
-    // mark Accessors
+    
+    // MARK: - Accessors
     func setLocation(newLocation : CGFloat )
     {
         self.inValueUpdate = true

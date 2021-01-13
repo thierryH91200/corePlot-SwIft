@@ -251,22 +251,22 @@ class CPTXYPlotSpace: CPTPlotSpace {
                     
     func constrainRange(existingRange: CPTPlotRange?, toGlobalRange globalRange: CPTPlotRange?)-> CPTPlotRange?
     {
-        if ( !globalRange ) {
+        if ( (globalRange == nil) ) {
             return existingRange;
         }
-        if ( !existingRange ) {
+        if ( (existingRange == nil) ) {
             return nil;
         }
         
         let theGlobalRange = globalRange;
         
-        if ( existingRange?.lengthDecimal >= theGlobalRange?.lengthDecimal) {
+        if ( existingRange!.lengthDecimal >= theGlobalRange!.lengthDecimal) {
             return theGlobalRange
         }
         else {
-            let newRange = existingRange
+            let newRange = existingRange as! CPTMutablePlotRange
             newRange.shiftEndToFitInRange(theGlobalRange)
-            newRange.shiftLocationToFitInRange(theGlobalRange)
+            newRange.shiftLocationToFitInRange(otherRange: theGlobalRange!)
             return newRange
         }
     }

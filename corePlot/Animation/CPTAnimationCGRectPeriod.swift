@@ -5,7 +5,7 @@
 //  Created by thierryH24 on 29/11/2020.
 //
 
-import Cocoa
+import AppKit
 
 class CPTAnimationCGRectPeriod: CPTAnimationPeriod {
 

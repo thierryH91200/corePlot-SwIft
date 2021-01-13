@@ -5,7 +5,7 @@
 //  Created by thierryH24 on 09/11/2020.
 //
 
-import Cocoa
+import AppKit
 
 //static void *CPTGraphHostingViewKVOContext = (void *)&CPTGraphHostingViewKVOContext;
 
