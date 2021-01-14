@@ -178,11 +178,11 @@ public class CPTBarPlot: CPTPlot {
                         doublePrecisionDelta = self.plotRange.lengthDouble / (double)(indexRange.length - 1);
                     }
                     
-                    let locationDouble = self.plotRange.locationDouble;
+                    let locationDouble = self.plotRange?.locationDouble;
                     let dataBytes     = locationData.mutableBytes;
                     let dataEnd       = dataBytes + indexRange.length;
                     while ( dataBytes < dataEnd ) {
-                        dataBytes++    = locationDouble;
+                        dataBytes   = locationDouble + 1;
                         locationDouble += doublePrecisionDelta;
                     }
                 }
@@ -194,15 +194,15 @@ public class CPTBarPlot: CPTPlot {
                     
                     var delta = CGFloat(1);
                     if ( indexRange.length > 1 ) {
-                        delta = self.plotRange.lengthDecimal / CGFloat((indexRange.length - 1));
+                        delta = self.plotRange!.lengthDecimal / CGFloat((indexRange.length - 1));
                     }
                     
-                    var locationDecimal = self.plotRange.locationDecimal;
+                    var locationDecimal = self.plotRange?.locationDecimal;
                     let dataBytes      = locationData.mutableBytes;
                     let dataEnd        = dataBytes + indexRange.length;
                     while ( dataBytes < dataEnd ) {
                         dataBytes++    = locationDecimal;
-                        locationDecimal = locationDecimal + delta;
+                        locationDecimal = locationDecimal! + delta;
                     }
                 }
                 self cacheNumbers(locationData, forField:CPTBarPlotFieldBarLocation, atRecordIndex:indexRange.location)
@@ -225,7 +225,7 @@ public class CPTBarPlot: CPTPlot {
                     var dataBytes     = locationData;
                     var dataEnd       = dataBytes + indexRange.length;
                     while ( dataBytes < dataEnd ) {
-                        dataBytes++    = locationDouble;
+                        dataBytes++    = locationDouble + 1
                         locationDouble += 1.0;
                     }
                 }
@@ -235,12 +235,12 @@ public class CPTBarPlot: CPTPlot {
                                     shape:nil];
                     locationData.shape = @[@(indexRange.length)];
                     
-                    let locationDecimal = CGFloat(0);
+                    var locationDecimal = CGFloat(0);
                     let dataBytes      = locationData.mutableBytes;
                     let dataEnd        = dataBytes + indexRange.length;
                     var one             = CGFloat(1);
                     while ( dataBytes < dataEnd ) {
-                        dataBytes++    = locationDecimal
+                        dataBytes   = locationDecimal + 1
                         locationDecimal = locationDecimal + one
                     }
                 }
@@ -527,7 +527,7 @@ public class CPTBarPlot: CPTPlot {
                     let base = self.baseValue
                     if range?.contains(base ) == false {
                         var newRange = range
-                        newRange.unionPlotRange(plotRangeWithLocationDecimal(base, lengthDecimal:(0)))
+                        newRange.unionPlotRange( plotRangeWithLocationDecimal(base, lengthDecimal:(0)))
                         range = newRange;
                     }
                 }
@@ -578,7 +578,7 @@ public class CPTBarPlot: CPTPlot {
     func plotRangeEnclosingBars() -> CPTPlotRange
     {
         let horizontalBars = self.barsAreHorizontal;
-        var range = CPTPlotRange(location: 0, length: 0)
+        var range = CPTPlotRange()
         
         if horizontalBars == true {
             range = self.plotRangeForCoordinate(coord: CPTCoordinate.y)!
@@ -664,7 +664,7 @@ public class CPTBarPlot: CPTPlot {
         let thePlotSpace = self.plotSpace;
         
         if self.doublePrecisionCache( ) == true {
-            var plotPoint = [CGFloat]()
+            var plotPoint = [CGFloat](repeating: 0, count: 2)
             
             plotPoint[independentCoord.rawValue] = self.cachedDoubleForField(CPTBarPlotField.location, recordIndex:idx)
             if plotPoint[independentCoord.rawValue].isNaN {
@@ -1047,7 +1047,7 @@ public class CPTBarPlot: CPTPlot {
         
         var offsetLocation = 0.0
         
-        if ( self.doublePrecisionCache ) {
+        if ( self.doublePrecisionCache )() {
             offsetLocation = (location.doubleValue + self.doubleLengthInPlotCoordinates(self.barOffset.decimalValue))
         }
         else {
@@ -1059,25 +1059,25 @@ public class CPTBarPlot: CPTPlot {
         // Offset
         if ( horizontalBars ) {
             label.anchorPlotPoint.append(length)
-            label.anchorPlotPoint.append(offsetLocation)
+            label.anchorPlotPoint.append(CGFloat(offsetLocation))
             
             if ( positiveDirection ) {
-                label.displacement = CGPoint(self.labelOffset, 0.0);
+                label.displacement = CGPoint(x: self.labelOffset, y: 0.0);
             }
             else {
-                label.displacement = CGPoint(-self.labelOffset, 0.0);
+                label.displacement = CGPoint(x: -self.labelOffset, y: 0.0);
             }
         }
         else {
             label.anchorPlotPoint.append(length)
-            label.anchorPlotPoint.append(offsetLocation)
+            label.anchorPlotPoint.append(CGFloat(offsetLocation))
 
             
             if ( positiveDirection ) {
-                label.displacement = CGPoint(0.0, self.labelOffset);
+                label.displacement = CGPoint(x: 0.0, y: self.labelOffset);
             }
             else {
-                label.displacement = CGPoint(0.0, -self.labelOffset);
+                label.displacement = CGPoint(x: 0.0, y: -self.labelOffset);
             }
         }
         
@@ -1136,7 +1136,7 @@ public class CPTBarPlot: CPTPlot {
         
         weak var theDataSource = dataSource as? CPTBarPlotDataSource
         
-        if ((theDataSource?.attributedLegendTitleForBarPlot(_: recordIndex:)) != nil) {
+        if ((theDataSource?.attributedLegendTitleForBarPlot(plot: index:)) != nil) {
             legendTitle = (theDataSource?.attributedLegendTitleForBarPlot( plot: self, index:idx))!
         }
         else {
@@ -1261,9 +1261,14 @@ public class CPTBarPlot: CPTPlot {
         set { self.cacheNumbers (  numbers: newValue , fieldEnum: CPTBarPlotField.location.rawValue) }
     }
     
-    var barFills : CPTNumberArray? {
-        get { self.cachedNumbersForField(  fieldEnum: CPTBarPlotField) as? [CGFloat]}
-        set { self.cacheNumbers ( numbers: newValue! , fieldEnum: CPTBarPlotField.location.rawValue)}
+    var barFills : [CPTFill]? {
+        get {
+            return cachedArrayForKey(key: NSBindingName.BarFills.rawValue) as? [CPTFill]
+        }
+        set {
+            self.cacheArray(newValue!, forKey:NSBindingName.BarFills.rawValue)
+            self.setNeedsDisplay()
+        }
     }
     
     
