@@ -279,6 +279,8 @@ public class CPTPlot: CPTAnnotationHostLayer {
 
     
     // MARK: - Bindings
+    
+    
     // MARK: - Drawing
     override func drawInContext(context: CGContext)
     {
@@ -286,7 +288,6 @@ public class CPTPlot: CPTAnnotationHostLayer {
         super.draw(in: context)
         
         weak var  theDelegate = self.delegatePlot
-        
         theDelegate?.didFinishDrawing(plot: self)
     }
     
@@ -312,7 +313,6 @@ public class CPTPlot: CPTAnnotationHostLayer {
         self.relabel()
         super.layoutSublayers()
     }
-    
     
     // MARK:Fields
     func numberOfFields() -> Int
@@ -424,7 +424,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
             let  myIdentifier = self.identifier;
             
             if myIdentifier is String {
-                legendTitle = myIdentifier as? String
+                legendTitle = myIdentifier
             }
         }
         return legendTitle!;

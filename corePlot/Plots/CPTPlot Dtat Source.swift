@@ -190,13 +190,13 @@ extension CPTPlot {
         weak var theDataSource = self.dataSource
         
         if ((theDataSource?.dataForPlot(plot: fieldEnum: indexRange:)) != nil) {
-            numbers = theDataSource?.dataForPlot?( plot:self, fieldEnum:fieldEnum, indexRange:indexRange) as? [CGFloat]
+            numbers = theDataSource?.dataForPlot!( plot:self, fieldEnum:fieldEnum, indexRange:indexRange) as? [CGFloat]
         }
         else if ((theDataSource?.doublesForPlot(plot: fieldEnum: indexRange:)) != nil) {
             numbers = NSMutableData dataWithLength:sizeof(double) * indexRange.length];
             var fieldValues  = numbers
             
-            var doubleValues = theDataSource?.doublesForPlot(plot:self, fieldEnum:fieldEnum, indexRange:indexRange)
+            var doubleValues = theDataSource?.doublesForPlot!(plot:self, fieldEnum:fieldEnum, indexRange:indexRange)
             //                memcpy(fieldValues, doubleValues, MemoryLayout<Double>.size * indexRange.length)
             fieldValues = [Double](repeating: doubleValues!.first!, count: indexRange.length )
             

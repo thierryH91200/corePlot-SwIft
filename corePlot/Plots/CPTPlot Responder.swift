@@ -5,7 +5,7 @@
 //  Created by thierryH24 on 24/11/2020.
 //
 
-import Foundation
+import AppKit
 
 
 extension CPTPlot {

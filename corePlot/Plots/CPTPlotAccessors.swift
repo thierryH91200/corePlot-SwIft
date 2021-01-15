@@ -12,7 +12,7 @@ extension CPTPlot {
     // MARK: - Accessors
     
     func dataLabels() -> [ CPTLayer]? {
-        return cachedArray(forKey: NSBindingName.PlotDataLabels.rawValue)
+        return cachedArray(forKey: NSBindingName.PlotDataLabels.rawValue) as? [ CPTLayer]
     }
     
     func setDataLabels(_ newDataLabels:[ CPTLayer]) {
@@ -44,6 +44,7 @@ extension CPTPlot {
             }
         }
     }
+    
     func setNeedsRelabel(newNeedsRelabel: Bool)
     {
         if ( newNeedsRelabel != needsRelabel ) {

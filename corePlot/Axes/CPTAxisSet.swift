@@ -9,8 +9,6 @@
 // 16/12/20
 //==============================
 
-
-
 import AppKit
 
 class CPTAxisSet: CPTLayer {

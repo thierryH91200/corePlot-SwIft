@@ -36,7 +36,7 @@ class CPTDarkGradientTheme: CPTXYTheme {
 
         let borderLineStyle = CPTLineStyle()
 
-        borderLineStyle.lineColor = CPTColor.colorWithGenericGray(CGFloat(0.2))
+        borderLineStyle.lineColor = CPTColor(colorWithGenericGray:CGFloat(0.2))
         borderLineStyle.lineWidth = CGFloat(4.0);
 
         plotAreaFrame.borderLineStyle = borderLineStyle;

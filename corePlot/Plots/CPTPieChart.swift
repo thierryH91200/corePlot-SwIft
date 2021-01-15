@@ -18,14 +18,14 @@ public protocol CPTPieChartDataSource : CPTPlotDataSource {
 }
 
 public protocol CPTPieChartDelegate : CPTPlotDelegate {
-
+    
     func pieChart(plot: CPTPieChart, sliceWasSelectedAtRecordIndex idx:Int)
     func pieChart(plot: CPTPieChart, sliceWasSelectedAtRecordIndex idx: Int, withEvent event: CPTNativeEvent )
     func pieChart(plot: CPTPieChart, sliceTouchDownAtRecordIndex idx: Int)
     func pieChart(plot: CPTPieChart, sliceTouchDownAtRecordIndex idx: Int, withEvent event: CPTNativeEvent )
     func pieChart(plot: CPTPieChart, sliceTouchUpAtRecordIndex idx: Int)
     func pieChart(plot: CPTPieChart, sliceTouchUpAtRecordIndex idx: Int, withEvent event: CPTNativeEvent )
-
+    
 }
 
 public class CPTPieChart: CPTPlot {
@@ -55,7 +55,7 @@ public class CPTPieChart: CPTPlot {
     }
     
     open weak var theDataSource : CPTPieChartDataSource?
-
+    
     var pieRadius: CGFloat
     var pieInnerRadius : CGFloat
     var startAngle: CGFloat
@@ -280,7 +280,7 @@ public class CPTPieChart: CPTPlot {
         }
         
         // Labels
-//        var theDataSource = self.theDataSource // as? CPTPieChartDataSource?
+        //        var theDataSource = self.theDataSource // as? CPTPieChartDataSource?
         let length = theDataSource?.numberOfRecordsForPlot( plot: self )
         self.relabelIndexRange(indexRange: NSRange(location: 0, length: length!))
     }
@@ -340,11 +340,11 @@ public class CPTPieChart: CPTPlot {
         
         let sampleCount = self.cachedDataCount;
         guard sampleCount != 0 else { return }
-
+        
         
         let thePlotArea = self.plotArea
         guard thePlotArea != nil else { return }
-
+        
         super.renderAsVectorInContext(context: context)
         
         context.beginTransparencyLayer(auxiliaryInfo: nil);
@@ -367,10 +367,10 @@ public class CPTPieChart: CPTPlot {
         var overlay          = self.overlayFill
         
         var hasNonZeroOffsets      = false;
-        var offsetArray = self.cachedArrayForKey(NSBindingName.PieSliceRadialOffsets.rawValue)
+        var offsetArray = self.cachedArrayForKey(key: NSBindingName.PieSliceRadialOffsets.rawValue)
         
         for  offset in offsetArray {
-            if offset  != CGFloat(0.0) {
+            if offset as! CGFloat  != CGFloat(0.0) {
                 hasNonZeroOffsets = true;
                 break;
             }
@@ -394,16 +394,17 @@ public class CPTPieChart: CPTPlot {
         let  fillClass = CPTFill()
         
         while ( currentIndex < sampleCount ) {
-            let currentWidth = self.cachedDoubleForField( CPTPieChartField.sliceWidthNormalized , recordIndex:currentIndex)
             
-            if ( !isnan(currentWidth)) {
+            let currentWidth = self.cachedDoubleForField( CPTPieChartField.sliceWidthNormalized , recordIndex: currentIndex)
+            
+            if currentWidth.isNan == false {
                 let radialOffset = offsetArray[currentIndex]
                 
                 // draw slice
-                context.saveGState();
+                context.saveGState()
                 
-                let startingAngle  = self.radiansForPieSliceValue(startingWidth)
-                let finishingAngle = self.radiansForPieSliceValue(startingWidth + currentWidth)
+                let startingAngle  = self.radiansForPieSliceValue( sliceValue : startingWidth )
+                let finishingAngle = self.radiansForPieSliceValue( sliceValue : startingWidth + currentWidth)
                 
                 let xOffset = CGFloat(0.0);
                 let yOffset = CGFloat(0.0);
@@ -421,7 +422,7 @@ public class CPTPieChart: CPTPlot {
                 }
                 
                 let slicePath = CGMutablePath();
-                self.addSliceToPath(slicePath, centerPoint:center, startingAngle:startingAngle, finishingAngle:finishingAngle, width:currentWidth)
+                self.addSliceToPath( slicePath, centerPoint:center, startingAngle: startingAngle, finishingAngle:finishingAngle, width:currentWidth)
                 
                 let currentFill = self.sliceFill(for: currentIndex)
                 
@@ -459,7 +460,7 @@ public class CPTPieChart: CPTPlot {
         context.endTransparencyLayer();
         
         // draw overlay all at once if not exploded
-        if ( (overlay != nil) && !hasNonZeroOffsets ) {
+        if ( (overlay != nil) && hasNonZeroOffsets == false) {
             // no shadow for the overlay
             context.setShadow(offset: CGSize(), blur: CGFloat(0.0), color: nil);
             
@@ -485,7 +486,7 @@ public class CPTPieChart: CPTPlot {
         }
     }
     
-    func radiansforPieSliceValue( pieSliceValue: CGFloat) -> CGFloat {
+    func radiansforPieSliceValue( sliceValue: CGFloat) -> CGFloat {
         var angle = startAngle
         let endingAngle = endAngle
         var pieRange: CGFloat
@@ -493,10 +494,10 @@ public class CPTPieChart: CPTPlot {
         switch sliceDirection {
         case .clockwise:
             pieRange = CGFloat(endingAngle.isNaN ? CGFloat(2.0 * .pi) : CGFloat(2.0 * .pi) - abs(endingAngle - angle))
-            angle -= pieSliceValue * pieRange
+            angle -= sliceValue * pieRange
         case .counterClockwise:
             pieRange = CGFloat(endingAngle.isNaN ? CGFloat(2.0 * .pi) : abs(endingAngle - angle))
-            angle += pieSliceValue * pieRange
+            angle += sliceValue * pieRange
         default:
             break
         }
@@ -542,14 +543,13 @@ public class CPTPieChart: CPTPlot {
     
     func sliceFillForIndex( idx: Int) -> CPTFill? {
         
-        var currentFill = cachedValue(forKey: .CPTPieChartBindingPieSliceFills, record: idx)
+        var currentFill = cachedValue(forKey: CPTPieChartBindingPieSliceFills, record: idx)
         
         if (currentFill == nil) || (currentFill == CPTPlot.nilData()) {
             currentFill = CPTFill(color: CPTPieChart.defaultPieSliceColor(for: idx))
         }
         return currentFill
     }
-    
     
     func drawSwatchForLegend(legend : CPTLegend, atIndex idx:Int, inRect rect: CGRect, inContext context: CGContext)
     {
@@ -580,45 +580,45 @@ public class CPTPieChart: CPTPlot {
     
     
     // MARK: Information
-    //
-    //    /** @brief Searches the pie slices for one corresponding to the given angle.
-    //     *  @param angle An angle in radians.
-    //     *  @return The index of the pie slice that matches the given angle. Returns @ref NSNotFound if no such pie slice exists.
-    //     **/
-    //    -(NSUInteger)pieSliceIndexAtAngle:(CGFloat)angle
-    //    {
-    //        // Convert the angle to its pie slice value
-    //        CGFloat pieAngle      = [self normalizedPosition:angle)
-    //        CGFloat startingAngle = [self normalizedPosition:self.startAngle)
-    //
-    //        // Iterate through the pie slices and compute their starting and ending angles.
-    //        // If the angle we are searching for lies within those two angles, return the index
-    //        // of that pie slice.
-    //        for ( NSUInteger currentIndex = 0; currentIndex < self.cachedDataCount; currentIndex++ ) {
-    //            CGFloat width = CGFloat([self cachedDoubleForField:CPTPieChartFieldSliceWidthNormalized recordIndex:currentIndex]);
-    //            if ( isnan(width)) {
-    //                continue;
-    //            }
-    //            CGFloat endingAngle = startingAngle;
-    //
-    //            if ( self.sliceDirection == CPTPieDirection.clockwise ) {
-    //                endingAngle -= width;
-    //            }
-    //            else {
-    //                endingAngle += width;
-    //            }
-    //
-    //            if ( [self angle:pieAngle betweenStartAngle:startingAngle endAngle:endingAngle] ) {
-    //                return currentIndex;
-    //            }
-    //
-    //            startingAngle = endingAngle;
-    //        }
-    //
-    //        // Searched every pie slice but couldn't find one that corresponds to the given angle.
-    //        return NSNotFound;
-    //    }
-    //
+    
+    /** @brief Searches the pie slices for one corresponding to the given angle.
+     *  @param angle An angle in radians.
+     *  @return The index of the pie slice that matches the given angle. Returns @ref NSNotFound if no such pie slice exists.
+     **/
+    func pieSliceIndexAtAngle(angle: CGFloat)->Int
+    {
+        // Convert the angle to its pie slice value
+        let pieAngle      = self.normalizedPosition(angle)
+        var startingAngle = self.normalizedPosition(self.startAngle)
+        
+        // Iterate through the pie slices and compute their starting and ending angles.
+        // If the angle we are searching for lies within those two angles, return the index
+        // of that pie slice.
+        for  currentIndex in 0..<self.cachedDataCount {
+            let width = CGFloat( self.cachedDoubleForField(CPTPieChartField.sliceWidthNormalized , recordIndex:currentIndex))
+            if width.isNan == true {
+                continue;
+            }
+            let endingAngle = startingAngle;
+            
+            if ( self.sliceDirection == CPTPieDirection.clockwise ) {
+                endingAngle -= width;
+            }
+            else {
+                endingAngle += width;
+            }
+            
+            if self.angle(pieAngle, betweenStartAngle:startingAngle, endAngle:endingAngle ) {
+                return currentIndex;
+            }
+            
+            startingAngle = endingAngle;
+        }
+        
+        // Searched every pie slice but couldn't find one that corresponds to the given angle.
+        return NSNotFound;
+    }
+    
     //    /** @brief Computes the halfway-point between the starting and ending angles of a given pie slice.
     //     *  @param idx A pie slice index.
     //     *  @return The angle that is halfway between the slice's starting and ending angles, or @NAN if
@@ -654,8 +654,8 @@ public class CPTPieChart: CPTPlot {
     //        // Searched every pie slice but couldn't find one that corresponds to the given index
     //        return CPTNAN;
     //    }
-
-
+    
+    
     // MARK: Animation
     func needsDisplayForKey(aKey:String )-> Bool
     {
@@ -679,12 +679,12 @@ public class CPTPieChart: CPTPlot {
     override func numberOfFields() -> Int {
         return 1
     }
-
-//func fieldIdentifiers() -> CPTNumberArray {
-//    return
-//        NSNumber(value: CPTPieChartField.sliceWidth)
-//}
-        /// @endcond
+    
+    //func fieldIdentifiers() -> CPTNumberArray {
+    //    return
+    //        NSNumber(value: CPTPieChartField.sliceWidth)
+    //}
+    /// @endcond
     
     // MARK: -  Data Labels
     //
@@ -754,11 +754,11 @@ public class CPTPieChart: CPTPlot {
         return self.cachedDataCount;
     }
     
-        /** @internal
-    //     *  @brief The title text of a legend entry.
-    //     *  @param idx The index of the desired title.
-    //     *  @return The title of the legend entry at the requested index.
-    //     **/
+    /** @internal
+     //     *  @brief The title text of a legend entry.
+     //     *  @param idx The index of the desired title.
+     //     *  @return The title of the legend entry at the requested index.
+     //     **/
     override func titleForLegendEntryAtIndex(idx: Int)-> String
     {
         var legendTitle = ""
@@ -783,7 +783,7 @@ public class CPTPieChart: CPTPlot {
     override func attributedTitleForLegendEntryAtIndex( idx: Int)-> NSAttributedString
     {
         var legendTitle : NSAttributedString
-    
+        
         weak var theDataSource = self.dataSource as? CPTPieChartDataSource
         
         if ((theDataSource?.attributedLegendTitleForPieChart(_: idx:)) != nil) {
@@ -863,7 +863,7 @@ public class CPTPieChart: CPTPlot {
         }
         return super.pointingDeviceDownEvent(event: event, atPoint: interactionPoint)
     }
-                
+    
     /**
      *  @brief Informs the receiver that the user has
      *  @if MacOnly released the mouse button. @endif
@@ -933,7 +933,7 @@ public class CPTPieChart: CPTPlot {
         }
         return super.pointingDeviceUpEvent(event: event, atPoint:interactionPoint)
     }
-        
+    
     override func dataIndexFromInteractionPoint(point: CGPoint) -> Int
     {
         let theGraph    = self.graph;
@@ -965,7 +965,7 @@ public class CPTPieChart: CPTPlot {
         var dx: CGFloat = point.x - centerPoint.x
         var dy: CGFloat = point.y - centerPoint.y
         let distanceSquared = dx * dx + dy * dy
-
+        
         let theStartAngle = startAngle
         let theEndAngle = endAngle
         let widthFactor: CGFloat
@@ -1031,60 +1031,60 @@ public class CPTPieChart: CPTPlot {
             }
             break;
             
-            case .counterClockwise:
-                if theEndAngle.isNaN || theStartAngle == theEndAngle {
-                    widthFactor = CGFloat(1.0);
+        case .counterClockwise:
+            if theEndAngle.isNaN || theStartAngle == theEndAngle {
+                widthFactor = CGFloat(1.0);
+            }
+            else {
+                widthFactor = (CGFloat)(2.0 * CGFloat.pi) / abs(theEndAngle - theStartAngle);
+            }
+            
+            for currentIndex in 0..<sampleCount {
+                // calculate angles for this slice
+                var width = self.cachedDoubleForField(CPTPieChartField.sliceWidthNormalized, recordIndex:currentIndex)
+                if width.isNan {
+                    continue
                 }
-                else {
-                    widthFactor = (CGFloat)(2.0 * CGFloat.pi) / abs(theEndAngle - theStartAngle);
+                width /= widthFactor;
+                
+                var endingAngle = startingAngle + width;
+                
+                // offset the center point of the slice if needed
+                var offsetTouchedAngle    = touchedAngle;
+                var offsetDistanceSquared = distanceSquared;
+                var radialOffset   = self.cachedValueForKey(key: NSBindingName.PieSliceRadialOffsets.rawValue, recordIndex:currentIndex)
+                if radialOffset as! CGFloat != CGFloat(0.0) {
+                    var offsetCenter = CGPoint()
+                    var medianAngle = CGFloat(M_PI) * (startingAngle + endingAngle);
+                    offsetCenter = CGPoint(centerPoint.x + cos(medianAngle) * radialOffset,
+                                           centerPoint.y + sin(medianAngle) * radialOffset);
+                    
+                    dx = point.x - offsetCenter.x;
+                    dy = point.y - offsetCenter.y;
+                    
+                    offsetTouchedAngle    = self.normalizedPosition(atan2(dy, dx))
+                    offsetDistanceSquared = dx * dx + dy * dy;
                 }
                 
-                for currentIndex in 0..<sampleCount {
-                    // calculate angles for this slice
-                    var width = self.cachedDoubleForField(CPTPieChartField.sliceWidthNormalized, recordIndex:currentIndex)
-                    if width.isNan {
-                        continue
+                // check angles
+                var angleInSlice = false
+                if self.angle(touchedAngle, betweenStartAngle:startingAngle, endAngle:endingAngle ) {
+                    if self.angle(offsetTouchedAngle, betweenStartAngle:startingAngle, endAngle:endingAngle) {
+                        angleInSlice = true
                     }
-                    width /= widthFactor;
-                    
-                    var endingAngle = startingAngle + width;
-                    
-                    // offset the center point of the slice if needed
-                    var offsetTouchedAngle    = touchedAngle;
-                    var offsetDistanceSquared = distanceSquared;
-                    var radialOffset   = self.cachedValueForKey(key: NSBindingName.PieSliceRadialOffsets.rawValue, recordIndex:currentIndex)
-                    if radialOffset as! CGFloat != CGFloat(0.0) {
-                        var offsetCenter = CGPoint()
-                        var medianAngle = CGFloat(M_PI) * (startingAngle + endingAngle);
-                        offsetCenter = CGPoint(centerPoint.x + cos(medianAngle) * radialOffset,
-                                               centerPoint.y + sin(medianAngle) * radialOffset);
-                        
-                        dx = point.x - offsetCenter.x;
-                        dy = point.y - offsetCenter.y;
-                        
-                        offsetTouchedAngle    = self.normalizedPosition(atan2(dy, dx))
-                        offsetDistanceSquared = dx * dx + dy * dy;
+                    else {
+                        return NSNotFound;
                     }
-                    
-                    // check angles
-                    var angleInSlice = false
-                    if self.angle(touchedAngle, betweenStartAngle:startingAngle, endAngle:endingAngle ) {
-                        if self.angle(offsetTouchedAngle, betweenStartAngle:startingAngle, endAngle:endingAngle) {
-                            angleInSlice = true
-                        }
-                        else {
-                            return NSNotFound;
-                        }
-                    }
-                    
-                    // check distance
-                    if ( angleInSlice && (offsetDistanceSquared >= chartInnerRadiusSquared) && (offsetDistanceSquared <= chartRadiusSquared)) {
-                        return currentIndex;
-                    }
-                    
-                    // save angle for the next slice
-                    startingAngle = endingAngle;
                 }
+                
+                // check distance
+                if ( angleInSlice && (offsetDistanceSquared >= chartInnerRadiusSquared) && (offsetDistanceSquared <= chartRadiusSquared)) {
+                    return currentIndex;
+                }
+                
+                // save angle for the next slice
+                startingAngle = endingAngle;
+            }
         }
         return NSNotFound;
     }
@@ -1204,5 +1204,5 @@ public class CPTPieChart: CPTPlot {
             }
         }
     }
-
+    
 }

@@ -194,7 +194,7 @@ extension CPTGraph {
     // MARK: - Retrieving Plot Spaces
     func defaultPlotSpace() ->CPTPlotSpace?
     {
-        return self.plotSpaces.count > 0 ? (self.plotSpaces)[0] : nil;
+        return self.plotSpaces.count > 0 ? self.plotSpaces[0] : nil;
     }
     
     /** @brief All plot spaces associated with the graph.

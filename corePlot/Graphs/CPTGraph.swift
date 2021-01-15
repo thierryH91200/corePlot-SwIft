@@ -30,7 +30,7 @@ public class CPTGraph: CPTBorderedLayer {
     //    @property (nonatomic, readwrite, strong, nonnull) CPTMutablePlotArray *plots;
 
     var plotSpaces = [CPTPlotSpace]()
-    var  titleAnnotation: CPTLayerAnnotation?
+    var titleAnnotation: CPTLayerAnnotation?
     var legendAnnotation: CPTLayerAnnotation?
     var inTitleUpdate = false
 

@@ -17,11 +17,13 @@ class CPTPlotAreaFrame: CPTBorderedLayer {
     init(newFrame: CGRect)
     {
         super.init(frame: newFrame)
-            plotArea = nil;
-
-            let newPlotArea = CPTPlotArea(frame:newFrame)
-            self.plotArea = CPTPlotArea(frame:newFrame)
-            self.masksToBorder = true
+        
+//        plotArea = nil;
+//        let newPlotArea = CPTPlotArea(frame:newFrame)
+//        self.plotArea = newPlotArea
+        
+        self.plotArea = CPTPlotArea(frame:newFrame)
+        self.masksToBorder = true
     }
 
     override init(layer: Any)
@@ -38,7 +40,7 @@ class CPTPlotAreaFrame: CPTBorderedLayer {
     
     // MARK: - Event Handling
 
-    func pointingDeviceDownEvent(event: CPTNativeEvent, atPoint interactionPoint: CGPoint) -> Bool
+    override func pointingDeviceDownEvent(event: CPTNativeEvent, atPoint interactionPoint: CGPoint) -> Bool
     {
         if ((self.plotArea?.pointingDeviceDownEvent(event: event, atPoint:interactionPoint)) != nil) {
             return true
@@ -106,17 +108,17 @@ class CPTPlotAreaFrame: CPTBorderedLayer {
 
 
     // MARK: - Accessors
-    func setPlotArea(newPlotArea: CPTPlotArea )
+    func setPlotArea(newPlotArea: CPTPlotArea? )
     {
         if newPlotArea != plotArea  {
             plotArea?.removeFromSuperlayer()
             plotArea = newPlotArea;
             
-            if ( newPlotArea ) {
+            if (( newPlotArea ) != nil) {
                 let theArea = newPlotArea
                 
-                self.insertSublayer(theArea, at:0)
-                theArea.graph = self.graph
+                self.insertSublayer(theArea!, at:0)
+                theArea!.graph = self.graph
             }
             self.setNeedsLayout()
         }

@@ -527,7 +527,7 @@ public class CPTBarPlot: CPTPlot {
                     let base = self.baseValue
                     if range?.contains(base ) == false {
                         var newRange = range
-                        newRange.unionPlotRange( plotRangeWithLocationDecimal(base, lengthDecimal:(0)))
+                        newRange.unionPlotRange( plotRangeWithLocationDecimal(base, lengthDecimal:0))
                         range = newRange;
                     }
                 }
@@ -614,21 +614,19 @@ public class CPTBarPlot: CPTPlot {
     
     override func renderAsVectorInContext(context: CGContext)
     {
-        if ( self.isHidden ) {
-            return;
-        }
+        guard self.isHidden == false else { return }
         
         var cachedLocations = self.cachedNumbersForField(fieldEnum: CPTBarPlotField.location.rawValue)
         var cachedLengths   = self.cachedNumbersForField(fieldEnum: CPTBarPlotField.tip.rawValue)
         
-        if ((cachedLocations == nil) || (cachedLengths == nil)) {
+        if (cachedLocations.isEmpty == true || cachedLengths.isEmpty == true ) {
             return
         }
         
         var basesVary   = self.barBasesVary;
         var cachedBases = self.cachedNumbersForField(fieldEnum: CPTBarPlotField.base.rawValue)
         
-        if ( basesVary && (cachedBases == nil)) {
+        if basesVary == true && cachedBases.isEmpty == true {
             return;
         }
         
@@ -653,7 +651,6 @@ public class CPTBarPlot: CPTPlot {
     }
     
     func barAtRecordIndex(idx: Int, basePoint: inout CGPoint, tipPoint: inout CGPoint)-> Bool
-    
     {
         var basePoint = basePoint
         var tipPoint = tipPoint
@@ -666,13 +663,13 @@ public class CPTBarPlot: CPTPlot {
         if self.doublePrecisionCache( ) == true {
             var plotPoint = [CGFloat](repeating: 0, count: 2)
             
-            plotPoint[independentCoord.rawValue] = self.cachedDoubleForField(CPTBarPlotField.location, recordIndex:idx)
+            plotPoint[independentCoord.rawValue] = CGFloat(self.cachedDoubleForField(fieldEnum: CPTBarPlotField.location.rawValue, recordIndex:idx))
             if plotPoint[independentCoord.rawValue].isNaN {
                 return false
             }
             
             // Tip point
-            plotPoint[dependentCoord.rawValue] = self.cachedDoubleForField(CPTBarPlotField.tip.rawValue, recordIndex:idx)
+            plotPoint[dependentCoord.rawValue] = CGFloat(self.cachedDoubleForField(fieldEnum: CPTBarPlotField.tip.rawValue, recordIndex:idx))
             if plotPoint[dependentCoord.rawValue].isNaN {
                 return false
             }
@@ -683,12 +680,12 @@ public class CPTBarPlot: CPTPlot {
                 plotPoint[dependentCoord.rawValue] = self.baseValue
             }
             else {
-                plotPoint[dependentCoord.rawValue] = self.cachedDoubleForField(CPTBarPlotField.base, recordIndex:idx)
+                plotPoint[dependentCoord.rawValue] = CGFloat(self.cachedDoubleForField(fieldEnum: CPTBarPlotField.base.rawValue, recordIndex:idx))
             }
             if plotPoint[dependentCoord.rawValue].isNaN {
                 return false
             }
-            basePoint = thePlotSpace!.plotAreaViewPointForDoublePrecisionPlotPoint(plotPoint, numberOfCoordinates:2)
+            basePoint = thePlotSpace!.plotAreaViewPointForDoublePrecisionPlotPoint(plotPoint: plotPoint, numberOfCoordinates:2)
         }
         else {
             var plotPoint = [CGFloat]()

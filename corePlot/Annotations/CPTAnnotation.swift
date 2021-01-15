@@ -7,6 +7,7 @@
 
 //==============================
 //  OK
+// 16/12/20
 //==============================
 
 
@@ -22,8 +23,6 @@ class CPTAnnotation: NSObject {
         contentAnchorPoint  = CGPoint(x: 0.5, y: 0.5)
         rotation            = CGFloat(0.0)
     }
-    
-
     
     var _contentLayer: CPTLayer?
     var contentLayer : CPTLayer? {

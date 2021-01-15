@@ -9,7 +9,14 @@ import AppKit
 
 class CPTXYTheme: CPTTheme {
     
+    override init()
+    {
+        super.init()
+        self.graphClass = CPTXYGraph()
+    }
+
     func newGraph()-> CPTXYGraph
+    
     {
         var graph : CPTXYGraph?
         
@@ -27,7 +34,7 @@ class CPTXYTheme: CPTTheme {
         let plotSpace = graph?.defaultPlotSpace as? CPTXYPlotSpace
         
         plotSpace?.xRange = CPTPlotRange(location:-1.0, length:1.0)
-        plotSpace!.yRange = CPTPlotRange(location:-1.0, length:1.0)
+        plotSpace?.yRange = CPTPlotRange(location:-1.0, length:1.0)
         
         self.applyThemeToGraph(graph: graph!)
         

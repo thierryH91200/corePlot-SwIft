@@ -7,6 +7,7 @@
 
 //==============================
 //  OK
+// 16/12/20
 //==============================
 
 import AppKit
@@ -128,6 +129,5 @@ class CPTLayerAnnotation: CPTAnnotation {
         self.xConstraints = xConstraint;
         self.yConstraints = yConstraint;
     }
-    
     
 }

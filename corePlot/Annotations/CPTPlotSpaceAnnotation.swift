@@ -9,7 +9,7 @@ import AppKit
 
 class CPTPlotSpaceAnnotation: CPTAnnotation {
     
-    var decimalAnchor = 0.0
+    var decimalAnchor = CGFloat(0.0)
     var anchorCount = 0
     var anchorPlotPoint = [CGFloat]()
     var plotSpace = CPTPlotSpace()

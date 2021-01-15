@@ -9,9 +9,16 @@ import AppKit
 
 protocol CPTPlotSpaceDelegate: NSObject {
     
+    func plotSpace( space: CPTPlotSpace, shouldScaleBy interactionScale : CGFloat, aboutPoint interactionPoint:CGPoint)-> Bool
+    func plotSpace( space: CPTPlotSpace, willDisplaceBy proposedDisplacementVector :CGPoint)-> CGPoint
+    func plotSpace( space: CPTPlotSpace, willChangePlotRangeTo newRange : CPTPlotRange, forCoordinate coordinate : CPTCoordinate) -> CPTPlotRange
+    
     
     func plotSpace(space: CPTPlotSpace, interactionScale:CGFloat,  interactionPoint:CGPoint) -> Bool
     func plotSpace(space: CPTPlotSpace, proposedDisplacementVector:CGPoint)-> CGPoint
+    
+    //    func plotSpace(space: CPTPlotSpace, willChangePlotRangeTo newRange: CPTPlotRange,  coordinate:CPTCoordinate)-> CPTPlotRange
+    
     func plotSpace(space: CPTPlotSpace, newRange: CPTPlotRange , coordinate:CPTCoordinate) -> CPTPlotRange
     
     func plotSpace(space: CPTPlotSpace, didChangePlotRangeForCoordinate coordinate: CPTCoordinate)
@@ -50,8 +57,8 @@ class CPTPlotSpace: NSObject {
     // MARK: - Categorical Data
     func orderedSetForCoordinate( coordinate: CPTCoordinate) -> NSMutableOrderedSet {
         
-//        typedef NSMutableOrderedSet<NSString *> CPTMutableCategorySet;
-
+        //        typedef NSMutableOrderedSet<NSString *> CPTMutableCategorySet;
+        
         var categoryNames: [Int :  NSMutableOrderedSet]?
         var names = categoryNames
         
@@ -103,7 +110,7 @@ class CPTPlotSpace: NSObject {
             let categories = newCategories;
             names?[cacheKey.rawValue] = NSMutableOrderedSet(array: categories)        }
         else {
-            names.removeObjectForKey(cacheKey)
+            names?.removeValue(forKey: cacheKey.rawValue)
         }
     }
     
@@ -184,7 +191,7 @@ class CPTPlotSpace: NSObject {
     func pointingDeviceDraggedEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint) -> Bool
     {
         weak var theDelegate = self.delegate
-
+        
         guard let handledByDelegate = theDelegate?.plotSpace(space: self, shouldHandlePointingDeviceDraggedEvent: event, atPoint: interactionPoint)
         else { return false}
         return handledByDelegate;
@@ -193,7 +200,7 @@ class CPTPlotSpace: NSObject {
     func pointingDeviceCancelledEvent(event : CPTNativeEvent )->Bool
     {
         weak var theDelegate = self.delegate
-
+        
         guard let handledByDelegate = theDelegate?.plotSpace(space: self, shouldHandlePointingDeviceCancelledEvent: event)
         else { return false}
         return handledByDelegate;
@@ -273,39 +280,41 @@ class CPTPlotSpace: NSObject {
      *  @param event The event.
      *  @return The drawing coordinates of the point.
      **/
-//        -(CGPoint)plotAreaViewPointForEvent:(nonnull CPTNativeEvent *__unused)event
-//        {
-//            return CGPointZero;
-//        }
-//
-        /** @brief Converts the interaction point of an OS event to the data coordinate space.
-         *  @param event The event.
-         *  @return An array of data point coordinates (as NSNumber values).
-         **/
-    //    -(nullable CPTNumberArray *)plotPointForEvent:(nonnull CPTNativeEvent *__unused)event
-    //    {
-    //        return nil;
-    //    }
-    //
-    //    /** @brief Converts the interaction point of an OS event to the data coordinate space.
-    //     *  @param plotPoint A c-style array of data point coordinates (as NSDecimal structs).
-    //     *  @param count The number of coordinate values in the @par{plotPoint} array.
-    //     *  @param event The event.
-    //     **/
-    //    -(void)plotPoint:(nonnull NSDecimal *__unused)plotPoint numberOfCoordinates:(NSUInteger cpt_unused)count forEvent:(nonnull CPTNativeEvent *__unused)event
-    //    {
-    //        NSParameterAssert(count == self.numberOfCoordinates);
-    //    }
-    //
-    //    /** @brief Converts the interaction point of an OS event to the data coordinate space.
-    //     *  @param plotPoint A c-style array of data point coordinates (as @double values).
-    //     *  @param count The number of coordinate values in the @par{plotPoint} array.
-    //     *  @param event The event.
-    //     **/
-    //    -(void)doublePrecisionPlotPoint:(nonnull double *__unused)plotPoint numberOfCoordinates:(NSUInteger cpt_unused)count forEvent:(nonnull CPTNativeEvent *__unused)event
-    //    {
-    //        NSParameterAssert(count == self.numberOfCoordinates);
-    //    }
+    func plotAreaViewPointForEvent(event: CPTNativeEvent) -> CGPoint
+    {
+        return CGPoint()
+    }
+    
+    /** @brief Converts the interaction point of an OS event to the data coordinate space.
+     *  @param event The event.
+     *  @return An array of data point coordinates (as NSNumber values).
+     **/
+    func plotPointForEvent(event: CPTNativeEvent)-> CPTNumberArray?
+    {
+        return nil;
+    }
+    
+    /** @brief Converts the interaction point of an OS event to the data coordinate space.
+     *  @param plotPoint A c-style array of data point coordinates (as NSDecimal structs).
+     *  @param count The number of coordinate values in the @par{plotPoint} array.
+     *  @param event The event.
+     **/
+    func plotPoint(plotPoint: CGFloat, numberOfCoordinates count: Int, forEvent event: CPTNativeEvent)
+    {
+        //    NSParameterAssert(count == self.numberOfCoordinates);
+        
+    }
+    
+    /** @brief Converts the interaction point of an OS event to the data coordinate space.
+     *  @param plotPoint A c-style array of data point coordinates (as @double values).
+     *  @param count The number of coordinate values in the @par{plotPoint} array.
+     *  @param event The event.
+     **/
+    func doublePrecisionPlotPoint(plotPoint: Double, numberOfCoordinates count: Int, forEvent event: CPTNativeEvent)
+    {
+        //        assert(count == numberOfCoordinates, "Invalid parameter not satisfying: count == numberOfCoordinates")
+        
+    }
     
     /** @brief Sets the range of values for a given coordinate.
      *  @param newRange The new plot range.
@@ -357,28 +366,29 @@ class CPTPlotSpace: NSObject {
     //     *  @param plots An array of the plots that have to fit in the visible area.
     //     *  @param coordinate The axis coordinate.
     //     **/
-    func scaleToFitPlots( plots: [CPTPlot]?, for coordinate: CPTCoordinate) {
+    func scaleToFitPlots( plots: [CPTPlot]?, forCoordinate coordinate: CPTCoordinate) {
+        
         guard plots?.count != 0 else { return }
         
         // Determine union of ranges
-        var unionRange: CPTMutablePlotRange? = nil
+        var unionRange : CPTMutablePlotRange?
         
-        if let plots = plots {
-            for plot in plots {
-//                guard let plot = plot as? CPTPlot else { continue }
-                
-                let currentRange = plot.plotRange(for: coordinate)
-                if unionRange == nil {
-                    unionRange = currentRange
-                }
-                unionRange?.union(currentRange)
+        //        if let plots = plots {
+        for plot in plots! {
+            //                guard let plot = plot as? CPTPlot else { continue }
+            
+            let currentRange = plot.plotRangeForCoordinate(coord: coordinate)
+            if unionRange == nil {
+                unionRange = currentRange as? CPTMutablePlotRange
             }
+            unionRange?.unionPlotRange(other: currentRange)
         }
+        //        }
         
         // Set range
         if let unionRange = unionRange {
             if unionRange.lengthDecimal == CGFloat(0) {
-                unionRange.union(plotRange(for: coordinate))
+                unionRange.unionPlotRange(other: plotRangeForCoordinate( coordinate: coordinate))
             }
             setPlotRange(newRange: unionRange, forCoordinate: coordinate)
         }
@@ -398,17 +408,14 @@ class CPTPlotSpace: NSObject {
      **/
     func scaleToFitEntirePlots(plots: [CPTPlot], forCoordinate coordinate: CPTCoordinate)
     {
-        if ( plots.count == 0 ) {
-            return;
-        }
-        
+        guard plots.isEmpty  == false else { return }
         // Determine union of ranges
         var unionRange : CPTMutablePlotRange?
         
         for plot in plots {
             let currentRange = plot.plotRangeForCoordinate(coord: coordinate)
             if ( (unionRange == nil) ) {
-                unionRange = currentRange
+                unionRange = currentRange as? CPTMutablePlotRange
             }
             unionRange?.unionPlotRange(other: currentRange)
         }
@@ -416,9 +423,9 @@ class CPTPlotSpace: NSObject {
         // Set range
         if (( unionRange ) != nil) {
             if unionRange?.lengthDecimal == CGFloat(0) {
-                unionRange.unionPlotRange(self, plotRangeForCoordinate(coordinate))
+                unionRange?.unionPlotRange(other: self.plotRangeForCoordinate(coordinate: coordinate))
             }
-            self.setPlotRange(newRange: unionRange, forCoordinate:coordinate)
+            self.setPlotRange(newRange: unionRange!, forCoordinate:coordinate)
         }
     }
     

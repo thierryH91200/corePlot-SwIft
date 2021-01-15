@@ -268,6 +268,39 @@ extension CPTPlot {
         return self.cachedData[String(fieldEnum)]!
     }
     
+    func cachedDoubleForField(fieldEnum: Int, recordIndex idx:Int)-> Double
+    {
+        let numbers = self.cachedNumbersForField(fieldEnum: fieldEnum)
+
+//        if ( numbers ) {
+//            switch ( numbers.dataTypeFormat ) {
+//                case CPTFloatingPointDataType:
+//                {
+//                    ltdoubleNumber = (const double *)[numbers samplePointer:idx];
+//                    if ( doubleNumber ) {
+//                        return *doubleNumber;
+//                    }
+//                }
+//                break;
+//
+//                case CPTDecimalDataType:
+//                {
+//                    const NSDecimal *decimalNumber = (const NSDecimal *)[numbers samplePointer:idx];
+//                    if ( decimalNumber ) {
+//                        return CPTDecimalDoubleValue(*decimalNumber);
+//                    }
+//                }
+//                break;
+//
+//                default:
+//                    print("NSException raise:CPTException format:@Unsupported data type format")
+//                    break;
+//            }
+//        }
+        return 0.0
+    }
+
+    
     /** @brief Retrieves a single number from the cache.
      *  @param fieldEnum The field enumerator identifying the field.
      *  @param idx The index of the desired data value.
