@@ -14,13 +14,13 @@ import AppKit
 class CPTGridLineGroup: CPTLayer {
     
     var axis : CPTAxis?
-    var major = true;
+    var major = true
     
     override init(frame: CGRect)
     {
         super.init(frame: frame)
-        axis  = nil;
-        major = false;
+        axis  = nil
+        major = false
         
         self.needsDisplayOnBoundsChange = true
     }
@@ -59,7 +59,7 @@ class CPTGridLineGroup: CPTLayer {
         }
         set {
             if _plotArea != newValue {
-                _plotArea = newValue;
+                _plotArea = newValue
                 
                 if ( _plotArea != nil) {
                     self.setNeedsDisplay()

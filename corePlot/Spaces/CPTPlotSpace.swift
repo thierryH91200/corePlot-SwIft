@@ -133,13 +133,13 @@ class CPTPlotSpace: NSObject {
         return categories
     }
     
-    func categoriesForCoordinate( coordinate: CPTCoordinate, at index: Int) -> String?
+    func categoryForCoordinate( coordinate: CPTCoordinate, at index: Int) -> String?
     {
         let categories = orderedSetForCoordinate(coordinate: coordinate)
         return categories[index] as? String
     }
     
-    func indexOfCategory(_ category: String, for coordinate: CPTCoordinate) -> Int {
+    func indexOfCategory( category: String, for coordinate: CPTCoordinate) -> Int {
         guard category != "" else {
             
             let categories = self.orderedSetForCoordinate(coordinate:coordinate)

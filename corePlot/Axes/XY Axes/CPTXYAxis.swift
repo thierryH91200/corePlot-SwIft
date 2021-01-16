@@ -10,7 +10,7 @@ import AppKit
 public class CPTXYAxis: CPTAxis {
 
 
-//    typedef CGPoint (*CPTAlignPointFunction)(__nonnull CGContextRef, CGPoint);
+//    typedef CGPoint (*CPTAlignPointFunction)(__nonnull CGContextRef, CGPoint)
 
     var orthogonalPosition = CGFloat(0)
     var axisConstraints : CPTConstraints?
@@ -20,9 +20,9 @@ public class CPTXYAxis: CPTAxis {
     override init(frame: CGRect)
     {
         super.init(frame: frame)
-        orthogonalPosition = 0.0;
-        axisConstraints    = nil;
-        self.tickDirection = CPTSign.none;
+        orthogonalPosition = 0.0
+        axisConstraints    = nil
+        self.tickDirection = CPTSign.none
     }
     
     override init(layer: Any)    {
@@ -30,8 +30,8 @@ public class CPTXYAxis: CPTAxis {
         
         let theLayer = CPTXYAxis(layer: layer)
         
-        orthogonalPosition = theLayer.orthogonalPosition;
-        axisConstraints    = theLayer.axisConstraints;
+        orthogonalPosition = theLayer.orthogonalPosition
+        axisConstraints    = theLayer.axisConstraints
     }
     
     required init?(coder: NSCoder) {
@@ -53,19 +53,19 @@ public class CPTXYAxis: CPTAxis {
 
         switch ( self.coordinate ) {
         case CPTCoordinate.x:
-                lower = lowerBoundPoint.y;
-                upper = upperBoundPoint.y;
-                break;
+                lower = lowerBoundPoint.y
+                upper = upperBoundPoint.y
+                break
 
         case CPTCoordinate.y:
-                lower = lowerBoundPoint.x;
-                upper = upperBoundPoint.x;
-                break;
+                lower = lowerBoundPoint.x
+                upper = upperBoundPoint.x
+                break
 
             default:
                 lower = CGFloat.nan
                 upper = CGFloat.nan
-                break;
+                break
         }
     }
 
@@ -93,21 +93,21 @@ public class CPTXYAxis: CPTAxis {
         
         if (( theAxisConstraints ) != nil) {
             var lowerBound = CGFloat(0)
-            var upperBound = CGFloat(0);
+            var upperBound = CGFloat(0)
             self.orthogonalCoordinateViewLowerBound(lower: &lowerBound ,upper: &upperBound)
             let constrainedPosition = theAxisConstraints!.positionFor(lowerBound: lowerBound, upperBound: upperBound)
                 
                 switch ( self.coordinate ) {
                 case CPTCoordinate.x:
-                point.y = constrainedPosition;
-                break;
+                point.y = constrainedPosition
+                break
                 
                 case CPTCoordinate.y:
-                point.x = constrainedPosition;
-                break;
+                point.x = constrainedPosition
+                break
                 
                 default:
-                break;
+                break
                 }
         }
         
@@ -115,14 +115,14 @@ public class CPTXYAxis: CPTAxis {
             print("[CPTXYAxis viewPointForCoordinateValue:%@] was %@", coordinateValue, CPTUtilities.shared.CPTStringFromPoint(point))
             
             if point.x.isNaN {
-                point.x = CGFloat(0.0);
+                point.x = CGFloat(0.0)
             }
             if point.y.isNaN {
-                point.y = CGFloat(0.0);
+                point.y = CGFloat(0.0)
             }
         }
         
-        return point;
+        return point
     }
 
 // MARK: Drawing
@@ -131,22 +131,22 @@ public class CPTXYAxis: CPTAxis {
     {
         let lineStyle = (major ? self.majorTickLineStyle : self.minorTickLineStyle)
         
-        let lineWidth = lineStyle.lineWidth;
+        let lineWidth = lineStyle.lineWidth
         let alignmentFunction : CPTAlignPointFunction = nil
         
         if ((self.contentsScale > CGFloat(1.0)) && (round(lineWidth) == lineWidth)) {
-            alignmentFunction = CPTAlignIntegralPointToUserSpace;
+            alignmentFunction = CPTAlignIntegralPointToUserSpace
         }
         else {
-            alignmentFunction = CPTAlignPointToUserSpace;
+            alignmentFunction = CPTAlignPointToUserSpace
         }
         
         lineStyle.setLineStyleInContext(context: context)
-        context.beginPath();
+        context.beginPath()
         
         for  tickLocation in locations {
             if labeledRange && labeledRange.containsNumber(number: tickLocation) == false {
-                continue;
+                continue
             }
             
             // Tick end points
@@ -154,35 +154,35 @@ public class CPTXYAxis: CPTAxis {
             var startViewPoint = baseViewPoint
             var endViewPoint   = baseViewPoint
             
-            var startFactor = CGFloat(0.0);
-            var endFactor   = CGFloat(0.0);
+            var startFactor = CGFloat(0.0)
+            var endFactor   = CGFloat(0.0)
             switch ( self.tickDirection ) {
             case .positive:
-                endFactor = CGFloat(1.0);
+                endFactor = CGFloat(1.0)
                 
             case .negative:
-                endFactor = CGFloat(-1.0);
+                endFactor = CGFloat(-1.0)
                 
             case .none:
-                startFactor = CGFloat(-0.5);
-                endFactor   = CGFloat(0.5);
+                startFactor = CGFloat(-0.5)
+                endFactor   = CGFloat(0.5)
             }
             
             switch ( self.coordinate ) {
             case CPTCoordinate.x:
-                startViewPoint.y += length * startFactor;
-                endViewPoint.y   += length * endFactor;
+                startViewPoint.y += length * startFactor
+                endViewPoint.y   += length * endFactor
                 
             case CPTCoordinate.y:
-                startViewPoint.x += length * startFactor;
-                endViewPoint.x   += length * endFactor;
+                startViewPoint.x += length * startFactor
+                endViewPoint.x   += length * endFactor
                 
             default:
                 print("Invalid coordinate in [", #file ,"]", #function )
             }
             
-            startViewPoint = alignmentFunction!(context, startViewPoint);
-            endViewPoint   = alignmentFunction!(context, endViewPoint);
+            startViewPoint = alignmentFunction!(context, startViewPoint)
+            endViewPoint   = alignmentFunction!(context, endViewPoint)
             
             // Add tick line
             context.move(to: startViewPoint)
@@ -202,7 +202,7 @@ public class CPTXYAxis: CPTAxis {
         
         let thePlotRange    = self.plotSpace?.plotRangeForCoordinate(coordinate: self.coordinate)
         var range    = thePlotRange
-        let theVisibleRange = self.visibleRange;
+        let theVisibleRange = self.visibleRange
         
         if (( theVisibleRange ) != nil) {
             range.intersectionPlotRange(theVisibleRange)
@@ -214,11 +214,11 @@ public class CPTXYAxis: CPTAxis {
         case .none:
             fallthrough
         case .provided:
-            labeledRange = range;
-            break;
+            labeledRange = range
+            break
             
         default:
-            break;
+            break
         }
         
         // Ticks
@@ -233,22 +233,22 @@ public class CPTXYAxis: CPTAxis {
         if ( (theLineStyle != nil) || (minCap != nil) || (maxCap != nil) ) {
             // If there is a separate axis range given then restrict the axis to that range, overriding the visible range
             // given for grid lines and ticks.
-            let theVisibleAxisRange = self.visibleAxisRange;
+            let theVisibleAxisRange = self.visibleAxisRange
             if (( theVisibleAxisRange ) != nil) {
                 range = theVisibleAxisRange
                 
             }
             let alignmentFunction : CPTAlignPointFunction = CPTUtilities.shared.CPTAlignPointToUserSpace
             if (( theLineStyle ) != nil) {
-                let lineWidth = theLineStyle?.lineWidth;
+                let lineWidth = theLineStyle?.lineWidth
                 if ((self.contentsScale > CGFloat(1.0)) && (round(lineWidth!) == lineWidth)) {
-                    alignmentFunction = CPTAlignIntegralPointToUserSpace;
+                    alignmentFunction = CPTAlignIntegralPointToUserSpace
                 }
                 
                 let startViewPoint = alignmentFunction!(context, self.viewPointForCoordinateValue(coordinateValue: range!.location))
                 let endViewPoint   = alignmentFunction!(context, self.viewPointForCoordinateValue(coordinateValue: range!.end))
                 theLineStyle?.setLineStyleInContext(context: context)
-                context.beginPath();
+                context.beginPath()
                 context.move(to: startViewPoint)
                 context.addLine(to: endViewPoint)
                 theLineStyle?.strokePathInContext(context: context)
@@ -261,10 +261,10 @@ public class CPTXYAxis: CPTAxis {
                     axisDirection = (range!.lengthDouble >= 0.0) ? CGPoint(x: 1.0, y: 0.0) : CGPoint(x: -1.0, y: 0.0)
                     
                 case CPTCoordinate.y:
-                    axisDirection = (range!.lengthDouble >= 0.0) ? CGPoint(x: 0.0, y: 1.0) : CGPoint(x: 0.0, y: -1.0);
+                    axisDirection = (range!.lengthDouble >= 0.0) ? CGPoint(x: 0.0, y: 1.0) : CGPoint(x: 0.0, y: -1.0)
                     
                 default:
-                    break;
+                    break
                 }
             }
             
@@ -290,12 +290,12 @@ public class CPTXYAxis: CPTAxis {
 
             self.relabel()
 
-            let thePlotSpace           = self.plotSpace;
-            let locations              = (isMajor ? self.majorTickLocations : self.minorTickLocations);
-            let selfCoordinate         = self.coordinate;
-            let orthogonalCoordinate   = CPTOrthogonalCoordinate(selfCoordinate);
+            let thePlotSpace           = self.plotSpace
+            let locations              = (isMajor ? self.majorTickLocations : self.minorTickLocations)
+            let selfCoordinate         = self.coordinate
+            let orthogonalCoordinate   = CPTOrthogonalCoordinate(selfCoordinate)
             let orthogonalRange = thePlotSpace.plotRangeForCoordinate(orthogonalCoordinate)
-            let theGridLineRange       = self.gridLinesRange;
+            let theGridLineRange       = self.gridLinesRange
             let labeledRange    = CPTMutablePlotRange(location: 0, length: 0)
 
             switch ( self.labelingPolicy ) {
@@ -311,37 +311,37 @@ public class CPTXYAxis: CPTAxis {
                 
 
                 default:
-                    break;
+                    break
             }
 
             if (( theGridLineRange ) != nil) {
                 orthogonalRange.intersectionPlotRange(theGridLineRange)
             }
 
-            let thePlotArea = self.plotArea;
+            let thePlotArea = self.plotArea
             var startPlotPoint = [CGFloat]()
             var endPlotPoint = [CGFloat]()
-            startPlotPoint[orthogonalCoordinate] = orthogonalRange.locationDecimal;
-            endPlotPoint[orthogonalCoordinate]   = orthogonalRange.endDecimal;
+            startPlotPoint[orthogonalCoordinate] = orthogonalRange.locationDecimal
+            endPlotPoint[orthogonalCoordinate]   = orthogonalRange.endDecimal
             let originTransformed = self.convert(self.bounds.origin, from:thePlotArea)
 
-            let lineWidth = lineStyle?.lineWidth;
+            let lineWidth = lineStyle?.lineWidth
 
             let alignmentFunction : CPTAlignPointFunction?
             if ((self.contentsScale > CGFloat(1.0)) && (round(lineWidth!) == lineWidth)) {
-                alignmentFunction = CPTAlignIntegralPointToUserSpace;
+                alignmentFunction = CPTAlignIntegralPointToUserSpace
             }
             else {
                 alignmentFunction = CPTAlignPointToUserSpace
             }
 
-            context.beginPath();
+            context.beginPath()
 
             for location in locations {
-                let locationDecimal = location.decimalValue;
+                let locationDecimal = location.decimalValue
 
                 if ( labeledRange && labeledRange.contains(locationDecimal) == false ) {
-                    continue;
+                    continue
                 }
 
                 startPlotPoint[selfCoordinate] = locationDecimal
@@ -349,8 +349,8 @@ public class CPTXYAxis: CPTAxis {
 
                 // Start point
                 var startViewPoint = thePlotSpace?.plotAreaViewPointForPlotPoint(plotPoint: startPlotPoint, numberOfCoordinates:2)
-                startViewPoint?.x += originTransformed.x;
-                startViewPoint?.y += originTransformed.y;
+                startViewPoint?.x += originTransformed.x
+                startViewPoint?.y += originTransformed.y
 
                 // End point
                 var endViewPoint = thePlotSpace?.plotAreaViewPointForPlotPoint( plotPoint: endPlotPoint, numberOfCoordinates: 2)
@@ -359,8 +359,8 @@ public class CPTXYAxis: CPTAxis {
                 
                 
                 // Align to pixels
-                startViewPoint = alignmentFunction!!(context, startViewPoint!);
-                endViewPoint   = alignmentFunction!!(context, endViewPoint!);
+                startViewPoint = alignmentFunction!!(context, startViewPoint!)
+                endViewPoint   = alignmentFunction!!(context, endViewPoint!)
 
                 // Add grid line
                 context.move(to: startViewPoint!)
@@ -376,220 +376,220 @@ public class CPTXYAxis: CPTAxis {
     // MARK: Background Bands
 //    -(NSUInteger)initialBandIndexForSortedLocations:(CPTNumberArray *)sortedLocations inRange:(CPTMutablePlotRange *)range
 //    {
-//        NSUInteger bandIndex = 0;
+//        NSUInteger bandIndex = 0
 //
-//        NSNumber *bandAnchor = self.alternatingBandAnchor;
-//        NSUInteger bandCount = self.alternatingBandFills.count;
+//        NSNumber *bandAnchor = self.alternatingBandAnchor
+//        NSUInteger bandCount = self.alternatingBandFills.count
 //
 //        if ( bandAnchor && (bandCount > 0)) {
-//            NSDecimal anchor = bandAnchor.decimalValue;
+//            NSDecimal anchor = bandAnchor.decimalValue
 //
-//            CPTPlotRange *theVisibleRange = self.visibleRange;
+//            CPTPlotRange *theVisibleRange = self.visibleRange
 //            if ( theVisibleRange ) {
-//                [range intersectionPlotRange:theVisibleRange];
+//                [range intersectionPlotRange:theVisibleRange]
 //            }
 //
-//            NSDecimal rangeStart;
+//            NSDecimal rangeStart
 //            if ( range.lengthDouble >= 0.0 ) {
-//                rangeStart = range.minLimitDecimal;
+//                rangeStart = range.minLimitDecimal
 //            }
 //            else {
-//                rangeStart = range.maxLimitDecimal;
+//                rangeStart = range.maxLimitDecimal
 //            }
 //
-//            NSDecimal origin = self.labelingOrigin.decimalValue;
-//            NSDecimal offset = CPTDecimalSubtract(anchor, origin);
-//            NSDecimalRound(&offset, &offset, 0, NSRoundDown);
+//            NSDecimal origin = self.labelingOrigin.decimalValue
+//            NSDecimal offset = CPTDecimalSubtract(anchor, origin)
+//            NSDecimalRound(&offset, &offset, 0, NSRoundDown)
 //
-//            const NSDecimal zero = CPTDecimalFromInteger(0);
+//            const NSDecimal zero = CPTDecimalFromInteger(0)
 //
 //            // Set starting coord--should be the smallest value >= rangeMin that is a whole multiple of majorInterval away from the alternatingBandAnchor
-//            NSDecimal coord         = zero;
-//            NSDecimal majorInterval = zero;
+//            NSDecimal coord         = zero
+//            NSDecimal majorInterval = zero
 //
 //            switch ( self.labelingPolicy ) {
 //                case CPTAxisLabelingPolicyAutomatic:
 //                case CPTAxisLabelingPolicyEqualDivisions:
 //                    if ( sortedLocations.count > 1 ) {
 //                        if ( range.lengthDouble >= 0.0 ) {
-//                            majorInterval = CPTDecimalSubtract(sortedLocations[1].decimalValue, sortedLocations[0].decimalValue);
+//                            majorInterval = CPTDecimalSubtract(sortedLocations[1].decimalValue, sortedLocations[0].decimalValue)
 //                        }
 //                        else {
-//                            majorInterval = CPTDecimalSubtract(sortedLocations[0].decimalValue, sortedLocations[1].decimalValue);
+//                            majorInterval = CPTDecimalSubtract(sortedLocations[0].decimalValue, sortedLocations[1].decimalValue)
 //                        }
 //                    }
-//                    break;
+//                    break
 //
 //                case CPTAxisLabelingPolicyFixedInterval:
 //                {
-//                    majorInterval = self.majorIntervalLength.decimalValue;
+//                    majorInterval = self.majorIntervalLength.decimalValue
 //                }
-//                break;
+//                break
 //
 //                case CPTAxisLabelingPolicyLocationsProvided:
 //                case CPTAxisLabelingPolicyNone:
 //                {
-//                    // user provided tick locations; they're not guaranteed to be evenly spaced, but band drawing always starts with the first location
+//                    // user provided tick locations they're not guaranteed to be evenly spaced, but band drawing always starts with the first location
 //                    if ( range.lengthDouble >= 0.0 ) {
 //                        for ( NSNumber *location in sortedLocations ) {
 //                            if ( CPTDecimalLessThan(anchor, location.decimalValue)) {
-//                                break;
+//                                break
 //                            }
 //
-//                            bandIndex++;
+//                            bandIndex++
 //                        }
 //                    }
 //                    else {
 //                        for ( NSNumber *location in sortedLocations ) {
 //                            if ( CPTDecimalGreaterThanOrEqualTo(anchor, location.decimalValue)) {
-//                                break;
+//                                break
 //                            }
 //
-//                            bandIndex++;
+//                            bandIndex++
 //                        }
 //                    }
 //
-//                    bandIndex = bandIndex % bandCount;
+//                    bandIndex = bandIndex % bandCount
 //                }
-//                break;
+//                break
 //            }
 //
 //            if ( !CPTDecimalEquals(majorInterval, zero)) {
-//                coord = CPTDecimalDivide(CPTDecimalSubtract(rangeStart, origin), majorInterval);
-//                NSDecimalRound(&coord, &coord, 0, NSRoundUp);
-//                NSInteger stepCount = CPTDecimalIntegerValue(coord) + CPTDecimalIntegerValue(offset) + 1;
+//                coord = CPTDecimalDivide(CPTDecimalSubtract(rangeStart, origin), majorInterval)
+//                NSDecimalRound(&coord, &coord, 0, NSRoundUp)
+//                NSInteger stepCount = CPTDecimalIntegerValue(coord) + CPTDecimalIntegerValue(offset) + 1
 //
 //                if ( stepCount >= 0 ) {
-//                    bandIndex = (NSUInteger)(stepCount % (NSInteger)bandCount);
+//                    bandIndex = (NSUInteger)(stepCount % (NSInteger)bandCount)
 //                }
 //                else {
-//                    bandIndex = (NSUInteger)(-stepCount % (NSInteger)bandCount);
+//                    bandIndex = (NSUInteger)(-stepCount % (NSInteger)bandCount)
 //                }
 //            }
 //        }
 //
-//        return bandIndex;
+//        return bandIndex
 //    }
 //
 //    func drawBackgroundBandsInContext(context: CGContextRef)
 //    {
-//        CPTFillArray *bandArray = self.alternatingBandFills;
-//        NSUInteger bandCount    = bandArray.count;
+//        CPTFillArray *bandArray = self.alternatingBandFills
+//        NSUInteger bandCount    = bandArray.count
 //
 //        if ( bandCount > 0 ) {
-//            CPTNumberArray *locations = self.majorTickLocations.allObjects;
+//            CPTNumberArray *locations = self.majorTickLocations.allObjects
 //
 //            if ( locations.count > 0 ) {
-//                CPTPlotSpace *thePlotSpace = self.plotSpace;
+//                CPTPlotSpace *thePlotSpace = self.plotSpace
 //
-//                CPTCoordinate selfCoordinate = self.coordinate;
-//                CPTMutablePlotRange *range   = [[thePlotSpace plotRangeForCoordinate:selfCoordinate] mutableCopy];
+//                CPTCoordinate selfCoordinate = self.coordinate
+//                CPTMutablePlotRange *range   = [[thePlotSpace plotRangeForCoordinate:selfCoordinate] mutableCopy]
 //                if ( range ) {
-//                    CPTPlotRange *theVisibleRange = self.visibleRange;
+//                    CPTPlotRange *theVisibleRange = self.visibleRange
 //                    if ( theVisibleRange ) {
-//                        [range intersectionPlotRange:theVisibleRange];
+//                        [range intersectionPlotRange:theVisibleRange]
 //                    }
 //                }
 //
-//                CPTCoordinate orthogonalCoordinate   = CPTOrthogonalCoordinate(selfCoordinate);
-//                CPTMutablePlotRange *orthogonalRange = [[thePlotSpace plotRangeForCoordinate:orthogonalCoordinate] mutableCopy];
-//                CPTPlotRange *theGridLineRange       = self.gridLinesRange;
+//                CPTCoordinate orthogonalCoordinate   = CPTOrthogonalCoordinate(selfCoordinate)
+//                CPTMutablePlotRange *orthogonalRange = [[thePlotSpace plotRangeForCoordinate:orthogonalCoordinate] mutableCopy]
+//                CPTPlotRange *theGridLineRange       = self.gridLinesRange
 //
 //                if ( theGridLineRange ) {
-//                    [orthogonalRange intersectionPlotRange:theGridLineRange];
+//                    [orthogonalRange intersectionPlotRange:theGridLineRange]
 //                }
 //
-//                const NSDecimal zero             = CPTDecimalFromInteger(0);
-//                NSSortDescriptor *sortDescriptor = nil;
+//                const NSDecimal zero             = CPTDecimalFromInteger(0)
+//                NSSortDescriptor *sortDescriptor = nil
 //                if ( range ) {
 //                    if ( CPTDecimalGreaterThanOrEqualTo(range.lengthDecimal, zero)) {
-//                        sortDescriptor = [[NSSortDescriptor alloc] initWithKey:nil ascending:YES];
+//                        sortDescriptor = [[NSSortDescriptor alloc] initWithKey:nil ascending:YES]
 //                    }
 //                    else {
-//                        sortDescriptor = [[NSSortDescriptor alloc] initWithKey:nil ascending:NO];
+//                        sortDescriptor = [[NSSortDescriptor alloc] initWithKey:nil ascending:NO]
 //                    }
 //                }
 //                else {
-//                    sortDescriptor = [[NSSortDescriptor alloc] initWithKey:nil ascending:YES];
+//                    sortDescriptor = [[NSSortDescriptor alloc] initWithKey:nil ascending:YES]
 //                }
-//                locations = [locations sortedArrayUsingDescriptors:@[sortDescriptor]];
+//                locations = [locations sortedArrayUsingDescriptors:@[sortDescriptor]]
 //
-//                NSUInteger bandIndex = [self initialBandIndexForSortedLocations:locations inRange:range];
+//                NSUInteger bandIndex = [self initialBandIndexForSortedLocations:locations inRange:range]
 //
-//                const id null = [NSNull null];
+//                const id null = [NSNull null]
 //
-//                NSDecimal lastLocation;
+//                NSDecimal lastLocation
 //                if ( range ) {
-//                    lastLocation = range.locationDecimal;
+//                    lastLocation = range.locationDecimal
 //                }
 //                else {
-//                    lastLocation = CPTDecimalNaN();
+//                    lastLocation = CPTDecimalNaN()
 //                }
 //
-//                NSDecimal startPlotPoint[2];
-//                NSDecimal endPlotPoint[2];
+//                NSDecimal startPlotPoint[2]
+//                NSDecimal endPlotPoint[2]
 //                if ( orthogonalRange ) {
-//                    startPlotPoint[orthogonalCoordinate] = orthogonalRange.locationDecimal;
-//                    endPlotPoint[orthogonalCoordinate]   = orthogonalRange.endDecimal;
+//                    startPlotPoint[orthogonalCoordinate] = orthogonalRange.locationDecimal
+//                    endPlotPoint[orthogonalCoordinate]   = orthogonalRange.endDecimal
 //                }
 //                else {
-//                    startPlotPoint[orthogonalCoordinate] = CPTDecimalNaN();
-//                    endPlotPoint[orthogonalCoordinate]   = CPTDecimalNaN();
+//                    startPlotPoint[orthogonalCoordinate] = CPTDecimalNaN()
+//                    endPlotPoint[orthogonalCoordinate]   = CPTDecimalNaN()
 //                }
 //
 //                for ( NSDecimalNumber *location in locations ) {
-//                    NSDecimal currentLocation = location.decimalValue;
+//                    NSDecimal currentLocation = location.decimalValue
 //                    if ( !CPTDecimalEquals(CPTDecimalSubtract(currentLocation, lastLocation), zero)) {
-//                        CPTFill *bandFill = bandArray[bandIndex++];
-//                        bandIndex %= bandCount;
+//                        CPTFill *bandFill = bandArray[bandIndex++]
+//                        bandIndex %= bandCount
 //
 //                        if ( bandFill != null ) {
 //                            // Start point
-//                            startPlotPoint[selfCoordinate] = currentLocation;
-//                            CGPoint startViewPoint = [thePlotSpace plotAreaViewPointForPlotPoint:startPlotPoint numberOfCoordinates:2];
+//                            startPlotPoint[selfCoordinate] = currentLocation
+//                            CGPoint startViewPoint = [thePlotSpace plotAreaViewPointForPlotPoint:startPlotPoint numberOfCoordinates:2]
 //
 //                            // End point
-//                            endPlotPoint[selfCoordinate] = lastLocation;
-//                            CGPoint endViewPoint = [thePlotSpace plotAreaViewPointForPlotPoint:endPlotPoint numberOfCoordinates:2];
+//                            endPlotPoint[selfCoordinate] = lastLocation
+//                            CGPoint endViewPoint = [thePlotSpace plotAreaViewPointForPlotPoint:endPlotPoint numberOfCoordinates:2]
 //
 //                            // Fill band
 //                            CGRect fillRect = CPTRectMake(MIN(startViewPoint.x, endViewPoint.x),
 //                                                          MIN(startViewPoint.y, endViewPoint.y),
 //                                                          ABS(endViewPoint.x - startViewPoint.x),
-//                                                          ABS(endViewPoint.y - startViewPoint.y));
-//                            [bandFill fillRect:CPTAlignIntegralRectToUserSpace(context, fillRect) inContext:context];
+//                                                          ABS(endViewPoint.y - startViewPoint.y))
+//                            [bandFill fillRect:CPTAlignIntegralRectToUserSpace(context, fillRect) inContext:context]
 //                        }
 //                    }
 //
-//                    lastLocation = currentLocation;
+//                    lastLocation = currentLocation
 //                }
 //
 //                // Fill space between last location and the range end
-//                NSDecimal endLocation;
+//                NSDecimal endLocation
 //                if ( range ) {
-//                    endLocation = range.endDecimal;
+//                    endLocation = range.endDecimal
 //                }
 //                else {
-//                    endLocation = CPTDecimalNaN();
+//                    endLocation = CPTDecimalNaN()
 //                }
 //                if ( !CPTDecimalEquals(lastLocation, endLocation)) {
-//                    CPTFill *bandFill = bandArray[bandIndex];
+//                    CPTFill *bandFill = bandArray[bandIndex]
 //
 //                    if ( bandFill != null ) {
 //                        // Start point
-//                        startPlotPoint[selfCoordinate] = endLocation;
-//                        CGPoint startViewPoint = [thePlotSpace plotAreaViewPointForPlotPoint:startPlotPoint numberOfCoordinates:2];
+//                        startPlotPoint[selfCoordinate] = endLocation
+//                        CGPoint startViewPoint = [thePlotSpace plotAreaViewPointForPlotPoint:startPlotPoint numberOfCoordinates:2]
 //
 //                        // End point
-//                        endPlotPoint[selfCoordinate] = lastLocation;
-//                        CGPoint endViewPoint = [thePlotSpace plotAreaViewPointForPlotPoint:endPlotPoint numberOfCoordinates:2];
+//                        endPlotPoint[selfCoordinate] = lastLocation
+//                        CGPoint endViewPoint = [thePlotSpace plotAreaViewPointForPlotPoint:endPlotPoint numberOfCoordinates:2]
 //
 //                        // Fill band
 //                        CGRect fillRect = CPTRectMake(MIN(startViewPoint.x, endViewPoint.x),
 //                                                      MIN(startViewPoint.y, endViewPoint.y),
 //                                                      ABS(endViewPoint.x - startViewPoint.x),
-//                                                      ABS(endViewPoint.y - startViewPoint.y));
-//                        [bandFill fillRect:CPTAlignIntegralRectToUserSpace(context, fillRect) inContext:context];
+//                                                      ABS(endViewPoint.y - startViewPoint.y))
+//                        [bandFill fillRect:CPTAlignIntegralRectToUserSpace(context, fillRect) inContext:context]
 //                    }
 //                }
 //            }
@@ -598,56 +598,56 @@ public class CPTXYAxis: CPTAxis {
 //
 //    -(void)drawBackgroundLimitsInContext:(nonnull CGContextRef)context
 //    {
-//        CPTLimitBandArray *limitArray = self.backgroundLimitBands;
+//        CPTLimitBandArray *limitArray = self.backgroundLimitBands
 //
 //        if ( limitArray.count > 0 ) {
-//            CPTPlotSpace *thePlotSpace = self.plotSpace;
+//            CPTPlotSpace *thePlotSpace = self.plotSpace
 //
-//            CPTCoordinate selfCoordinate = self.coordinate;
-//            CPTMutablePlotRange *range   = [[thePlotSpace plotRangeForCoordinate:selfCoordinate] mutableCopy];
+//            CPTCoordinate selfCoordinate = self.coordinate
+//            CPTMutablePlotRange *range   = [[thePlotSpace plotRangeForCoordinate:selfCoordinate] mutableCopy]
 //
 //            if ( range ) {
-//                CPTPlotRange *theVisibleRange = self.visibleRange;
+//                CPTPlotRange *theVisibleRange = self.visibleRange
 //                if ( theVisibleRange ) {
-//                    [range intersectionPlotRange:theVisibleRange];
+//                    [range intersectionPlotRange:theVisibleRange]
 //                }
 //            }
 //
-//            CPTCoordinate orthogonalCoordinate   = CPTOrthogonalCoordinate(selfCoordinate);
-//            CPTMutablePlotRange *orthogonalRange = [[thePlotSpace plotRangeForCoordinate:orthogonalCoordinate] mutableCopy];
-//            CPTPlotRange *theGridLineRange       = self.gridLinesRange;
+//            CPTCoordinate orthogonalCoordinate   = CPTOrthogonalCoordinate(selfCoordinate)
+//            CPTMutablePlotRange *orthogonalRange = [[thePlotSpace plotRangeForCoordinate:orthogonalCoordinate] mutableCopy]
+//            CPTPlotRange *theGridLineRange       = self.gridLinesRange
 //
 //            if ( theGridLineRange ) {
-//                [orthogonalRange intersectionPlotRange:theGridLineRange];
+//                [orthogonalRange intersectionPlotRange:theGridLineRange]
 //            }
 //
-//            NSDecimal startPlotPoint[2];
-//            NSDecimal endPlotPoint[2];
-//            startPlotPoint[orthogonalCoordinate] = orthogonalRange.locationDecimal;
-//            endPlotPoint[orthogonalCoordinate]   = orthogonalRange.endDecimal;
+//            NSDecimal startPlotPoint[2]
+//            NSDecimal endPlotPoint[2]
+//            startPlotPoint[orthogonalCoordinate] = orthogonalRange.locationDecimal
+//            endPlotPoint[orthogonalCoordinate]   = orthogonalRange.endDecimal
 //
 //            for ( CPTLimitBand *band in self.backgroundLimitBands ) {
-//                CPTFill *bandFill = band.fill;
+//                CPTFill *bandFill = band.fill
 //
 //                if ( bandFill ) {
-//                    CPTMutablePlotRange *bandRange = [band.range mutableCopy];
+//                    CPTMutablePlotRange *bandRange = [band.range mutableCopy]
 //                    if ( bandRange ) {
-//                        [bandRange intersectionPlotRange:range];
+//                        [bandRange intersectionPlotRange:range]
 //
 //                        // Start point
-//                        startPlotPoint[selfCoordinate] = bandRange.locationDecimal;
-//                        CGPoint startViewPoint = [thePlotSpace plotAreaViewPointForPlotPoint:startPlotPoint numberOfCoordinates:2];
+//                        startPlotPoint[selfCoordinate] = bandRange.locationDecimal
+//                        CGPoint startViewPoint = [thePlotSpace plotAreaViewPointForPlotPoint:startPlotPoint numberOfCoordinates:2]
 //
 //                        // End point
-//                        endPlotPoint[selfCoordinate] = bandRange.endDecimal;
-//                        CGPoint endViewPoint = [thePlotSpace plotAreaViewPointForPlotPoint:endPlotPoint numberOfCoordinates:2];
+//                        endPlotPoint[selfCoordinate] = bandRange.endDecimal
+//                        CGPoint endViewPoint = [thePlotSpace plotAreaViewPointForPlotPoint:endPlotPoint numberOfCoordinates:2]
 //
 //                        // Fill band
 //                        CGRect fillRect = CPTRectMake(MIN(startViewPoint.x, endViewPoint.x),
 //                                                      MIN(startViewPoint.y, endViewPoint.y),
 //                                                      ABS(endViewPoint.x - startViewPoint.x),
-//                                                      ABS(endViewPoint.y - startViewPoint.y));
-//                        [bandFill fillRect:CPTAlignIntegralRectToUserSpace(context, fillRect) inContext:context];
+//                                                      ABS(endViewPoint.y - startViewPoint.y))
+//                        [bandFill fillRect:CPTAlignIntegralRectToUserSpace(context, fillRect) inContext:context]
 //                    }
 //                }
 //            }
@@ -661,15 +661,15 @@ public class CPTXYAxis: CPTAxis {
 //
 //    -(nullable NSString *)description
 //    {
-//        CPTPlotRange *range    = [self.plotSpace plotRangeForCoordinate:self.coordinate];
-//        CGPoint startViewPoint = [self viewPointForCoordinateValue:range.location];
-//        CGPoint endViewPoint   = [self viewPointForCoordinateValue:range.end];
+//        CPTPlotRange *range    = [self.plotSpace plotRangeForCoordinate:self.coordinate]
+//        CGPoint startViewPoint = [self viewPointForCoordinateValue:range.location]
+//        CGPoint endViewPoint   = [self viewPointForCoordinateValue:range.end]
 //
 //        return [NSString stringWithFormat:@"<%@ with range: %@ viewCoordinates: %@ to %@>",
 //                super.description,
 //                range,
 //                CPTStringFromPoint(startViewPoint),
-//                CPTStringFromPoint(endViewPoint)];
+//                CPTStringFromPoint(endViewPoint)]
 //    }
 //
 //    /// @endcond
@@ -679,54 +679,54 @@ public class CPTXYAxis: CPTAxis {
     // Center title in the plot range by default
 //    -(nonnull NSNumber *)defaultTitleLocation
 //    {
-//        NSNumber *location;
+//        NSNumber *location
 //
-//        CPTPlotSpace *thePlotSpace  = self.plotSpace;
-//        CPTCoordinate theCoordinate = self.coordinate;
+//        CPTPlotSpace *thePlotSpace  = self.plotSpace
+//        CPTCoordinate theCoordinate = self.coordinate
 //
-//        CPTPlotRange *axisRange = [thePlotSpace plotRangeForCoordinate:theCoordinate];
+//        CPTPlotRange *axisRange = [thePlotSpace plotRangeForCoordinate:theCoordinate]
 //
 //        if ( axisRange ) {
-//            CPTScaleType scaleType = [thePlotSpace scaleTypeForCoordinate:theCoordinate];
+//            CPTScaleType scaleType = [thePlotSpace scaleTypeForCoordinate:theCoordinate]
 //
 //            switch ( scaleType ) {
 //                case CPTScaleTypeLinear:
-//                    location = axisRange.midPoint;
-//                    break;
+//                    location = axisRange.midPoint
+//                    break
 //
 //                case CPTScaleTypeLog:
 //                {
-//                    double loc = axisRange.locationDouble;
-//                    double end = axisRange.endDouble;
+//                    double loc = axisRange.locationDouble
+//                    double end = axisRange.endDouble
 //
 //                    if ((loc > 0.0) && (end >= 0.0)) {
-//                        location = @(pow(10.0, (log10(loc) + log10(end)) / 2.0));
+//                        location = @(pow(10.0, (log10(loc) + log10(end)) / 2.0))
 //                    }
 //                    else {
-//                        location = axisRange.midPoint;
+//                        location = axisRange.midPoint
 //                    }
 //                }
-//                break;
+//                break
 //
 //                case CPTScaleTypeLogModulus:
 //                {
-//                    double loc = axisRange.locationDouble;
-//                    double end = axisRange.endDouble;
+//                    double loc = axisRange.locationDouble
+//                    double end = axisRange.endDouble
 //
-//                    location = @(CPTInverseLogModulus((CPTLogModulus(loc) + CPTLogModulus(end)) / 2.0));
+//                    location = @(CPTInverseLogModulus((CPTLogModulus(loc) + CPTLogModulus(end)) / 2.0))
 //                }
-//                break;
+//                break
 //
 //                default:
-//                    location = axisRange.midPoint;
-//                    break;
+//                    location = axisRange.midPoint
+//                    break
 //            }
 //        }
 //        else {
-//            location = @0;
+//            location = @0
 //        }
 //
-//        return location;
+//        return location
 //    }
 //
 //    /// @endcond
@@ -738,32 +738,32 @@ public class CPTXYAxis: CPTAxis {
 //    -(void)setAxisConstraints:(nullable CPTConstraints *)newConstraints
 //    {
 //        if ( ![axisConstraints isEqualToConstraint:newConstraints] ) {
-//            axisConstraints = newConstraints;
-//            [self setNeedsDisplay];
-//            [self setNeedsLayout];
+//            axisConstraints = newConstraints
+//            [self setNeedsDisplay]
+//            [self setNeedsLayout]
 //        }
 //    }
 //
 //    -(void)setOrthogonalPosition:(nullable NSNumber *)newPosition
 //    {
-//        BOOL needsUpdate = YES;
+//        BOOL needsUpdate = YES
 //
 //        if ( newPosition ) {
-//            NSNumber *position = newPosition;
-//            needsUpdate = ![orthogonalPosition isEqualToNumber:position];
+//            NSNumber *position = newPosition
+//            needsUpdate = ![orthogonalPosition isEqualToNumber:position]
 //        }
 //
 //        if ( needsUpdate ) {
-//            orthogonalPosition = newPosition;
-//            [self setNeedsDisplay];
-//            [self setNeedsLayout];
+//            orthogonalPosition = newPosition
+//            [self setNeedsDisplay]
+//            [self setNeedsLayout]
 //        }
 //    }
 //
 //    -(void)setCoordinate:(CPTCoordinate)newCoordinate
 //    {
 //        if ( self.coordinate != newCoordinate ) {
-//            super.coordinate = newCoordinate;
+//            super.coordinate = newCoordinate
 //            switch ( newCoordinate ) {
 //                case CPTCoordinateX:
 //                    switch ( self.labelAlignment ) {
@@ -771,13 +771,13 @@ public class CPTXYAxis: CPTAxis {
 //                        case CPTAlignmentCenter:
 //                        case CPTAlignmentRight:
 //                            // ok--do nothing
-//                            break;
+//                            break
 //
 //                        default:
-//                            self.labelAlignment = CPTAlignmentCenter;
-//                            break;
+//                            self.labelAlignment = CPTAlignmentCenter
+//                            break
 //                    }
-//                    break;
+//                    break
 //
 //                case CPTCoordinateY:
 //                    switch ( self.labelAlignment ) {
@@ -785,17 +785,17 @@ public class CPTXYAxis: CPTAxis {
 //                        case CPTAlignmentMiddle:
 //                        case CPTAlignmentBottom:
 //                            // ok--do nothing
-//                            break;
+//                            break
 //
 //                        default:
-//                            self.labelAlignment = CPTAlignmentMiddle;
-//                            break;
+//                            self.labelAlignment = CPTAlignmentMiddle
+//                            break
 //                    }
-//                    break;
+//                    break
 //
 //                default:
-//                    [NSException raise:NSInvalidArgumentException format:@"Invalid coordinate: %lu", (unsigned long)newCoordinate];
-//                    break;
+//                    [NSException raise:NSInvalidArgumentException format:@"Invalid coordinate: %lu", (unsigned long)newCoordinate]
+//                    break
 //            }
 //        }
 //    }

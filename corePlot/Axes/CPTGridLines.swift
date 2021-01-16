@@ -24,7 +24,7 @@ class CPTGridLines: CPTLayer {
         axis  = nil
         major = false
         
-        self.needsDisplayOnBoundsChange = true;
+        self.needsDisplayOnBoundsChange = true
     }
     
     override init(layer: Any)
@@ -32,7 +32,7 @@ class CPTGridLines: CPTLayer {
         super.init(layer:layer)
         
         let theLayer = CPTGridLines(layer: layer)
-        axis  = theLayer.axis;
+        axis  = theLayer.axis
         major = theLayer.major
     }
     

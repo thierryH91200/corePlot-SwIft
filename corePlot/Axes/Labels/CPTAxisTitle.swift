@@ -38,23 +38,23 @@ public class CPTAxisTitle: CPTAxisLabel {
             let otherTitle = object as! CPTAxisTitle
             
             if ((self.rotation != otherTitle.rotation) || (self.offset != otherTitle.offset)) {
-                return false;
+                return false
             }
             if self.contentLayer.isEqual(otherTitle ) == false {
                 return false
             }
             
-            let location = (object as! CPTAxisLabel).tickLocation;
+            let location = (object as! CPTAxisLabel).tickLocation
             
             if location != 0 {
                 return self.tickLocation == location
             }
             else {
-                return false;
+                return false
             }
         }
         else {
-            return false;
+            return false
         }
     }
     

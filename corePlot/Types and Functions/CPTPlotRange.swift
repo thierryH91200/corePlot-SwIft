@@ -7,6 +7,8 @@
 
 import AppKit
 
+typealias CPTPlotRangeArray = [CPTPlotRange]
+
 class CPTPlotRange: NSObject {
     
     enum CPTPlotRangeComparisonResult : Int {
@@ -20,11 +22,11 @@ class CPTPlotRange: NSObject {
     var length: CGFloat = 0.0
     var  end: CGFloat = 0.0
     
-//    var locationDecimal:  CGFloat = 0.0
+    //    var locationDecimal:  CGFloat = 0.0
     var lengthDecimal: CGFloat = 0.0
     var endDecimal: CGFloat = 0.0
     
-//    var locationDouble : Double = 0.0
+    //    var locationDouble : Double = 0.0
     var lengthDouble: Double = 0.0
     var endDouble: Double = 0.0
     
@@ -86,10 +88,10 @@ class CPTPlotRange: NSObject {
     {
         super.init()
         locationDecimal = location
-//        locationDouble  = location
+        //        locationDouble  = location
         
         lengthDecimal = length
-//        lengthDouble  = length
+        //        lengthDouble  = length
         
         if lengthDouble.isNaN {
             isInfinite = false
@@ -100,13 +102,14 @@ class CPTPlotRange: NSObject {
             lengthSign = lengthDecimal.signbit() ? CPTSign.negative : CPTSign.positive
         }
     }
+    
     init(location: Double, length:Double)
     {
         super.init()
-//        locationDecimal = location
+        //        locationDecimal = location
         locationDouble  = location
         
-//        lengthDecimal = length
+        //        lengthDecimal = length
         lengthDouble  = length
         
         if lengthDouble.isNaN {
@@ -118,20 +121,16 @@ class CPTPlotRange: NSObject {
             lengthSign = lengthDouble.signbit() ? CPTSign.negative : CPTSign.positive
         }
     }
-
-    ////    /** @brief Initializes a newly allocated CPTPlotRange object with the provided location and length.
-    ////     *  @param loc The starting location of the range.
-    ////     *  @param len The length of the range.
-    ////     *  @return The initialized CPTPlotRange object.
-    ////     **/
-    //    -(nonnull instancetype)initWithLocationDecimal:(NSDecimal)loc lengthDecimal:(NSDecimal)len
-    //    {
-    //        return [self initWithLocation:[NSDecimalNumber decimalNumberWithDecimal:loc]
-    //                               length:[NSDecimalNumber decimalNumberWithDecimal:len]];
-    //    }
     
-    /// @name Initialization
-    /// @{
+    /** @brief Initializes a newly allocated CPTPlotRange object with the provided location and length.
+     *  @param loc The starting location of the range.
+     *  @param len The length of the range.
+     *  @return The initialized CPTPlotRange object.
+     **/
+    convenience init(locationDecimal loc: CGFloat, lengthDecimal len: CGFloat) {
+        self.init(locationDecimal:  loc, lengthDecimal: len)
+    }
+    
     
     /** @brief Initializes a newly allocated CPTPlotRange object.
      *
@@ -173,28 +172,28 @@ class CPTPlotRange: NSObject {
         }
     }
     
-    ////
-    ////
-    ////    -(NSNumber *)length
-    ////    {
-    ////        return [NSDecimalNumber decimalNumberWithDecimal:self.lengthDecimal];
-    ////    }
-    ////
-    ////    -(void)setLengthDecimal:(NSDecimal)newLength
-    ////    {
-    ////        if ( !CPTDecimalEquals(lengthDecimal, newLength)) {
-    ////            lengthDecimal = newLength;
-    ////
-    ////            if ( !self.inValueUpdate ) {
-    ////                self.inValueUpdate = YES;
-    ////
-    ////                self.lengthDouble = CPTDecimalDoubleValue(newLength);
-    ////
-    ////                self.inValueUpdate = false
-    ////            }
-    ////        }
-    ////    }
-    ////
+    //
+    //
+    //    -(NSNumber *)length
+    //    {
+    //        return [NSDecimalNumber decimalNumberWithDecimal:self.lengthDecimal];
+    //    }
+    //
+    //    -(void)setLengthDecimal:(NSDecimal)newLength
+    //    {
+    //        if ( !CPTDecimalEquals(lengthDecimal, newLength)) {
+    //            lengthDecimal = newLength;
+    //
+    //            if ( !self.inValueUpdate ) {
+    //                self.inValueUpdate = YES;
+    //
+    //                self.lengthDouble = CPTDecimalDoubleValue(newLength);
+    //
+    //                self.inValueUpdate = false
+    //            }
+    //        }
+    //    }
+    //
     //    -(void)setLengthDouble:(double)newLength
     //    {
     //        if ( lengthDouble != newLength ) {
@@ -466,7 +465,7 @@ class CPTPlotRange: NSObject {
         }
         return result;
     }
-
+    
     /** @brief Compares a number to the range, determining if it is in the range, or above or below it.
      *  @param number The number to check.
      *  @return The comparison result.
@@ -490,10 +489,10 @@ class CPTPlotRange: NSObject {
         return result;
     }
     
-        /** @brief Compares a number to the range, determining if it is in the range, or above or below it.
-         *  @param number The number to check.
-         *  @return The comparison result.
-         **/
+    /** @brief Compares a number to the range, determining if it is in the range, or above or below it.
+     *  @param number The number to check.
+     *  @return The comparison result.
+     **/
     func compareToDouble(number: Double)-> CPTPlotRangeComparisonResult
     {
         var result : CPTPlotRangeComparisonResult

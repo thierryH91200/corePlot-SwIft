@@ -15,7 +15,7 @@ class CPTGraphHostingView: NSView {
     var printRect = NSRect.zero
     var closedHandCursor = NSCursor.closedHand
     var openHandCursor = NSCursor.openHand
-    var  allowPinchScaling = false
+    var allowPinchScaling = false
     
     var locationInWindow = NSPoint.zero
     var scrollOffset = CGPoint.zero

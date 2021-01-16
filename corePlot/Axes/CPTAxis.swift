@@ -25,13 +25,13 @@ protocol CPTAxisDelegate : CPTLayerDelegate {
     func axis(axis:  CPTAxis, labelTouchDown label: CPTAxisLabel )
     func axis(axis:  CPTAxis, labelTouchDown label: CPTAxisLabel, withEvent event: CPTNativeEvent )
     
-    func axis(axis:  CPTAxis, labelTouchUp label: CPTAxisLabel );
+    func axis(axis:  CPTAxis, labelTouchUp label: CPTAxisLabel )
     func axis(axis:  CPTAxis, labelTouchUp label: CPTAxisLabel, withEvent event: CPTNativeEvent)
     
     func axis(axis:  CPTAxis, minorTickTouchDown label: CPTAxisLabel)
     func axis(axis:  CPTAxis, minorTickTouchDown label: CPTAxisLabel, withEvent event: CPTNativeEvent )
     
-    func axis(axis:  CPTAxis, minorTickTouchUp label: CPTAxisLabel );
+    func axis(axis:  CPTAxis, minorTickTouchUp label: CPTAxisLabel )
     func axis(axis:  CPTAxis, minorTickTouchUp label: CPTAxisLabel, withEvent event: CPTNativeEvent )
     
 }
@@ -39,8 +39,8 @@ protocol CPTAxisDelegate : CPTLayerDelegate {
 public class CPTAxis : CPTLayer {
     
     enum CPTAxisLabelingPolicy: Int  {
-        case none              ///< No labels provided; user sets labels and tick locations.
-        case provided ///< User sets tick locations; axis makes labels.
+        case none              ///< No labels provided user sets labels and tick locations.
+        case provided ///< User sets tick locations axis makes labels.
         case fixedInterval    ///< Fixed interval labeling policy.
         case automatic        ///< Automatic labeling policy.
         case divisions     ///< Divide the plot range into equal parts.
@@ -94,7 +94,7 @@ public class CPTAxis : CPTLayer {
     var attributedTitle =  NSAttributedString(string: "")
     var titleRotation :  CGFloat?
     var titleDirection : CPTSign = .none
-    var titleLocation = 0
+//    var titleLocation = 0
     var defaultTitleLocation = 0
     
     // MARK: -
@@ -179,7 +179,7 @@ public class CPTAxis : CPTLayer {
     var axisLabels: Set<CPTAxisLabel>
 //    var minorTickAxisLabels : Set<Double>
     
-    var labelExclusionRanges = [CPTPlot]()
+    var labelExclusionRanges = [CPTPlotRange]()
     var labelShadow: CPTShadow?
     var minorTickLabelShadow: CPTShadow?
     
@@ -188,18 +188,18 @@ public class CPTAxis : CPTLayer {
     override init( frame : CGRect  )
     {
         super.init(frame: frame)
-        plotSpace                   = nil;
+        plotSpace                   = nil
         title                       = ""
         attributedTitle             = NSAttributedString(string: "")
         
         minorTickLocations.removeAll()
-        preferredNumberOfMajorTicks = 0;
-        minorTickLength             = CGFloat(3.0);
-        majorTickLength             = CGFloat(5.0);
-        labelOffset                 = CGFloat(2.0);
-        minorTickLabelOffset        = CGFloat(2.0);
-        labelRotation               = CGFloat(0.0);
-        minorTickLabelRotation      = CGFloat(0.0);
+        preferredNumberOfMajorTicks = 0
+        minorTickLength             = CGFloat(3.0)
+        majorTickLength             = CGFloat(5.0)
+        labelOffset                 = CGFloat(2.0)
+        minorTickLabelOffset        = CGFloat(2.0)
+        labelRotation               = CGFloat(0.0)
+        minorTickLabelRotation      = CGFloat(0.0)
         labelAlignment              = .center
         minorTickLabelAlignment     = .center
         
@@ -214,10 +214,10 @@ public class CPTAxis : CPTLayer {
         axisLineCapMin              = CPTLineCap()
         axisLineCapMax              = CPTLineCap()
         labelingOrigin              = 0.0
-        majorIntervalLength         = 1;
+        majorIntervalLength         = 1
         minorTicksPerInterval       = 1
         coordinate                  = .x
-        labelingPolicy              = .fixedInterval;
+        labelingPolicy              = .fixedInterval
         labelTextStyle              = CPTTextStyle()
         
         let newFormatter = NumberFormatter()
@@ -225,10 +225,10 @@ public class CPTAxis : CPTLayer {
         newFormatter.maximumFractionDigits = 1
         newFormatter.minimumFractionDigits = 1
         
-        labelFormatter              = newFormatter;
+        labelFormatter              = newFormatter
         minorTickLabelTextStyle     = CPTTextStyle()
         minorTickLabelFormatter     = nil
-        labelFormatterChanged       = true;
+        labelFormatterChanged       = true
         minorLabelFormatterChanged  = false
         axisLabels.removeAll()
         minorTickAxisLabels.removeAll()
@@ -237,22 +237,22 @@ public class CPTAxis : CPTLayer {
         titleTextStyle              = CPTTextStyle()
         titleRotation               = nil
         titleLocation               = 0
-        needsRelabel                = true;
+        needsRelabel                = true
         labelExclusionRanges.removeAll()
-        plotArea                    = nil;
+        plotArea                    = nil
         separateLayers              = false
-        labelShadow                 = nil;
-        minorTickLabelShadow        = nil;
-        visibleRange                = nil;
-        visibleAxisRange            = nil;
-        gridLinesRange              = nil;
+        labelShadow                 = nil
+        minorTickLabelShadow        = nil
+        visibleRange                = nil
+        visibleAxisRange            = nil
+        gridLinesRange              = nil
         alternatingBandFills.removeAll()
         alternatingBandAnchor       = 0
         backgroundLimitBands.removeAll()
-        minorGridLines              = nil;
-        majorGridLines              = nil;
-        pointingDeviceDownLabel     = nil;
-        pointingDeviceDownTickLabel = nil;
+        minorGridLines              = nil
+        majorGridLines              = nil
+        pointingDeviceDownLabel     = nil
+        pointingDeviceDownTickLabel = nil
         inTitleUpdate               = false
         labelsUpdated               = false
         
@@ -265,65 +265,65 @@ public class CPTAxis : CPTLayer {
         
         let theLayer = CPTAxis( layer: layer)
         
-        plotSpace                   = theLayer.plotSpace;
-        majorTickLocations          = theLayer.majorTickLocations;
-        minorTickLocations          = theLayer.minorTickLocations;
-        preferredNumberOfMajorTicks = theLayer.preferredNumberOfMajorTicks;
-        minorTickLength             = theLayer.minorTickLength;
-        majorTickLength             = theLayer.majorTickLength;
-        labelOffset                 = theLayer.labelOffset;
-        minorTickLabelOffset        = theLayer.labelOffset;
-        labelRotation               = theLayer.labelRotation;
-        minorTickLabelRotation      = theLayer.labelRotation;
-        labelAlignment              = theLayer.labelAlignment;
-        minorTickLabelAlignment     = theLayer.labelAlignment;
-        title                       = theLayer.title;
-        attributedTitle             = theLayer.attributedTitle;
-        titleOffset                 = theLayer.titleOffset;
-        axisLineStyle               = theLayer.axisLineStyle;
-        majorTickLineStyle          = theLayer.majorTickLineStyle;
-        minorTickLineStyle          = theLayer.minorTickLineStyle;
-        tickLabelDirection          = theLayer.tickLabelDirection;
-        minorTickLabelDirection     = theLayer.minorTickLabelDirection;
-        majorGridLineStyle          = theLayer.majorGridLineStyle;
-        minorGridLineStyle          = theLayer.minorGridLineStyle;
-        axisLineCapMin              = theLayer.axisLineCapMin;
-        axisLineCapMax              = theLayer.axisLineCapMax;
-        labelingOrigin              = theLayer.labelingOrigin;
-        majorIntervalLength         = theLayer.majorIntervalLength;
-        minorTicksPerInterval       = theLayer.minorTicksPerInterval;
-        coordinate                  = theLayer.coordinate;
-        labelingPolicy              = theLayer.labelingPolicy;
-        labelFormatter              = theLayer.labelFormatter;
-        minorTickLabelFormatter     = theLayer.minorTickLabelFormatter;
-        axisLabels                  = theLayer.axisLabels;
-        minorTickAxisLabels         = theLayer.minorTickAxisLabels;
-        tickDirection               = theLayer.tickDirection;
-        labelTextStyle              = theLayer.labelTextStyle;
-        minorTickLabelTextStyle     = theLayer.minorTickLabelTextStyle;
-        axisTitle                   = theLayer.axisTitle;
-        titleTextStyle              = theLayer.titleTextStyle;
-        titleRotation               = theLayer.titleRotation;
-        titleDirection              = theLayer.titleDirection;
-        titleLocation               = theLayer.titleLocation;
-        needsRelabel                = theLayer.needsRelabel;
-        labelExclusionRanges        = theLayer.labelExclusionRanges;
-        plotArea                    = theLayer.plotArea;
-        separateLayers              = theLayer.separateLayers;
-        labelShadow                 = theLayer.labelShadow;
-        minorTickLabelShadow        = theLayer.minorTickLabelShadow;
-        visibleRange                = theLayer.visibleRange;
-        visibleAxisRange            = theLayer.visibleAxisRange;
-        gridLinesRange              = theLayer.gridLinesRange;
-        alternatingBandFills        = theLayer.alternatingBandFills;
-        alternatingBandAnchor       = theLayer.alternatingBandAnchor;
-        mutableBackgroundLimitBands = theLayer.mutableBackgroundLimitBands;
-        minorGridLines              = theLayer.minorGridLines;
-        majorGridLines              = theLayer.majorGridLines;
-        pointingDeviceDownLabel     = theLayer.pointingDeviceDownLabel;
-        pointingDeviceDownTickLabel = theLayer.pointingDeviceDownTickLabel;
-        inTitleUpdate               = theLayer.inTitleUpdate;
-        labelsUpdated               = theLayer.labelsUpdated;
+        plotSpace                   = theLayer.plotSpace
+        majorTickLocations          = theLayer.majorTickLocations
+        minorTickLocations          = theLayer.minorTickLocations
+        preferredNumberOfMajorTicks = theLayer.preferredNumberOfMajorTicks
+        minorTickLength             = theLayer.minorTickLength
+        majorTickLength             = theLayer.majorTickLength
+        labelOffset                 = theLayer.labelOffset
+        minorTickLabelOffset        = theLayer.labelOffset
+        labelRotation               = theLayer.labelRotation
+        minorTickLabelRotation      = theLayer.labelRotation
+        labelAlignment              = theLayer.labelAlignment
+        minorTickLabelAlignment     = theLayer.labelAlignment
+        title                       = theLayer.title
+        attributedTitle             = theLayer.attributedTitle
+        titleOffset                 = theLayer.titleOffset
+        axisLineStyle               = theLayer.axisLineStyle
+        majorTickLineStyle          = theLayer.majorTickLineStyle
+        minorTickLineStyle          = theLayer.minorTickLineStyle
+        tickLabelDirection          = theLayer.tickLabelDirection
+        minorTickLabelDirection     = theLayer.minorTickLabelDirection
+        majorGridLineStyle          = theLayer.majorGridLineStyle
+        minorGridLineStyle          = theLayer.minorGridLineStyle
+        axisLineCapMin              = theLayer.axisLineCapMin
+        axisLineCapMax              = theLayer.axisLineCapMax
+        labelingOrigin              = theLayer.labelingOrigin
+        majorIntervalLength         = theLayer.majorIntervalLength
+        minorTicksPerInterval       = theLayer.minorTicksPerInterval
+        coordinate                  = theLayer.coordinate
+        labelingPolicy              = theLayer.labelingPolicy
+        labelFormatter              = theLayer.labelFormatter
+        minorTickLabelFormatter     = theLayer.minorTickLabelFormatter
+        axisLabels                  = theLayer.axisLabels
+        minorTickAxisLabels         = theLayer.minorTickAxisLabels
+        tickDirection               = theLayer.tickDirection
+        labelTextStyle              = theLayer.labelTextStyle
+        minorTickLabelTextStyle     = theLayer.minorTickLabelTextStyle
+        axisTitle                   = theLayer.axisTitle
+        titleTextStyle              = theLayer.titleTextStyle
+        titleRotation               = theLayer.titleRotation
+        titleDirection              = theLayer.titleDirection
+        titleLocation               = theLayer.titleLocation
+        needsRelabel                = theLayer.needsRelabel
+        labelExclusionRanges        = theLayer.labelExclusionRanges
+        plotArea                    = theLayer.plotArea
+        separateLayers              = theLayer.separateLayers
+        labelShadow                 = theLayer.labelShadow
+        minorTickLabelShadow        = theLayer.minorTickLabelShadow
+        visibleRange                = theLayer.visibleRange
+        visibleAxisRange            = theLayer.visibleAxisRange
+        gridLinesRange              = theLayer.gridLinesRange
+        alternatingBandFills        = theLayer.alternatingBandFills
+        alternatingBandAnchor       = theLayer.alternatingBandAnchor
+        mutableBackgroundLimitBands = theLayer.mutableBackgroundLimitBands
+        minorGridLines              = theLayer.minorGridLines
+        majorGridLines              = theLayer.majorGridLines
+        pointingDeviceDownLabel     = theLayer.pointingDeviceDownLabel
+        pointingDeviceDownTickLabel = theLayer.pointingDeviceDownTickLabel
+        inTitleUpdate               = theLayer.inTitleUpdate
+        labelsUpdated               = theLayer.labelsUpdated
     }
     
     required init?(coder: NSCoder) {
@@ -373,18 +373,18 @@ public class CPTAxis : CPTLayer {
                 let rangeMax = CGFloat(range.maxLimitDecimal)
                 
                 var minorInterval = CGFloat(0.0)
-                let minorTickCount = self.minorTicksPerInterval;
+                let minorTickCount = self.minorTicksPerInterval
                 if ( minorTickCount > 0 ) {
                     minorInterval = majorInterval / (minorTickCount + 1)
                 }
                 else {
-                    minorInterval = zero;
+                    minorInterval = zero
                 }
                 
                 // Set starting coord--should be the smallest value >= rangeMin that is a whole multiple of majorInterval away from the labelingOrigin
                 let origin = CGFloat(truncating: self.labelingOrigin)
                 var  coord  = ( rangeMin - origin) / majorInterval
-                NSDecimalRound(&coord, &coord, 0, NSRoundUp);
+                NSDecimalRound(&coord, &coord, 0, NSRoundUp)
                 coord = (coord * majorInterval) + origin
                 
                 // Set minor ticks between the starting point and rangeMin
@@ -396,12 +396,13 @@ public class CPTAxis : CPTLayer {
                             break
                         }
                         minorLocations.insert(minorCoord)
-                            minorCoord = minorCoord - minorInterval
-                        }
+                        minorCoord = minorCoord - minorInterval
+                    }
                 }
                 
                 // Set tick locations
                 while ( coord < rangeMax) {
+                    
                     // Major tick
                     majorLocations.insert(coord)
                     
@@ -421,8 +422,8 @@ public class CPTAxis : CPTLayer {
                 }
 //            }
         }
-        newMajorLocations = majorLocations;
-        newMinorLocations = minorLocations;
+        newMajorLocations = majorLocations
+        newMinorLocations = minorLocations
     }
     
     //    /**
@@ -454,63 +455,63 @@ public class CPTAxis : CPTLayer {
     //     */
     func filteredTickLocations(allLocations: CPTNumberSet )-> CPTNumberSet
     {
-        let exclusionRanges = self.labelExclusionRanges;
+        let exclusionRanges = self.labelExclusionRanges
         
         if ( exclusionRanges.isEmpty == false ) {
-            let filteredLocations = allLocations 
+            var filteredLocations = allLocations
             for range in exclusionRanges  {
                 for location in allLocations {
-                    if range.containsNumber(location) {
-                        filteredLocations.removeObject(location)
+                    if range.containsNumber(number: location) {
+                        filteredLocations.remove(location)
                     }
                 }
             }
-            return filteredLocations;
+            return filteredLocations
         }
         else {
-            return allLocations;
+            return allLocations
         }
     }
     
-    
-    //    /** @brief Removes any major ticks falling inside the label exclusion ranges from the set of tick locations.
-    //     *  @param allLocations A set of major tick locations.
-    //     *  @return The filtered set.
-    //     **/
+    /** @brief Removes any major ticks falling inside the label exclusion ranges from the set of tick locations.
+     *  @param allLocations A set of major tick locations.
+     *  @return The filtered set.
+     **/
     func filteredMajorTickLocations(allLocations: CPTNumberSet )-> CPTNumberSet
     {
         return self.filteredTickLocations(allLocations: allLocations)
     }
-    //
-    //    /** @brief Removes any minor ticks falling inside the label exclusion ranges from the set of tick locations.
-    //     *  @param allLocations A set of minor tick locations.
-    //     *  @return The filtered set.
-    //     **/
+    
+    /** @brief Removes any minor ticks falling inside the label exclusion ranges from the set of tick locations.
+     *  @param allLocations A set of minor tick locations.
+     *  @return The filtered set.
+     **/
     func filteredMinorTickLocations(allLocations: CPTNumberSet )-> CPTNumberSet
     {
         return self.filteredTickLocations(allLocations: allLocations)
     }
+    
     //
     // MARK: - Labels
     var _tickOffset = CGFloat(0)
     var tickOffset : CGFloat {
         get   {
-            var offset = CGFloat(0.0);
+            var offset = CGFloat(0.0)
             
             switch ( self.tickDirection ) {
             case .none:
-                offset += self.majorTickLength * CGFloat(0.5);
-                break;
+                offset += self.majorTickLength * CGFloat(0.5)
+                break
                 
             case .positive:
                 fallthrough
                 
             case .negative:
-                offset += self.majorTickLength;
-                break;
+                offset += self.majorTickLength
+                break
             }
             
-            return offset;
+            return offset
         }
         set {}
     }
@@ -523,47 +524,47 @@ public class CPTAxis : CPTLayer {
          *  @param labeledRange A plot range used to filter the generated labels. If @nil, no filtering is done.
          *  @param useMajorAxisLabels If @true, label the major ticks, otherwise label the minor ticks.
          **/
-    func updateAxisLabelsAtLocations(locations: CPTNumberSet, inRange labeledRange : CPTPlotRange, useMajorAxisLabels:Bool)
+    func updateAxisLabelsAtLocations(locations: CPTNumberSet, inRange labeledRange : CPTPlotRange?, useMajorAxisLabels:Bool)
     {
         var theLabelAlignment = CPTAlignment.left
         let theLabelDirection : CPTSign
-        var theLabelOffset = CGFloat(0);
-        var theLabelRotation = CGFloat(0);
-        let theLabelTextStyle : CPTTextStyle;
+        var theLabelOffset = CGFloat(0)
+        var theLabelRotation = CGFloat(0)
+        let theLabelTextStyle : CPTTextStyle
         let theLabelFormatter : Formatter
         var theLabelFormatterChanged = false
         let theShadow : CPTShadow
         
-        let theDelegate = self.delegate as! CPTAxisDelegate
+        weak var theDelegate = self.delegate as? CPTAxisDelegate
         
         if ( useMajorAxisLabels == true ) {
             if ( locations.count > 0 ) {
-                let locationSet = locations;
-                var shouldContinue = theDelegate.axis(axis: self, shouldUpdateAxisLabelsAtLocations: locationSet)
+                let locationSet = locations
+                var shouldContinue = theDelegate?.axis(axis: self, shouldUpdateAxisLabelsAtLocations: locationSet)
             }
-            theLabelAlignment        = self.labelAlignment;
-            theLabelDirection        = self.tickLabelDirection;
-            theLabelOffset           = self.labelOffset;
-            theLabelRotation         = self.labelRotation;
-            theLabelTextStyle        = self.labelTextStyle;
-            theLabelFormatter        = self.labelFormatter!;
-            theLabelFormatterChanged = self.labelFormatterChanged;
-            theShadow                = self.labelShadow!;
+            theLabelAlignment        = self.labelAlignment
+            theLabelDirection        = self.tickLabelDirection
+            theLabelOffset           = self.labelOffset
+            theLabelRotation         = self.labelRotation
+            theLabelTextStyle        = self.labelTextStyle
+            theLabelFormatter        = self.labelFormatter!
+            theLabelFormatterChanged = self.labelFormatterChanged
+            theShadow                = self.labelShadow!
         }
         else {
             if ( locations.count > 0 ) {
-                var locationSet = locations;
-                var shouldContinue   = theDelegate.axis(axis: self, shouldUpdateMinorAxisLabelsAtLocations:locationSet)
+                var locationSet = locations
+                var shouldContinue   = theDelegate?.axis(axis: self, shouldUpdateMinorAxisLabelsAtLocations:locationSet)
                 if ( shouldContinue  == false) { return }
             }
-            theLabelAlignment        = self.minorTickLabelAlignment;
-            theLabelDirection        = self.minorTickLabelDirection;
-            theLabelOffset           = self.minorTickLabelOffset;
-            theLabelRotation         = self.minorTickLabelRotation;
-            theLabelTextStyle        = self.minorTickLabelTextStyle;
-            theLabelFormatter        = self.minorTickLabelFormatter!;
-            theLabelFormatterChanged = self.minorLabelFormatterChanged;
-            theShadow                = self.minorTickLabelShadow!;
+            theLabelAlignment        = self.minorTickLabelAlignment
+            theLabelDirection        = self.minorTickLabelDirection
+            theLabelOffset           = self.minorTickLabelOffset
+            theLabelRotation         = self.minorTickLabelRotation
+            theLabelTextStyle        = self.minorTickLabelTextStyle
+            theLabelFormatter        = self.minorTickLabelFormatter!
+            theLabelFormatterChanged = self.minorLabelFormatterChanged
+            theShadow                = self.minorTickLabelShadow!
         }
         
         if ((locations.count == 0) || !theLabelTextStyle || !theLabelFormatter ) {
@@ -576,85 +577,85 @@ public class CPTAxis : CPTLayer {
             return
         }
         
-        let textAttributes = theLabelTextStyle.attributes;
-        var hasAttributedFormatter   = ([theLabelFormatter attributedStringForObjectValue:[NSDecimalNumber zero]
-                                         withDefaultAttributes:textAttributes] != nil);
+        let textAttributes = theLabelTextStyle.attributes
+        var hasAttributedFormatter = theLabelFormatter.attributedString(for: NSDecimalNumber.zero, withDefaultAttributes:textAttributes) != nil
         
-        let thePlotSpace = self.plotSpace;
-        let myCoordinate = self.coordinate;
+        let thePlotSpace = self.plotSpace
+        let myCoordinate = self.coordinate
         var hasCategories = thePlotSpace?.scaleTypeForCoordinate(coordinate: myCoordinate) == CPTScaleType.category
         
-        let direction = self.tickDirection;
+        let direction = self.tickDirection
         
         if ( theLabelDirection == CPTSign.none ) {
             theLabelDirection = direction
         }
         
         if ((direction == CPTSign.none) || (theLabelDirection == direction)) {
-            theLabelOffset += self.tickOffset;
+            theLabelOffset += self.tickOffset
         }
         
-        let thePlotArea = self.plotArea;
-        
+        let thePlotArea = self.plotArea
         thePlotArea?.setAxisSetLayersForType(layerType: CPTGraphLayerType.axisLabels)
         
         var oldAxisLabels = Set<CPTAxisLabel>()
         if ( useMajorAxisLabels == true ) {
-            oldAxisLabels.insert( self.axisLabels )
+            oldAxisLabels = self.axisLabels
         }
         else {
-            oldAxisLabels.insert( self.minorTickAxisLabels )
+            oldAxisLabels = self.minorTickAxisLabels
         }
         
         var newAxisLabels = Set<CPTAxisLabel>()
-        let blankLabel         = CPTAxisLabel(newText: nil, newStyle:nil);
-        let axisLabelGroup     = thePlotArea!.axisLabelGroup;
+        let blankLabel         = CPTAxisLabel(newText: nil, newStyle:nil)
+        let axisLabelGroup     = thePlotArea!.axisLabelGroup
         var lastLayer          : CPTLayer?
         
         for tickLocation in locations  {
-            if ( labeledRange && labeledRange.containsNumber(number: tickLocation) == false ) {
-                continue;
+            if ( (labeledRange != nil) && labeledRange?.containsNumber(number: tickLocation) == false ) {
+                continue
             }
             
             let newAxisLabel : CPTAxisLabel
             var needsNewContentLayer = false
             
             // reuse axis labels where possible--will prevent flicker when updating layers
-            blankLabel.tickLocation = tickLocation;
-            var oldAxisLabel = [oldAxisLabels member:blankLabel];
+            blankLabel.tickLocation = tickLocation
             
-            if ( oldAxisLabel ) {
-                newAxisLabel = oldAxisLabel;
+            var oldAxisLabel = CPTAxisLabel()
+//            CPTAxisLabel *oldAxisLabel = [oldAxisLabels member:blankLabel];
+            if let oldAxisLabel = (oldAxisLabels as NSSet).member(blankLabel) as? CPTAxisLabel {
+                oldAxisLabel.something = "somethingElse"
+                newAxisLabel = oldAxisLabel
             }
             else {
                 newAxisLabel              = CPTAxisLabel(newText: nil, newStyle:nil)
-                newAxisLabel.tickLocation = tickLocation;
-                needsNewContentLayer      = true;
+                newAxisLabel.tickLocation = tickLocation
+                needsNewContentLayer      = true
             }
             
-            newAxisLabel.rotation  = theLabelRotation;
-            newAxisLabel.offset    = theLabelOffset;
-            newAxisLabel.alignment = theLabelAlignment;
+            newAxisLabel.rotation  = theLabelRotation
+            newAxisLabel.offset    = theLabelOffset
+            newAxisLabel.alignment = theLabelAlignment
             
             if ( needsNewContentLayer || theLabelFormatterChanged ) {
                 var newLabelLayer : CPTTextLayer?
                 if ( hasCategories ) {
-                    let labelString = [thePlotSpace categoryForCoordinate:myCoordinate atIndex:tickLocation.unsignedIntegerValue];
-                    if ( labelString ) {
-                        newLabelLayer = CPTTextLayer(labelString, style:theLabelTextStyle)
+                    let labelString = thePlotSpace!.categoryForCoordinate(coordinate: myCoordinate, at:Int(tickLocation))
+                    if (( labelString ) != nil) {
+                        newLabelLayer = CPTTextLayer(newText: labelString!, newStyle:theLabelTextStyle)
                     }
                 }
                 else if ( hasAttributedFormatter == true) {
-                    let labelString = [theLabelFormatter attributedStringForObjectValue:tickLocation withDefaultAttributes:textAttributes];
-                    newLabelLayer = CPTTextLayer(attributedText: labelString)
+                    let labelString = theLabelFormatter.attributedString(for: tickLocation, withDefaultAttributes:textAttributes)
+                    newLabelLayer = CPTTextLayer(attributedText: labelString!)
                 }
                 else {
-                    var labelString = [theLabelFormatter stringForObjectValue:tickLocation];
-                    newLabelLayer = CPTTextLayer(labelString, style:theLabelTextStyle)
+                    var labelString = theLabelFormatter.string(for: tickLocation)
+                    newLabelLayer = CPTTextLayer(newText: labelString!, newStyle:theLabelTextStyle)
                 }
-                [oldAxisLabel.contentLayer removeFromSuperlayer];
+                oldAxisLabel.contentLayer.removeFromSuperlayer()
                 if (( newLabelLayer ) != nil) {
-                    newAxisLabel.contentLayer = newLabelLayer!;
+                    newAxisLabel.contentLayer = newLabelLayer!
                     
                     if (( lastLayer ) != nil) {
                         axisLabelGroup?.insertSublayer(newLabelLayer!, below:lastLayer)
@@ -665,25 +666,25 @@ public class CPTAxis : CPTLayer {
                 }
             }
             
-            lastLayer        = newAxisLabel.contentLayer;
-            lastLayer.shadow = theShadow;
+            lastLayer        = newAxisLabel.contentLayer
+            lastLayer?.shadow = theShadow
             
-            newAxisLabels.addObject(newAxisLabel)
+            newAxisLabels.insert(newAxisLabel)
         }
         
         // remove old labels that are not needed any more from the layer hierarchy
-        [oldAxisLabels minusSet:newAxisLabels];
+        oldAxisLabels.minusSet(newAxisLabels)
         for label in oldAxisLabels {
             label.contentLayer.removeFromSuperlayer()
         }
         
-        self.labelsUpdated = true;
+        self.labelsUpdated = true
         if ( useMajorAxisLabels ) {
-            self.axisLabels            = newAxisLabels;
+            self.axisLabels            = newAxisLabels
             self.labelFormatterChanged = false
         }
         else {
-            self.minorTickAxisLabels        = newAxisLabels;
+            self.minorTickAxisLabels        = newAxisLabels
             self.minorLabelFormatterChanged = false
         }
         self.labelsUpdated = false
@@ -728,7 +729,7 @@ public class CPTAxis : CPTLayer {
         
         if theDelegate.axisShouldRelabel(axis: self ) == true {
             self.needsRelabel = false
-            return;
+            return
         }
         
         var newMajorLocations = Set<CGFloat>()
@@ -739,18 +740,18 @@ public class CPTAxis : CPTLayer {
             fallthrough
         case .provided:
             // Locations are set by user
-            break;
+            break
             
         case .fixedInterval:
             self.generateFixedInterval(newMajorLocations:&newMajorLocations, newMinorLocations:&newMinorLocations)
             
         case .automatic:
-            self.autoGenerateMajorTickLocations(newMajorLocations: &newMajorLocations, minorTickLocations:&newMinorLocations)
-            break;
+            self.autoGenerateMajorTickLocations(newMajorLocations: &newMajorLocations, newMinorLocations:&newMinorLocations)
+            break
             
         case .divisions:
-            self.generateEqualMajorTickLocations(&newMajorLocations, minorTickLocations:&newMinorLocations)
-            break;
+            self.generateEqualMajorTickLocations(newMajorLocations: &newMajorLocations, newMinorLocations:&newMinorLocations)
+            break
         }
         
         switch ( self.labelingPolicy ) {
@@ -758,43 +759,43 @@ public class CPTAxis : CPTLayer {
             fallthrough
         case .provided:
             // Locations are set by user--no filtering required
-            break;
+            break
             
         default:
             // Filter and set tick locations
-            self.majorTickLocations = self.filteredMajorTickLocations(newMajorLocations)
-            self.minorTickLocations = self.filteredMinorTickLocations(newMinorLocations)
+            self.majorTickLocations = self.filteredMajorTickLocations(allLocations: newMajorLocations)
+            self.minorTickLocations = self.filteredMinorTickLocations(allLocations: newMinorLocations)
         }
         
         // Label ticks
         switch ( self.labelingPolicy ) {
         case .none:
             self.updateCustomTickLabels()
-            break;
+            break
             
         case .provided:
             let labeledRange = self.plotSpace?.plotRangeForCoordinate(coordinate: self.coordinate) as! CPTMutablePlotRange
-                let theVisibleRange     = self.visibleRange;
+            let theVisibleRange     = self.visibleRange
             if ( theVisibleRange != nil ) {
                 labeledRange.intersectionPlotRange(other: theVisibleRange)
             }
-                
-            self.updateAxisLabelsAtLocations(self.majorTickLocations,
-                inRange:labeledRange,
-                useMajorAxisLabel:true)
-                
-            self.updateAxisLabelsAtLocations(self.minorTickLocations,
-                inRange:labeledRange,
-                useMajorAxisLabels:false)
-                        
-        default:
-            self.updateAxisLabelsAtLocations(self.majorTickLocations,
-                                              inRange:nil,
-                                              useMajorAxisLabels:true)
             
-            self.updateAxisLabelsAtLocations(self.minorTickLocations,
-                inRange:nil,
-                useMajorAxisLabels:false)
+            self.updateAxisLabelsAtLocations(locations: self.majorTickLocations,
+                                             inRange:labeledRange,
+                                             useMajorAxisLabels:true)
+            
+            self.updateAxisLabelsAtLocations(locations: self.minorTickLocations,
+                                             inRange:labeledRange,
+                                             useMajorAxisLabels:false)
+            
+        default:
+            self.updateAxisLabelsAtLocations(locations: self.majorTickLocations,
+                                             inRange:nil,
+                                             useMajorAxisLabels:true)
+            
+            self.updateAxisLabelsAtLocations(locations: self.minorTickLocations,
+                                             inRange:nil,
+                                             useMajorAxisLabels:false)
         }
         
         self.needsRelabel = false
@@ -806,44 +807,44 @@ public class CPTAxis : CPTLayer {
         theDelegate.axisDidRelabel(axis: self)
     }
     
-    //    /**
-    //     *  @internal
-    //     *  @brief Updates the position of all custom labels, hiding the ones that are outside the visible range.
-    //     */
+        /**
+         *  @internal
+         *  @brief Updates the position of all custom labels, hiding the ones that are outside the visible range.
+         */
     //   func updateCustomTickLabels
     //    {
-    //        CPTMutablePlotRange *range = [[self.plotSpace plotRangeForCoordinate:self.coordinate] mutableCopy];
+    //        CPTMutablePlotRange *range = [[self.plotSpace plotRangeForCoordinate:self.coordinate] mutableCopy]
     //
     //        if ( range ) {
-    //            CPTPlotRange *theVisibleRange = self.visibleRange;
+    //            CPTPlotRange *theVisibleRange = self.visibleRange
     //            if ( theVisibleRange ) {
-    //                [range intersectionPlotRange:theVisibleRange];
+    //                [range intersectionPlotRange:theVisibleRange]
     //            }
     //
     //            if ( range.lengthDouble != 0.0 ) {
-    //                CPTCoordinate orthogonalCoordinate = CPTOrthogonalCoordinate(self.coordinate);
+    //                CPTCoordinate orthogonalCoordinate = CPTOrthogonalCoordinate(self.coordinate)
     //
-    //                CPTSign direction = self.tickLabelDirection;
+    //                CPTSign direction = self.tickLabelDirection
     //
     //                if ( direction == CPTSignNone ) {
-    //                    direction = self.tickDirection;
+    //                    direction = self.tickDirection
     //                }
     //
     //                for ( CPTAxisLabel *label in self.axisLabels ) {
-    //                    var visible = [range containsNumber:label.tickLocation];
-    //                    label.contentLayer.hidden = !visible;
+    //                    var visible = [range containsNumber:label.tickLocation]
+    //                    label.contentLayer.hidden = !visible
     //                    if ( visible ) {
-    //                        CGPoint tickBasePoint = [self viewPointForCoordinateValue:label.tickLocation];
-    //                        [label positionRelativeToViewPoint:tickBasePoint forCoordinate:orthogonalCoordinate inDirection:direction];
+    //                        CGPoint tickBasePoint = [self viewPointForCoordinateValue:label.tickLocation]
+    //                        [label positionRelativeToViewPoint:tickBasePoint forCoordinate:orthogonalCoordinate inDirection:direction]
     //                    }
     //                }
     //
     //                for ( CPTAxisLabel *label in self.minorTickAxisLabels ) {
-    //                    var visible = [range containsNumber:label.tickLocation];
-    //                    label.contentLayer.hidden = !visible;
+    //                    var visible = [range containsNumber:label.tickLocation]
+    //                    label.contentLayer.hidden = !visible
     //                    if ( visible ) {
-    //                        CGPoint tickBasePoint = [self viewPointForCoordinateValue:label.tickLocation];
-    //                        [label positionRelativeToViewPoint:tickBasePoint forCoordinate:orthogonalCoordinate inDirection:direction];
+    //                        CGPoint tickBasePoint = [self viewPointForCoordinateValue:label.tickLocation]
+    //                        [label positionRelativeToViewPoint:tickBasePoint forCoordinate:orthogonalCoordinate inDirection:direction]
     //                    }
     //                }
     //            }
@@ -853,21 +854,21 @@ public class CPTAxis : CPTLayer {
     
     //   func updateMinorTickLabelOffsets
     //    {
-    //        CPTSign direction      = self.tickDirection;
-    //        CPTSign labelDirection = self.minorTickLabelDirection;
+    //        CPTSign direction      = self.tickDirection
+    //        CPTSign labelDirection = self.minorTickLabelDirection
     //
     //        if ( labelDirection == CPTSignNone ) {
-    //            labelDirection = direction;
+    //            labelDirection = direction
     //        }
     //
-    //        CGFloat minorOffset = self.minorTickLabelOffset;
+    //        CGFloat minorOffset = self.minorTickLabelOffset
     //
     //        if ((direction == CPTSignNone) || (labelDirection == direction)) {
-    //            minorOffset += self.tickOffset;
+    //            minorOffset += self.tickOffset
     //        }
     //
     //        for ( CPTAxisLabel *label in self.minorTickAxisLabels ) {
-    //            label.offset = minorOffset;
+    //            label.offset = minorOffset
     //        }
     //    }
     //
@@ -878,17 +879,17 @@ public class CPTAxis : CPTLayer {
     //     **/
     //   func updateMajorTickLabels
     //    {
-    //        CPTCoordinate orthogonalCoordinate = CPTOrthogonalCoordinate(self.coordinate);
+    //        CPTCoordinate orthogonalCoordinate = CPTOrthogonalCoordinate(self.coordinate)
     //
-    //        CPTSign direction = self.tickLabelDirection;
+    //        CPTSign direction = self.tickLabelDirection
     //
     //        if ( direction == CPTSignNone ) {
-    //            direction = self.tickDirection;
+    //            direction = self.tickDirection
     //        }
     //
     //        for ( CPTAxisLabel *label in self.axisLabels ) {
-    //            CGPoint tickBasePoint = [self viewPointForCoordinateValue:label.tickLocation];
-    //            [label positionRelativeToViewPoint:tickBasePoint forCoordinate:orthogonalCoordinate inDirection:direction];
+    //            CGPoint tickBasePoint = [self viewPointForCoordinateValue:label.tickLocation]
+    //            [label positionRelativeToViewPoint:tickBasePoint forCoordinate:orthogonalCoordinate inDirection:direction]
     //        }
     //    }
     
@@ -901,7 +902,7 @@ public class CPTAxis : CPTLayer {
 
     //    -(nonnull NSNumber *)defaultTitleLocation
     //    {
-    //        return @(NAN);
+    //        return @(NAN)
     //    }
     //
     //    /**
@@ -910,17 +911,17 @@ public class CPTAxis : CPTLayer {
     
     func updateAxisTitle()
     {
-        var direction = self.titleDirection;
+        var direction = self.titleDirection
         if direction == .none {
-            direction = self.tickDirection;
+            direction = self.tickDirection
         }
         
         let coordValue = self.viewPointForCoordinateValue(coordinateValue: CGFloat(self.titleLocation))
         let ortho = CPTUtilities.shared.CPTOrthogonalCoordinate(coordinate)
             
-        self.axisTitle()!.positionRelativeToViewPoint( point: coordValue,
+        self.axisTitle!.positionRelativeToViewPoint( point:   coordValue,
                                                     coordinate: ortho,
-                                                    direction:direction)
+                                                    direction:  direction)
     }
 
 // MARK: - Layout
@@ -930,7 +931,7 @@ public class CPTAxis : CPTLayer {
             self.relabel()
         }
         else {
-            self.updateMajorTickLabels();
+            self.updateMajorTickLabels()
             self.updateMinorTickLabels()
         }
         self.updateAxisTitle()
@@ -945,14 +946,14 @@ public class CPTAxis : CPTLayer {
     //    {
     //        if ( limitBand ) {
     //            if ( !self.mutableBackgroundLimitBands ) {
-    //                self.mutableBackgroundLimitBands = [NSMutableArray array];
+    //                self.mutableBackgroundLimitBands = [NSMutableArray array]
     //            }
     //
-    //            CPTLimitBand *band = limitBand;
-    //            [self.mutableBackgroundLimitBands addObject:band];
+    //            CPTLimitBand *band = limitBand
+    //            [self.mutableBackgroundLimitBands addObject:band]
     //
-    //            CPTPlotArea *thePlotArea = self.plotArea;
-    //            [thePlotArea setNeedsDisplay];
+    //            CPTPlotArea *thePlotArea = self.plotArea
+    //            [thePlotArea setNeedsDisplay]
     //        }
     //    }
     //
@@ -962,10 +963,10 @@ public class CPTAxis : CPTLayer {
     func removeBackgroundLimitBand(limitBand: CPTLimitBand? )
     {
         if (( limitBand ) != nil) {
-            let band = limitBand;
+            let band = limitBand
             self.mutableBackgroundLimitBands.removeObject(band!)
             
-            let thePlotArea = self.plotArea;
+            let thePlotArea = self.plotArea
             thePlotArea?.setNeedsDisplay()
         }
     }
@@ -975,7 +976,7 @@ public class CPTAxis : CPTLayer {
     func removeAllBackgroundLimitBands()
     {
         self.mutableBackgroundLimitBands.removeAll()
-        let thePlotArea = self.plotArea;
+        let thePlotArea = self.plotArea
         thePlotArea?.setNeedsDisplay()
     }
     
@@ -984,7 +985,7 @@ public class CPTAxis : CPTLayer {
     {
         guard self.isHidden == false else { return false }
         
-        let theGraph = self.graph;
+        let theGraph = self.graph
         guard theGraph != nil else { return false }
         
         weak var theDelegate = self.delegate as? CPTAxisDelegate
@@ -992,21 +993,21 @@ public class CPTAxis : CPTLayer {
         // Tick labels
         
         for label in self.axisLabels {
-            let contentLayer = label.contentLayer;
+            let contentLayer = label.contentLayer
             if contentLayer.isHidden == false {
                 let labelPoint = theGraph?.convert(interactionPoint, to:contentLayer)
                 
                 if contentLayer.bounds.contains( labelPoint!) == true {
-                    self.pointingDeviceDownLabel = label;
+                    self.pointingDeviceDownLabel = label
                     var handled = false
                     
                     if ((theDelegate?.axis(axis:labelTouchDown:)) != nil) {
-                        handled = true;
+                        handled = true
                         theDelegate?.axis(axis: self, labelTouchDown:label)
                     }
                     
                     if ((theDelegate?.axis(axis:labelTouchDown:withEvent:)) != nil) {
-                        handled = true;
+                        handled = true
                         theDelegate?.axis(axis:self, labelTouchDown:label, withEvent:event)
                     }
                     guard handled == false else { return true }
@@ -1016,22 +1017,22 @@ public class CPTAxis : CPTLayer {
         
         // Minor tick labels
         for label in self.minorTickAxisLabels {
-            let contentLayer = label.contentLayer;
+            let contentLayer = label.contentLayer
             if ( !contentLayer.isHidden ) {
                 
                 let labelPoint = theGraph?.convert(interactionPoint, to:contentLayer)
                 
                 if contentLayer.bounds.contains(labelPoint!) == true {
-                    self.pointingDeviceDownTickLabel = label;
+                    self.pointingDeviceDownTickLabel = label
                     var handled = false
                     
                     if ((theDelegate?.axis(axis: minorTickTouchDown:)) != nil) {
-                        handled = true;
+                        handled = true
                         theDelegate?.axis(axis:self, minorTickTouchDown:label)
                     }
                     
                     if ((theDelegate?.axis(axis:minorTickTouchDown:withEvent:)) != nil) {
-                        handled = true;
+                        handled = true
                         theDelegate?.axis(axis: self, minorTickTouchDown:label, withEvent:event)
                     }
                     guard handled == false else { return true }
@@ -1072,13 +1073,13 @@ public class CPTAxis : CPTLayer {
     //     **/
     override func pointingDeviceUpEvent(event: CPTNativeEvent, atPoint interactionPoint:CGPoint )-> Bool
     {
-        let selectedDownLabel     = self.pointingDeviceDownLabel;
-        let selectedDownTickLabel = self.pointingDeviceDownTickLabel;
+        let selectedDownLabel     = self.pointingDeviceDownLabel
+        let selectedDownTickLabel = self.pointingDeviceDownTickLabel
         
-        self.pointingDeviceDownLabel     = nil;
-        self.pointingDeviceDownTickLabel = nil;
+        self.pointingDeviceDownLabel     = nil
+        self.pointingDeviceDownTickLabel = nil
         
-        let theGraph = self.graph;
+        let theGraph = self.graph
         
         guard self.isHidden == false else { return false }
 //        guard self.plots.count != 0 else { return false }
@@ -1088,7 +1089,7 @@ public class CPTAxis : CPTLayer {
         
         // Tick labels
         for label in self.axisLabels {
-            let contentLayer = label.contentLayer;
+            let contentLayer = label.contentLayer
             if ( !contentLayer.isHidden ) {
                 let labelPoint = theGraph?.convert(interactionPoint, to:contentLayer)
                 
@@ -1108,7 +1109,7 @@ public class CPTAxis : CPTLayer {
                     
                     if ( label == selectedDownLabel ) {
                         if (theDelegate?.axis(axis: labelWasSelected:) != nil) {
-                            handled = true;
+                            handled = true
                             theDelegate?.axis(axis:self, labelWasSelected:label)
                         }
                         
@@ -1125,7 +1126,7 @@ public class CPTAxis : CPTLayer {
         
         // Minor tick labels
         for label in self.minorTickAxisLabels {
-            let contentLayer = label.contentLayer;
+            let contentLayer = label.contentLayer
             if (  !contentLayer.isHidden ) {
                 let labelPoint = theGraph!.convert(interactionPoint, to:contentLayer)
                 
@@ -1133,29 +1134,29 @@ public class CPTAxis : CPTLayer {
                     var handled = false
                     
                     if ((theDelegate?.axis(axis: minorTickTouchUp:)) != nil) {
-                        handled = true;
+                        handled = true
                         theDelegate?.axis(axis:self, minorTickTouchUp:label)
                     }
                     
                     if ((theDelegate?.axis(axis: minorTickTouchUp: withEvent:)) != nil) {
-                        handled = true;
+                        handled = true
                         theDelegate?.axis(axis:self, minorTickTouchUp:label, withEvent:event)
                     }
                     
                     if label == selectedDownTickLabel  {
                         if ((theDelegate?.axis(axis: minorTickLabelWasSelected:)) != nil) {
-                            handled = true;
+                            handled = true
                             theDelegate?.axis(axis:self, minorTickLabelWasSelected:label)
                         }
                         
                         if ((theDelegate?.axis(axis: minorTickLabelWasSelected: withEvent:)) != nil) {
-                            handled = true;
+                            handled = true
                             theDelegate?.axis(axis:self, minorTickLabelWasSelected:label, withEvent:event)
                         }
                     }
                     
                     if ( handled ) {
-                        return true;
+                        return true
                     }
                 }
             }
@@ -1169,34 +1170,34 @@ public class CPTAxis : CPTLayer {
     //   func setLabelTextStyle:(nullable CPTTextStyle *)newStyle
     //    {
     //        if ( labelTextStyle != newStyle ) {
-    //            labelTextStyle = [newStyle copy];
+    //            labelTextStyle = [newStyle copy]
     //
-    //            Class textLayerClass = [CPTTextLayer class];
+    //            Class textLayerClass = [CPTTextLayer class]
     //            for ( CPTAxisLabel *axisLabel in self.axisLabels ) {
-    //                CPTLayer *contentLayer = axisLabel.contentLayer;
+    //                CPTLayer *contentLayer = axisLabel.contentLayer
     //                if ( [contentLayer isKindOfClass:textLayerClass] ) {
-    //                    ((CPTTextLayer *)contentLayer).textStyle = labelTextStyle;
+    //                    ((CPTTextLayer *)contentLayer).textStyle = labelTextStyle
     //                }
     //            }
     //
-    //            [self updateMajorTickLabels];
+    //            [self updateMajorTickLabels]
     //        }
     //    }
     //
     //   func setMinorTickLabelTextStyle:(nullable CPTTextStyle *)newStyle
     //    {
     //        if ( minorTickLabelTextStyle != newStyle ) {
-    //            minorTickLabelTextStyle = [newStyle copy];
+    //            minorTickLabelTextStyle = [newStyle copy]
     //
-    //            Class textLayerClass = [CPTTextLayer class];
+    //            Class textLayerClass = [CPTTextLayer class]
     //            for ( CPTAxisLabel *axisLabel in self.minorTickAxisLabels ) {
-    //                CPTLayer *contentLayer = axisLabel.contentLayer;
+    //                CPTLayer *contentLayer = axisLabel.contentLayer
     //                if ( [contentLayer isKindOfClass:textLayerClass] ) {
-    //                    ((CPTTextLayer *)contentLayer).textStyle = minorTickLabelTextStyle;
+    //                    ((CPTTextLayer *)contentLayer).textStyle = minorTickLabelTextStyle
     //                }
     //            }
     //
-    //            [self updateMinorTickLabels];
+    //            [self updateMinorTickLabels]
     //        }
     //    }
     //
@@ -1204,17 +1205,17 @@ public class CPTAxis : CPTLayer {
     //   func setTitleTextStyle:(nullable CPTTextStyle *)newStyle
     //    {
     //        if ( newStyle != titleTextStyle ) {
-    //            titleTextStyle = [newStyle copy];
+    //            titleTextStyle = [newStyle copy]
     //
     //            if ( !self.inTitleUpdate ) {
-    //                self.inTitleUpdate   = true;
-    //                self.attributedTitle = nil;
+    //                self.inTitleUpdate   = true
+    //                self.attributedTitle = nil
     //                self.inTitleUpdate   = false
     //
-    //                CPTLayer *contentLayer = self.axisTitle.contentLayer;
+    //                CPTLayer *contentLayer = self.axisTitle.contentLayer
     //                if ( [contentLayer isKindOfClass:[CPTTextLayer class]] ) {
-    //                    ((CPTTextLayer *)contentLayer).textStyle = titleTextStyle;
-    //                    [self updateAxisTitle];
+    //                    ((CPTTextLayer *)contentLayer).textStyle = titleTextStyle
+    //                    [self updateAxisTitle]
     //                }
     //            }
     //        }
@@ -1224,9 +1225,9 @@ public class CPTAxis : CPTLayer {
         get { return _titleOffset}
         set {
             if ( newValue != _titleOffset ) {
-                _titleOffset = newValue;
+                _titleOffset = newValue
                 
-                self.axisTitle?.offset = _titleOffset;
+                self.axisTitle?.offset = _titleOffset
                 self.updateAxisTitle()
             }
         }
@@ -1235,9 +1236,9 @@ public class CPTAxis : CPTLayer {
     func setTitleRotation(newRotation: CGFloat)
         {
             if ( newRotation != titleRotation ) {
-                titleRotation = newRotation;
+                titleRotation = newRotation
     
-                self.axisTitle?.rotation = titleRotation!;
+                self.axisTitle?.rotation = titleRotation!
                 self.updateAxisTitle()
             }
         }
@@ -1245,7 +1246,7 @@ public class CPTAxis : CPTLayer {
     func setTitleDirection(newDirection: CPTSign)
         {
             if ( newDirection != titleDirection ) {
-                titleDirection = newDirection;
+                titleDirection = newDirection
     
                 self.updateAxisTitle()
             }
@@ -1254,22 +1255,22 @@ public class CPTAxis : CPTLayer {
     //   func setTitle:(nullable NSString *)newTitle
     //    {
     //        if ( newTitle != title ) {
-    //            title = [newTitle copy];
+    //            title = [newTitle copy]
     //
     //            if ( !self.inTitleUpdate ) {
-    //                self.inTitleUpdate   = true;
-    //                self.attributedTitle = nil;
+    //                self.inTitleUpdate   = true
+    //                self.attributedTitle = nil
     //                self.inTitleUpdate   = false
     //
     //                if ( title ) {
-    //                    CPTLayer *contentLayer = self.axisTitle.contentLayer;
+    //                    CPTLayer *contentLayer = self.axisTitle.contentLayer
     //                    if ( [contentLayer isKindOfClass:[CPTTextLayer class]] ) {
-    //                        ((CPTTextLayer *)contentLayer).text = title;
-    //                        [self updateAxisTitle];
+    //                        ((CPTTextLayer *)contentLayer).text = title
+    //                        [self updateAxisTitle]
     //                    }
     //                }
     //                else {
-    //                    self.axisTitle = nil;
+    //                    self.axisTitle = nil
     //                }
     //            }
     //        }
@@ -1278,27 +1279,27 @@ public class CPTAxis : CPTLayer {
     //   func setAttributedTitle:(nullable NSAttributedString *)newTitle
     //    {
     //        if ( newTitle != attributedTitle ) {
-    //            attributedTitle = [newTitle copy];
+    //            attributedTitle = [newTitle copy]
     //
     //            if ( !self.inTitleUpdate ) {
-    //                self.inTitleUpdate = true;
+    //                self.inTitleUpdate = true
     //
     //                if ( attributedTitle ) {
     //                    self.titleTextStyle = [CPTTextStyle textStyleWithAttributes:[attributedTitle attributesAtIndex:0
-    //                                                                                                    effectiveRange:NULL]];
-    //                    self.title = attributedTitle.string;
+    //                                                                                                    effectiveRange:NULL]]
+    //                    self.title = attributedTitle.string
     //
-    //                    CPTLayer *contentLayer = self.axisTitle.contentLayer;
+    //                    CPTLayer *contentLayer = self.axisTitle.contentLayer
     //                    if ( [contentLayer isKindOfClass:[CPTTextLayer class]] ) {
-    //                        ((CPTTextLayer *)contentLayer).attributedText = attributedTitle;
-    //                        [self updateAxisTitle];
+    //                        ((CPTTextLayer *)contentLayer).attributedText = attributedTitle
+    //                        [self updateAxisTitle]
     //                    }
     //                }
     //                else {
-    //                    self.titleTextStyle = nil;
-    //                    self.title          = nil;
+    //                    self.titleTextStyle = nil
+    //                    self.title          = nil
     //
-    //                    self.axisTitle = nil;
+    //                    self.axisTitle = nil
     //                }
     //
     //                self.inTitleUpdate = false
@@ -1306,215 +1307,217 @@ public class CPTAxis : CPTLayer {
     //        }
     //    }
     //
-    //   func setTitleLocation:(nullable NSNumber *)newLocation
-    //    {
-    //        var needsUpdate = true;
-    //
-    //        if ( newLocation ) {
-    //            NSNumber *location = newLocation;
-    //            needsUpdate = ![titleLocation isEqualToNumber:location];
-    //        }
-    //
-    //        if ( needsUpdate ) {
-    //            titleLocation = newLocation;
-    //            [self updateAxisTitle];
-    //        }
-    //    }
-    //
-    //    -(nullable NSNumber *)titleLocation
-    //    {
-    //        if ( isnan(titleLocation.doubleValue)) {
-    //            return self.defaultTitleLocation;
-    //        }
-    //        else {
-    //            return titleLocation;
-    //        }
-    //    }
-    //
-    //   func setLabelExclusionRanges:(nullable CPTPlotRangeArray *)ranges
-    //    {
-    //        if ( ranges != labelExclusionRanges ) {
-    //            labelExclusionRanges = ranges;
-    //            self.needsRelabel    = true;
-    //        }
-    //    }
-    //
     
+//    isEqualToRange
+    
+    var _titleLocation : Int?
+    var titleLocation : Int? {
+        get {
+            if _titleLocation == -1 {
+                return defaultTitleLocation
+            } else {
+                return _titleLocation
+            }
+        }
+        set {
+            var needsUpdate = true;
+            
+            if ( newValue  != nil) {
+                let location = newValue
+                needsUpdate = titleLocation == location
+            }
+            
+            if ( needsUpdate  == true ) {
+                _titleLocation = newValue!
+                self.updateAxisTitle()
+            }
+        }
+    }
+
+
+    //
+    func setLabelExclusionRanges(ranges: CPTPlotRangeArray )
+    {
+        if ( ranges != labelExclusionRanges )  {
+            labelExclusionRanges = ranges
+            self.needsRelabel    = true
+        }
+    }
     
     
     //   func setMajorTickLocations:(nullable CPTNumberSet *)newLocations
     //    {
     //        if ( newLocations != majorTickLocations ) {
-    //            majorTickLocations = newLocations;
+    //            majorTickLocations = newLocations
     //            if ( self.separateLayers ) {
-    //                CPTGridLines *gridlines = self.majorGridLines;
-    //                [gridlines setNeedsDisplay];
+    //                CPTGridLines *gridlines = self.majorGridLines
+    //                [gridlines setNeedsDisplay]
     //            }
     //            else {
-    //                CPTPlotArea *thePlotArea = self.plotArea;
-    //                [thePlotArea.majorGridLineGroup setNeedsDisplay];
+    //                CPTPlotArea *thePlotArea = self.plotArea
+    //                [thePlotArea.majorGridLineGroup setNeedsDisplay]
     //            }
     //
-    //            self.needsRelabel = true;
+    //            self.needsRelabel = true
     //        }
     //    }
     //
     //   func setMinorTickLocations:(nullable CPTNumberSet *)newLocations
     //    {
     //        if ( newLocations != minorTickLocations ) {
-    //            minorTickLocations = newLocations;
+    //            minorTickLocations = newLocations
     //            if ( self.separateLayers ) {
-    //                CPTGridLines *gridlines = self.minorGridLines;
-    //                [gridlines setNeedsDisplay];
+    //                CPTGridLines *gridlines = self.minorGridLines
+    //                [gridlines setNeedsDisplay]
     //            }
     //            else {
-    //                CPTPlotArea *thePlotArea = self.plotArea;
-    //                [thePlotArea.minorGridLineGroup setNeedsDisplay];
+    //                CPTPlotArea *thePlotArea = self.plotArea
+    //                [thePlotArea.minorGridLineGroup setNeedsDisplay]
     //            }
     //
-    //            self.needsRelabel = true;
+    //            self.needsRelabel = true
     //        }
     //    }
     //
     //   func setMajorTickLength:(CGFloat)newLength
     //    {
     //        if ( newLength != majorTickLength ) {
-    //            majorTickLength = newLength;
+    //            majorTickLength = newLength
     //
-    //            [self updateMajorTickLabelOffsets];
-    //            [self updateMinorTickLabelOffsets];
+    //            [self updateMajorTickLabelOffsets]
+    //            [self updateMinorTickLabelOffsets]
     //
-    //            [self setNeedsDisplay];
-    //            [self updateMajorTickLabels];
-    //            [self updateMinorTickLabels];
+    //            [self setNeedsDisplay]
+    //            [self updateMajorTickLabels]
+    //            [self updateMinorTickLabels]
     //        }
     //    }
     //
     //   func setMinorTickLength:(CGFloat)newLength
     //    {
     //        if ( newLength != minorTickLength ) {
-    //            minorTickLength = newLength;
-    //            [self setNeedsDisplay];
+    //            minorTickLength = newLength
+    //            [self setNeedsDisplay]
     //        }
     //    }
     //
     //   func setLabelOffset:(CGFloat)newOffset
     //    {
     //        if ( newOffset != labelOffset ) {
-    //            labelOffset = newOffset;
+    //            labelOffset = newOffset
     //
-    //            [self updateMajorTickLabelOffsets];
-    //            [self updateMajorTickLabels];
+    //            [self updateMajorTickLabelOffsets]
+    //            [self updateMajorTickLabels]
     //        }
     //    }
     //
     //   func setMinorTickLabelOffset:(CGFloat)newOffset
     //    {
     //        if ( newOffset != minorTickLabelOffset ) {
-    //            minorTickLabelOffset = newOffset;
+    //            minorTickLabelOffset = newOffset
     //
-    //            [self updateMinorTickLabelOffsets];
-    //            [self updateMinorTickLabels];
+    //            [self updateMinorTickLabelOffsets]
+    //            [self updateMinorTickLabels]
     //        }
     //    }
     //
     //   func setLabelRotation:(CGFloat)newRotation
     //    {
     //        if ( newRotation != labelRotation ) {
-    //            labelRotation = newRotation;
+    //            labelRotation = newRotation
     //            for ( CPTAxisLabel *label in self.axisLabels ) {
-    //                label.rotation = labelRotation;
+    //                label.rotation = labelRotation
     //            }
-    //            [self updateMajorTickLabels];
+    //            [self updateMajorTickLabels]
     //        }
     //    }
     //
     //   func setMinorTickLabelRotation:(CGFloat)newRotation
     //    {
     //        if ( newRotation != minorTickLabelRotation ) {
-    //            minorTickLabelRotation = newRotation;
+    //            minorTickLabelRotation = newRotation
     //            for ( CPTAxisLabel *label in self.minorTickAxisLabels ) {
-    //                label.rotation = minorTickLabelRotation;
+    //                label.rotation = minorTickLabelRotation
     //            }
-    //            [self updateMinorTickLabels];
+    //            [self updateMinorTickLabels]
     //        }
     //    }
     //
     //   func setLabelAlignment:(CPTAlignment)newAlignment
     //    {
     //        if ( newAlignment != labelAlignment ) {
-    //            labelAlignment = newAlignment;
-    //            [self updateMajorTickLabels];
+    //            labelAlignment = newAlignment
+    //            [self updateMajorTickLabels]
     //        }
     //    }
     //
     //   func setMinorTickLabelAlignment:(CPTAlignment)newAlignment
     //    {
     //        if ( newAlignment != minorTickLabelAlignment ) {
-    //            minorTickLabelAlignment = newAlignment;
-    //            [self updateMinorTickLabels];
+    //            minorTickLabelAlignment = newAlignment
+    //            [self updateMinorTickLabels]
     //        }
     //    }
     //
     //   func setLabelShadow:(nullable CPTShadow *)newLabelShadow
     //    {
     //        if ( newLabelShadow != labelShadow ) {
-    //            labelShadow = newLabelShadow;
+    //            labelShadow = newLabelShadow
     //            for ( CPTAxisLabel *label in self.axisLabels ) {
-    //                label.contentLayer.shadow = labelShadow;
+    //                label.contentLayer.shadow = labelShadow
     //            }
-    //            [self updateMajorTickLabels];
+    //            [self updateMajorTickLabels]
     //        }
     //    }
     //
     //   func setMinorTickLabelShadow:(nullable CPTShadow *)newLabelShadow
     //    {
     //        if ( newLabelShadow != minorTickLabelShadow ) {
-    //            minorTickLabelShadow = newLabelShadow;
+    //            minorTickLabelShadow = newLabelShadow
     //            for ( CPTAxisLabel *label in self.minorTickAxisLabels ) {
-    //                label.contentLayer.shadow = minorTickLabelShadow;
+    //                label.contentLayer.shadow = minorTickLabelShadow
     //            }
-    //            [self updateMinorTickLabels];
+    //            [self updateMinorTickLabels]
     //        }
     //    }
     //
     //   func setPlotSpace:(nullable CPTPlotSpace *)newSpace
     //    {
     //        if ( newSpace != plotSpace ) {
-    //            plotSpace         = newSpace;
-    //            self.needsRelabel = true;
+    //            plotSpace         = newSpace
+    //            self.needsRelabel = true
     //        }
     //    }
     //
     //   func setCoordinate:(CPTCoordinate)newCoordinate
     //    {
     //        if ( newCoordinate != coordinate ) {
-    //            coordinate        = newCoordinate;
-    //            self.needsRelabel = true;
+    //            coordinate        = newCoordinate
+    //            self.needsRelabel = true
     //        }
     //    }
     //
     //   func setAxisLineStyle:(nullable CPTLineStyle *)newLineStyle
     //    {
     //        if ( newLineStyle != axisLineStyle ) {
-    //            axisLineStyle = [newLineStyle copy];
-    //            [self setNeedsDisplay];
+    //            axisLineStyle = [newLineStyle copy]
+    //            [self setNeedsDisplay]
     //        }
     //    }
     //
     //   func setMajorTickLineStyle:(nullable CPTLineStyle *)newLineStyle
     //    {
     //        if ( newLineStyle != majorTickLineStyle ) {
-    //            majorTickLineStyle = [newLineStyle copy];
-    //            [self setNeedsDisplay];
+    //            majorTickLineStyle = [newLineStyle copy]
+    //            [self setNeedsDisplay]
     //        }
     //    }
     //
     //   func setMinorTickLineStyle:(nullable CPTLineStyle *)newLineStyle
     //    {
     //        if ( newLineStyle != minorTickLineStyle ) {
-    //            minorTickLineStyle = [newLineStyle copy];
-    //            [self setNeedsDisplay];
+    //            minorTickLineStyle = [newLineStyle copy]
+    //            [self setNeedsDisplay]
     //        }
     //    }
     //
@@ -1524,19 +1527,19 @@ public class CPTAxis : CPTLayer {
         if ( newLineStyle != majorGridLineStyle ) {
             majorGridLineStyle = newLineStyle
             
-            let thePlotArea = self.plotArea;
+            let thePlotArea = self.plotArea
             thePlotArea?.updateAxisSetLayersForType( layerType: .majorGridLines)
             
             if ( self.separateLayers ) {
                 if (majorGridLineStyle != nil) {
-                    var gridLines = self.majorGridLines;
+                    var gridLines = self.majorGridLines
                     
                     if (gridLines != nil) {
                         gridLines?.setNeedsDisplay()
                     }
                     else {
                         gridLines           = CPTGridLines(frame: CGRect())
-                        self.majorGridLines = gridLines;
+                        self.majorGridLines = gridLines
                     }
                 }
                 else {
@@ -1552,29 +1555,29 @@ public class CPTAxis : CPTLayer {
     //   func setMinorGridLineStyle:(nullable CPTLineStyle *)newLineStyle
     //    {
     //        if ( newLineStyle != minorGridLineStyle ) {
-    //            minorGridLineStyle = [newLineStyle copy];
+    //            minorGridLineStyle = [newLineStyle copy]
     //
-    //            CPTPlotArea *thePlotArea = self.plotArea;
-    //            [thePlotArea updateAxisSetLayersForType:CPTGraphLayerTypeMinorGridLines];
+    //            CPTPlotArea *thePlotArea = self.plotArea
+    //            [thePlotArea updateAxisSetLayersForType:CPTGraphLayerTypeMinorGridLines]
     //
     //            if ( self.separateLayers ) {
     //                if ( minorGridLineStyle ) {
-    //                    CPTGridLines *gridLines = self.minorGridLines;
+    //                    CPTGridLines *gridLines = self.minorGridLines
     //
     //                    if ( gridLines ) {
-    //                        [gridLines setNeedsDisplay];
+    //                        [gridLines setNeedsDisplay]
     //                    }
     //                    else {
-    //                        gridLines           = [[CPTGridLines alloc] init];
-    //                        self.minorGridLines = gridLines;
+    //                        gridLines           = [[CPTGridLines alloc] init]
+    //                        self.minorGridLines = gridLines
     //                    }
     //                }
     //                else {
-    //                    self.minorGridLines = nil;
+    //                    self.minorGridLines = nil
     //                }
     //            }
     //            else {
-    //                [thePlotArea.minorGridLineGroup setNeedsDisplay];
+    //                [thePlotArea.minorGridLineGroup setNeedsDisplay]
     //            }
     //        }
     //    }
@@ -1582,73 +1585,73 @@ public class CPTAxis : CPTLayer {
     //   func setAxisLineCapMin:(nullable CPTLineCap *)newAxisLineCapMin
     //    {
     //        if ( newAxisLineCapMin != axisLineCapMin ) {
-    //            axisLineCapMin = [newAxisLineCapMin copy];
-    //            [self setNeedsDisplay];
+    //            axisLineCapMin = [newAxisLineCapMin copy]
+    //            [self setNeedsDisplay]
     //        }
     //    }
     //
     //   func setAxisLineCapMax:(nullable CPTLineCap *)newAxisLineCapMax
     //    {
     //        if ( newAxisLineCapMax != axisLineCapMax ) {
-    //            axisLineCapMax = [newAxisLineCapMax copy];
-    //            [self setNeedsDisplay];
+    //            axisLineCapMax = [newAxisLineCapMax copy]
+    //            [self setNeedsDisplay]
     //        }
     //    }
     //
     //   func setLabelingOrigin:(nonnull NSNumber *)newLabelingOrigin
     //    {
-    //        var needsUpdate = true;
+    //        var needsUpdate = true
     //
     //        if ( newLabelingOrigin ) {
-    //            needsUpdate = ![labelingOrigin isEqualToNumber:newLabelingOrigin];
+    //            needsUpdate = ![labelingOrigin isEqualToNumber:newLabelingOrigin]
     //        }
     //
     //        if ( needsUpdate ) {
-    //            labelingOrigin = newLabelingOrigin;
+    //            labelingOrigin = newLabelingOrigin
     //
-    //            self.needsRelabel = true;
+    //            self.needsRelabel = true
     //        }
     //    }
     //
     //   func setMajorIntervalLength:(nullable NSNumber *)newIntervalLength
     //    {
-    //        var needsUpdate = true;
+    //        var needsUpdate = true
     //
     //        if ( newIntervalLength ) {
-    //            NSNumber *interval = newIntervalLength;
-    //            needsUpdate = ![majorIntervalLength isEqualToNumber:interval];
+    //            NSNumber *interval = newIntervalLength
+    //            needsUpdate = ![majorIntervalLength isEqualToNumber:interval]
     //        }
     //
     //        if ( needsUpdate ) {
-    //            majorIntervalLength = newIntervalLength;
+    //            majorIntervalLength = newIntervalLength
     //
-    //            self.needsRelabel = true;
+    //            self.needsRelabel = true
     //        }
     //    }
     //
     //   func setMinorTicksPerInterval:(NSUInteger)newMinorTicksPerInterval
     //    {
     //        if ( newMinorTicksPerInterval != minorTicksPerInterval ) {
-    //            minorTicksPerInterval = newMinorTicksPerInterval;
+    //            minorTicksPerInterval = newMinorTicksPerInterval
     //
-    //            self.needsRelabel = true;
+    //            self.needsRelabel = true
     //        }
     //    }
     //
     //   func setLabelingPolicy:(CPTAxisLabelingPolicy)newPolicy
     //    {
     //        if ( newPolicy != labelingPolicy ) {
-    //            labelingPolicy    = newPolicy;
-    //            self.needsRelabel = true;
+    //            labelingPolicy    = newPolicy
+    //            self.needsRelabel = true
     //        }
     //    }
     //
     //   func setPreferredNumberOfMajorTicks:(NSUInteger)newPreferredNumberOfMajorTicks
     //    {
     //        if ( newPreferredNumberOfMajorTicks != preferredNumberOfMajorTicks ) {
-    //            preferredNumberOfMajorTicks = newPreferredNumberOfMajorTicks;
+    //            preferredNumberOfMajorTicks = newPreferredNumberOfMajorTicks
     //            if ( self.labelingPolicy == CPTAxisLabelingPolicyAutomatic ) {
-    //                self.needsRelabel = true;
+    //                self.needsRelabel = true
     //            }
     //        }
     //    }
@@ -1656,20 +1659,20 @@ public class CPTAxis : CPTLayer {
     //   func setLabelFormatter:(nullable NSFormatter *)newTickLabelFormatter
     //    {
     //        if ( newTickLabelFormatter != labelFormatter ) {
-    //            labelFormatter = newTickLabelFormatter;
+    //            labelFormatter = newTickLabelFormatter
     //
-    //            self.labelFormatterChanged = true;
-    //            self.needsRelabel          = true;
+    //            self.labelFormatterChanged = true
+    //            self.needsRelabel          = true
     //        }
     //    }
     //
     //   func setMinorTickLabelFormatter:(nullable NSFormatter *)newMinorTickLabelFormatter
     //    {
     //        if ( newMinorTickLabelFormatter != minorTickLabelFormatter ) {
-    //            minorTickLabelFormatter = newMinorTickLabelFormatter;
+    //            minorTickLabelFormatter = newMinorTickLabelFormatter
     //
-    //            self.minorLabelFormatterChanged = true;
-    //            self.needsRelabel               = true;
+    //            self.minorLabelFormatterChanged = true
+    //            self.needsRelabel               = true
     //        }
     //    }
     //
@@ -1677,18 +1680,18 @@ public class CPTAxis : CPTLayer {
     //   func setGridLinesRange:(nullable CPTPlotRange *)newRange
     //    {
     //        if ( gridLinesRange != newRange ) {
-    //            gridLinesRange = [newRange copy];
+    //            gridLinesRange = [newRange copy]
     //            if ( self.separateLayers ) {
-    //                CPTGridLines *gridlines = self.majorGridLines;
-    //                [gridlines setNeedsDisplay];
+    //                CPTGridLines *gridlines = self.majorGridLines
+    //                [gridlines setNeedsDisplay]
     //
-    //                gridlines = self.minorGridLines;
-    //                [gridlines setNeedsDisplay];
+    //                gridlines = self.minorGridLines
+    //                [gridlines setNeedsDisplay]
     //            }
     //            else {
-    //                CPTPlotArea *thePlotArea = self.plotArea;
-    //                [thePlotArea.majorGridLineGroup setNeedsDisplay];
-    //                [thePlotArea.minorGridLineGroup setNeedsDisplay];
+    //                CPTPlotArea *thePlotArea = self.plotArea
+    //                [thePlotArea.majorGridLineGroup setNeedsDisplay]
+    //                [thePlotArea.minorGridLineGroup setNeedsDisplay]
     //            }
     //        }
     //    }
@@ -1696,85 +1699,85 @@ public class CPTAxis : CPTLayer {
     //   func setPlotArea:(nullable CPTPlotArea *)newPlotArea
     //    {
     //        if ( newPlotArea != plotArea ) {
-    //            plotArea = newPlotArea;
+    //            plotArea = newPlotArea
     //
-    //            CPTGridLines *theMinorGridLines = self.minorGridLines;
-    //            CPTGridLines *theMajorGridLines = self.majorGridLines;
+    //            CPTGridLines *theMinorGridLines = self.minorGridLines
+    //            CPTGridLines *theMajorGridLines = self.majorGridLines
     //
     //            if ( newPlotArea ) {
-    //                [newPlotArea updateAxisSetLayersForType:CPTGraphLayerTypeMinorGridLines];
+    //                [newPlotArea updateAxisSetLayersForType:CPTGraphLayerTypeMinorGridLines]
     //                if ( theMinorGridLines ) {
-    //                    [theMinorGridLines removeFromSuperlayer];
-    //                    [newPlotArea.minorGridLineGroup insertSublayer:theMinorGridLines atIndex:[newPlotArea sublayerIndexForAxis:self layerType:CPTGraphLayerTypeMinorGridLines]];
+    //                    [theMinorGridLines removeFromSuperlayer]
+    //                    [newPlotArea.minorGridLineGroup insertSublayer:theMinorGridLines atIndex:[newPlotArea sublayerIndexForAxis:self layerType:CPTGraphLayerTypeMinorGridLines]]
     //                }
     //
-    //                [newPlotArea updateAxisSetLayersForType:CPTGraphLayerTypeMajorGridLines];
+    //                [newPlotArea updateAxisSetLayersForType:CPTGraphLayerTypeMajorGridLines]
     //                if ( theMajorGridLines ) {
-    //                    [theMajorGridLines removeFromSuperlayer];
-    //                    [newPlotArea.majorGridLineGroup insertSublayer:theMajorGridLines atIndex:[newPlotArea sublayerIndexForAxis:self layerType:CPTGraphLayerTypeMajorGridLines]];
+    //                    [theMajorGridLines removeFromSuperlayer]
+    //                    [newPlotArea.majorGridLineGroup insertSublayer:theMajorGridLines atIndex:[newPlotArea sublayerIndexForAxis:self layerType:CPTGraphLayerTypeMajorGridLines]]
     //                }
     //
-    //                [newPlotArea updateAxisSetLayersForType:CPTGraphLayerTypeAxisLabels];
+    //                [newPlotArea updateAxisSetLayersForType:CPTGraphLayerTypeAxisLabels]
     //                if ( self.axisLabels.count > 0 ) {
-    //                    CPTAxisLabelGroup *axisLabelGroup = newPlotArea.axisLabelGroup;
-    //                    CALayer *lastLayer                = nil;
+    //                    CPTAxisLabelGroup *axisLabelGroup = newPlotArea.axisLabelGroup
+    //                    CALayer *lastLayer                = nil
     //
     //                    for ( CPTAxisLabel *label in self.axisLabels ) {
-    //                        CPTLayer *contentLayer = label.contentLayer;
+    //                        CPTLayer *contentLayer = label.contentLayer
     //                        if ( contentLayer ) {
-    //                            [contentLayer removeFromSuperlayer];
+    //                            [contentLayer removeFromSuperlayer]
     //
     //                            if ( lastLayer ) {
-    //                                [axisLabelGroup insertSublayer:contentLayer below:lastLayer];
+    //                                [axisLabelGroup insertSublayer:contentLayer below:lastLayer]
     //                            }
     //                            else {
-    //                                [axisLabelGroup insertSublayer:contentLayer atIndex:[newPlotArea sublayerIndexForAxis:self layerType:CPTGraphLayerTypeAxisLabels]];
+    //                                [axisLabelGroup insertSublayer:contentLayer atIndex:[newPlotArea sublayerIndexForAxis:self layerType:CPTGraphLayerTypeAxisLabels]]
     //                            }
     //
-    //                            lastLayer = contentLayer;
+    //                            lastLayer = contentLayer
     //                        }
     //                    }
     //                }
     //
     //                if ( self.minorTickAxisLabels.count > 0 ) {
-    //                    CPTAxisLabelGroup *axisLabelGroup = newPlotArea.axisLabelGroup;
-    //                    CALayer *lastLayer                = nil;
+    //                    CPTAxisLabelGroup *axisLabelGroup = newPlotArea.axisLabelGroup
+    //                    CALayer *lastLayer                = nil
     //
     //                    for ( CPTAxisLabel *label in self.minorTickAxisLabels ) {
-    //                        CPTLayer *contentLayer = label.contentLayer;
+    //                        CPTLayer *contentLayer = label.contentLayer
     //                        if ( contentLayer ) {
-    //                            [contentLayer removeFromSuperlayer];
+    //                            [contentLayer removeFromSuperlayer]
     //
     //                            if ( lastLayer ) {
-    //                                [axisLabelGroup insertSublayer:contentLayer below:lastLayer];
+    //                                [axisLabelGroup insertSublayer:contentLayer below:lastLayer]
     //                            }
     //                            else {
-    //                                [axisLabelGroup insertSublayer:contentLayer atIndex:[newPlotArea sublayerIndexForAxis:self layerType:CPTGraphLayerTypeAxisLabels]];
+    //                                [axisLabelGroup insertSublayer:contentLayer atIndex:[newPlotArea sublayerIndexForAxis:self layerType:CPTGraphLayerTypeAxisLabels]]
     //                            }
     //
-    //                            lastLayer = contentLayer;
+    //                            lastLayer = contentLayer
     //                        }
     //                    }
     //                }
     //
-    //                [newPlotArea updateAxisSetLayersForType:CPTGraphLayerTypeAxisTitles];
-    //                CPTLayer *content = self.axisTitle.contentLayer;
+    //                [newPlotArea updateAxisSetLayersForType:CPTGraphLayerTypeAxisTitles]
+    //                CPTLayer *content = self.axisTitle.contentLayer
     //                if ( content ) {
-    //                    [content removeFromSuperlayer];
-    //                    [newPlotArea.axisTitleGroup insertSublayer:content atIndex:[newPlotArea sublayerIndexForAxis:self layerType:CPTGraphLayerTypeAxisTitles]];
+    //                    [content removeFromSuperlayer]
+    //                    [newPlotArea.axisTitleGroup insertSublayer:content atIndex:[newPlotArea sublayerIndexForAxis:self layerType:CPTGraphLayerTypeAxisTitles]]
     //                }
     //            }
     //            else {
-    //                [theMinorGridLines removeFromSuperlayer];
-    //                [theMajorGridLines removeFromSuperlayer];
+    //                [theMinorGridLines removeFromSuperlayer]
+    //                [theMajorGridLines removeFromSuperlayer]
     //
     //                for ( CPTAxisLabel *label in self.axisLabels ) {
-    //                    [label.contentLayer removeFromSuperlayer];
+    //                    [label.contentLayer removeFromSuperlayer]
     //                }
     //                for ( CPTAxisLabel *label in self.minorTickAxisLabels ) {
-    //                    [label.contentLayer removeFromSuperlayer];
+    //                    [label.contentLayer removeFromSuperlayer]
     //                }
-    //                [self.axisTitle.contentLayer removeFromSuperlayer];
+    //                [self.axisTitle.contentLayer removeFromSuperlayer]
     //            }
     //        }
     //    }
@@ -1782,42 +1785,42 @@ public class CPTAxis : CPTLayer {
     //   func setVisibleRange:(nullable CPTPlotRange *)newRange
     //    {
     //        if ( newRange != visibleRange ) {
-    //            visibleRange      = [newRange copy];
-    //            self.needsRelabel = true;
+    //            visibleRange      = [newRange copy]
+    //            self.needsRelabel = true
     //        }
     //    }
     //
     //   func setVisibleAxisRange:(nullable CPTPlotRange *)newRange
     //    {
     //        if ( newRange != visibleAxisRange ) {
-    //            visibleAxisRange  = [newRange copy];
-    //            self.needsRelabel = true;
+    //            visibleAxisRange  = [newRange copy]
+    //            self.needsRelabel = true
     //        }
     //    }
     //
     //   func setSeparateLayers:(BOOL)newSeparateLayers
     //    {
     //        if ( newSeparateLayers != separateLayers ) {
-    //            separateLayers = newSeparateLayers;
+    //            separateLayers = newSeparateLayers
     //            if ( separateLayers ) {
     //                if ( self.minorGridLineStyle ) {
-    //                    CPTGridLines *gridLines = [[CPTGridLines alloc] init];
-    //                    self.minorGridLines = gridLines;
+    //                    CPTGridLines *gridLines = [[CPTGridLines alloc] init]
+    //                    self.minorGridLines = gridLines
     //                }
     //                if ( self.majorGridLineStyle ) {
-    //                    CPTGridLines *gridLines = [[CPTGridLines alloc] init];
-    //                    self.majorGridLines = gridLines;
+    //                    CPTGridLines *gridLines = [[CPTGridLines alloc] init]
+    //                    self.majorGridLines = gridLines
     //                }
     //            }
     //            else {
-    //                CPTPlotArea *thePlotArea = self.plotArea;
-    //                self.minorGridLines = nil;
+    //                CPTPlotArea *thePlotArea = self.plotArea
+    //                self.minorGridLines = nil
     //                if ( self.minorGridLineStyle ) {
-    //                    [thePlotArea.minorGridLineGroup setNeedsDisplay];
+    //                    [thePlotArea.minorGridLineGroup setNeedsDisplay]
     //                }
-    //                self.majorGridLines = nil;
+    //                self.majorGridLines = nil
     //                if ( self.majorGridLineStyle ) {
-    //                    [thePlotArea.majorGridLineGroup setNeedsDisplay];
+    //                    [thePlotArea.majorGridLineGroup setNeedsDisplay]
     //                }
     //            }
     //        }
@@ -1825,40 +1828,40 @@ public class CPTAxis : CPTLayer {
     //
     //   func setMinorGridLines:(nullable CPTGridLines *)newGridLines
     //    {
-    //        CPTGridLines *oldGridLines = minorGridLines;
+    //        CPTGridLines *oldGridLines = minorGridLines
     //
     //        if ( newGridLines != oldGridLines ) {
-    //            [oldGridLines removeFromSuperlayer];
-    //            minorGridLines = newGridLines;
+    //            [oldGridLines removeFromSuperlayer]
+    //            minorGridLines = newGridLines
     //
     //            if ( newGridLines ) {
-    //                CPTGridLines *gridLines = newGridLines;
+    //                CPTGridLines *gridLines = newGridLines
     //
     //                gridLines.major = false
-    //                gridLines.axis  = self;
+    //                gridLines.axis  = self
     //
-    //                CPTPlotArea *thePlotArea = self.plotArea;
-    //                [thePlotArea.minorGridLineGroup insertSublayer:gridLines atIndex:[thePlotArea sublayerIndexForAxis:self layerType:CPTGraphLayerTypeMinorGridLines]];
+    //                CPTPlotArea *thePlotArea = self.plotArea
+    //                [thePlotArea.minorGridLineGroup insertSublayer:gridLines atIndex:[thePlotArea sublayerIndexForAxis:self layerType:CPTGraphLayerTypeMinorGridLines]]
     //            }
     //        }
     //    }
     //
     //   func setMajorGridLines:(nullable CPTGridLines *)newGridLines
     //    {
-    //        CPTGridLines *oldGridLines = majorGridLines;
+    //        CPTGridLines *oldGridLines = majorGridLines
     //
     //        if ( newGridLines != oldGridLines ) {
-    //            [oldGridLines removeFromSuperlayer];
-    //            majorGridLines = newGridLines;
+    //            [oldGridLines removeFromSuperlayer]
+    //            majorGridLines = newGridLines
     //
     //            if ( newGridLines ) {
-    //                CPTGridLines *gridLines = newGridLines;
+    //                CPTGridLines *gridLines = newGridLines
     //
-    //                gridLines.major = true;
-    //                gridLines.axis  = self;
+    //                gridLines.major = true
+    //                gridLines.axis  = self
     //
-    //                CPTPlotArea *thePlotArea = self.plotArea;
-    //                [thePlotArea.majorGridLineGroup insertSublayer:gridLines atIndex:[thePlotArea sublayerIndexForAxis:self layerType:CPTGraphLayerTypeMajorGridLines]];
+    //                CPTPlotArea *thePlotArea = self.plotArea
+    //                [thePlotArea.majorGridLineGroup insertSublayer:gridLines atIndex:[thePlotArea sublayerIndexForAxis:self layerType:CPTGraphLayerTypeMajorGridLines]]
     //            }
     //        }
     //    }
@@ -1866,89 +1869,89 @@ public class CPTAxis : CPTLayer {
     //   func setAlternatingBandFills:(nullable CPTFillArray *)newFills
     //    {
     //        if ( newFills != alternatingBandFills ) {
-    //            Class nullClass = [NSNull class];
-    //            Class fillClass = [CPTFill class];
+    //            Class nullClass = [NSNull class]
+    //            Class fillClass = [CPTFill class]
     //
     //            var convertFills = false
     //            for ( id obj in newFills ) {
     //                if ( [obj isKindOfClass:nullClass] || [obj isKindOfClass:fillClass] ) {
-    //                    continue;
+    //                    continue
     //                }
     //                else {
-    //                    convertFills = true;
-    //                    break;
+    //                    convertFills = true
+    //                    break
     //                }
     //            }
     //
     //            if ( convertFills ) {
-    //                Class colorClass    = [CPTColor class];
-    //                Class gradientClass = [CPTGradient class];
-    //                Class imageClass    = [CPTImage class];
+    //                Class colorClass    = [CPTColor class]
+    //                Class gradientClass = [CPTGradient class]
+    //                Class imageClass    = [CPTImage class]
     //
-    //                CPTMutableFillArray *fillArray = [newFills mutableCopy];
-    //                NSUInteger i                   = 0;
-    //                CPTFill *newFill               = nil;
+    //                CPTMutableFillArray *fillArray = [newFills mutableCopy]
+    //                NSUInteger i                   = 0
+    //                CPTFill *newFill               = nil
     //
     //                for ( id obj in newFills ) {
     //                    if ( [obj isKindOfClass:nullClass] || [obj isKindOfClass:fillClass] ) {
-    //                        i++;
-    //                        continue;
+    //                        i++
+    //                        continue
     //                    }
     //                    else if ( [obj isKindOfClass:colorClass] ) {
-    //                        newFill = [[CPTFill alloc] initWithColor:obj];
+    //                        newFill = [[CPTFill alloc] initWithColor:obj]
     //                    }
     //                    else if ( [obj isKindOfClass:gradientClass] ) {
-    //                        newFill = [[CPTFill alloc] initWithGradient:obj];
+    //                        newFill = [[CPTFill alloc] initWithGradient:obj]
     //                    }
     //                    else if ( [obj isKindOfClass:imageClass] ) {
-    //                        newFill = [[CPTFill alloc] initWithImage:obj];
+    //                        newFill = [[CPTFill alloc] initWithImage:obj]
     //                    }
     //                    else {
-    //                        [NSException raise:CPTException format:@"Alternating band fills must be one or more of the following: CPTFill, CPTColor, CPTGradient, CPTImage, or [NSNull null]."];
+    //                        [NSException raise:CPTException format:@"Alternating band fills must be one or more of the following: CPTFill, CPTColor, CPTGradient, CPTImage, or [NSNull null]."]
     //                    }
     //
-    //                    fillArray[i] = newFill;
+    //                    fillArray[i] = newFill
     //
-    //                    i++;
+    //                    i++
     //                }
     //
-    //                alternatingBandFills = fillArray;
+    //                alternatingBandFills = fillArray
     //            }
     //            else {
-    //                alternatingBandFills = [newFills copy];
+    //                alternatingBandFills = [newFills copy]
     //            }
     //
-    //            CPTPlotArea *thePlotArea = self.plotArea;
-    //            [thePlotArea setNeedsDisplay];
+    //            CPTPlotArea *thePlotArea = self.plotArea
+    //            [thePlotArea setNeedsDisplay]
     //        }
     //    }
     //
     //   func setAlternatingBandAnchor:(nullable NSNumber *)newBandAnchor
     //    {
     //        if ( newBandAnchor != alternatingBandAnchor ) {
-    //            alternatingBandAnchor = newBandAnchor;
+    //            alternatingBandAnchor = newBandAnchor
     //
-    //            CPTPlotArea *thePlotArea = self.plotArea;
-    //            [thePlotArea setNeedsDisplay];
+    //            CPTPlotArea *thePlotArea = self.plotArea
+    //            [thePlotArea setNeedsDisplay]
     //        }
     //    }
     //
     //    -(nullable CPTLimitBandArray *)backgroundLimitBands
     //    {
-    //        return [self.mutableBackgroundLimitBands copy];
+    //        return [self.mutableBackgroundLimitBands copy]
     //    }
     //
     //    -(nullable CPTAxisSet *)axisSet
     //    {
-    //        CPTPlotArea *thePlotArea = self.plotArea;
+    //        CPTPlotArea *thePlotArea = self.plotArea
     //
-    //        return thePlotArea.axisSet;
+    //        return thePlotArea.axisSet
     //    }
     //
     func setHidde(newHidden: Bool)
     {
         if ( newHidden != self.isHidden ) {
-            super.isHidden = newHidden;
+            super.isHidden = newHidden
             self.setNeedsRelabel()
         }
     }

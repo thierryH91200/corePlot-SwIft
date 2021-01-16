@@ -239,39 +239,7 @@ extension CPTAxis {
     //        }
     //    }
     //
-    func setTitleLocation(newLocation : Int?)
-    {
-        var needsUpdate = true;
-        
-        if ( newLocation  != nil) {
-            let location = newLocation
-            needsUpdate = titleLocation == location
-        }
-        
-        if ( needsUpdate  == true ) {
-            titleLocation = newLocation!
-            self.updateAxisTitle()
-        }
-    }
-    //
-    //    -(nullable NSNumber *)titleLocation
-    //    {
-    //        if ( isnan(titleLocation.doubleValue)) {
-    //            return self.defaultTitleLocation;
-    //        }
-    //        else {
-    //            return titleLocation;
-    //        }
-    //    }
-    //
-    //    -(void)setLabelExclusionRanges:(nullable CPTPlotRangeArray *)ranges
-    //    {
-    //        if ( ranges != labelExclusionRanges ) {
-    //            labelExclusionRanges = ranges;
-    //            self.needsRelabel    = YES;
-    //        }
-    //    }
-    //
+
     //    -(void)setNeedsRelabel:(BOOL)newNeedsRelabel
     //    {
     //        if ( newNeedsRelabel != needsRelabel ) {
@@ -348,17 +316,16 @@ extension CPTAxis {
         }
     }
 
-
-    //    -(void)setLabelOffset:(CGFloat)newOffset
-    //    {
-    //        if ( newOffset != labelOffset ) {
-    //            labelOffset = newOffset;
-    //
-    //            [self updateMajorTickLabelOffsets];
-    //            [self updateMajorTickLabels];
-    //        }
-    //    }
-    //
+    func setLabelOffset(newOffset: CGFloat)
+    {
+        if ( newOffset != labelOffset ) {
+            labelOffset = newOffset;
+            
+            self.updateMajorTickLabelOffsets()
+            self.updateMajorTickLabels();
+        }
+    }
+    
     //    -(void)setMinorTickLabelOffset:(CGFloat)newOffset
     //    {
     //        if ( newOffset != minorTickLabelOffset ) {

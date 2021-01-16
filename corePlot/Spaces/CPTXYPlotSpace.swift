@@ -283,7 +283,7 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //        CPTMutableAnimationArray *animationArray = self.animations;
     //        CPTAnimationOperation *op;
     //
-    //        NSString *property        = nil;
+    //        NSString *property        = nifl;
     //        CPTPlotRange *oldRange    = nil;
     //        CPTPlotRange *globalRange = nil;
     //
@@ -971,9 +971,9 @@ class CPTXYPlotSpace: CPTPlotSpace {
     }
     
     
-//    -(void)plotPoint:(nonnull NSDecimal *)plotPoint numberOfCoordinates:(NSUInteger)count forPlotAreaViewPoint:(CGPoint)point
-//    {
-//    }
+    func plotPoint(plotPoint: CGFloat, numberOfCoordinatescount : Int, forPlotAreaViewPoint point:CGPoint)
+    {
+    }
     
     override func plotPoint(plotPoint: [CGFloat], numberOfCoordinates count:Int, forPlotAreaViewPoint point: CGPoint)
     {
@@ -1130,20 +1130,20 @@ class CPTXYPlotSpace: CPTPlotSpace {
     }
     
         // Plot point for event
-    //    -(nullable CPTNumberArray *)plotPointForEvent:(nonnull CPTNativeEvent *)event
-    //    {
-    //        return [self.plotPointForPlotAreaViewPoint:[self.plotAreaViewPointForEvent:event]];
-    //    }
-    //
-    //    -(void)plotPoint:(nonnull NSDecimal *)plotPoint numberOfCoordinates:(NSUInteger)count forEvent:(nonnull CPTNativeEvent *)event
-    //    {
-    //        [self.plotPoint:plotPoint numberOfCoordinates:count forPlotAreaViewPoint:[self.plotAreaViewPointForEvent:event]];
-    //    }
-    //
-    //    -(void)doublePrecisionPlotPoint:(nonnull double *)plotPoint numberOfCoordinates:(NSUInteger)count forEvent:(nonnull CPTNativeEvent *)event
-    //    {
-    //        [self.doublePrecisionPlotPoint:plotPoint numberOfCoordinates:count forPlotAreaViewPoint:[self.plotAreaViewPointForEvent:event]];
-    //    }
+    override func plotPointForEvent(event: CPTNativeEvent ) -> CPTNumberArray
+    {
+        return self.plotPointForPlotAreaViewPoint(point: self.plotAreaViewPointForEvent(event: event))
+    }
+    
+    override func plotPoint(plotPoint: CGFloat, numberOfCoordinates count: Int, forEvent event: CPTNativeEvent)
+    {
+        self.plotPoint(plotPoint: plotPoint, numberOfCoordinates:count, forPlotAreaViewPoint: self.plotAreaViewPointForEvent(event: event))
+    }
+    
+    override func doublePrecisionPlotPoint(plotPoint: Double, numberOfCoordinates count: Int, forEvent event: CPTNativeEvent)
+    {
+        self.doublePrecisionPlotPoint(plotPoint, numberOfCoordinates:count, forPlotAreaViewPoint: self.plotAreaViewPointForEvent(event: event))
+    }
 
 
     // MARK: - Scaling
@@ -1478,41 +1478,43 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //
     //        return false
     //    }
-    //
-    //    /// @cond
-    //
-    //    -(nullable CPTPlotRange *)shiftRange:(nonnull CPTPlotRange *)oldRange by:(NSDecimal)shift usingMomentum:(BOOL)momentum inGlobalRange:(nullable CPTPlotRange *)globalRange withDisplacement:(CGFloat *)displacement
-    //    {
-    //        CPTMutablePlotRange *newRange = [oldRange mutableCopy];
-    //
-    //        newRange.locationDecimal = CPTDecimalAdd(newRange.locationDecimal, shift);
-    //
-    //        if ( globalRange ) {
-    //            CPTPlotRange *constrainedRange = [self.constrainRange:newRange toGlobalRange:globalRange];
-    //
-    //            if ( momentum ) {
-    //                if ( ![newRange isEqualToRange:constrainedRange] ) {
-    //                    // reduce the shift as we get farther outside the global range
-    //                    NSDecimal rangeLength = newRange.lengthDecimal;
-    //
-    //                    if ( !CPTDecimalEquals(rangeLength, CPTDecimalFromInteger(0))) {
-    //                        NSDecimal diff = CPTDecimalDivide(CPTDecimalSubtract(constrainedRange.locationDecimal, newRange.locationDecimal), rangeLength);
-    //                        diff = CPTDecimalMax(CPTDecimalMin(CPTDecimalMultiply(diff, CPTDecimalFromDouble(2.5)), CPTDecimalFromInteger(1)), CPTDecimalFromInteger(-1));
-    //
-    //                        newRange.locationDecimal = CPTDecimalSubtract(newRange.locationDecimal, CPTDecimalMultiply(shift, CPTDecimalAbs(diff)));
-    //
-    //                        *displacement = *displacement * (CGFloat(1.0) - ABS(CPTDecimalCGFloatValue(diff)));
-    //                    }
-    //                }
-    //            }
-    //            else {
-    //                newRange = (CPTMutablePlotRange *)constrainedRange;
-    //            }
-    //        }
-    //
-    //        return newRange;
-    //    }
-    //
+
+
+    func shiftRange(oldRange: CPTPlotRange, by shift: CGFloat,  usingMomentum momentum:Bool, inGlobalRange globalRange: CPTPlotRange?, withDisplacement displacement :CGFloat ) -> CPTPlotRange
+    {
+        var newRange = oldRange
+        var displacement = displacement
+        
+        newRange.locationDecimal = newRange.locationDecimal + shift
+        
+        if (( globalRange ) != nil) {
+            let constrainedRange = self.constrainRange(existingRange: newRange, toGlobalRange:globalRange)
+            
+            if ( momentum ) {
+                if  newRange.isEqualToRange(otherRange: constrainedRange ) == false {
+                    // reduce the shift as we get farther outside the global range
+                    let rangeLength = newRange.lengthDecimal;
+                    
+                    if rangeLength != CGFloat(0) {
+                        var diff = ( constrainedRange!.locationDecimal -  newRange.locationDecimal) / rangeLength
+                        
+                        
+                        diff = max(min(diff * CGFloat(2.5), CGFloat(1)), CGFloat(-1))
+                        
+                        newRange.locationDecimal = newRange.locationDecimal - (shift * abs(diff))
+                        
+                        displacement = displacement * (CGFloat(1.0) - abs(CGFloat(diff)))
+                    }
+                }
+            }
+            else {
+                newRange = constrainedRange!;
+            }
+        }
+        
+        return newRange;
+    }
+    
     //    /// @endcond
     //
         #if TARGET_OS_SIMULATOR || TARGET_OS_IPHONE
@@ -1590,19 +1592,17 @@ class CPTXYPlotSpace: CPTPlotSpace {
     //
         #endif
     //
-    //    /**
-    //     *  @brief Reset the dragging state and cancel any active animations.
-    //     **/
-    //    -(void)cancelAnimations
-    //    {
-    //        self.isDragging = false
-    //        for ( CPTAnimationOperation *op in self.animations ) {
-    //            [[CPTAnimation sharedInstance] removeAnimationOperation:op];
-    //        }
-    //    }
-    //
-    //    /// @}
-    //
+        /**
+         *  @brief Reset the dragging state and cancel any active animations.
+         **/
+        func cancelAnimations()
+        {
+            self.isDragging = false
+            for op in self.animations  {
+                CPTAnimation.shared.removeAnimationOperation(animationOperation: op)
+            }
+        }
+
     // MARK: -  Accessors
 
 

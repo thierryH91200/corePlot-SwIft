@@ -26,9 +26,9 @@ class CPTAxisSet: CPTLayer {
                     axis.plotArea = nil
                     axis.graph    = nil
                 }
-                _axes = newValue;
+                _axes = newValue
                 let plotArea = self.superlayer as! CPTPlotArea
-                let theGraph    = plotArea.graph;
+                let theGraph    = plotArea.graph
                 for  axis in axes  {
                     self.addSublayer( axis)
                     axis.plotArea = plotArea
@@ -58,7 +58,7 @@ class CPTAxisSet: CPTLayer {
     {
         super.init(frame: frame)
         axes.removeAll()
-        borderLineStyle = nil;
+        borderLineStyle = nil
         
         self.needsDisplayOnBoundsChange = true
     }
@@ -105,22 +105,22 @@ class CPTAxisSet: CPTLayer {
         for axis in self.axes  {
             if ( axis.coordinate == coordinate ) {
                 if count == idx {
-                    foundAxis = axis;
-                    break;
+                    foundAxis = axis
+                    break
                 }
                 else {
                     count += 1
                 }
             }
         }
-        return foundAxis;
+        return foundAxis
     }
     
     func pointingDeviceDownEvent(event: CPTNativeEvent, interactionPoint:CGPoint)-> Bool
     {
         for axis in self.axes  {
             if axis.pointingDeviceDownEvent(event:event, atPoint:interactionPoint ) {
-                return true;
+                return true
             }
         }
         return super.pointingDeviceDownEvent(event:event, atPoint:interactionPoint)

@@ -282,7 +282,7 @@ class CPTMutablePlotRange: CPTPlotRange {
     {
         self.inValueUpdate = true
         self.locationDecimal = newLocation
-        self.locationDouble  = newLocation
+        self.locationDouble  = Double(newLocation)
         self.inValueUpdate = false
     }
     
@@ -290,7 +290,7 @@ class CPTMutablePlotRange: CPTPlotRange {
     {
         self.inValueUpdate = true
         self.lengthDecimal = newLength
-        self.lengthDouble  = newLength;
+        self.lengthDouble  = Double(newLength)
         self.inValueUpdate = false;
     }
 }

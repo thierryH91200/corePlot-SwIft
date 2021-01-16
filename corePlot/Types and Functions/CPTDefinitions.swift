@@ -98,10 +98,10 @@ let CPTStringDrawingOptions : [NSString.DrawingOptions] = [.usesLineFragmentOrig
  *  @brief An array of numbers.
  **/
 typealias CPTNumberArray = [CGFloat]
-typealias CPTMutableNumberArray = [NSNumber]
-typealias CPTNumberSet = Set<NSNumber>
+typealias CPTMutableNumberArray = [CGFloat]
+typealias CPTNumberSet = Set<CGFloat>
 typealias CPTFloatSet = Set<CGFloat>
-typealias CPTMutableNumberSet = Set<NSNumber>
+typealias CPTMutableNumberSet = Set<CGFloat>
 typealias CPTStringArray = [String]
 typealias CPTMutableStringArray = [String]
 /**
