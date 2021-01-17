@@ -112,7 +112,7 @@ public class CPTAxis : CPTLayer {
     
     // MARK: Axis
     var coordinate : CPTCoordinate
-    var labelingOrigin : NSNumber
+    var labelingOrigin : CGFloat
     var tickDirection : CPTSign
     var visibleRange : CPTPlotRange?
     var visibleAxisRange : CPTPlotRange?
@@ -163,7 +163,7 @@ public class CPTAxis : CPTLayer {
     //    var majorGridLineStyle : CPTFillArray
     var alternatingBandFills = [CPTFill]()
     
-    var alternatingBandAnchor = 0.0
+    var alternatingBandAnchor : CGFloat?
     var backgroundLimitBands = [CPTLimitBand]()
     
     // MARK:  Plot Space

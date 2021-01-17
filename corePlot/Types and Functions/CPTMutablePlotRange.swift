@@ -44,7 +44,6 @@ class CPTMutablePlotRange: CPTPlotRange {
         set { super.lengthDecimal = newValue }
     }
     
-    
     /** @property double locationDouble
      *  @brief The starting value of the range as a @double.
      *  @see @ref location, @ref locationDecimal
@@ -93,8 +92,8 @@ class CPTMutablePlotRange: CPTPlotRange {
                 }
             }
             else {
-                self.locationDouble = -CGFloat.infinity;
-                self.lengthDouble   = CGFloat.infinity  // HUGE_VAL;
+                self.locationDouble = -Double.infinity
+                self.lengthDouble   = Double.infinity  // HUGE_VAL;
             }
         }
         else if ( self.isInfinite && !other!.isInfinite ) {
@@ -115,12 +114,12 @@ class CPTMutablePlotRange: CPTPlotRange {
             switch ( other?.lengthSign ) {
             case .positive:
                 self.locationDecimal = minimum;
-                self.lengthDouble    = CGFloat.infinity;
+                self.lengthDouble    = Double.infinity;
                 break;
                 
             case .negative:
                 self.locationDecimal = maximum;
-                self.lengthDouble    = -CGFloat.infinity;
+                self.lengthDouble    = -Double.infinity;
                 break;
                 
             default:
@@ -280,17 +279,13 @@ class CPTMutablePlotRange: CPTPlotRange {
     // MARK: - Accessors
     func setLocation(newLocation : CGFloat )
     {
-        self.inValueUpdate = true
         self.locationDecimal = newLocation
         self.locationDouble  = Double(newLocation)
-        self.inValueUpdate = false
     }
     
     func setLength(newLength:  CGFloat )
     {
-        self.inValueUpdate = true
         self.lengthDecimal = newLength
         self.lengthDouble  = Double(newLength)
-        self.inValueUpdate = false;
     }
 }

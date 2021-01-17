@@ -7,7 +7,7 @@
 
 import AppKit
 
-class PieChartController: NSViewController, CPTPieChartDataSource  {
+class PieChartController: NSViewController  {
     
     private var pieGraph : CPTXYGraph? = nil
     let dataForChart = [20.0, 30.0, 60.0]
@@ -18,8 +18,8 @@ class PieChartController: NSViewController, CPTPieChartDataSource  {
         
         // Create graph from theme
         
-//        let kCPTDarkGradientTheme = "Dark Gradients"
-
+        //        let kCPTDarkGradientTheme = "Dark Gradients"
+        
         let newGraph = CPTXYGraph(frame: CGRect())
         newGraph.applyTheme(theme: CPTTheme(named: CPTThemeName.CPTDarkGradientTheme.rawValue))
         
@@ -54,32 +54,32 @@ class PieChartController: NSViewController, CPTPieChartDataSource  {
         
         self.pieGraph = newGraph
     }
+}
+
+// MARK: - Plot Data Source Methods
+extension PieChartController: CPTPieChartDataSource  {
     
-    // MARK: - Plot Data Source Methods
     func numberOfRecordsForPlot(plot: CPTPlot) -> UInt
     {
         return UInt(self.dataForChart.count)
     }
     
-    func numberForPlot(plot: CPTPlot, field: UInt, recordIndex: UInt) -> Int?
+    func numberForPlot(plot: CPTPlot, field: UInt, recordIndex: UInt) -> Any?
     {
-        if Int(recordIndex) > self.dataForChart.count {
-            return nil
-        }
-        else {
-            switch CPTPieChartField(rawValue: Int(field))! {
-            case .sliceWidth:
-                return self.dataForChart[Int(recordIndex)]
-                
-            default:
-                return Int(recordIndex)
-            }
+        guard recordIndex <= self.dataForChart.count else { return nil  }
+        
+        switch CPTPieChartField(rawValue: Int(field))! {
+        case .sliceWidth:
+            return self.dataForChart[Int(recordIndex)]
+            
+        default:
+            return Int(recordIndex)
         }
     }
     
-    func dataLabelForPlot(plot: CPTPlot, recordIndex: UInt) -> CPTLayer?
+    func dataLabelForPlot(plot: CPTPlot, index: UInt) -> CPTLayer?
     {
-        let label = CPTTextLayer(text:"\(recordIndex)", style: <#CPTTextStyle?#>)
+        let label = CPTTextLayer(newText:"\(index)")
         
         if let textStyle = label.textStyle?.mutableCopy() as? CPTMutableTextStyle {
             textStyle.color = CPTColor.lightGray
@@ -91,16 +91,14 @@ class PieChartController: NSViewController, CPTPieChartDataSource  {
     func radialOffsetForPieChart(piePlot: CPTPieChart, recordIndex: UInt) -> CGFloat
     {
         var offset: CGFloat = 0.0
-        
         if ( recordIndex == 0 ) {
             offset = piePlot.pieRadius / 8.0
         }
-        
         return offset
     }
 }
-    
-    // MARK: - Delegate Methods
+
+// MARK: - Delegate Methods
 extension PieChartController: CPTPieChartDelegate  {
     
     func pieChart(plot: CPTPieChart, sliceWasSelectedAtRecordIndex idx: Int)

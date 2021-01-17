@@ -131,17 +131,17 @@ public class CPTXYAxis: CPTAxis {
     {
         let lineStyle = (major ? self.majorTickLineStyle : self.minorTickLineStyle)
         
-        let lineWidth = lineStyle.lineWidth
+        let lineWidth = lineStyle?.lineWidth
         let alignmentFunction : CPTAlignPointFunction = nil
         
-        if ((self.contentsScale > CGFloat(1.0)) && (round(lineWidth) == lineWidth)) {
+        if ((self.contentsScale > CGFloat(1.0)) && (round(lineWidth!) == lineWidth)) {
             alignmentFunction = CPTAlignIntegralPointToUserSpace
         }
         else {
             alignmentFunction = CPTAlignPointToUserSpace
         }
         
-        lineStyle.setLineStyleInContext(context: context)
+        lineStyle?.setLineStyleInContext(context: context)
         context.beginPath()
         
         for  tickLocation in locations {
@@ -189,7 +189,7 @@ public class CPTXYAxis: CPTAxis {
             context.addLine(to: endViewPoint)
         }
         // Stroke tick line
-        lineStyle.strokePathInContext(context: context)
+        lineStyle?.strokePathInContext(context: context)
     }
 
     override func renderAsVectorInContext(context: CGContext)
@@ -246,7 +246,7 @@ public class CPTXYAxis: CPTAxis {
                 }
                 
                 let startViewPoint = alignmentFunction!(context, self.viewPointForCoordinateValue(coordinateValue: range!.location))
-                let endViewPoint   = alignmentFunction!(context, self.viewPointForCoordinateValue(coordinateValue: range!.end))
+                let endViewPoint   = alignmentFunction!(context, self.viewPointForCoordinateValue(coordinateValue: range!.end()))
                 theLineStyle?.setLineStyleInContext(context: context)
                 context.beginPath()
                 context.move(to: startViewPoint)
@@ -269,12 +269,12 @@ public class CPTXYAxis: CPTAxis {
             }
             
             if (( minCap ) != nil) {
-                let viewPoint = alignmentFunction!(context, self.viewPointForCoordinateValue(coordinateValue: range!.minLimit))
+                let viewPoint = alignmentFunction!(context, self.viewPointForCoordinateValue(coordinateValue: range!.minLimit()))
                 minCap!.renderAsVectorInContext(context: context, center:viewPoint, direction:CGPoint(x: -axisDirection.x, y: -axisDirection.y))
             }
             
             if (( maxCap ) != nil) {
-                let viewPoint = alignmentFunction!(context, self.viewPointForCoordinateValue(coordinateValue: range!.maxLimit))
+                let viewPoint = alignmentFunction!(context, self.viewPointForCoordinateValue(coordinateValue: range!.maxLimit()))
                 maxCap!.renderAsVectorInContext(context: context, center:viewPoint, direction:axisDirection)
             }
         }
@@ -293,36 +293,35 @@ public class CPTXYAxis: CPTAxis {
             let thePlotSpace           = self.plotSpace
             let locations              = (isMajor ? self.majorTickLocations : self.minorTickLocations)
             let selfCoordinate         = self.coordinate
-            let orthogonalCoordinate   = CPTOrthogonalCoordinate(selfCoordinate)
-            let orthogonalRange = thePlotSpace.plotRangeForCoordinate(orthogonalCoordinate)
+            let orthogonalCoordinate   = CPTUtilities.shared.CPTOrthogonalCoordinate(selfCoordinate)
+            let orthogonalRange = thePlotSpace?.plotRangeForCoordinate(coordinate: orthogonalCoordinate) as! CPTMutablePlotRange
             let theGridLineRange       = self.gridLinesRange
-            let labeledRange    = CPTMutablePlotRange(location: 0, length: 0)
-
+            let labeledRange    = CPTMutablePlotRange(location: 0.0, length: 0.0)
+            
             switch ( self.labelingPolicy ) {
             case .none:
                 fallthrough
             case .provided:
                 
-                let labeledRange = self.plotSpace?.plotRangeForCoordinate(coordinate: self.coordinate)
-                    let theVisibleRange = self.visibleRange
+                let labeledRange = self.plotSpace?.plotRangeForCoordinate(coordinate: self.coordinate) as! CPTMutablePlotRange
+                let theVisibleRange = self.visibleRange
                 if (( theVisibleRange ) != nil) {
-                        labeledRange.intersectionPlotRange(theVisibleRange)
-                    }
+                    labeledRange.intersectionPlotRange(other: theVisibleRange)
+                }
                 
-
-                default:
-                    break
+            default:
+                break
             }
-
+            
             if (( theGridLineRange ) != nil) {
-                orthogonalRange.intersectionPlotRange(theGridLineRange)
+                orthogonalRange.intersectionPlotRange(other: theGridLineRange)
             }
-
+            
             let thePlotArea = self.plotArea
             var startPlotPoint = [CGFloat]()
             var endPlotPoint = [CGFloat]()
-            startPlotPoint[orthogonalCoordinate] = orthogonalRange.locationDecimal
-            endPlotPoint[orthogonalCoordinate]   = orthogonalRange.endDecimal
+            startPlotPoint[orthogonalCoordinate.rawValue] = orthogonalRange.locationDecimal
+            endPlotPoint[orthogonalCoordinate.rawValue]   = orthogonalRange.endDecimal
             let originTransformed = self.convert(self.bounds.origin, from:thePlotArea)
 
             let lineWidth = lineStyle?.lineWidth
@@ -338,14 +337,14 @@ public class CPTXYAxis: CPTAxis {
             context.beginPath()
 
             for location in locations {
-                let locationDecimal = location.decimalValue
+                let locationDecimal = location
 
                 if ( labeledRange && labeledRange.contains(locationDecimal) == false ) {
                     continue
                 }
 
-                startPlotPoint[selfCoordinate] = locationDecimal
-                endPlotPoint[selfCoordinate]   = locationDecimal
+                startPlotPoint[selfCoordinate.rawValue] = locationDecimal
+                endPlotPoint[selfCoordinate.rawValue]   = locationDecimal
 
                 // Start point
                 var startViewPoint = thePlotSpace?.plotAreaViewPointForPlotPoint(plotPoint: startPlotPoint, numberOfCoordinates:2)
@@ -374,286 +373,286 @@ public class CPTXYAxis: CPTAxis {
     }
     
     // MARK: Background Bands
-//    -(NSUInteger)initialBandIndexForSortedLocations:(CPTNumberArray *)sortedLocations inRange:(CPTMutablePlotRange *)range
-//    {
-//        NSUInteger bandIndex = 0
-//
-//        NSNumber *bandAnchor = self.alternatingBandAnchor
-//        NSUInteger bandCount = self.alternatingBandFills.count
-//
-//        if ( bandAnchor && (bandCount > 0)) {
-//            NSDecimal anchor = bandAnchor.decimalValue
-//
-//            CPTPlotRange *theVisibleRange = self.visibleRange
-//            if ( theVisibleRange ) {
-//                [range intersectionPlotRange:theVisibleRange]
-//            }
-//
-//            NSDecimal rangeStart
-//            if ( range.lengthDouble >= 0.0 ) {
-//                rangeStart = range.minLimitDecimal
-//            }
-//            else {
-//                rangeStart = range.maxLimitDecimal
-//            }
-//
-//            NSDecimal origin = self.labelingOrigin.decimalValue
-//            NSDecimal offset = CPTDecimalSubtract(anchor, origin)
-//            NSDecimalRound(&offset, &offset, 0, NSRoundDown)
-//
-//            const NSDecimal zero = CPTDecimalFromInteger(0)
-//
-//            // Set starting coord--should be the smallest value >= rangeMin that is a whole multiple of majorInterval away from the alternatingBandAnchor
-//            NSDecimal coord         = zero
-//            NSDecimal majorInterval = zero
-//
-//            switch ( self.labelingPolicy ) {
-//                case CPTAxisLabelingPolicyAutomatic:
-//                case CPTAxisLabelingPolicyEqualDivisions:
-//                    if ( sortedLocations.count > 1 ) {
-//                        if ( range.lengthDouble >= 0.0 ) {
-//                            majorInterval = CPTDecimalSubtract(sortedLocations[1].decimalValue, sortedLocations[0].decimalValue)
-//                        }
-//                        else {
-//                            majorInterval = CPTDecimalSubtract(sortedLocations[0].decimalValue, sortedLocations[1].decimalValue)
-//                        }
-//                    }
-//                    break
-//
-//                case CPTAxisLabelingPolicyFixedInterval:
-//                {
-//                    majorInterval = self.majorIntervalLength.decimalValue
-//                }
-//                break
-//
-//                case CPTAxisLabelingPolicyLocationsProvided:
-//                case CPTAxisLabelingPolicyNone:
-//                {
-//                    // user provided tick locations they're not guaranteed to be evenly spaced, but band drawing always starts with the first location
-//                    if ( range.lengthDouble >= 0.0 ) {
-//                        for ( NSNumber *location in sortedLocations ) {
-//                            if ( CPTDecimalLessThan(anchor, location.decimalValue)) {
-//                                break
-//                            }
-//
-//                            bandIndex++
-//                        }
-//                    }
-//                    else {
-//                        for ( NSNumber *location in sortedLocations ) {
-//                            if ( CPTDecimalGreaterThanOrEqualTo(anchor, location.decimalValue)) {
-//                                break
-//                            }
-//
-//                            bandIndex++
-//                        }
-//                    }
-//
-//                    bandIndex = bandIndex % bandCount
-//                }
-//                break
-//            }
-//
-//            if ( !CPTDecimalEquals(majorInterval, zero)) {
-//                coord = CPTDecimalDivide(CPTDecimalSubtract(rangeStart, origin), majorInterval)
-//                NSDecimalRound(&coord, &coord, 0, NSRoundUp)
-//                NSInteger stepCount = CPTDecimalIntegerValue(coord) + CPTDecimalIntegerValue(offset) + 1
-//
-//                if ( stepCount >= 0 ) {
-//                    bandIndex = (NSUInteger)(stepCount % (NSInteger)bandCount)
-//                }
-//                else {
-//                    bandIndex = (NSUInteger)(-stepCount % (NSInteger)bandCount)
-//                }
-//            }
-//        }
-//
-//        return bandIndex
-//    }
-//
-//    func drawBackgroundBandsInContext(context: CGContextRef)
-//    {
-//        CPTFillArray *bandArray = self.alternatingBandFills
-//        NSUInteger bandCount    = bandArray.count
-//
-//        if ( bandCount > 0 ) {
-//            CPTNumberArray *locations = self.majorTickLocations.allObjects
-//
-//            if ( locations.count > 0 ) {
-//                CPTPlotSpace *thePlotSpace = self.plotSpace
-//
-//                CPTCoordinate selfCoordinate = self.coordinate
-//                CPTMutablePlotRange *range   = [[thePlotSpace plotRangeForCoordinate:selfCoordinate] mutableCopy]
-//                if ( range ) {
-//                    CPTPlotRange *theVisibleRange = self.visibleRange
-//                    if ( theVisibleRange ) {
-//                        [range intersectionPlotRange:theVisibleRange]
-//                    }
-//                }
-//
-//                CPTCoordinate orthogonalCoordinate   = CPTOrthogonalCoordinate(selfCoordinate)
-//                CPTMutablePlotRange *orthogonalRange = [[thePlotSpace plotRangeForCoordinate:orthogonalCoordinate] mutableCopy]
-//                CPTPlotRange *theGridLineRange       = self.gridLinesRange
-//
-//                if ( theGridLineRange ) {
-//                    [orthogonalRange intersectionPlotRange:theGridLineRange]
-//                }
-//
-//                const NSDecimal zero             = CPTDecimalFromInteger(0)
-//                NSSortDescriptor *sortDescriptor = nil
-//                if ( range ) {
-//                    if ( CPTDecimalGreaterThanOrEqualTo(range.lengthDecimal, zero)) {
-//                        sortDescriptor = [[NSSortDescriptor alloc] initWithKey:nil ascending:YES]
-//                    }
-//                    else {
-//                        sortDescriptor = [[NSSortDescriptor alloc] initWithKey:nil ascending:NO]
-//                    }
-//                }
-//                else {
-//                    sortDescriptor = [[NSSortDescriptor alloc] initWithKey:nil ascending:YES]
-//                }
-//                locations = [locations sortedArrayUsingDescriptors:@[sortDescriptor]]
-//
-//                NSUInteger bandIndex = [self initialBandIndexForSortedLocations:locations inRange:range]
-//
-//                const id null = [NSNull null]
-//
-//                NSDecimal lastLocation
-//                if ( range ) {
-//                    lastLocation = range.locationDecimal
-//                }
-//                else {
-//                    lastLocation = CPTDecimalNaN()
-//                }
-//
-//                NSDecimal startPlotPoint[2]
-//                NSDecimal endPlotPoint[2]
-//                if ( orthogonalRange ) {
-//                    startPlotPoint[orthogonalCoordinate] = orthogonalRange.locationDecimal
-//                    endPlotPoint[orthogonalCoordinate]   = orthogonalRange.endDecimal
-//                }
-//                else {
-//                    startPlotPoint[orthogonalCoordinate] = CPTDecimalNaN()
-//                    endPlotPoint[orthogonalCoordinate]   = CPTDecimalNaN()
-//                }
-//
-//                for ( NSDecimalNumber *location in locations ) {
-//                    NSDecimal currentLocation = location.decimalValue
-//                    if ( !CPTDecimalEquals(CPTDecimalSubtract(currentLocation, lastLocation), zero)) {
-//                        CPTFill *bandFill = bandArray[bandIndex++]
-//                        bandIndex %= bandCount
-//
-//                        if ( bandFill != null ) {
-//                            // Start point
-//                            startPlotPoint[selfCoordinate] = currentLocation
-//                            CGPoint startViewPoint = [thePlotSpace plotAreaViewPointForPlotPoint:startPlotPoint numberOfCoordinates:2]
-//
-//                            // End point
-//                            endPlotPoint[selfCoordinate] = lastLocation
-//                            CGPoint endViewPoint = [thePlotSpace plotAreaViewPointForPlotPoint:endPlotPoint numberOfCoordinates:2]
-//
-//                            // Fill band
-//                            CGRect fillRect = CPTRectMake(MIN(startViewPoint.x, endViewPoint.x),
-//                                                          MIN(startViewPoint.y, endViewPoint.y),
-//                                                          ABS(endViewPoint.x - startViewPoint.x),
-//                                                          ABS(endViewPoint.y - startViewPoint.y))
-//                            [bandFill fillRect:CPTAlignIntegralRectToUserSpace(context, fillRect) inContext:context]
-//                        }
-//                    }
-//
-//                    lastLocation = currentLocation
-//                }
-//
-//                // Fill space between last location and the range end
-//                NSDecimal endLocation
-//                if ( range ) {
-//                    endLocation = range.endDecimal
-//                }
-//                else {
-//                    endLocation = CPTDecimalNaN()
-//                }
-//                if ( !CPTDecimalEquals(lastLocation, endLocation)) {
-//                    CPTFill *bandFill = bandArray[bandIndex]
-//
-//                    if ( bandFill != null ) {
-//                        // Start point
-//                        startPlotPoint[selfCoordinate] = endLocation
-//                        CGPoint startViewPoint = [thePlotSpace plotAreaViewPointForPlotPoint:startPlotPoint numberOfCoordinates:2]
-//
-//                        // End point
-//                        endPlotPoint[selfCoordinate] = lastLocation
-//                        CGPoint endViewPoint = [thePlotSpace plotAreaViewPointForPlotPoint:endPlotPoint numberOfCoordinates:2]
-//
-//                        // Fill band
-//                        CGRect fillRect = CPTRectMake(MIN(startViewPoint.x, endViewPoint.x),
-//                                                      MIN(startViewPoint.y, endViewPoint.y),
-//                                                      ABS(endViewPoint.x - startViewPoint.x),
-//                                                      ABS(endViewPoint.y - startViewPoint.y))
-//                        [bandFill fillRect:CPTAlignIntegralRectToUserSpace(context, fillRect) inContext:context]
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    -(void)drawBackgroundLimitsInContext:(nonnull CGContextRef)context
-//    {
-//        CPTLimitBandArray *limitArray = self.backgroundLimitBands
-//
-//        if ( limitArray.count > 0 ) {
-//            CPTPlotSpace *thePlotSpace = self.plotSpace
-//
-//            CPTCoordinate selfCoordinate = self.coordinate
-//            CPTMutablePlotRange *range   = [[thePlotSpace plotRangeForCoordinate:selfCoordinate] mutableCopy]
-//
-//            if ( range ) {
-//                CPTPlotRange *theVisibleRange = self.visibleRange
-//                if ( theVisibleRange ) {
-//                    [range intersectionPlotRange:theVisibleRange]
-//                }
-//            }
-//
-//            CPTCoordinate orthogonalCoordinate   = CPTOrthogonalCoordinate(selfCoordinate)
-//            CPTMutablePlotRange *orthogonalRange = [[thePlotSpace plotRangeForCoordinate:orthogonalCoordinate] mutableCopy]
-//            CPTPlotRange *theGridLineRange       = self.gridLinesRange
-//
-//            if ( theGridLineRange ) {
-//                [orthogonalRange intersectionPlotRange:theGridLineRange]
-//            }
-//
-//            NSDecimal startPlotPoint[2]
-//            NSDecimal endPlotPoint[2]
-//            startPlotPoint[orthogonalCoordinate] = orthogonalRange.locationDecimal
-//            endPlotPoint[orthogonalCoordinate]   = orthogonalRange.endDecimal
-//
-//            for ( CPTLimitBand *band in self.backgroundLimitBands ) {
-//                CPTFill *bandFill = band.fill
-//
-//                if ( bandFill ) {
-//                    CPTMutablePlotRange *bandRange = [band.range mutableCopy]
-//                    if ( bandRange ) {
-//                        [bandRange intersectionPlotRange:range]
-//
-//                        // Start point
-//                        startPlotPoint[selfCoordinate] = bandRange.locationDecimal
-//                        CGPoint startViewPoint = [thePlotSpace plotAreaViewPointForPlotPoint:startPlotPoint numberOfCoordinates:2]
-//
-//                        // End point
-//                        endPlotPoint[selfCoordinate] = bandRange.endDecimal
-//                        CGPoint endViewPoint = [thePlotSpace plotAreaViewPointForPlotPoint:endPlotPoint numberOfCoordinates:2]
-//
-//                        // Fill band
-//                        CGRect fillRect = CPTRectMake(MIN(startViewPoint.x, endViewPoint.x),
-//                                                      MIN(startViewPoint.y, endViewPoint.y),
-//                                                      ABS(endViewPoint.x - startViewPoint.x),
-//                                                      ABS(endViewPoint.y - startViewPoint.y))
-//                        [bandFill fillRect:CPTAlignIntegralRectToUserSpace(context, fillRect) inContext:context]
-//                    }
-//                }
-//            }
-//        }
-//    }
+    func initialBandIndexForSortedLocations(sortedLocations:CPTNumberArray, inRange range:CPTMutablePlotRange )-> Int
+    {
+        var bandIndex = 0
 
+        let bandAnchor = self.alternatingBandAnchor
+        let bandCount = self.alternatingBandFills.count
+
+
+        if ( (bandAnchor != nil) && (bandCount > 0)) {
+            let anchor = bandAnchor
+
+            let theVisibleRange = self.visibleRange
+            if (( theVisibleRange ) != nil) {
+                range.intersectionPlotRange(other: theVisibleRange)
+            }
+
+            var rangeStart = CGFloat(0)
+            if ( range.lengthDouble >= 0.0 ) {
+                rangeStart = range.minLimitDecimal
+            }
+            else {
+                rangeStart = range.maxLimitDecimal
+            }
+
+            let origin = self.labelingOrigin
+            let offset = CGFloat(anchor!) - origin
+//            NSDecimalRound(&offset, &offset, 0, NSRoundDown)
+
+            let zero = CGFloat(0)
+
+            // Set starting coord--should be the smallest value >= rangeMin that is a whole multiple of majorInterval away from the alternatingBandAnchor
+            var coord         = zero
+            var majorInterval = zero
+
+            switch ( self.labelingPolicy ) {
+            case .automatic:
+                fallthrough
+            case .divisions:
+                if ( sortedLocations.count > 1 ) {
+                    if ( range.lengthDouble >= 0.0 ) {
+                        majorInterval = sortedLocations[1] - sortedLocations[0]
+                    }
+                    else {
+                        majorInterval = sortedLocations[0] - sortedLocations[1]
+                    }
+                }
+                break
+                
+            case .fixedInterval:
+                majorInterval = self.majorIntervalLength
+                
+            case .provided:
+                fallthrough
+            case .none:
+                // user provided tick locations they're not guaranteed to be evenly spaced, but band drawing always starts with the first location
+                if ( range.lengthDouble >= 0.0 ) {
+                    for location in sortedLocations {
+                        if anchor! <= location {
+                            break
+                        }
+                        
+                        bandIndex += 1
+                    }
+                }
+                else {
+                    for location in sortedLocations {
+                        if anchor! >= location {
+                            break
+                        }
+                        
+                        bandIndex += 1
+                    }
+                }
+                
+                bandIndex = bandIndex % bandCount
+            }
+            
+            if majorInterval != zero {
+                coord = (CGFloat(rangeStart) - CGFloat(origin)) / majorInterval
+                
+//                NSDecimalRound(&coord, &coord, 0, NSRoundUp)
+                let stepCount = Int(coord) + Int(offset) + 1
+
+                if ( stepCount >= 0 ) {
+                    bandIndex = Int(stepCount % bandCount)
+                }
+                else {
+                    bandIndex = Int(-stepCount % bandCount)
+                }
+            }
+        }
+
+        return bandIndex
+    }
+
+    override func drawBackgroundBandsInContext(context: CGContext)
+    {
+        let bandArray = self.alternatingBandFills
+        let bandCount    = bandArray.count
+
+        if ( bandCount > 0 ) {
+            
+//            let myArray = Array(mySet)
+            var locations = Array(self.majorTickLocations)
+
+            if ( locations.count > 0 ) {
+                let thePlotSpace = self.plotSpace
+
+                let selfCoordinate = self.coordinate
+                let range   = thePlotSpace!.plotRangeForCoordinate(coordinate: selfCoordinate) as? CPTMutablePlotRange
+                if (( range ) != nil) {
+                    let theVisibleRange = self.visibleRange
+                    if (( theVisibleRange ) != nil) {
+                        range?.intersectionPlotRange(other: theVisibleRange)
+                    }
+                }
+
+                let orthogonalCoordinate   = CPTUtilities.shared.CPTOrthogonalCoordinate(selfCoordinate)
+                let orthogonalRange = thePlotSpace?.plotRangeForCoordinate(coordinate: orthogonalCoordinate) as? CPTMutablePlotRange
+                let theGridLineRange       = self.gridLinesRange
+
+                if (( theGridLineRange ) != nil) {
+                    orthogonalRange?.intersectionPlotRange(other: theGridLineRange)
+                }
+
+                var sortDescriptor = NSSortDescriptor()
+                if ( range != nil) {
+                    if range!.lengthDecimal >= CGFloat(0) {
+                        sortDescriptor = NSSortDescriptor(key:nil, ascending:true)
+                    }
+                    else {
+                        sortDescriptor = NSSortDescriptor(key:nil, ascending: false)
+                    }
+                }
+                else {
+                    sortDescriptor = NSSortDescriptor(key:nil, ascending:true)
+                }
+                
+                locations = locations.sorted{ $0 > $1 } // sortedArrayUsingDescriptors:@[sortDescriptor]]
+
+                var bandIndex = self.initialBandIndexForSortedLocations(sortedLocations: locations, inRange: range!)
+
+//                let null = [NSNull null]
+
+                var lastLocation = CGFloat(0)
+                if ( range != nil) {
+                    lastLocation = range!.locationDecimal
+                }
+                else {
+                    lastLocation = .nan
+                }
+
+                var startPlotPoint = [CGFloat]()
+                var endPlotPoint = [CGFloat]()
+                if (( orthogonalRange ) != nil) {
+                    startPlotPoint[orthogonalCoordinate.rawValue] = orthogonalRange!.locationDecimal
+                    endPlotPoint[orthogonalCoordinate.rawValue]   = orthogonalRange!.endDecimal
+                }
+                else {
+                    startPlotPoint[orthogonalCoordinate.rawValue] = .nan
+                    endPlotPoint[orthogonalCoordinate.rawValue] = .nan
+                }
+
+                for location in locations {
+                    let currentLocation = location
+                    if currentLocation - lastLocation != CGFloat(0) {
+                        let bandFill = bandArray[bandIndex]
+                        bandIndex += 1
+                        bandIndex %= bandCount
+
+//                        if ( bandFill != nil ) {
+                            // Start point
+                            startPlotPoint[selfCoordinate.rawValue] = currentLocation
+                            let startViewPoint = thePlotSpace?.plotAreaViewPointForPlotPoint(plotPoint: startPlotPoint, numberOfCoordinates:2)
+
+                            // End point
+                            endPlotPoint[selfCoordinate.rawValue] = lastLocation
+                            let endViewPoint = thePlotSpace?.plotAreaViewPointForPlotPoint(plotPoint: endPlotPoint, numberOfCoordinates:2)
+
+                            // Fill band
+                            let fillRect = CGRect(x: min(startViewPoint!.x, endViewPoint!.x),
+                                                  y: min(startViewPoint!.y, endViewPoint!.y),
+                                                  width: abs(endViewPoint!.x - startViewPoint!.x),
+                                                  height: abs(endViewPoint!.y - startViewPoint!.y))
+                            bandFill.fillRect(rect: CPTUtilities.shared.CPTAlignIntegralRectToUserSpace(context: context, rect: fillRect), context:context)
+//                        }
+                    }
+
+                    lastLocation = currentLocation
+                }
+
+                // Fill space between last location and the range end
+                var endLocation = CGFloat(0)
+                if (( range ) != nil) {
+                    endLocation = range!.endDecimal
+                }
+                else {
+                    endLocation = .nan
+                }
+                if lastLocation != endLocation {
+                    let bandFill = bandArray[bandIndex]
+
+//                    if ( bandFill != nil ) {
+                        // Start point
+                        startPlotPoint[selfCoordinate.rawValue] = endLocation
+                        let startViewPoint = thePlotSpace?.plotAreaViewPointForPlotPoint(plotPoint: startPlotPoint, numberOfCoordinates:2)
+
+                        // End point
+                        endPlotPoint[selfCoordinate.rawValue] = lastLocation
+                        let endViewPoint = thePlotSpace?.plotAreaViewPointForPlotPoint(plotPoint: endPlotPoint, numberOfCoordinates:2)
+
+                        // Fill band
+                        let fillRect = CGRect(x: min(startViewPoint!.x, endViewPoint!.x),
+                                              y: min(startViewPoint!.y, endViewPoint!.y),
+                                              width: abs(endViewPoint!.x - startViewPoint!.x),
+                                              height: abs(endViewPoint!.y - startViewPoint!.y))
+                        bandFill.fillRect(rect: CPTUtilities.shared.CPTAlignIntegralRectToUserSpace(context: context, rect: fillRect), context:context)
+//                    }
+                }
+            }
+        }
+    }
+
+    override func drawBackgroundLimitsInContext(context: CGContext)
+    {
+        let limitArray = self.backgroundLimitBands
+
+        if ( limitArray.count > 0 ) {
+            let thePlotSpace = self.plotSpace
+
+            let selfCoordinate = self.coordinate
+            let range   = thePlotSpace?.plotRangeForCoordinate(coordinate: selfCoordinate) as! CPTMutablePlotRange
+
+//            if (( range ) != nil) {
+                let theVisibleRange = self.visibleRange
+                if (( theVisibleRange ) != nil) {
+                    range.intersectionPlotRange(other: theVisibleRange)
+                }
+//            }
+
+            let orthogonalCoordinate   = CPTUtilities.shared.CPTOrthogonalCoordinate(selfCoordinate)
+            let orthogonalRange = thePlotSpace?.plotRangeForCoordinate(coordinate: orthogonalCoordinate) as! CPTMutablePlotRange
+            let theGridLineRange       = self.gridLinesRange
+
+            if (( theGridLineRange ) != nil) {
+                orthogonalRange.intersectionPlotRange(other: theGridLineRange)
+            }
+
+            var startPlotPoint = [CGFloat]()
+            var endPlotPoint = [CGFloat]()
+            startPlotPoint[orthogonalCoordinate.rawValue] = orthogonalRange.locationDecimal
+            endPlotPoint[orthogonalCoordinate.rawValue]   = orthogonalRange.endDecimal
+
+            for band in self.backgroundLimitBands {
+                let bandFill = band.fill
+
+                if (( bandFill ) != nil) {
+                    let bandRange = band.range as? CPTMutablePlotRange
+                    if (( bandRange ) != nil) {
+                        bandRange?.intersectionPlotRange(other: range)
+
+                        // Start point
+                        startPlotPoint[selfCoordinate.rawValue] = bandRange!.locationDecimal
+                        let startViewPoint = thePlotSpace?.plotAreaViewPointForPlotPoint(plotPoint: startPlotPoint, numberOfCoordinates:2)
+
+                        // End point
+                        endPlotPoint[selfCoordinate.rawValue] = bandRange!.endDecimal
+                        let endViewPoint = thePlotSpace?.plotAreaViewPointForPlotPoint(plotPoint: endPlotPoint, numberOfCoordinates:2)
+
+                        // Fill band
+                        let fillRect = CGRect(x: min(startViewPoint!.x, endViewPoint!.x),
+                                              y: min(startViewPoint!.y, endViewPoint!.y),
+                                              width: abs(endViewPoint!.x - startViewPoint!.x),
+                                              height: abs(endViewPoint!.y - startViewPoint!.y))
+                        bandFill?.fillRect(rect: CPTUtilities.shared.CPTAlignIntegralRectToUserSpace(context: context, rect: fillRect), context:context)
+                    }
+                }
+            }
+        }
+    }
 
     // MARK: - Description
 //

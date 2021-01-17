@@ -185,12 +185,12 @@ extension CPTPlot {
      **/
     func numbersFromDataSourceForField(fieldEnum : Int, recordIndexRange indexRange:NSRange)->Any?
     {
-        let  numbers : Any // can be CPTNumericData, Array, or Data
+        let  numbers : Any? // can be CPTNumericData, Array, or Data
         
         weak var theDataSource = self.dataSource
         
         if ((theDataSource?.dataForPlot(plot: fieldEnum: indexRange:)) != nil) {
-            numbers = theDataSource?.dataForPlot!( plot:self, fieldEnum:fieldEnum, indexRange:indexRange) as? [CGFloat]
+            numbers = theDataSource?.dataForPlot!( plot:self, fieldEnum:fieldEnum, indexRange:indexRange) as? CGFloat
         }
         else if ((theDataSource?.doublesForPlot(plot: fieldEnum: indexRange:)) != nil) {
             numbers = NSMutableData dataWithLength:sizeof(double) * indexRange.length];
@@ -205,7 +205,7 @@ extension CPTPlot {
             let numberArray = theDataSource?.numbersForPlot!(plot: self, fieldEnum: fieldEnum, indexRange:indexRange )
             
             if (( numberArray ) != nil) {
-                numbers = NSArray arrayWithArray:numberArray;
+                numbers = numberArray! as [Int];
             }
             else {
                 
@@ -219,7 +219,7 @@ extension CPTPlot {
             var fieldData = NSMutableData(length: indexRange.length)
             var fieldValues      = fieldData
             for recordIndex in indexRange.location..<indexRange.location + indexRange.length {
-                let number = theDataSource?.doubleForPlot(plot: self, fieldEnum:fieldEnum, index:recordIndex)
+                let number = theDataSource?.doubleForPlot!(plot: self, fieldEnum:fieldEnum, index:recordIndex)
                 fieldValues = number! + 1.0
             }
             
@@ -228,9 +228,9 @@ extension CPTPlot {
         else {
             if ((theDataSource?.numberForPlot(plot: fieldEnum: index:)) != nil) {
                 
-                let nullObject                 = NSNull null;
+                let nullObject    : CGFloat?
                 let recordIndex = 0
-                let fieldValues = [CGFloat]()
+                var fieldValues = [CGFloat?]()
                 for recordIndex in indexRange.location..<(indexRange.location + indexRange.length) {
                     if ( respondsToSingleValueSelector ) {
                         let number = theDataSource?.numberForPlot(plot: self, fieldEnum:fieldEnum, index:recordIndex)

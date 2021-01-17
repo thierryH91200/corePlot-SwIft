@@ -20,18 +20,18 @@ import AppKit
     @objc optional func dataForPlot     ( plot : CPTPlot, fieldEnum: Int, indexRange:NSRange ) -> CGFloat
     @objc optional func dataForPlot     ( plot : CPTPlot , indexRange:NSRange)-> [CGFloat]
     
-    @objc optional func dataLabelForPlot(plot: CPTPlot, index:Int )-> CPTLayer?
+    @objc optional func dataLabelForPlot(plot: CPTPlot, index:UInt )-> CPTLayer?
     @objc optional func dataLabelsForPlot(plot: CPTPlot,  indexRange: NSRange)-> [CPTLayer]
 }
 
 @objc public protocol CPTPlotDelegate  : CALayerDelegate{
     
     @objc optional func plot(plot: CPTPlot, dataLabelWasSelectedAtRecordIndex:Int)
-    @objc optional func plot(plot: CPTPlot, dataLabelWasSelectedAtRecordIndex:Int,  event: CPTNativeEvent )
+    @objc optional func plot(plot: CPTPlot, dataLabelWasSelectedAtRecordIndex:Int, event: CPTNativeEvent )
     @objc optional func plot(plot: CPTPlot, dataLabelTouchDownAtRecordIndex:Int)
     @objc optional func plot(plot: CPTPlot, dataLabelTouchDownAtRecordIndex:Int, event: CPTNativeEvent )
     @objc optional func plot(plot: CPTPlot, dataLabelTouchUpAtRecordIndex: Int)
-    @objc optional func plot(plot: CPTPlot, dataLabelTouchUpAtRecordIndex: Int,  event: CPTNativeEvent )
+    @objc optional func plot(plot: CPTPlot, dataLabelTouchUpAtRecordIndex: Int, event: CPTNativeEvent )
     
     @objc optional func didFinishDrawing(plot: CPTPlot )
 }

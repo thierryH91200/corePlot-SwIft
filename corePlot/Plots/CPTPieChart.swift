@@ -571,14 +571,14 @@ public class CPTPieChart: CPTPlot {
                 
                 if theFill != nil  {
                     context.beginPath();
-                    CPTAddRoundedRectPath(context, CPTAlignIntegralRectToUserSpace(context, rect), radius);
+                    CPTAddRoundedRectPath(context, CPTUtilities.shared.CPTAlignIntegralRectToUserSpace(context, rect), radius);
                     theFill?.fillPathInContext(context: context)
                 }
                 
                 if (( theLineStyle ) != nil) {
                     theLineStyle?.setLineStyleInContext(context: context)
                     context.beginPath();
-                    CPTAddRoundedRectPath(context, CPTAlignBorderedRectToUserSpace(context, rect, theLineStyle), radius);
+                    CPTAddRoundedRectPath(context, CPTUtilities.shared.CPTAlignBorderedRectToUserSpace(context, rect, theLineStyle), radius);
                     theLineStyle?.strokePathInContext(context: context)
                 }
             }

@@ -19,28 +19,28 @@ class CPTPlotRange: NSObject {
     }
     
     var location : CGFloat = 0.0
-//    var length: CGFloat = 0.0
-//    var end: CGFloat = 0.0
+    //    var length: CGFloat = 0.0
+    //    var end: CGFloat = 0.0
     
     //    var locationDecimal:  CGFloat = 0.0
     var lengthDecimal: CGFloat = 0.0
-//    var endDecimal: CGFloat = 0.0
+    //    var endDecimal: CGFloat = 0.0
     
     //    var locationDouble : Double = 0.0
     var lengthDouble: Double = 0.0
-//    var endDouble: Double = 0.0
+    //    var endDouble: Double = 0.0
     
-//    var minLimit = CGFloat(0.0)
-//    var midPoint = CGFloat(0.0);
-//    var maxLimit = CGFloat(0.0)
+    //    var minLimit = CGFloat(0.0)
+    //    var midPoint = CGFloat(0.0);
+    //    var maxLimit = CGFloat(0.0)
     
-    var minLimitDecimal = CGFloat(0.0)
-//    var midPointDecimal = CGFloat(0.0)
+//    var minLimitDecimal = CGFloat(0.0)
+    //    var midPointDecimal = CGFloat(0.0)
     //    var maxLimitDecimal = CGFloat(0.0)
     
-//    var minLimitDouble = Double(0.0)
-//    var midPointDouble = Double(0.0)
-//    var maxLimitDouble = Double(0.0)
+    //    var minLimitDouble = Double(0.0)
+    //    var midPointDouble = Double(0.0)
+    //    var maxLimitDouble = Double(0.0)
     
     var  isInfinite = true
     var  lengthSign  = CPTSign.positive
@@ -181,7 +181,7 @@ class CPTPlotRange: NSObject {
                 
                 self.lengthDouble = Double(newValue)
             }
-
+            
         }
     }
     
@@ -204,7 +204,7 @@ class CPTPlotRange: NSObject {
     }
     
     var _endDecimal : CGFloat = 0
-        var endDecimal : CGFloat {
+    var endDecimal : CGFloat {
         get { return self.locationDecimal + self.lengthDecimal }
         set { }
     }
@@ -224,73 +224,78 @@ class CPTPlotRange: NSObject {
     
     var _minLimit = CGFloat(0.0)
     func minLimit() -> CGFloat
-        {
-            return self.minLimitDecimal
-        }
+    {
+        return self.minLimitDecimal
+    }
     
-        -(NSDecimal)minLimitDecimal
-        {
-            NSDecimal loc = self.locationDecimal;
-            NSDecimal len = self.lengthDecimal;
     
-            if ( NSDecimalIsNotANumber(&len)) {
+    var minLimitDecimal : CGFloat {
+        get {
+            let loc = self.locationDecimal;
+            let len = self.lengthDecimal;
+            
+            if len.isNaN {
                 return loc;
             }
-            else if ( CPTDecimalLessThan(len, CPTDecimalFromInteger(0))) {
-                return CPTDecimalAdd(loc, len);
+            else if len < CGFloat(0) {
+                return loc + len
             }
             else {
                 return loc;
             }
+
         }
-//    var minLimitDouble = Double(0.0)
-        func minLimitDouble() -> Double
-        {
-            let doubleLoc = self.locationDouble;
-            let doubleLen = self.lengthDouble;
+        set { }
+    }
+
+    //    var minLimitDouble = Double(0.0)
+    func minLimitDouble() -> Double
+    {
+        let doubleLoc = self.locationDouble;
+        let doubleLen = self.lengthDouble;
+        
+        if ( doubleLen < 0.0 ) {
+            return doubleLoc + doubleLen;
+        }
+        else {
+            return doubleLoc;
+        }
+    }
     
-            if ( doubleLen < 0.0 ) {
-                return doubleLoc + doubleLen;
-            }
-            else {
-                return doubleLoc;
-            }
-        }
-    
-        func midPoint() -> CGFloat
-        {
-            return self._midPointDecimal
-        }
+    func midPoint() -> CGFloat
+    {
+        return self._midPointDecimal
+    }
     
     var _midPointDecimal : CGFloat = 0
     func midPointDecimal()-> CGFloat
-        {
-            return self.locationDecimal + (self.lengthDecimal / 2)
+    {
+        return self.locationDecimal + (self.lengthDecimal / 2)
+    }
+    
+    func midPointDouble() -> Double
+    {
+        return fma(self.lengthDouble, 0.5, self.locationDouble);
+    }
+    
+    func maxLimit() -> CGFloat
+    {
+        return self.maxLimitDecimal
+    }
+    
+    
+    func maxLimitDouble()-> Double
+    {
+        let doubleLoc = self.locationDouble;
+        let doubleLen = self.lengthDouble;
+        
+        if ( doubleLen > 0.0 ) {
+            return doubleLoc + doubleLen;
         }
-    
-        func midPointDouble() -> Double
-        {
-            return fma(self.lengthDouble, 0.5, self.locationDouble);
+        else {
+            return doubleLoc;
         }
-    
-        func maxLimit() -> CGFloat
-        {
-            return self.maxLimitDecimal
-        }
-    
-    
-        func maxLimitDouble()-> Double
-        {
-            let doubleLoc = self.locationDouble;
-            let doubleLen = self.lengthDouble;
-    
-            if ( doubleLen > 0.0 ) {
-                return doubleLoc + doubleLen;
-            }
-            else {
-                return doubleLoc;
-            }
-        }
+    }
     
     
     // MARK: -  Checking Containership
@@ -319,7 +324,7 @@ class CPTPlotRange: NSObject {
      **/
     func containsDouble(number: Double) -> Bool
     {
-        return (number >= self.minLimitDouble) && (number <= self.maxLimitDouble)
+        return (number >= self.minLimitDouble()) && (number <= self.maxLimitDouble())
     }
     
     /** @brief Determines whether a given number is inside the range.
@@ -491,10 +496,10 @@ class CPTPlotRange: NSObject {
         if number.isNaN {
             result = .undefined;
         }
-        else if ( number < self.minLimitDouble ) {
+        else if ( number < self.minLimitDouble() ) {
             result = .belowRange
         }
-        else if ( number > self.maxLimitDouble ) {
+        else if ( number > self.maxLimitDouble() ) {
             result = .aboveRange
         }
         else {

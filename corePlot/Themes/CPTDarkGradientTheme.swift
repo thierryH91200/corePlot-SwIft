@@ -54,12 +54,12 @@ class CPTDarkGradientTheme: CPTXYTheme {
         let minorLineStyle = CPTLineStyle()
         
         minorLineStyle.lineCap   = CGLineCap.square;
-        minorLineStyle.lineColor = NSColor.darkGray
+        minorLineStyle.lineColor = NSUIColor.darkGray
         minorLineStyle.lineWidth = CGFloat(1.0);
         
         let whiteTextStyle = CPTTextStyle()
         
-        whiteTextStyle.color    = NSColor.white
+        whiteTextStyle.color    = NSUIColor.white
         whiteTextStyle.fontSize = CGFloat(14.0);
         
         let whiteMinorTickTextStyle = CPTTextStyle()
