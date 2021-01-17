@@ -113,6 +113,7 @@
 		03E60DAE25828F7B00DB4F73 /* CPTLegend Drawing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E60DAD25828F7B00DB4F73 /* CPTLegend Drawing.swift */; };
 		03E60DB325828F8E00DB4F73 /* CPTLegendEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E60DB125828F8E00DB4F73 /* CPTLegendEntry.swift */; };
 		03E60DB425828F8E00DB4F73 /* CPTLegend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E60DB225828F8E00DB4F73 /* CPTLegend.swift */; };
+		03FC6A8925B3243D00D2E578 /* BarChartController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FC6A8825B3243C00D2E578 /* BarChartController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -235,6 +236,7 @@
 		03E60DAD25828F7B00DB4F73 /* CPTLegend Drawing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CPTLegend Drawing.swift"; sourceTree = "<group>"; };
 		03E60DB125828F8E00DB4F73 /* CPTLegendEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPTLegendEntry.swift; sourceTree = "<group>"; };
 		03E60DB225828F8E00DB4F73 /* CPTLegend.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPTLegend.swift; sourceTree = "<group>"; };
+		03FC6A8825B3243C00D2E578 /* BarChartController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarChartController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -319,6 +321,7 @@
 			children = (
 				030A6515255FCE9A002B3D13 /* PieChartController.swift */,
 				030A6516255FCE9A002B3D13 /* PieChartController.xib */,
+				03FC6A8825B3243C00D2E578 /* BarChartController.swift */,
 				03848EFA255F2F7000F1C1D5 /* README.md */,
 				037244392545FE4600B59C97 /* corePlot */,
 				037244442545FE4600B59C97 /* corePlotTests */,
@@ -779,6 +782,7 @@
 				0397469F2557281B008CF3E6 /* CPTColor.swift in Sources */,
 				03E60DAE25828F7B00DB4F73 /* CPTLegend Drawing.swift in Sources */,
 				03A863172586C86D0006CAB2 /* CPTNumericDataType.swift in Sources */,
+				03FC6A8925B3243D00D2E578 /* BarChartController.swift in Sources */,
 				0320AFD0255C518900D32BF9 /* CPTPlainBlackTheme.swift in Sources */,
 				033BF56B2572D1DF003ECB08 /* CPTAnimationTimingFunction.swift in Sources */,
 				030A652A25601394002B3D13 /* CPTXYAxisSet.swift in Sources */,

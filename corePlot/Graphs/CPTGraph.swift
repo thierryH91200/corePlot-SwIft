@@ -17,8 +17,8 @@ public class CPTGraph: CPTBorderedLayer {
     
     // MARK: - Axis Set
     var axisSet : CPTAxisSet? {
-        get { return self.plotAreaFrame.axisSet! }
-        set { self.plotAreaFrame.axisSet = newValue   }
+        get { return self.plotAreaFrame?.axisSet! }
+        set { self.plotAreaFrame?.axisSet = newValue   }
     }
 
     var title = ""
@@ -38,7 +38,7 @@ public class CPTGraph: CPTBorderedLayer {
     // MARK: Layers
 //    var axisSet : CPTAxisSet
     var newAxisSet : CPTAxisSet?
-    var plotAreaFrame : CPTPlotAreaFrame
+    var plotAreaFrame : CPTPlotAreaFrame?
 //    var defaultPlotSpace : CPTPlotSpace
     var newPlotSpace : CPTPlotSpace?
     var topDownLayerOrder : [CPTGraphLayerType]

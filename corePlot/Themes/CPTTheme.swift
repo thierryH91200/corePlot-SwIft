@@ -18,6 +18,22 @@ import AppKit
 //extern CPTThemeName __nonnull const kCPTStocksTheme;       ///< A graph theme with a gradient background and white lines.
 ///// @}
 
+enum CPTThemeName: String {
+    case CPTDarkGradientTheme     = "Dark Gradients"
+    case CPTPlainBlackTheme  = "Plain Black"
+    case CPTPlainWhiteTheme = "Plain White"
+    case CPTSlateTheme   = "Slate"
+    case CPTStocksTheme     = "Stocks"
+}
+//struct CPTThemeName: String {
+//    var CPTDarkGradientTheme     = "Dark Gradients"
+//    var CPTPlainBlackTheme  = "Plain Black"
+//    var CPTPlainWhiteTheme = "Plain White"
+//    var CPTSlateTheme   = "Slate"
+//    var CPTStocksTheme     = "Stocks"
+//}
+//
+
 
 class CPTTheme: NSObject {
 
@@ -52,12 +68,12 @@ class CPTTheme: NSObject {
 //        }
 //        return newTheme;
 //    }
-    class func themeNamed(_ themeName: CPTThemeName?) -> CPTTheme? {
+    class func themeNamed(_ themeName: CPTThemeName) -> CPTTheme? {
         
         var newTheme: CPTTheme?
 
         for themeClass in themes! {
-            if themeName?.isEqual(toString: themeClass.name()) != nil {
+            if themeName?.rawValue == themeClass.name {
                 newTheme = themeClass.init() as? CPTTheme
                 break
             }
@@ -66,7 +82,7 @@ class CPTTheme: NSObject {
     }
     
     
-    init (themeNamed: CPTThemeName)
+    init (named: CPTThemeName)
     {
         let newTheme : CPTTheme?
         

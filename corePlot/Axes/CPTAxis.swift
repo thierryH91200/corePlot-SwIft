@@ -95,7 +95,7 @@ public class CPTAxis : CPTLayer {
     var titleRotation :  CGFloat?
     var titleDirection : CPTSign = .none
 //    var titleLocation = 0
-    var defaultTitleLocation = 0
+    var defaultTitleLocation = CGFloat(0)
     
     // MARK: -
     var axisLineStyle : CPTLineStyle?
@@ -144,14 +144,14 @@ public class CPTAxis : CPTLayer {
     // MARK:  Major Ticks
     var majorIntervalLength = CGFloat(0)
     var majorTickLength = CGFloat(0)
-    var majorTickLineStyle: CPTLineStyle
+    var majorTickLineStyle: CPTLineStyle?
     var majorTickLocations: CPTNumberSet
     var preferredNumberOfMajorTicks = 0
     
     // MARK:  Minor Ticks
     var minorTicksPerInterval = CGFloat(0.0)
     var minorTickLength = CGFloat(0.0)
-    var minorTickLineStyle: CPTLineStyle
+    var minorTickLineStyle: CPTLineStyle?
     var minorTickLocations: CPTNumberSet
     
     // MARK:  Grid Lines
@@ -1310,8 +1310,8 @@ public class CPTAxis : CPTLayer {
     
 //    isEqualToRange
     
-    var _titleLocation : Int?
-    var titleLocation : Int? {
+    var _titleLocation : CGFloat?
+    var titleLocation : CGFloat? {
         get {
             if _titleLocation == -1 {
                 return defaultTitleLocation

@@ -500,7 +500,41 @@ class CPTXYPlotSpace: CPTPlotSpace {
 
     override func scaleToFitPlots(plots:[ CPTPlot]  )
     {
-        scaleToFitEntirePlots(plots: plots)
+        guard plots.isEmpty == false else { return }
+
+        // Determine union of ranges
+        var unionXRange : CPTMutablePlotRange?
+        var unionYRange : CPTMutablePlotRange?
+
+        for plot in plots {
+            let currentXRange = plot.plotRangeForCoordinate(coord: CPTCoordinate.x)
+            let currentYRange = plot.plotRangeForCoordinate(coord: CPTCoordinate.y)
+            
+            if ( unionXRange != nil) {
+                unionXRange = currentXRange as? CPTMutablePlotRange
+            }
+            if ( unionYRange != nil) {
+                unionYRange = currentYRange as? CPTMutablePlotRange
+            }
+            unionXRange?.unionPlotRange(other: currentXRange)
+            unionYRange?.unionPlotRange(other: currentYRange)
+        }
+
+        // Set range
+        let zero = CGFloat(0);
+
+        if ( unionXRange == nil ) {
+            if unionXRange?.lengthDecimal == zero {
+                unionXRange?.unionPlotRange(other: self.xRange)
+            }
+            self.xRange = unionXRange!;
+        }
+        if ( unionYRange == nil ) {
+            if unionYRange?.lengthDecimal == zero {
+                unionYRange?.unionPlotRange(other: self.yRange)
+            }
+            self.yRange = unionYRange!;
+        }
     }
     
     override func scaleToFitEntirePlots(plots: [ CPTPlot] )

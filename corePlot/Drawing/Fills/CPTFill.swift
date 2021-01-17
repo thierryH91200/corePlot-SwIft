@@ -7,7 +7,7 @@
 
 import AppKit
 
-public class CPTFill: NSObject  {
+@objc public class CPTFill: NSObject  {
     
     static let shared = CPTFill()
     

@@ -9,7 +9,7 @@ import AppKit
 
 @objc public protocol CPTPlotDataSource: NSObjectProtocol {
     
-    func numberOfRecordsForPlot ( plot:  CPTPlot) -> Int
+    @objc optional func numberOfRecordsForPlot ( plot:  CPTPlot) -> UInt
 
     @objc optional func numberForPlot  ( plot: CPTPlot, fieldEnum: Int, index: Int) -> Int
     @objc optional func numbersForPlot ( plot: CPTPlot, fieldEnum: Int, indexRange : NSRange) -> [Int]
@@ -20,20 +20,20 @@ import AppKit
     @objc optional func dataForPlot     ( plot : CPTPlot, fieldEnum: Int, indexRange:NSRange ) -> CGFloat
     @objc optional func dataForPlot     ( plot : CPTPlot , indexRange:NSRange)-> [CGFloat]
     
-    @objc optional func dataLabelForPlot(plot: CPTPlot, index:Int )-> CPTLayer
+    @objc optional func dataLabelForPlot(plot: CPTPlot, index:Int )-> CPTLayer?
     @objc optional func dataLabelsForPlot(plot: CPTPlot,  indexRange: NSRange)-> [CPTLayer]
 }
 
-@objc public protocol CPTPlotDelegate {
+@objc public protocol CPTPlotDelegate  : CALayerDelegate{
     
-    func plot(plot: CPTPlot, dataLabelWasSelectedAtRecordIndex:Int)
-    func plot(plot: CPTPlot, dataLabelWasSelectedAtRecordIndex:Int,  event: CPTNativeEvent )
-    func plot(plot: CPTPlot, dataLabelTouchDownAtRecordIndex:Int)
-    func plot(plot: CPTPlot, dataLabelTouchDownAtRecordIndex:Int, event: CPTNativeEvent )
-    func plot(plot: CPTPlot, dataLabelTouchUpAtRecordIndex: Int)
-    func plot(plot: CPTPlot, dataLabelTouchUpAtRecordIndex: Int,  event: CPTNativeEvent )
+    @objc optional func plot(plot: CPTPlot, dataLabelWasSelectedAtRecordIndex:Int)
+    @objc optional func plot(plot: CPTPlot, dataLabelWasSelectedAtRecordIndex:Int,  event: CPTNativeEvent )
+    @objc optional func plot(plot: CPTPlot, dataLabelTouchDownAtRecordIndex:Int)
+    @objc optional func plot(plot: CPTPlot, dataLabelTouchDownAtRecordIndex:Int, event: CPTNativeEvent )
+    @objc optional func plot(plot: CPTPlot, dataLabelTouchUpAtRecordIndex: Int)
+    @objc optional func plot(plot: CPTPlot, dataLabelTouchUpAtRecordIndex: Int,  event: CPTNativeEvent )
     
-    func didFinishDrawing(plot: CPTPlot )
+    @objc optional func didFinishDrawing(plot: CPTPlot )
 }
 
 public class CPTPlot: CPTAnnotationHostLayer {
@@ -65,7 +65,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
     var plotArea : CPTPlotArea? {
         get {
             let theGraph = self.graph
-            return theGraph?.plotAreaFrame.plotArea! }
+            return theGraph?.plotAreaFrame?.plotArea! }
         set { }
     }
 

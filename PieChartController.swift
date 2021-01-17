@@ -7,7 +7,7 @@
 
 import AppKit
 
-class PieChartController: NSViewController {
+class PieChartController: NSViewController, CPTPieChartDataSource  {
     
     private var pieGraph : CPTXYGraph? = nil
     let dataForChart = [20.0, 30.0, 60.0]
@@ -18,10 +18,10 @@ class PieChartController: NSViewController {
         
         // Create graph from theme
         
-        let kCPTDarkGradientTheme = "Dark Gradients"
+//        let kCPTDarkGradientTheme = "Dark Gradients"
 
         let newGraph = CPTXYGraph(frame: CGRect())
-        newGraph.applyTheme(theme: CPTTheme(named: .darkGradientTheme))
+        newGraph.applyTheme(theme: CPTTheme(named: CPTThemeName.CPTDarkGradientTheme.rawValue))
         
         let hostingView = self.view as! CPTGraphHostingView
         hostingView.hostedGraph = newGraph
@@ -41,16 +41,16 @@ class PieChartController: NSViewController {
         newGraph.title          = "Graph Title"
         
         // Add pie chart
-        let piePlot = CPTPieChart(frame: CGRect)
+        let piePlot = CPTPieChart(frame: .zero)
         piePlot.dataSource      = self
         piePlot.pieRadius       = 131.0
         piePlot.identifier      = "Pie Chart 1"
-        piePlot.startAngle      = CGFloat(M_PI_4)
+        piePlot.startAngle      = CGFloat.pi/4
         piePlot.sliceDirection  = .counterClockwise
         piePlot.centerAnchor    = CGPoint(x: 0.5, y: 0.38)
         piePlot.borderLineStyle = CPTLineStyle()
         piePlot.delegate        = self
-        newGraph.addPlot(piePlot)
+        newGraph.addPlot(plot: piePlot)
         
         self.pieGraph = newGraph
     }
@@ -68,11 +68,11 @@ class PieChartController: NSViewController {
         }
         else {
             switch CPTPieChartField(rawValue: Int(field))! {
-            case .SliceWidth:
-                return (self.dataForChart)[Int(recordIndex)] as Int
+            case .sliceWidth:
+                return self.dataForChart[Int(recordIndex)]
                 
             default:
-                return recordIndex
+                return Int(recordIndex)
             }
         }
     }
@@ -85,7 +85,6 @@ class PieChartController: NSViewController {
             textStyle.color = CPTColor.lightGray
             label.textStyle = textStyle
         }
-        
         return label
     }
     
@@ -99,12 +98,14 @@ class PieChartController: NSViewController {
         
         return offset
     }
+}
     
     // MARK: - Delegate Methods
+extension PieChartController: CPTPieChartDelegate  {
     
-    func pieChart(plot: CPTPlot, sliceWasSelectedAtRecordIndex recordIndex: UInt)
+    func pieChart(plot: CPTPieChart, sliceWasSelectedAtRecordIndex idx: Int)
     {
-        self.pieGraph?.title = "Selected index: \(recordIndex)"
+        self.pieGraph?.title = "Selected index: \(idx)"
     }
 }
 

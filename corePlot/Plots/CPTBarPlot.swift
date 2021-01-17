@@ -11,18 +11,18 @@ import AppKit
 // MARK: bar plot data source.
 @objc public protocol CPTBarPlotDataSource:   CPTPlotDataSource  {
     
-    func barFillsForBarPlot     (plot: CPTBarPlot, indexRange:NSRange)-> [CPTFill]
-    func barFillForBarPlot      (plot: CPTBarPlot, index:Int) -> [CPTFill]
+    @objc optional func barFillsForBarPlot     (plot: CPTBarPlot, indexRange:NSRange)-> [CPTFill]
+    @objc optional func barFillForBarPlot      (plot: CPTBarPlot, index:Int) -> [CPTFill]
     
-    func barLineStyleForBarPlot (plot: CPTBarPlot, index:Int)-> CPTLineStyle
-    func barLineStylesForBarPlot(plot: CPTBarPlot, indexRange:NSRange)-> [CPTLineStyle]
+    @objc optional func barLineStyleForBarPlot (plot: CPTBarPlot, index:Int)-> CPTLineStyle
+    @objc optional func barLineStylesForBarPlot(plot: CPTBarPlot, indexRange:NSRange)-> [CPTLineStyle]
     
-    func barWidthsForBarPlot    (plot: CPTBarPlot, indexRange :NSRange)-> [CGFloat]
-    func barWidthForBarPlot     (plot: CPTBarPlot, index: Int)-> CGFloat
+    @objc optional func barWidthsForBarPlot    (plot: CPTBarPlot, indexRange :NSRange)-> [CGFloat]
+    @objc optional func barWidthForBarPlot     (plot: CPTBarPlot, index: Int)-> CGFloat
     
-    func legendTitleForBarPlot  (plot: CPTBarPlot, index:Int) -> String
+    @objc optional func legendTitleForBarPlot  (plot: CPTBarPlot, index:Int) -> String
     
-    func attributedLegendTitleForBarPlot(plot: CPTBarPlot, index:Int )-> NSAttributedString
+    @objc optional func attributedLegendTitleForBarPlot(plot: CPTBarPlot, index:Int )-> NSAttributedString
 }
 
 // MARK:  Bar plot delegate
@@ -45,6 +45,8 @@ enum  CPTBarPlotField : Int {
 
 public class CPTBarPlot: CPTPlot {
     
+    static let shared = CPTBarPlot()
+
     weak var barDataSource : CPTBarPlotDataSource?
     
     //    var barFills = [CPTFill]()

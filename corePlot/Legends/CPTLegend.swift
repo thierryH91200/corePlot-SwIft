@@ -559,7 +559,6 @@
     func removePlot(plot: CPTPlot)
     {
         if ( self.plots.contains(plot) ) {
-            //                [self.plots removeObjectIdenticalTo:plot];
             self.removeLegendEntriesForPlot(plot: plot)
             self.layoutChanged = true
             
@@ -591,7 +590,6 @@
         let plotToRemove = self.plotWithIdentifier(identifier: identifier)
         
         if (( plotToRemove ) != nil) {
-            //            self.plots.removeObjectIdenticalTo(plotToRemove)
             self.plots.removeObject(plotToRemove!)
             self.removeLegendEntriesForPlot(plot: plotToRemove!)
             self.layoutChanged = true

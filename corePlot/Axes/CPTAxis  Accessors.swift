@@ -131,10 +131,7 @@ extension CPTAxis {
                 self.updateMinorTickLabels()
             }
         }
-    
-    
-    
-    
+
     
     //    -(void)setTitleTextStyle:(nullable CPTTextStyle *)newStyle
     //    {
@@ -155,16 +152,16 @@ extension CPTAxis {
     //        }
     //    }
     //
-    //    -(void)setTitleOffset:(CGFloat)newOffset
-    //    {
-    //        if ( newOffset != titleOffset ) {
-    //            titleOffset = newOffset;
-    //
-    //            self.axisTitle.offset = titleOffset;
-    //            [self updateAxisTitle];
-    //        }
-    //    }
-    //
+    func setTitleOffset(newOffset: CGFloat)
+    {
+        if ( newOffset != titleOffset ) {
+            titleOffset = newOffset;
+            
+            self.axisTitle?.offset = titleOffset;
+            self.updateAxisTitle()
+        }
+    }
+    
     //    -(void)setTitleRotation:(CGFloat)newRotation
     //    {
     //        if ( newRotation != titleRotation ) {

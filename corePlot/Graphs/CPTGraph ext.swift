@@ -98,7 +98,7 @@ extension CPTGraph {
      *  @param identifier A plot identifier.
      *  @return The plot with the given identifier or @nil if it was not found.
      **/
-    func plotWithIdentifier(identifier: UUID)-> CPTPlot?
+    func plotWithIdentifier(identifier: String)-> CPTPlot?
     {
         for plot in self.plots {
             if plot.identifier == identifier {
@@ -124,11 +124,11 @@ extension CPTGraph {
      **/
     func addPlot(plot: CPTPlot?, space: CPTPlotSpace )
     {
-        if (( plot ) != nil) {
+        if ( plot  != nil) {
             self.plots.append(plot!)
             plot?.plotSpace = space
             plot?.graph     = self;
-            self.plotAreaFrame.plotGroup.addPlot(plot: plot!)
+            self.plotAreaFrame?.plotGroup.addPlot(plot: plot!)
         }
     }
     
@@ -143,8 +143,10 @@ extension CPTGraph {
             if self.plots.contains(plot! ) {
                 thePlot?.plotSpace = nil
                 thePlot?.graph     = nil
-                self.plotAreaFrame.plotGroup.removePlot(plot: thePlot!)
-                self.plots.remove(at: thePlot)
+                self.plotAreaFrame?.plotGroup.removePlot(plot: thePlot!)
+                
+                let index = plots.firstIndex(of: thePlot!)
+                self.plots.remove( at: index! )
             }
             else {
                 print("Tried to remove CPTPlot which did not exist.")
@@ -172,22 +174,24 @@ extension CPTGraph {
             self.plots.insert(plot!, at: index)
             plot?.plotSpace = space
             plot?.graph     = self
-            self.plotAreaFrame.plotGroup.insertPlot(plot: plot!, atIndex: index)
+            self.plotAreaFrame?.plotGroup.insertPlot(plot: plot!, atIndex: index)
         }
     }
     
     /** @brief Remove a plot from the graph.
      *  @param identifier The identifier of the plot to remove.
      **/
-    func removePlotWithIdentifier(identifier: UUID)
+    func removePlotWithIdentifier(identifier: String)
     {
         let plotToRemove = self.plotWithIdentifier(identifier: identifier)
         
         if (( plotToRemove ) != nil) {
             plotToRemove?.plotSpace = nil
             plotToRemove?.graph     = nil
-            self.plotAreaFrame.plotGroup.removePlot(plot: plotToRemove!)
-            self.plots.removeObjectIdentical(plotToRemove)
+            self.plotAreaFrame?.plotGroup.removePlot(plot: plotToRemove!)
+//            self.plots.removeObjectIdentical(plotToRemove)
+            self.plots = self.plots.filter { $0 != plotToRemove } // Keeps only what is
+
         }
     }
     
@@ -218,7 +222,7 @@ extension CPTGraph {
      *  @param identifier A plot space identifier.
      *  @return The plot space with the given identifier or @nil if it was not found.
      **/
-    func plotSpaceWithIdentifier(identifier: UUID) -> CPTPlotSpace?
+    func plotSpaceWithIdentifier(identifier: String) -> CPTPlotSpace?
     {
         for plotSpace in self.plotSpaces  {
             if plotSpace.identifier == identifier {
@@ -232,8 +236,8 @@ extension CPTGraph {
     func setPlotAreaFrame(newArea: CPTPlotAreaFrame?)
     {
         if ( plotAreaFrame != newArea ) {
-            plotAreaFrame.graph = nil;
-            plotAreaFrame.removeFromSuperlayer()
+            plotAreaFrame?.graph = nil;
+            plotAreaFrame?.removeFromSuperlayer()
             
             plotAreaFrame = newArea!;
             
@@ -333,7 +337,7 @@ extension CPTGraph {
             }
         }
         if ( backgroundBandsNeedRedraw ) {
-            self.plotAreaFrame.plotArea?.setNeedsDisplay()
+            self.plotAreaFrame?.plotArea?.setNeedsDisplay()
         }
     }
         
@@ -369,7 +373,7 @@ extension CPTGraph {
             }
             else {
                 if (( theLegendAnnotation ) != nil) {
-                    self.removeAnnotation(theLegendAnnotation)
+                    self.removeAnnotation(theLegendAnnotation!)
                     self.legendAnnotation = nil;
                 }
             }
@@ -437,7 +441,7 @@ extension CPTGraph {
     //    }
     
     func setTopDownLayerOrder(_ newArray: [CPTGraphLayerType]) {
-        plotAreaFrame.plotArea?.topDownLayerOrder = newArray
+        plotAreaFrame?.plotArea?.topDownLayerOrder = newArray
     }
     
     func setTitle(newTitle : String)
@@ -459,10 +463,10 @@ extension CPTGraph {
                     }
                     else {
                         let frameLayer = self.plotAreaFrame
-                        if ( frameLayer ) {
-                            let newTitleAnnotation = CPTLayerAnnotation( newAnchorLayer: frameLayer)
+                        if (( frameLayer ) != nil) {
+                            let newTitleAnnotation = CPTLayerAnnotation( newAnchorLayer: frameLayer!)
                             
-                            let newTextLayer = CPTTextLayer(newText: title, newStyle: titleTextStyle)
+                            let newTextLayer = CPTTextLayer(newText: title, newStyle: titleTextStyle!)
                             
                             newTitleAnnotation.contentLayer       = newTextLayer
                             newTitleAnnotation.displacement       = self.titleDisplacement
@@ -475,7 +479,7 @@ extension CPTGraph {
                 }
                 else {
                     if  (theTitleAnnotation != nil)  {
-                        self.removeAnnotation(theTitleAnnotation)
+                        self.removeAnnotation(theTitleAnnotation!)
                         self.titleAnnotation = nil;
                     }
                 }
@@ -519,7 +523,7 @@ extension CPTGraph {
                     self.title          = ""
                     
                     if (( theTitleAnnotation ) != nil) {
-                        self.removeAnnotation(theTitleAnnotation)
+                        self.removeAnnotation(theTitleAnnotation!)
                         self.titleAnnotation = nil;
                     }
                 }
@@ -587,7 +591,7 @@ extension CPTGraph {
         }
         
         // Plot area
-        if self.plotAreaFrame.pointingDeviceDownEvent(event: event, atPoint:interactionPoint ) {
+        if ((self.plotAreaFrame?.pointingDeviceDownEvent(event: event, atPoint:interactionPoint )) != nil) {
             return true
         }
         
@@ -654,7 +658,7 @@ extension CPTGraph {
         }
         
         // Plot area
-        if  !handledEvent && self.plotAreaFrame.pointingDeviceUpEvent(event:event, atPoint:interactionPoint) {
+        if  !handledEvent && ((self.plotAreaFrame?.pointingDeviceUpEvent(event:event, atPoint:interactionPoint)) != nil) {
             handledEvent = true
         }
         
@@ -697,7 +701,7 @@ extension CPTGraph {
         }
         
         // Plot area
-        if self.plotAreaFrame.pointingDeviceDraggedEvent(event:event, atPoint:interactionPoint) {
+        if ((self.plotAreaFrame?.pointingDeviceDraggedEvent(event:event, atPoint:interactionPoint)) != nil) {
             return true
         }
         
@@ -760,7 +764,7 @@ extension CPTGraph {
         }
         
         // Plot area
-        if  self.plotAreaFrame.pointingDeviceCancelledEvent( event ) {
+        if  ((self.plotAreaFrame?.pointingDeviceCancelledEvent( event )) != nil) {
             return true
         }
         
@@ -801,7 +805,7 @@ extension CPTGraph {
         }
         
         // Plot area
-        if self.plotAreaFrame.scrollWheelEvent(event: event, fromPoint:fromPoint, toPoint:toPoint ) {
+        if ((self.plotAreaFrame?.scrollWheelEvent(event: event, fromPoint:fromPoint, toPoint:toPoint )) != nil) {
             return true
         }
         

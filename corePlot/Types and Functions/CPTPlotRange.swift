@@ -19,28 +19,28 @@ class CPTPlotRange: NSObject {
     }
     
     var location : CGFloat = 0.0
-    var length: CGFloat = 0.0
-    var  end: CGFloat = 0.0
+//    var length: CGFloat = 0.0
+//    var end: CGFloat = 0.0
     
     //    var locationDecimal:  CGFloat = 0.0
     var lengthDecimal: CGFloat = 0.0
-    var endDecimal: CGFloat = 0.0
+//    var endDecimal: CGFloat = 0.0
     
     //    var locationDouble : Double = 0.0
     var lengthDouble: Double = 0.0
-    var endDouble: Double = 0.0
+//    var endDouble: Double = 0.0
     
-    var minLimit = CGFloat(0.0)
-    var midPoint = CGFloat(0.0);
-    var maxLimit = CGFloat(0.0)
+//    var minLimit = CGFloat(0.0)
+//    var midPoint = CGFloat(0.0);
+//    var maxLimit = CGFloat(0.0)
     
     var minLimitDecimal = CGFloat(0.0)
-    var midPointDecimal = CGFloat(0.0)
+//    var midPointDecimal = CGFloat(0.0)
     //    var maxLimitDecimal = CGFloat(0.0)
     
-    var minLimitDouble = Double(0.0)
-    var midPointDouble = Double(0.0)
-    var maxLimitDouble = Double(0.0)
+//    var minLimitDouble = Double(0.0)
+//    var midPointDouble = Double(0.0)
+//    var maxLimitDouble = Double(0.0)
     
     var  isInfinite = true
     var  lengthSign  = CPTSign.positive
@@ -172,135 +172,126 @@ class CPTPlotRange: NSObject {
         }
     }
     
-    //
-    //
-    //    -(NSNumber *)length
-    //    {
-    //        return [NSDecimalNumber decimalNumberWithDecimal:self.lengthDecimal];
-    //    }
-    //
-    //    -(void)setLengthDecimal:(NSDecimal)newLength
-    //    {
-    //        if ( !CPTDecimalEquals(lengthDecimal, newLength)) {
-    //            lengthDecimal = newLength;
-    //
-    //            if ( !self.inValueUpdate ) {
-    //                self.inValueUpdate = YES;
-    //
-    //                self.lengthDouble = CPTDecimalDoubleValue(newLength);
-    //
-    //                self.inValueUpdate = false
-    //            }
-    //        }
-    //    }
-    //
-    //    -(void)setLengthDouble:(double)newLength
-    //    {
-    //        if ( lengthDouble != newLength ) {
-    //            lengthDouble = newLength;
-    //
-    //            if ( isnan(newLength)) {
-    //                self.isInfinite = false
-    //                self.lengthSign = CPTSignNone;
-    //            }
-    //            else {
-    //                self.isInfinite = (BOOL)isinf(newLength);
-    //                self.lengthSign = signbit(newLength) ? CPTSignNegative : CPTSignPositive;
-    //            }
-    //
-    //            if ( !self.inValueUpdate ) {
-    //                self.inValueUpdate = YES;
-    //
-    //                self.lengthDecimal = CPTDecimalFromDouble(newLength);
-    //
-    //                self.inValueUpdate = false
-    //            }
-    //        }
-    //    }
-    //
-    //    -(NSNumber *)end
-    //    {
-    //        return [NSDecimalNumber decimalNumberWithDecimal:self.endDecimal];
-    //    }
-    //
-    //    -(NSDecimal)endDecimal
-    //    {
-    //        return CPTDecimalAdd(self.locationDecimal, self.lengthDecimal);
-    //    }
-    //
-    //    -(double)endDouble
-    //    {
-    //        return self.locationDouble + self.lengthDouble;
-    //    }
-    //
-    //    -(NSNumber *)minLimit
-    //    {
-    //        return [NSDecimalNumber decimalNumberWithDecimal:self.minLimitDecimal];
-    //    }
-    //
-    //    -(NSDecimal)minLimitDecimal
-    //    {
-    //        NSDecimal loc = self.locationDecimal;
-    //        NSDecimal len = self.lengthDecimal;
-    //
-    //        if ( NSDecimalIsNotANumber(&len)) {
-    //            return loc;
-    //        }
-    //        else if ( CPTDecimalLessThan(len, CPTDecimalFromInteger(0))) {
-    //            return CPTDecimalAdd(loc, len);
-    //        }
-    //        else {
-    //            return loc;
-    //        }
-    //    }
-    //
-    //    -(double)minLimitDouble
-    //    {
-    //        double doubleLoc = self.locationDouble;
-    //        double doubleLen = self.lengthDouble;
-    //
-    //        if ( doubleLen < 0.0 ) {
-    //            return doubleLoc + doubleLen;
-    //        }
-    //        else {
-    //            return doubleLoc;
-    //        }
-    //    }
-    //
-    //    -(NSNumber *)midPoint
-    //    {
-    //        return [NSDecimalNumber decimalNumberWithDecimal:self.midPointDecimal];
-    //    }
-    //
-    //    -(NSDecimal)midPointDecimal
-    //    {
-    //        return CPTDecimalAdd(self.locationDecimal, CPTDecimalDivide(self.lengthDecimal, CPTDecimalFromInteger(2)));
-    //    }
-    //
-    //    -(double)midPointDouble
-    //    {
-    //        return fma(self.lengthDouble, 0.5, self.locationDouble);
-    //    }
-    //
-    //    -(NSNumber *)maxLimit
-    //    {
-    //        return [NSDecimalNumber decimalNumberWithDecimal:self.maxLimitDecimal];
-    //    }
+    var length : CGFloat {
+        get {return self.lengthDecimal}
+        
+        set {
+            if lengthDecimal != newValue {
+                lengthDecimal = newValue;
+                
+                self.lengthDouble = Double(newValue)
+            }
+
+        }
+    }
+    
+    func setLengthDouble(newLength: Double)
+    {
+        if ( lengthDouble != newLength ) {
+            lengthDouble = newLength;
+            
+            if newLength.isNaN {
+                self.isInfinite = false
+                self.lengthSign = CPTSign.none;
+            }
+            else {
+                self.isInfinite = newLength.isInfinite
+                self.lengthSign = newLength.signbit() ? CPTSign.negative : CPTSign.positive;
+            }
+            
+            self.lengthDecimal = CGFloat(newLength);
+        }
+    }
+    
+    var _endDecimal : CGFloat = 0
+        var endDecimal : CGFloat {
+        get { return self.locationDecimal + self.lengthDecimal }
+        set { }
+    }
     
     
-    //    -(double)maxLimitDouble
-    //    {
-    //        double doubleLoc = self.locationDouble;
-    //        double doubleLen = self.lengthDouble;
-    //
-    //        if ( doubleLen > 0.0 ) {
-    //            return doubleLoc + doubleLen;
-    //        }
-    //        else {
-    //            return doubleLoc;
-    //        }
-    //    }
-    //
+    func end()-> CGFloat
+    {
+        return self.endDecimal
+    }
+    
+    
+    //    var endDouble: Double = 0.0
+    func endDouble()-> Double
+    {
+        return self.locationDouble + self.lengthDouble;
+    }
+    
+    var _minLimit = CGFloat(0.0)
+    func minLimit() -> CGFloat
+        {
+            return self.minLimitDecimal
+        }
+    
+        -(NSDecimal)minLimitDecimal
+        {
+            NSDecimal loc = self.locationDecimal;
+            NSDecimal len = self.lengthDecimal;
+    
+            if ( NSDecimalIsNotANumber(&len)) {
+                return loc;
+            }
+            else if ( CPTDecimalLessThan(len, CPTDecimalFromInteger(0))) {
+                return CPTDecimalAdd(loc, len);
+            }
+            else {
+                return loc;
+            }
+        }
+//    var minLimitDouble = Double(0.0)
+        func minLimitDouble() -> Double
+        {
+            let doubleLoc = self.locationDouble;
+            let doubleLen = self.lengthDouble;
+    
+            if ( doubleLen < 0.0 ) {
+                return doubleLoc + doubleLen;
+            }
+            else {
+                return doubleLoc;
+            }
+        }
+    
+        func midPoint() -> CGFloat
+        {
+            return self._midPointDecimal
+        }
+    
+    var _midPointDecimal : CGFloat = 0
+    func midPointDecimal()-> CGFloat
+        {
+            return self.locationDecimal + (self.lengthDecimal / 2)
+        }
+    
+        func midPointDouble() -> Double
+        {
+            return fma(self.lengthDouble, 0.5, self.locationDouble);
+        }
+    
+        func maxLimit() -> CGFloat
+        {
+            return self.maxLimitDecimal
+        }
+    
+    
+        func maxLimitDouble()-> Double
+        {
+            let doubleLoc = self.locationDouble;
+            let doubleLen = self.lengthDouble;
+    
+            if ( doubleLen > 0.0 ) {
+                return doubleLoc + doubleLen;
+            }
+            else {
+                return doubleLoc;
+            }
+        }
+    
     
     // MARK: -  Checking Containership
     func contains(_ number: CGFloat) -> Bool {

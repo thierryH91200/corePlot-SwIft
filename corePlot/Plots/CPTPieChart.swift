@@ -7,26 +7,33 @@
 
 import AppKit
 
-public protocol CPTPieChartDataSource : CPTPlotDataSource {
+@objc public protocol CPTPieChartDataSource : CPTPlotDataSource {
     
-    func sliceFillsForPieChart (          _ pieChart: CPTPieChart, recordIndexRange:NSRange) -> [CPTFill?]
-    func sliceFillForPieChart   (         _ pieChart: CPTPieChart, idx : Int) -> CPTFill
-    func radialOffsetsForPieChart(        _ pieChart: CPTPieChart, recordIndexRange: NSRange) -> [CGFloat]
-    func radialOffsetForPieChart(         _ pieChart: CPTPieChart, recordIndex: Int) -> CGFloat
-    func legendTitleForPieChart (         _ pieChart: CPTPieChart, idx: Int)-> String?
-    func attributedLegendTitleForPieChart(_ pieChart: CPTPieChart, idx :Int)-> NSAttributedString
+    @objc optional func sliceFillsForPieChart (          _ pieChart: CPTPieChart, recordIndexRange:NSRange) -> [CPTFill?]
+    @objc optional func sliceFillForPieChart   (         _ pieChart: CPTPieChart, idx : Int) -> CPTFill
+    @objc optional func radialOffsetsForPieChart(        _ pieChart: CPTPieChart, recordIndexRange: NSRange) -> [CGFloat]
+    @objc optional func radialOffsetForPieChart(         _ pieChart: CPTPieChart, recordIndex: Int) -> CGFloat
+    @objc optional func legendTitleForPieChart (         _ pieChart: CPTPieChart, idx: Int)-> String?
+    @objc optional func attributedLegendTitleForPieChart(_ pieChart: CPTPieChart, idx :Int)-> NSAttributedString
 }
 
-public protocol CPTPieChartDelegate : CPTPlotDelegate {
+@objc public protocol CPTPieChartDelegate : CPTPlotDelegate {
     
-    func pieChart(plot: CPTPieChart, sliceWasSelectedAtRecordIndex idx:Int)
-    func pieChart(plot: CPTPieChart, sliceWasSelectedAtRecordIndex idx: Int, withEvent event: CPTNativeEvent )
-    func pieChart(plot: CPTPieChart, sliceTouchDownAtRecordIndex idx: Int)
-    func pieChart(plot: CPTPieChart, sliceTouchDownAtRecordIndex idx: Int, withEvent event: CPTNativeEvent )
-    func pieChart(plot: CPTPieChart, sliceTouchUpAtRecordIndex idx: Int)
-    func pieChart(plot: CPTPieChart, sliceTouchUpAtRecordIndex idx: Int, withEvent event: CPTNativeEvent )
+    @objc optional func pieChart(plot: CPTPieChart, sliceWasSelectedAtRecordIndex idx: Int)
+    @objc optional func pieChart(plot: CPTPieChart, sliceWasSelectedAtRecordIndex idx: Int, withEvent event: CPTNativeEvent )
+    @objc optional func pieChart(plot: CPTPieChart, sliceTouchDownAtRecordIndex idx: Int)
+    @objc optional func pieChart(plot: CPTPieChart, sliceTouchDownAtRecordIndex idx: Int, withEvent event: CPTNativeEvent )
+    @objc optional func pieChart(plot: CPTPieChart, sliceTouchUpAtRecordIndex idx: Int)
+    @objc optional func pieChart(plot: CPTPieChart, sliceTouchUpAtRecordIndex idx: Int, withEvent event: CPTNativeEvent )
     
 }
+
+enum CPTPieChartField : Int {
+    case sliceWidth             //< Pie slice width.
+    case sliceWidthNormalized   //< Pie slice width normalized [0, 1].
+    case sliceWidthSum          //< Cumulative sum of pie slice widths.
+}
+
 
 public class CPTPieChart: CPTPlot {
     
@@ -164,12 +171,12 @@ public class CPTPieChart: CPTPlot {
                 let rawSliceValues = self.numbersFromDataSourceForField ( fieldEnum: CPTPieChartField.sliceWidth.rawValue,
                                                                           recordIndexRange:indexRange)
                 
-                self.cacheNumbers(rawSliceValues,
+                self.cacheNumbers(numbers: rawSliceValues,
                                   forField: CPTPieChartField.sliceWidth.rawValue,
-                                  atRecordIndex: indexRange)
+                                  atRecordIndexidx: indexRange)
             }
             else {
-                self.cacheNumbers(numbers: nil, forField: CPTPieChartField.sliceWidth.rawValue)
+                self.cacheNumbers(numbers: nil, forField: CPTPieChartField.sliceWidth.rawValue, atRecordIndexidx: <#Int#>)
             }
         }
         self.updateNormalizedData()

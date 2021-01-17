@@ -60,6 +60,13 @@ https://webdevdesigner.com/q/what-is-the-swift-equivalent-of-respondstoselector-
     if ( numbers ) {
     
     
+   ## swift - Objective-C load class method?
+   
+   it will not be as magic as load().
+   
+    https://stackoverflow.com/questions/24898453/swift-objective-c-load-class-method
+    
+    
 
 
 # Add change 
@@ -111,3 +118,7 @@ add protocol CPTAxisDelegate : CPTLayerDelegate {
 
 ### 03-01-21 modify CPTBarPlot big job
 ### 06-01-211 CPTPieChart
+
+https://stackoverflow.com/questions/52065329/swift-better-way-to-remove-a-specific-object-from-an-array
+//            self.plots.removeObjectIdentical(plotToRemove)
+self.plots = self.plots.filter { $0 != plotToRemove } // Keeps only what is
