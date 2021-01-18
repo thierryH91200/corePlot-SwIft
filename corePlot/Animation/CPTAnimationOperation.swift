@@ -14,10 +14,9 @@ class CPTAnimationOperation: NSObject {
     var animationCurve: CPTAnimationCurve?
     var boundObject: Any
     var boundGetter : Selector
-    var boundSetter: Selector
+    var boundSetter : Selector
     var delegate : CPTAnimationDelegate?
     var isCanceled = false
-    
     
     // MARK:  Identification
     var identifier: NSObject?
@@ -37,14 +36,13 @@ class CPTAnimationOperation: NSObject {
     }
     
     override convenience init() {
-        assert(false, "Must call -initWithAnimationPeriod:animationCurve:object:getter:setter: to initialize a CPTAnimationOperation.")
         
         self.init(
             animationPeriod: CPTAnimationPeriod(),
             animationCurve: CPTAnimationCurve.default,
             object: NSObject(),
-            getter: #selector(init(_:)),
-            setter: #selector(init(_:)) )
+            getter: #selector( init(sender:)),
+            setter: #selector(init:))
     }
         
 }

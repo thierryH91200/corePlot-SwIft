@@ -15,7 +15,7 @@ class CPTDarkGradientTheme: CPTXYTheme {
         return kCPTDarkGradientTheme
     }
     
-    func applyTheme( graph: CGFloat) {
+    override func applyThemeToBackground( graph: CPTGraph) {
         
         let endColor = NSUIColor(genericGray: CGFloat(0.1))
         var graphGradient = CPTGradient(beginningColor: endColor, ending: endColor)
@@ -46,24 +46,20 @@ class CPTDarkGradientTheme: CPTXYTheme {
     override func applyThemeToAxisSet(axisSet: CPTAxisSet )
     {
         let majorLineStyle = CPTLineStyle()
-        
         majorLineStyle.lineCap   = CGLineCap.square
         majorLineStyle.lineColor = CPTColor( colorWithGenericGray:CGFloat(0.5))
         majorLineStyle.lineWidth = CGFloat(2.0)
         
         let minorLineStyle = CPTLineStyle()
-        
         minorLineStyle.lineCap   = CGLineCap.square;
         minorLineStyle.lineColor = NSUIColor.darkGray
         minorLineStyle.lineWidth = CGFloat(1.0);
         
         let whiteTextStyle = CPTTextStyle()
-        
         whiteTextStyle.color    = NSUIColor.white
         whiteTextStyle.fontSize = CGFloat(14.0);
         
         let whiteMinorTickTextStyle = CPTTextStyle()
-        
         whiteMinorTickTextStyle.color    = NSColor.white
         whiteMinorTickTextStyle.fontSize = CGFloat(12.0);
         

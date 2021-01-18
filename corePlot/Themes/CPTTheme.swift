@@ -119,7 +119,7 @@ class CPTTheme: NSObject {
         self.applyThemeToBackground(graph: graph!)
         let plotAreaFrame = graph?.plotAreaFrame
         
-        if (( plotAreaFrame ) != nil) {
+        if plotAreaFrame != nil) {
             self.applyThemeToPlotArea(plotAreaFrame: plotAreaFrame!)
         }
         

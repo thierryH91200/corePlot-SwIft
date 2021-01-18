@@ -33,7 +33,6 @@ protocol CPTAxisDelegate : CPTLayerDelegate {
     
     func axis(axis:  CPTAxis, minorTickTouchUp label: CPTAxisLabel )
     func axis(axis:  CPTAxis, minorTickTouchUp label: CPTAxisLabel, withEvent event: CPTNativeEvent )
-    
 }
 
 public class CPTAxis : CPTLayer {

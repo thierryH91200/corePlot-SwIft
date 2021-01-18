@@ -205,7 +205,7 @@ class CPTGraphHostingView: NSView {
         if let theGraph = theGraph , self.allowPinchScaling == true {
             let pointOfMagnification = NSPointToCGPoint(self.convert(event.locationInWindow, from:nil))
             let pointInHostedGraph   = self.layer?.convert(pointOfMagnification, to: theGraph)
-            let pointInPlotArea      = theGraph.convert(pointInHostedGraph!, to:theGraph.plotAreaFrame.plotArea)
+            let pointInPlotArea      = theGraph.convert(pointInHostedGraph!, to:theGraph.plotAreaFrame?.plotArea)
 
             let scale = event.magnification + CGFloat(1.0)
 

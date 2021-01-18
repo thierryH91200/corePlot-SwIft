@@ -39,11 +39,8 @@ public class CPTXYAxis: CPTAxis {
     }
     
 // MARK: - Coordinate Transforms
-
     func orthogonalCoordinateViewLowerBound(lower: inout CGFloat, upper: inout CGFloat)
     {
-//        var lower = lower
-//        var upper = upper
         let orthogonalCoordinate = CPTUtilities.shared.CPTOrthogonalCoordinate(self.coordinate)
         let xyPlotSpace        = self.plotSpace
         let orthogonalRange = xyPlotSpace?.plotRangeForCoordinate(coordinate: orthogonalCoordinate)
@@ -126,7 +123,6 @@ public class CPTXYAxis: CPTAxis {
     }
 
 // MARK: Drawing
-
     func drawTicksInContext(context: CGContext, atLocations locations: CPTNumberSet, withLength length:CGFloat, inRange labeledRange: CPTPlotRange, isMajor major:Bool)
     {
         let lineStyle = (major ? self.majorTickLineStyle : self.minorTickLineStyle)
@@ -197,15 +193,14 @@ public class CPTXYAxis: CPTAxis {
         guard self.isHidden == false else { return }
         
         super.renderAsVectorInContext(context: context)
-        
         self.relabel()
         
-        let thePlotRange    = self.plotSpace?.plotRangeForCoordinate(coordinate: self.coordinate)
+        let thePlotRange    = self.plotSpace?.plotRangeForCoordinate(coordinate: self.coordinate) as? CPTMutablePlotRange
         var range    = thePlotRange
         let theVisibleRange = self.visibleRange
         
-        if (( theVisibleRange ) != nil) {
-            range.intersectionPlotRange(theVisibleRange)
+        if theVisibleRange != nil {
+            range?.intersectionPlotRange(other: theVisibleRange)
         }
         
         let labeledRange : CPTMutablePlotRange?
@@ -215,7 +210,6 @@ public class CPTXYAxis: CPTAxis {
             fallthrough
         case .provided:
             labeledRange = range
-            break
             
         default:
             break

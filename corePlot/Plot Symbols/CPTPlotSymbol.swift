@@ -7,9 +7,16 @@
 
 import AppKit
 
+//==============================
+//  OK
+// 16/12/20
+//==============================
+
 
 
 class CPTPlotSymbol: NSObject {
+    
+    static let shared = CPTPlotSymbol()
     
     enum CPTPlotSymbolType : Int {
         case none ///< No symbol.
@@ -29,12 +36,6 @@ class CPTPlotSymbol: NSObject {
     
     var anchorPoint = CGPoint()
     var symbolType = CPTPlotSymbolType.none
-    //    @synthesize lineStyle;
-    //    @synthesize shadow;
-    //    @synthesize customSymbolPath;
-    var usesEvenOddClipRule = false
-    //    var cachedSymbolPath : CGPath?
-    //    @synthesize cachedLayer;
     var cachedScale = CGFloat(0)
     
     // MARK: - Init/Dealloc
@@ -64,14 +65,13 @@ class CPTPlotSymbol: NSObject {
         }
     }
     
-    //    -(void)setSymbolType:(CPTPlotSymbolType)newType
-    //    {
-    //        if ( newType != symbolType ) {
-    //            symbolType            = newType;
-    //            self.cachedSymbolPath = nil
-    //        }
-    //    }
-    //
+    func setSymbolType(newType: CPTPlotSymbolType)
+    {
+        if ( newType != symbolType ) {
+            symbolType            = newType;
+            self.cachedSymbolPath = nil
+        }
+    }
     
     var  _shadow : CPTShadow?
     var  shadow : CPTShadow? {
@@ -116,15 +116,17 @@ class CPTPlotSymbol: NSObject {
         }
     }
     
-    //
-    //    -(void)setUsesEvenOddClipRule:(BOOL)newEvenOddClipRule
-    //    {
-    //        if ( newEvenOddClipRule != usesEvenOddClipRule ) {
-    //            usesEvenOddClipRule = newEvenOddClipRule;
-    //            self.cachedLayer    = nil
-    //        }
-    //    }
-    
+    var _usesEvenOddClipRule = false
+    var usesEvenOddClipRule : Bool {
+        get { return _usesEvenOddClipRule
+        }
+        set {
+            if ( newValue != _usesEvenOddClipRule ) {
+                _usesEvenOddClipRule = newValue
+                self.cachedLayer    = nil
+            }
+        }
+    }
 
     var _cachedSymbolPath : CGPath?
     var cachedSymbolPath : CGPath? {
@@ -153,155 +155,67 @@ class CPTPlotSymbol: NSObject {
     }
     
     // MARK: - Class methods
-    //
-    //    /** @brief Creates and returns a new CPTPlotSymbol instance initialized with a symbol type of #CPTPlotSymbolTypeNone.
-    //     *  @return A new CPTPlotSymbol instance initialized with a symbol type of #CPTPlotSymbolTypeNone.
-    //     **/
-    //    +(nonnull instancetype)plotSymbol
-    //    {
-    //        CPTPlotSymbol *symbol = [[self alloc] init];
-    //
-    //        symbol.symbolType = CPTPlotSymbolTypeNone;
-    //
-    //        return symbol;
-    //    }
-    //
-    //    /** @brief Creates and returns a new CPTPlotSymbol instance initialized with a symbol type of #CPTPlotSymbolTypeCross.
-    //     *  @return A new CPTPlotSymbol instance initialized with a symbol type of #CPTPlotSymbolTypeCross.
-    //     **/
-    //    +(nonnull instancetype)crossPlotSymbol
-    //    {
-    //        CPTPlotSymbol *symbol = [[self alloc] init];
-    //
-    //        symbol.symbolType = CPTPlotSymbolTypeCross;
-    //
-    //        return symbol;
-    //    }
-    //
-    //    /** @brief Creates and returns a new CPTPlotSymbol instance initialized with a symbol type of #CPTPlotSymbolTypeEllipse.
-    //     *  @return A new CPTPlotSymbol instance initialized with a symbol type of #CPTPlotSymbolTypeEllipse.
-    //     **/
-    //    +(nonnull instancetype)ellipsePlotSymbol
-    //    {
-    //        CPTPlotSymbol *symbol = [[self alloc] init];
-    //
-    //        symbol.symbolType = CPTPlotSymbolTypeEllipse;
-    //
-    //        return symbol;
-    //    }
-    //
-    //    /** @brief Creates and returns a new CPTPlotSymbol instance initialized with a symbol type of #CPTPlotSymbolTypeRectangle.
-    //     *  @return A new CPTPlotSymbol instance initialized with a symbol type of #CPTPlotSymbolTypeRectangle.
-    //     **/
-    //    +(nonnull instancetype)rectanglePlotSymbol
-    //    {
-    //        CPTPlotSymbol *symbol = [[self alloc] init];
-    //
-    //        symbol.symbolType = CPTPlotSymbolTypeRectangle;
-    //
-    //        return symbol;
-    //    }
-    //
-    //    /** @brief Creates and returns a new CPTPlotSymbol instance initialized with a symbol type of #CPTPlotSymbolTypePlus.
-    //     *  @return A new CPTPlotSymbol instance initialized with a symbol type of #CPTPlotSymbolTypePlus.
-    //     **/
-    //    +(nonnull instancetype)plusPlotSymbol
-    //    {
-    //        CPTPlotSymbol *symbol = [[self alloc] init];
-    //
-    //        symbol.symbolType = CPTPlotSymbolTypePlus;
-    //
-    //        return symbol;
-    //    }
-    //
-    //    /** @brief Creates and returns a new CPTPlotSymbol instance initialized with a symbol type of #CPTPlotSymbolTypeStar.
-    //     *  @return A new CPTPlotSymbol instance initialized with a symbol type of #CPTPlotSymbolTypeStar.
-    //     **/
-    //    +(nonnull instancetype)starPlotSymbol
-    //    {
-    //        CPTPlotSymbol *symbol = [[self alloc] init];
-    //
-    //        symbol.symbolType = CPTPlotSymbolTypeStar;
-    //
-    //        return symbol;
-    //    }
-    //
-    //    /** @brief Creates and returns a new CPTPlotSymbol instance initialized with a symbol type of #CPTPlotSymbolTypeDiamond.
-    //     *  @return A new CPTPlotSymbol instance initialized with a symbol type of #CPTPlotSymbolTypeDiamond.
-    //     **/
-    //    +(nonnull instancetype)diamondPlotSymbol
-    //    {
-    //        CPTPlotSymbol *symbol = [[self alloc] init];
-    //
-    //        symbol.symbolType = CPTPlotSymbolTypeDiamond;
-    //
-    //        return symbol;
-    //    }
-    //
-    //    /** @brief Creates and returns a new CPTPlotSymbol instance initialized with a symbol type of #CPTPlotSymbolTypeTriangle.
-    //     *  @return A new CPTPlotSymbol instance initialized with a symbol type of #CPTPlotSymbolTypeTriangle.
-    //     **/
-    //    +(nonnull instancetype)trianglePlotSymbol
-    //    {
-    //        CPTPlotSymbol *symbol = [[self alloc] init];
-    //
-    //        symbol.symbolType = CPTPlotSymbolTypeTriangle;
-    //
-    //        return symbol;
-    //    }
-    //
-    //    /** @brief Creates and returns a new CPTPlotSymbol instance initialized with a symbol type of #CPTPlotSymbolTypePentagon.
-    //     *  @return A new CPTPlotSymbol instance initialized with a symbol type of #CPTPlotSymbolTypePentagon.
-    //     **/
-    //    +(nonnull instancetype)pentagonPlotSymbol
-    //    {
-    //        CPTPlotSymbol *symbol = [[self alloc] init];
-    //
-    //        symbol.symbolType = CPTPlotSymbolTypePentagon;
-    //
-    //        return symbol;
-    //    }
-    //
-    //    /** @brief Creates and returns a new CPTPlotSymbol instance initialized with a symbol type of #CPTPlotSymbolTypeHexagon.
-    //     *  @return A new CPTPlotSymbol instance initialized with a symbol type of #CPTPlotSymbolTypeHexagon.
-    //     **/
-    //    +(nonnull instancetype)hexagonPlotSymbol
-    //    {
-    //        CPTPlotSymbol *symbol = [[self alloc] init];
-    //
-    //        symbol.symbolType = CPTPlotSymbolTypeHexagon;
-    //
-    //        return symbol;
-    //    }
-    //
-    //    /** @brief Creates and returns a new CPTPlotSymbol instance initialized with a symbol type of #CPTPlotSymbolTypeDash.
-    //     *  @return A new CPTPlotSymbol instance initialized with a symbol type of #CPTPlotSymbolTypeDash.
-    //     **/
-    //    +(nonnull instancetype)dashPlotSymbol
-    //    {
-    //        CPTPlotSymbol *symbol = [[self alloc] init];
-    //
-    //        symbol.symbolType = CPTPlotSymbolTypeDash;
-    //
-    //        return symbol;
-    //    }
-    //
-    //    /** @brief Creates and returns a new CPTPlotSymbol instance initialized with a symbol type of #CPTPlotSymbolTypeSnow.
-    //     *  @return A new CPTPlotSymbol instance initialized with a symbol type of #CPTPlotSymbolTypeSnow.
-    //     **/
-    //    +(nonnull instancetype)snowPlotSymbol
-    //    {
-    //        CPTPlotSymbol *symbol = [[self alloc] init];
-    //
-    //        symbol.symbolType = CPTPlotSymbolTypeSnow;
-    //
-    //        return symbol;
-    //    }
-    //
-    //    /** @brief Creates and returns a new CPTPlotSymbol instance initialized with a symbol type of #CPTPlotSymbolTypeCustom.
-    //     *  @param aPath The bounding path for the custom symbol.
-    //     *  @return A new CPTPlotSymbol instance initialized with a symbol type of #CPTPlotSymbolTypeCustom.
-    //     **/
+    func plotSymbol() -> CPTPlotSymbol {
+        let symbol = CPTPlotSymbol()
+        symbol.symbolType = CPTPlotSymbolType.none
+        return symbol
+    }
+    func crossPlotSymbol() -> CPTPlotSymbol {
+        let symbol = CPTPlotSymbol()
+        symbol.symbolType = CPTPlotSymbolType.cross
+        return symbol
+    }
+    func rectanglePlotSymbol() -> CPTPlotSymbol {
+        let symbol = CPTPlotSymbol()
+        symbol.symbolType = CPTPlotSymbolType.rectangle
+        return symbol
+    }
+    func ellipsePlotSymbol() -> CPTPlotSymbol {
+        let symbol = CPTPlotSymbol()
+        symbol.symbolType = CPTPlotSymbolType.ellipse
+        return symbol
+    }
+    func plusPlotSymbol() -> CPTPlotSymbol {
+        let symbol = CPTPlotSymbol()
+        symbol.symbolType = CPTPlotSymbolType.plus
+        return symbol
+    }
+    func starPlotSymbol() -> CPTPlotSymbol {
+        let symbol = CPTPlotSymbol()
+        symbol.symbolType = CPTPlotSymbolType.star
+        return symbol
+    }
+    func diamondPlotSymbol() -> CPTPlotSymbol {
+        let symbol = CPTPlotSymbol()
+        symbol.symbolType = CPTPlotSymbolType.diamond
+        return symbol
+    }
+    func trianglePlotSymbol() -> CPTPlotSymbol {
+        let symbol = CPTPlotSymbol()
+        symbol.symbolType = CPTPlotSymbolType.triangle
+        return symbol
+    }
+    func pentagonPlotSymbol() -> CPTPlotSymbol {
+        let symbol = CPTPlotSymbol()
+        symbol.symbolType = CPTPlotSymbolType.pentagon
+        return symbol
+    }
+    func hexagonPlotSymbol() -> CPTPlotSymbol {
+        let symbol = CPTPlotSymbol()
+        symbol.symbolType = CPTPlotSymbolType.hexagon
+        return symbol
+    }
+    func dashPlotSymbol() -> CPTPlotSymbol {
+        let symbol = CPTPlotSymbol()
+        symbol.symbolType = CPTPlotSymbolType.dash
+        return symbol
+    }
+    func snowPlotSymbol() -> CPTPlotSymbol {
+        let symbol = CPTPlotSymbol()
+        symbol.symbolType = CPTPlotSymbolType.snow
+        return symbol
+    }
+
     
     func customPlotSymbol(with aPath: CGPath?) -> CPTPlotSymbol {
         let symbol = CPTPlotSymbol()
@@ -400,14 +314,14 @@ class CPTPlotSymbol: NSObject {
         return layerSize
     }
     
-    //
-    //    /// @endcond
-    //
-    //    /** @brief Draws the plot symbol into the given graphics context centered at the provided point.
-    //     *  @param context The graphics context to draw into.
-    //     *  @param center The center point of the symbol.
-    //     *  @param scale The drawing scale factor. Must be greater than zero (@num{0}).
-    //     **/
+    
+    /// @endcond
+    
+    /** @brief Draws the plot symbol into the given graphics context centered at the provided point.
+     *  @param context The graphics context to draw into.
+     *  @param center The center point of the symbol.
+     *  @param scale The drawing scale factor. Must be greater than zero (@num{0}).
+     **/
     func renderAsVectorInContext(context: CGContext, atPoint center:CGPoint, scale:CGFloat)
     {
         let theSymbolPath = self.cachedSymbolPath;
@@ -513,10 +427,10 @@ class CPTPlotSymbol: NSObject {
     // MARK: - mark Private methods
     
     
-    //    /** @internal
-    //     *  @brief Creates and returns a drawing path for the current symbol type.
-    //     *  @return A path describing the outline of the current symbol type.
-    //     **/
+    /** @internal
+     *  @brief Creates and returns a drawing path for the current symbol type.
+     *  @return A path describing the outline of the current symbol type.
+     **/
     func newSymbolPath()-> CGPath
     {
         var dx = CGFloat(0)
@@ -534,37 +448,32 @@ class CPTPlotSymbol: NSObject {
         case .rectangle:
             let rect = CGRect(x: -halfSize.width, y: -halfSize.height, width: symbolSize.width, height: symbolSize.height)
             symbolPath.addRect(rect)
-            break;
             
         case .ellipse:
             let rect = CGRect(x: -halfSize.width, y: -halfSize.height, width: symbolSize.width, height: symbolSize.height)
             symbolPath.addEllipse(in: rect)
-            break;
             
         case .cross:
             symbolPath.move(to: CGPoint( x: -halfSize.width, y: halfSize.height))
             symbolPath.addLine(to: CGPoint( x: halfSize.width, y: -halfSize.height))
-            
             symbolPath.move(to: CGPoint( x: halfSize.width, y: halfSize.height))
             symbolPath.addLine(to: CGPoint( x: -halfSize.width, y: -halfSize.height))
-            break;
             
         case .plus:
-            //                CGPathMoveToPoint(symbolPath, nil,CGFloat(0.0), halfSize.height);
-            //                CGPathAddLineToPoint(symbolPath, nil, CGFloat(0.0), -halfSize.height);
-            //                CGPathMoveToPoint(symbolPath, nil, -halfSize.width, CGFloat(0.0));
-            //                CGPathAddLineToPoint(symbolPath, nil, halfSize.width, CGFloat(0.0));
-            break;
-            
-        case .pentagon:
-            //                CGPathMoveToPoint(symbolPath, nil, CGFloat(0.0), halfSize.height);
-            //                CGPathAddLineToPoint(symbolPath, nil, halfSize.width * CGFloat(0.95105651630), halfSize.height * CGFloat(0.30901699437));
-            //                CGPathAddLineToPoint(symbolPath, nil, halfSize.width * CGFloat(0.58778525229), -halfSize.height * CGFloat(0.80901699437));
-            //                CGPathAddLineToPoint(symbolPath, nil, -halfSize.width * CGFloat(0.58778525229), -halfSize.height * CGFloat(0.80901699437));
-            //                CGPathAddLineToPoint(symbolPath, nil, -halfSize.width * CGFloat(0.95105651630), halfSize.height * CGFloat(0.30901699437));
+            symbolPath.move(to: CGPoint(x: CGFloat(0.0), y: halfSize.height), transform: .identity)
+            symbolPath.addLine(to: CGPoint(x: CGFloat(0.0), y: -halfSize.height), transform: .identity)
+            symbolPath.move(to: CGPoint(x: -halfSize.width, y: CGFloat(0.0)), transform: .identity)
+            symbolPath.addLine(to: CGPoint(x: halfSize.width, y: CGFloat(0.0)), transform: .identity)
             symbolPath.closeSubpath();
-            break;
-            
+
+        case .pentagon:
+            symbolPath.move(to: CGPoint(x: CGFloat(0.0), y: halfSize.height), transform: .identity)
+            symbolPath.addLine(to: CGPoint(x: halfSize.width * CGFloat(0.95105651630), y: halfSize.height * CGFloat(0.30901699437)), transform: .identity)
+            symbolPath.addLine(to: CGPoint(x: halfSize.width * CGFloat(0.58778525229), y: -halfSize.height * CGFloat(0.80901699437)), transform: .identity)
+            symbolPath.addLine(to: CGPoint(x: -halfSize.width * CGFloat(0.58778525229), y: -halfSize.height * CGFloat(0.80901699437)), transform: .identity)
+            symbolPath.addLine(to: CGPoint(x: -halfSize.width * CGFloat(0.95105651630), y: halfSize.height * CGFloat(0.30901699437)), transform: .identity)
+            symbolPath.closeSubpath();
+
         case .star:
             symbolPath.move(to: CGPoint(x: CGFloat(0.0), y: halfSize.height), transform: .identity)
             symbolPath.addLine(to: CGPoint(x: halfSize.width * CGFloat(0.22451398829), y: halfSize.height * CGFloat(0.30901699437)), transform: .identity)
@@ -576,9 +485,7 @@ class CPTPlotSymbol: NSObject {
             symbolPath.addLine(to: CGPoint(x: -halfSize.width * CGFloat(0.36327126400), y: -halfSize.height * CGFloat(0.11803398875)), transform: .identity)
             symbolPath.addLine(to: CGPoint(x: -halfSize.width * CGFloat(0.95105651630), y: halfSize.height * CGFloat(0.30901699437)), transform: .identity)
             symbolPath.addLine(to: CGPoint(x: -halfSize.width * CGFloat(0.22451398829), y: halfSize.height * CGFloat(0.30901699437)), transform: .identity)
-            
             symbolPath.closeSubpath();
-            break;
             
         case .diamond:
             symbolPath.move(to: CGPoint(x: CGFloat(0.0), y: halfSize.height), transform: .identity)
@@ -586,22 +493,18 @@ class CPTPlotSymbol: NSObject {
             symbolPath.addLine(to: CGPoint(x: CGFloat(0.0), y: -halfSize.height), transform: .identity)
             symbolPath.addLine(to: CGPoint(x: -halfSize.width, y: CGFloat(0.0)), transform: .identity)
             symbolPath.closeSubpath();
-            break;
             
         case .triangle:
             dx = halfSize.width * CGFloat(0.86602540378); // sqrt(3.0) / 2.0;
             dy = halfSize.height / CGFloat(2.0);
-            
-            //                CGPathMoveToPoint(symbolPath, nil, CGFloat(0.0), halfSize.height);
-            //                CGPathAddLineToPoint(symbolPath, nil, dx, -dy);
-            //                CGPathAddLineToPoint(symbolPath, nil, -dx, -dy);
+            symbolPath.move(to: CGPoint(x: CGFloat(0.0), y: halfSize.height), transform: .identity)
+            symbolPath.addLine(to: CGPoint(x: dx, y: -dy), transform: .identity)
+            symbolPath.addLine(to: CGPoint(x: -dx, y: -dy), transform: .identity)
             symbolPath.closeSubpath();
-            break;
             
         case .dash:
             symbolPath.move   (to: CGPoint( x: halfSize.width, y: CGFloat(0.0)))
             symbolPath.addLine(to: CGPoint( x: -halfSize.width, y: CGFloat(0.0)))
-            break;
             
         case .hexagon:
             dx = halfSize.width * CGFloat(0.86602540378); // sqrt(3.0) / 2.0;
@@ -614,7 +517,6 @@ class CPTPlotSymbol: NSObject {
             symbolPath.addLine(to: CGPoint( x: -dx, y: -dy))
             symbolPath.addLine(to: CGPoint( x: -dx, y: dy))
             symbolPath.closeSubpath();
-            break;
             
         case .snow:
             dx = halfSize.width * CGFloat(0.86602540378); // sqrt(3.0) / 2.0;
@@ -629,7 +531,6 @@ class CPTPlotSymbol: NSObject {
             symbolPath.move   (to: CGPoint( x: -dx, y: -dy))
             symbolPath.addLine(to: CGPoint( x: dx, y: dy))
             
-            
         case .custom:
             let customPath = self.customSymbolPath;
             if (( customPath ) != nil) {
@@ -637,12 +538,10 @@ class CPTPlotSymbol: NSObject {
                 let dx1      = symbolSize.width / oldBounds.size.width;
                 let dy1      = symbolSize.height / oldBounds.size.height;
                 
-                //                    var scaleTransform = CGAffineTransformScale(CGAffineTransformIdentity, dx1, dy1);
-                //                    scaleTransform = scaleTransform.concatenating(CGAffineTransformMakeTranslation(-halfSize.width, -halfSize.height));
-                //                    CGPathAddPath(symbolPath, &scaleTransform, customPath);
+                var scaleTransform = CGAffineTransform.identity.scaledBy(x: dx1, y: dy1)
+                scaleTransform = scaleTransform.concatenating(CGAffineTransform(translationX: -halfSize.width, y: -halfSize.height))
+                symbolPath.addPath(customPath!, transform: scaleTransform)
             }
-            
-            break;
         }
         return symbolPath;
     }
@@ -671,8 +570,6 @@ class CPTPlotSymbol: NSObject {
     //    }
     //
     //    /// @endcond
-    //
-    //    @end
-    
+ 
     
 }

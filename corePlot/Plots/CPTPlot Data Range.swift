@@ -22,8 +22,9 @@ extension CPTPlot {
         if self.dataNeedsReloading == true {
             self.reloadData()
         }
+        
         let numbers = self.cachedNumbersForField(fieldEnum: fieldEnum)
-        let range            : CPTPlotRange?
+        let range : CPTPlotRange?
         
         let numberOfSamples = numbers.count
         

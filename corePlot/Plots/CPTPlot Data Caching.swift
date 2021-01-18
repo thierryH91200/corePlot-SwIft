@@ -21,14 +21,14 @@ extension CPTPlot {
      *  @param numbers An array of numbers to cache. Can be a CPTNumericData, NSArray, or NSData (NSData is assumed to be a c-style array of type @double).
      *  @param fieldEnum The field enumerator identifying the field.
      **/
-    func cacheNumbers(numbers : [CGFloat?], fieldEnum: Int)
+    func cacheNumbers(numbers : [CGFloat?], forField fieldEnum: Int)
     {
         var cacheKey = String(fieldEnum)
         
         let coordinate   = self.coordinateForFieldIdentifier(field: fieldEnum)
         var thePlotSpace = self.plotSpace;
         
-        if ( numbers != nil ) {
+        if numbers.isEmpty == false {
             
             let scaleType = thePlotSpace?.scaleTypeForCoordinate(coordinate: coordinate)
             switch ( scaleType! ) {

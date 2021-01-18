@@ -122,3 +122,5 @@ add protocol CPTAxisDelegate : CPTLayerDelegate {
 https://stackoverflow.com/questions/52065329/swift-better-way-to-remove-a-specific-object-from-an-array
 //            self.plots.removeObjectIdentical(plotToRemove)
 self.plots = self.plots.filter { $0 != plotToRemove } // Keeps only what is
+
+### 17-01-21 finish class CPTPlotSymbol

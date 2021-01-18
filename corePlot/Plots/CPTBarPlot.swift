@@ -61,6 +61,7 @@ public class CPTBarPlot: CPTPlot {
     var barCornerRadius : CGFloat
     var barBaseCornerRadius : CGFloat
     var barsAreHorizontal : Bool
+    
     var baseValue : CGFloat
     var barBasesVary : Bool
     var plotRange : CPTPlotRange?

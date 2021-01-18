@@ -17,7 +17,7 @@ class CPTAnnotation: NSObject {
     
     override init()
     {
-        annotationHostLayer = ni;
+        annotationHostLayer = nil
         contentLayer        = nil
         displacement        = .zero
         contentAnchorPoint  = CGPoint(x: 0.5, y: 0.5)

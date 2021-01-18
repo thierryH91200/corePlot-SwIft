@@ -329,22 +329,22 @@ class CPTAnimation: NSObject {
                 let tweenedValue = parameters[CPTAnimationValueKey]
                 
                 
-                if ( !valueClass && [tweenedValue isKindOfClass:[NSDecimalNumber class]] ) {
-                    NSDecimal buffer = ((NSDecimalNumber *)tweenedValue).decimalValue;
+                if  !valueClass && tweenedValue is NSDecimalNumber  {
+                    let buffer = ((NSDecimalNumber *)tweenedValue).decimalValue;
                     
                     typedef void (*SetterType)(id, SEL, NSDecimal);
                     SetterType setterMethod = (SetterType)[boundObject methodForSelector:boundSetter];
                     setterMethod(boundObject, boundSetter, buffer);
                 }
-                else if ( valueClass && [tweenedValue isKindOfClass:[NSNumber class]] ) {
+                else if ( valueClass && tweenedValue is NSNumber {
                     NSNumber *value = (NSNumber *)tweenedValue;
                     
                     typedef void (*NumberSetterType)(id, SEL, NSNumber *);
                     NumberSetterType setterMethod = (NumberSetterType)[boundObject methodForSelector:boundSetter];
                     setterMethod(boundObject, boundSetter, value);
                 }
-                else if ( [tweenedValue isKindOfClass:[CPTPlotRange class]] ) {
-                    CPTPlotRange *range = (CPTPlotRange *)tweenedValue;
+                else if ( tweenedValue is CPTPlotRange  ) {
+                    let range = tweenedValue;
                     
                     typedef void (*RangeSetterType)(id, SEL, CPTPlotRange *);
                     RangeSetterType setterMethod = (RangeSetterType)[boundObject methodForSelector:boundSetter];
@@ -406,21 +406,23 @@ class CPTAnimation: NSObject {
     
     func cancelTimer()
     {
-        
-        if ( theTimer ) {
-            self.timer = NULL;
+        if (( timer ) != nil) {
+            self.timer = nil;
         }
     }
     
     /// @endcond
     
+    //        typealias CPTAnimationTimingFunction = (CGFloat, CGFloat)-> (CGFloat)
+
+    
     // MARK: - Timing Functions
     func timingFunction(for animationCurve: CPTAnimationCurve) -> CPTAnimationTimingFunction? {
         
-        //        typealias CPTAnimationTimingFunction = (CGFloat, CGFloat)-> (CGFloat)
         
         
         var timingFunction :  CPTAnimationTimingFunction
+        var animationCurve = animationCurve
         
         if ( animationCurve == .default ) {
             animationCurve = self.defaultAnimationCurve
@@ -533,7 +535,6 @@ class CPTAnimation: NSObject {
         default:
             timingFunction = CPTAnimationTimingFunctionLinear
         }
-        
         return timingFunction
     }
 }

@@ -288,8 +288,8 @@ public class CPTPieChart: CPTPlot {
         
         // Labels
         //        var theDataSource = self.theDataSource // as? CPTPieChartDataSource?
-        let length = theDataSource?.numberOfRecordsForPlot( plot: self )
-        self.relabelIndexRange(indexRange: NSRange(location: 0, length: length!))
+        let length = theDataSource?.numberOfRecordsForPlot!( plot: self )
+        self.relabelIndexRange(indexRange: NSRange(location: 0, length: Int(length!)))
     }
     
     func reloadSliceFills()
@@ -313,7 +313,7 @@ public class CPTPieChart: CPTPlot {
     func reloadRadialOffsetsInIndexRange(indexRange: NSRange)
     {
         weak var theDataSource = dataSource as? CPTPieChartDataSource
-        if let method1 = theDataSource?.radialOffsetsForPieChart(self, recordIndexRange : indexRange)  {
+        if let method1 = theDataSource?.radialOffsetsForPieChart!(self, recordIndexRange : indexRange)  {
             
             self.cacheArray( theDataSource,
                              radialOffsetsForPieChart:self,
@@ -328,7 +328,7 @@ public class CPTPieChart: CPTPlot {
             let maxIndex = NSMaxRange(indexRange)
             
             for idx in indexRange.location..<maxIndex {
-                let offset = theDataSource?.radialOffsetForPieChart(self, recordIndex : idx)
+                let offset = theDataSource?.radialOffsetForPieChart!(self, recordIndex : idx)
                 array.append(offset!)
             }
             
@@ -1102,25 +1102,22 @@ public class CPTPieChart: CPTPlot {
     var sliceWidths :  [CGFloat] {
         get { self.cachedNumbers( forField: CPTPieChartField.sliceWidth.rawValue ) }
         set {
-            self.cacheNumbers(numbers: newValue, forField: CPTPieChartField.sliceWidth.rawValue)
+            self.cacheNumbers(numbers: newValue, forField: CPTPieChartField.sliceWidth.rawValue )
             self.updateNormalizedData()
         }
     }
     
-    func sliceFills() -> [CPTFill]
-    {
-        return self.cachedArray(forKey: NSBindingName.PieSliceFills.rawValue)
+    var sliceFills: [CPTFill]? {
+        get {  return self.cachedArray(forKey: NSBindingName.PieSliceFills.rawValue) as?  [CPTFill] }
+        set {
+            self.cacheArray( newValue!, forKey: NSBindingName.PieSliceFills.rawValue)
+            self.setNeedsDisplay()
+        }
     }
     
-    func setSliceFills(newSliceFills: [CPTFill] )
+    func sliceRadialOffsets() -> [CGFloat]?
     {
-        self.cacheArray( newSliceFills,forKey: NSBindingName.PieSliceFills.rawValue)
-        self.setNeedsDisplay()
-    }
-    
-    func sliceRadialOffsets() -> [CGFloat]
-    {
-        return self.cachedArray( forKey: NSBindingName.PieSliceRadialOffsets.rawValue)
+        return (self.cachedArray( forKey: NSBindingName.PieSliceRadialOffsets.rawValue) as?  [CGFloat])!
     }
     
     func setSliceRadialOffsets(newSliceRadialOffsets: [CGFloat])

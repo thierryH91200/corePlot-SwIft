@@ -357,16 +357,15 @@ func CPTAnimationTimingFunctionElasticInOut(elapsedTime: CGFloat ,  duration: CG
         return pow(CGFloat(2.0), CGFloat(-10.0) * elapsedTime) * sin((elapsedTime * duration - s) * CGFloat(2.0 * Double.pi) / period) * CGFloat(0.5) + CGFloat(1.0);
     }
 }
-//
-//#pragma mark -
-//#pragma mark Exponential
-//
-///**
-// *  @brief Computes a exponential in animation timing function.
-// *  @param elapsedTime The elapsed time of the animation between zero (@num{0}) and @par{duration}.
-// *  @param duration The overall duration of the animation in seconds.
-// *  @return The animation progress in the range zero (@num{0}) to one (@num{1}) at the given @par{elapsedTime}.
-// **/
+
+// MARK: - Exponential
+
+/**
+ *  @brief Computes a exponential in animation timing function.
+ *  @param elapsedTime The elapsed time of the animation between zero (@num{0}) and @par{duration}.
+ *  @param duration The overall duration of the animation in seconds.
+ *  @return The animation progress in the range zero (@num{0}) to one (@num{1}) at the given @par{elapsedTime}.
+ **/
 func CPTAnimationTimingFunctionExponentialIn(elapsedTime: CGFloat ,  duration: CGFloat ) -> CGFloat
 {
     var elapsedTime = elapsedTime
@@ -382,13 +381,13 @@ func CPTAnimationTimingFunctionExponentialIn(elapsedTime: CGFloat ,  duration: C
 
     return pow(CGFloat(2.0), CGFloat(10.0) * (elapsedTime - CGFloat(1.0)));
 }
-//
-///**
-// *  @brief Computes a exponential out animation timing function.
-// *  @param elapsedTime The elapsed time of the animation between zero (@num{0}) and @par{duration}.
-// *  @param duration The overall duration of the animation in seconds.
-// *  @return The animation progress in the range zero (@num{0}) to one (@num{1}) at the given @par{elapsedTime}.
-// **/
+
+/**
+ *  @brief Computes a exponential out animation timing function.
+ *  @param elapsedTime The elapsed time of the animation between zero (@num{0}) and @par{duration}.
+ *  @param duration The overall duration of the animation in seconds.
+ *  @return The animation progress in the range zero (@num{0}) to one (@num{1}) at the given @par{elapsedTime}.
+ **/
 func CPTAnimationTimingFunctionExponentialOut(elapsedTime: CGFloat ,  duration: CGFloat ) -> CGFloat
 {
     var elapsedTime = elapsedTime
@@ -404,13 +403,13 @@ func CPTAnimationTimingFunctionExponentialOut(elapsedTime: CGFloat ,  duration: 
 
     return -pow(CGFloat(2.0), CGFloat(-10.0) * elapsedTime) + CGFloat(1.0);
 }
-//
-///**
-// *  @brief Computes a exponential in and out animation timing function.
-// *  @param elapsedTime The elapsed time of the animation between zero (@num{0}) and @par{duration}.
-// *  @param duration The overall duration of the animation in seconds.
-// *  @return The animation progress in the range zero (@num{0}) to one (@num{1}) at the given @par{elapsedTime}.
-// **/
+
+/**
+ *  @brief Computes a exponential in and out animation timing function.
+ *  @param elapsedTime The elapsed time of the animation between zero (@num{0}) and @par{duration}.
+ *  @param duration The overall duration of the animation in seconds.
+ *  @return The animation progress in the range zero (@num{0}) to one (@num{1}) at the given @par{elapsedTime}.
+ **/
 func CPTAnimationTimingFunctionExponentialInOut(elapsedTime: CGFloat ,  duration: CGFloat ) -> CGFloat
 {
     var elapsedTime = elapsedTime
@@ -433,8 +432,7 @@ func CPTAnimationTimingFunctionExponentialInOut(elapsedTime: CGFloat ,  duration
     }
 }
 //
-//#pragma mark -
-//#pragma mark Sinusoidal
+// MARK: - Sinusoidal
 //
 ///**
 // *  @brief Computes a sinusoidal in animation timing function.
@@ -479,13 +477,13 @@ func CPTAnimationTimingFunctionSinusoidalOut(elapsedTime: CGFloat ,  duration: C
 
     return sin(elapsedTime * CGFloat(Double.pi/2));
 }
-//
-///**
-// *  @brief Computes a sinusoidal in and out animation timing function.
-// *  @param elapsedTime The elapsed time of the animation between zero (@num{0}) and @par{duration}.
-// *  @param duration The overall duration of the animation in seconds.
-// *  @return The animation progress in the range zero (@num{0}) to one (@num{1}) at the given @par{elapsedTime}.
-// **/
+
+/**
+ *  @brief Computes a sinusoidal in and out animation timing function.
+ *  @param elapsedTime The elapsed time of the animation between zero (@num{0}) and @par{duration}.
+ *  @param duration The overall duration of the animation in seconds.
+ *  @return The animation progress in the range zero (@num{0}) to one (@num{1}) at the given @par{elapsedTime}.
+ **/
 func CPTAnimationTimingFunctionSinusoidalInOut(elapsedTime: CGFloat ,  duration: CGFloat ) -> CGFloat
 {
     var elapsedTime = elapsedTime
@@ -502,15 +500,14 @@ func CPTAnimationTimingFunctionSinusoidalInOut(elapsedTime: CGFloat ,  duration:
     return CGFloat(-0.5) * (cos(CGFloat(Double.pi) * elapsedTime) - CGFloat(1.0));
 }
 //
-//#pragma mark -
-//#pragma mark Cubic
-//
-///**
-// *  @brief Computes a cubic in animation timing function.
-// *  @param elapsedTime The elapsed time of the animation between zero (@num{0}) and @par{duration}.
-// *  @param duration The overall duration of the animation in seconds.
-// *  @return The animation progress in the range zero (@num{0}) to one (@num{1}) at the given @par{elapsedTime}.
-// **/
+// MARK: - Cubic
+
+/**
+ *  @brief Computes a cubic in animation timing function.
+ *  @param elapsedTime The elapsed time of the animation between zero (@num{0}) and @par{duration}.
+ *  @param duration The overall duration of the animation in seconds.
+ *  @return The animation progress in the range zero (@num{0}) to one (@num{1}) at the given @par{elapsedTime}.
+ **/
 func CPTAnimationTimingFunctionCubicIn(elapsedTime: CGFloat ,  duration: CGFloat ) -> CGFloat
 {
     var elapsedTime = elapsedTime
@@ -577,16 +574,15 @@ func CPTAnimationTimingFunctionCubicInOut(elapsedTime: CGFloat ,  duration: CGFl
         return CGFloat(0.5) * (elapsedTime * elapsedTime * elapsedTime + CGFloat(2.0));
     }
 }
-//
-//#pragma mark -
-//#pragma mark Quadratic
-//
-///**
-// *  @brief Computes a quadratic in animation timing function.
-// *  @param elapsedTime The elapsed time of the animation between zero (@num{0}) and @par{duration}.
-// *  @param duration The overall duration of the animation in seconds.
-// *  @return The animation progress in the range zero (@num{0}) to one (@num{1}) at the given @par{elapsedTime}.
-// **/
+
+// MARK: - Quadratic
+
+/**
+ *  @brief Computes a quadratic in animation timing function.
+ *  @param elapsedTime The elapsed time of the animation between zero (@num{0}) and @par{duration}.
+ *  @param duration The overall duration of the animation in seconds.
+ *  @return The animation progress in the range zero (@num{0}) to one (@num{1}) at the given @par{elapsedTime}.
+ **/
 func CPTAnimationTimingFunctionQuadraticIn(elapsedTime: CGFloat ,  duration: CGFloat ) -> CGFloat
 {
     var elapsedTime = elapsedTime
@@ -595,11 +591,9 @@ func CPTAnimationTimingFunctionQuadraticIn(elapsedTime: CGFloat ,  duration: CGF
     }
 
     elapsedTime /= duration;
-
     if ( elapsedTime >= CGFloat(1.0)) {
         return CGFloat(1.0);
     }
-
     return elapsedTime * elapsedTime;
 }
 //
@@ -621,7 +615,6 @@ func CPTAnimationTimingFunctionQuadraticOut(elapsedTime: CGFloat ,  duration: CG
     if ( elapsedTime >= CGFloat(1.0)) {
         return CGFloat(1.0);
     }
-
     return -elapsedTime * (elapsedTime - CGFloat(2.0));
 }
 //
@@ -653,9 +646,10 @@ func CPTAnimationTimingFunctionQuadraticInOut(elapsedTime: CGFloat ,  duration: 
         return CGFloat(-0.5) * (elapsedTime * (elapsedTime - CGFloat(2.0)) - CGFloat(1.0));
     }
 }
-//
-//#pragma mark -
-//#pragma mark Quartic
+
+// MARK: - Quartic
+
+
 //
 ///**
 // *  @brief Computes a quartic in animation timing function.
@@ -678,44 +672,41 @@ func CPTAnimationTimingFunctionQuarticIn(elapsedTime: CGFloat ,  duration: CGFlo
 
     return elapsedTime * elapsedTime * elapsedTime * elapsedTime;
 }
-//
-///**
-// *  @brief Computes a quartic out animation timing function.
-// *  @param elapsedTime The elapsed time of the animation between zero (@num{0}) and @par{duration}.
-// *  @param duration The overall duration of the animation in seconds.
-// *  @return The animation progress in the range zero (@num{0}) to one (@num{1}) at the given @par{elapsedTime}.
-// **/
+
+/**
+ *  @brief Computes a quartic out animation timing function.
+ *  @param elapsedTime The elapsed time of the animation between zero (@num{0}) and @par{duration}.
+ *  @param duration The overall duration of the animation in seconds.
+ *  @return The animation progress in the range zero (@num{0}) to one (@num{1}) at the given @par{elapsedTime}.
+ **/
 func CPTAnimationTimingFunctionQuarticOut(elapsedTime: CGFloat ,  duration: CGFloat ) -> CGFloat
-{
-    var elapsedTime = elapsedTime
-if ( elapsedTime <= CGFloat(0.0)) {
-        return CGFloat(0.0);
-    }
-
-    elapsedTime = elapsedTime / duration - CGFloat(1.0);
-
-    if ( elapsedTime >= CGFloat(0.0)) {
-        return CGFloat(1.0);
-    }
-
-    return -(elapsedTime * elapsedTime * elapsedTime * elapsedTime - CGFloat(1.0));
-}
-//
-///**
-// *  @brief Computes a quartic in and out animation timing function.
-// *  @param elapsedTime The elapsed time of the animation between zero (@num{0}) and @par{duration}.
-// *  @param duration The overall duration of the animation in seconds.
-// *  @return The animation progress in the range zero (@num{0}) to one (@num{1}) at the given @par{elapsedTime}.
-// **/
-func CPTAnimationTimingFunctionQuarticInOut(elapsedTime: CGFloat ,  duration: CGFloat ) -> CGFloat
 {
     var elapsedTime = elapsedTime
     if ( elapsedTime <= CGFloat(0.0)) {
         return CGFloat(0.0);
     }
+    
+    elapsedTime = elapsedTime / duration - CGFloat(1.0);
+    
+    if ( elapsedTime >= CGFloat(0.0)) {
+        return CGFloat(1.0);
+    }
+    
+    return -(elapsedTime * elapsedTime * elapsedTime * elapsedTime - CGFloat(1.0));
+}
+
+/**
+ *  @brief Computes a quartic in and out animation timing function.
+ *  @param elapsedTime The elapsed time of the animation between zero (@num{0}) and @par{duration}.
+ *  @param duration The overall duration of the animation in seconds.
+ *  @return The animation progress in the range zero (@num{0}) to one (@num{1}) at the given @par{elapsedTime}.
+ **/
+func CPTAnimationTimingFunctionQuarticInOut(elapsedTime: CGFloat, duration: CGFloat) -> CGFloat
+{
+    var elapsedTime = elapsedTime
+    guard elapsedTime > CGFloat(0) else { return CGFloat(0.0) }
 
     elapsedTime /= duration * CGFloat(0.5);
-
     if ( elapsedTime >= CGFloat(2.0)) {
         return CGFloat(1.0);
     }
@@ -730,8 +721,7 @@ func CPTAnimationTimingFunctionQuarticInOut(elapsedTime: CGFloat ,  duration: CG
     }
 }
 //
-//#pragma mark -
-//#pragma mark Quintic
+// MARK: - Quintic
 //
 ///**
 // *  @brief Computes a quintic in animation timing function.
@@ -805,4 +795,4 @@ func CPTAnimationTimingFunctionQuinticInOut(elapsedTime: CGFloat ,  duration: CG
         return CGFloat(0.5) * (elapsedTime * elapsedTime * elapsedTime * elapsedTime * elapsedTime + CGFloat(2.0));
     }
 }
-//}
+
