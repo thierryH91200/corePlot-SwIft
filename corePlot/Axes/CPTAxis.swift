@@ -173,7 +173,6 @@ public class CPTAxis : CPTLayer {
     var plotArea: CPTPlotArea?
     var minorGridLines : CPTGridLines?
     var majorGridLines: CPTGridLines?
-    var axisSet: CPTAxisSet
     
     var axisLabels: Set<CPTAxisLabel>
 //    var minorTickAxisLabels : Set<Double>
@@ -183,6 +182,17 @@ public class CPTAxis : CPTLayer {
     var minorTickLabelShadow: CPTShadow?
     
     var mutableBackgroundLimitBands = [CPTLimitBand]()
+    
+    var _axisSet : CPTAxisSet
+    var axisSet: CPTAxisSet {
+        get {
+            return (plotArea?.axisSet)!
+        }
+        set {
+            
+        }
+    }
+
     
     override init( frame : CGRect  )
     {

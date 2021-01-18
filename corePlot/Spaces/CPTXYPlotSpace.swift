@@ -796,11 +796,13 @@ class CPTXYPlotSpace: CPTPlotSpace {
 
     override func plotAreaViewPointForPlotPoint(plotPoint: [CGFloat] , numberOfCoordinates count: Int)-> CGPoint
     {
-        var viewPoint = super.plotAreaViewPointForPlotPoint(plotPoint: plotPoint, numberOfCoordinates: count)
+        var viewPoint = super.plotAreaViewPointForPlotPoint(
+            plotPoint: plotPoint,
+            numberOfCoordinates: count)
         
         var layerSize = CGSize()
         let theGraph  = self.graph;
-        let plotArea  = theGraph?.plotAreaFrame.plotArea
+        let plotArea  = theGraph?.plotAreaFrame?.plotArea
         
         if ( plotArea  != nil) {
             layerSize = plotArea!.bounds.size;

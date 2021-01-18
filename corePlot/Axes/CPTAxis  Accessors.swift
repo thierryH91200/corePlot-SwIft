@@ -619,24 +619,23 @@ extension CPTAxis {
         }
     }
     
-    //    -(void)setGridLinesRange:(nullable CPTPlotRange *)newRange
-    //    {
-    //        if ( gridLinesRange != newRange ) {
-    //            gridLinesRange = [newRange copy];
-    //            if ( self.separateLayers ) {
-    //                CPTGridLines *gridlines = self.majorGridLines;
-    //                [gridlines setNeedsDisplay];
-    //
-    //                gridlines = self.minorGridLines;
-    //                [gridlines setNeedsDisplay];
-    //            }
-    //            else {
-    //                CPTPlotArea *thePlotArea = self.plotArea;
-    //                [thePlotArea.majorGridLineGroup setNeedsDisplay];
-    //                [thePlotArea.minorGridLineGroup setNeedsDisplay];
-    //            }
-    //        }
-    //    }
+    func setGridLinesRange(_ newValue: CPTPlotRange?) {
+        if gridLinesRange != newValue {
+            gridLinesRange = newValue
+            if separateLayers {
+                var gridlines = majorGridLines
+                gridlines?.setNeedsDisplay()
+                
+                gridlines = minorGridLines
+                gridlines?.setNeedsDisplay()
+            } else {
+                let thePlotArea = plotArea
+                thePlotArea?.majorGridLineGroup?.setNeedsDisplay()
+                thePlotArea?.minorGridLineGroup?.setNeedsDisplay()
+            }
+        }
+    }
+    
     //
     //    -(void)setPlotArea:(nullable CPTPlotArea *)newPlotArea
     //    {
@@ -874,19 +873,7 @@ extension CPTAxis {
     //            [thePlotArea setNeedsDisplay];
     //        }
     //    }
-    //
-    //    -(nullable CPTLimitBandArray *)backgroundLimitBands
-    //    {
-    //        return [self.mutableBackgroundLimitBands copy];
-    //    }
-    //
-    //    -(nullable CPTAxisSet *)axisSet
-    //    {
-    //        CPTPlotArea *thePlotArea = self.plotArea;
-    //
-    //        return thePlotArea.axisSet;
-    //    }
-    //
+    //    
     
     public override var isHidden: Bool {
         get {

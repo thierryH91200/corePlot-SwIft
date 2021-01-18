@@ -111,3 +111,4 @@ typealias CPTValueArray = Array<NSValue >
 typealias CPTMutableValueArray = Array<NSValue >;
 typealias CPTDictionary = Dictionary< String , Any>
 typealias CPTMutableDictionary = Dictionary<String , Any>
+typealias CPTLimitBandArray = [CPTLimitBand]

@@ -27,10 +27,10 @@ extension CPTLayer {
         var scale = CGFloat(0.0)
         
         if self.respondsToSelector(to: #selector(hostingView)) {
-            scale = (self as? CPTGraph)?.hostingView.window.backingScaleFactor
+            scale = self.hostingView.window.backingScaleFactor
         }
         
-        if ((scale == 0.0) && CALayer.instancesRespondToSelector(to: #selector(contentsScale))) {
+        if ((scale == 0.0) && CALayer.instancesRespond(to: #selector(getter: contentsScale))) {
             scale = self.contentsScale
         }
         

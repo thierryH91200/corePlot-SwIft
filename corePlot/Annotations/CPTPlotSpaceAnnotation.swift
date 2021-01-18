@@ -9,10 +9,10 @@ import AppKit
 
 class CPTPlotSpaceAnnotation: CPTAnnotation {
     
-    var decimalAnchor = CGFloat(0.0)
     var anchorCount = 0
-    var anchorPlotPoint = [CGFloat]()
     var plotSpace = CPTPlotSpace()
+    var decimalAnchor = [CGFloat]()
+
     
     // MARK: - Init/Dealloc
     convenience init(newPlotSpace: CPTPlotSpace, newPlotPoint: [CGFloat])
@@ -43,9 +43,10 @@ class CPTPlotSpaceAnnotation: CPTAnnotation {
     {
         let content = self.contentLayer
         
-        if (( content ) != nil) {
+        if content != nil {
             let hostLayer = self.annotationHostLayer;
-            if (( hostLayer ) != nil) {
+            
+            if  hostLayer != nil {
                 let plotAnchor = self.anchorPlotPoint;
                 if !plotAnchor.isEmpty {
                     // Get plot area point
@@ -56,9 +57,9 @@ class CPTPlotSpaceAnnotation: CPTAnnotation {
                     
                     var newPosition = CGPoint()
                     let theGraph    = thePlotSpace.graph
-                    let plotArea = theGraph?.plotAreaFrame.plotArea
+                    let plotArea = theGraph?.plotAreaFrame?.plotArea
                     if (( plotArea ) != nil) {
-                        newPosition = plotArea.convertPoin(plotAreaViewAnchorPoint, toLayer:hostLayer)
+                        newPosition = (plotArea?.convert(plotAreaViewAnchorPoint, to: hostLayer))!
                     }
                     else {
                         newPosition = CGPoint()
@@ -78,28 +79,17 @@ class CPTPlotSpaceAnnotation: CPTAnnotation {
     
     
     // MARK: - Accessors
-    func setAnchorPlotPoint(newPlotPoint: [CGFloat])
+    var anchorPlotPoint = [CGFloat]()
+    func setAnchorPlotPoint(newValue: [CGFloat])
     {
-        if  anchorPlotPoint != newPlotPoint  {
-            anchorPlotPoint = newPlotPoint
+        if  anchorPlotPoint != newValue  {
+            self.anchorPlotPoint = newValue
+            self.decimalAnchor = newValue
             
             self.anchorCount = anchorPlotPoint.count
-            
-            var decimalPoint = [CGFloat]()
-            for i in 0..<self.anchorCount {
-                decimalPoint.append(anchorPlotPoint[i])
-            }
-            self.decimalAnchor = decimalPoint
-            
             self.setContentNeedsLayout()
         }
     }
     
-    func setDecimalAnchor(newAnchor : Double)
-    {
-        if ( decimalAnchor != newAnchor ) {
-            decimalAnchor = newAnchor
-        }
-    }
     
 }

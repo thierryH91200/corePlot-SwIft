@@ -506,8 +506,7 @@ class CPTColor: NSObject {
     //#endif
     //}
     //
-    //#pragma mark -
-    //#pragma mark Init/Dealloc
+    // MARK: - Init/Dealloc
     //
     ///** @brief Initializes a newly allocated CPTColor object with the provided @ref CGColorRef.
     // *
@@ -766,3 +765,4 @@ class CPTColor: NSObject {
 //@end
 
 
+}

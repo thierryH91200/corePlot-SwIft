@@ -10,16 +10,7 @@ import AppKit
 extension CPTPlot {
     
     // MARK: Data Source
-    
-//    func reloadDataInIndexRange(indexRange :NSRange)
-//    {
-//        self.dataNeedsReloading = false
-//        self.reloadPlotData(indexRange: indexRange)
-//        
-//        // Data labels
-//        self.reloadDataLabels( indexRange: indexRange)
-//    }
-    
+        
     ///** @brief Insert records into the plot data cache at the given index.
     // *  @param idx The starting index of the new records.
     // *  @param numberOfRecords The number of records to insert.
@@ -163,7 +154,7 @@ extension CPTPlot {
             let maxIndex = NSMaxRange(indexRange)
             
             for idx in indexRange.location..<maxIndex {
-                let labelLayer = theDataSource?.dataLabelForPlot?(plot: self, index: idx)
+                let labelLayer = theDataSource?.dataLabelForPlot?(plot: self, index: UInt(idx))
                 
                 if let labelLayer = labelLayer {
                     array.append(labelLayer)
@@ -187,188 +178,188 @@ extension CPTPlot {
     {
         let  numbers : Any? // can be CPTNumericData, Array, or Data
         
-        weak var theDataSource = self.dataSource
-        
-        if ((theDataSource?.dataForPlot(plot: fieldEnum: indexRange:)) != nil) {
-            numbers = theDataSource?.dataForPlot!( plot:self, fieldEnum:fieldEnum, indexRange:indexRange) as? CGFloat
-        }
-        else if ((theDataSource?.doublesForPlot(plot: fieldEnum: indexRange:)) != nil) {
-            numbers = NSMutableData dataWithLength:sizeof(double) * indexRange.length];
-            var fieldValues  = numbers
-            
-            var doubleValues = theDataSource?.doublesForPlot!(plot:self, fieldEnum:fieldEnum, indexRange:indexRange)
-            //                memcpy(fieldValues, doubleValues, MemoryLayout<Double>.size * indexRange.length)
-            fieldValues = [Double](repeating: doubleValues!.first!, count: indexRange.length )
-            
-        }
-        else if ((theDataSource?.numbersForPlot?(plot: fieldEnum: indexRange:)) != nil) {
-            let numberArray = theDataSource?.numbersForPlot!(plot: self, fieldEnum: fieldEnum, indexRange:indexRange )
-            
-            if (( numberArray ) != nil) {
-                numbers = numberArray! as [Int];
-            }
-            else {
-                
-                numbers = nil
-            }
-            
-        }
-        else if  theDataSource?.doubleForPlot(plot : fieldEnum: index:) != nil {
-           
-            var recordIndex = 0
-            var fieldData = NSMutableData(length: indexRange.length)
-            var fieldValues      = fieldData
-            for recordIndex in indexRange.location..<indexRange.location + indexRange.length {
-                let number = theDataSource?.doubleForPlot!(plot: self, fieldEnum:fieldEnum, index:recordIndex)
-                fieldValues = number! + 1.0
-            }
-            
-            numbers = fieldData;
-        }
-        else {
-            if ((theDataSource?.numberForPlot(plot: fieldEnum: index:)) != nil) {
-                
-                let nullObject    : CGFloat?
-                let recordIndex = 0
-                var fieldValues = [CGFloat?]()
-                for recordIndex in indexRange.location..<(indexRange.location + indexRange.length) {
-                    if ( respondsToSingleValueSelector ) {
-                        let number = theDataSource?.numberForPlot(plot: self, fieldEnum:fieldEnum, index:recordIndex)
-                        if ( number ) {
-                            fieldValues.append(number)
-                        }
-                        else {
-                            fieldValues.append(nullObject)
-                        }
-                    }
-                    else {
-                        fieldValues.append( zero)
-                    }
-                }
-                numbers = fieldValues
-            }
-        }
+//        weak var theDataSource = self.dataSource
+//
+//        if ((theDataSource?.dataForPlot(plot: fieldEnum: indexRange:)) != nil) {
+//            numbers = theDataSource?.dataForPlot!( plot:self, fieldEnum:fieldEnum, indexRange:indexRange) as? CGFloat
+//        }
+//        else if ((theDataSource?.doublesForPlot(plot: fieldEnum: indexRange:)) != nil) {
+//            numbers = NSMutableData dataWithLength:sizeof(double) * indexRange.length];
+//            var fieldValues  = numbers
+//
+//            var doubleValues = theDataSource?.doublesForPlot!(plot:self, fieldEnum:fieldEnum, indexRange:indexRange)
+//            //                memcpy(fieldValues, doubleValues, MemoryLayout<Double>.size * indexRange.length)
+//            fieldValues = [Double](repeating: doubleValues!.first!, count: indexRange.length )
+//
+//        }
+//        else if ((theDataSource?.numbersForPlot?(plot: fieldEnum: indexRange:)) != nil) {
+//            let numberArray = theDataSource?.numbersForPlot!(plot: self, fieldEnum: fieldEnum, indexRange:indexRange )
+//
+//            if (( numberArray ) != nil) {
+//                numbers = numberArray! as [Int];
+//            }
+//            else {
+//
+//                numbers = nil
+//            }
+//
+//        }
+//        else if  theDataSource?.doubleForPlot(plot : fieldEnum: index:) != nil {
+//
+//            var recordIndex = 0
+//            var fieldData = NSMutableData(length: indexRange.length)
+//            var fieldValues      = fieldData
+//            for recordIndex in indexRange.location..<indexRange.location + indexRange.length {
+//                let number = theDataSource?.doubleForPlot!(plot: self, fieldEnum:fieldEnum, index:recordIndex)
+//                fieldValues = number! + 1.0
+//            }
+//
+//            numbers = fieldData;
+//        }
+//        else {
+//            if ((theDataSource?.numberForPlot(plot: fieldEnum: index:)) != nil) {
+//
+//                let nullObject    : CGFloat?
+//                let recordIndex = 0
+//                var fieldValues = [CGFloat?]()
+//                for recordIndex in indexRange.location..<(indexRange.location + indexRange.length) {
+//                    if ( respondsToSingleValueSelector ) {
+//                        let number = theDataSource?.numberForPlot!(plot: self, fieldEnum:fieldEnum, index:recordIndex)
+//                        if ( number ) {
+//                            fieldValues.append(number)
+//                        }
+//                        else {
+//                            fieldValues.append(nullObject)
+//                        }
+//                    }
+//                    else {
+//                        fieldValues.append( zero)
+//                    }
+//                }
+//                numbers = fieldValues
+//            }
+//        }
         return numbers;
     }
-    //
-    ///** @brief Gets a range of plot data for the given plot.
-    // *  @param indexRange The range of the data indexes of interest.
-    // *  @return Returns @YES if the datasource implements the
-    // *  @link CPTPlotDataSource::dataForPlot:recordIndexRange: -dataForPlot:recordIndexRange: @endlink
-    // *  method and it returns valid data.
-    // **/
+    
+    /** @brief Gets a range of plot data for the given plot.
+     *  @param indexRange The range of the data indexes of interest.
+     *  @return Returns @YES if the datasource implements the
+     *  @link CPTPlotDataSource::dataForPlot:recordIndexRange: -dataForPlot:recordIndexRange: @endlink
+     *  method and it returns valid data.
+     **/
     func loadNumbersForAllFieldsFromDataSourceInRecordIndexRange(indexRange: NSRange) -> Bool
     {
         var hasData = false;
         weak var theDataSource = self.dataSource
         
-        if (( theDataSource?.dataForPlot(plot: indexRange:) ) != nil) {
-            let data = theDataSource?.dataForPlot!(plot: self, indexRange:indexRange)
-            
-            if data is CPTNumericData  {
-                let sampleCount = data.numberOfSamples;
-                let dataType  = data.dataType;
-                
-                if ((sampleCount > 0) && (data.numberOfDimensions == 2)) {
-                    let theShape    = data.shape;
-                    let rowCount   = theShape[0]
-                    let fieldCount = theShape[1]
-                    
-                    if ( fieldCount > 0 ) {
-                        // convert data type if needed
-                        switch ( self.cachePrecision ) {
-                        case .auto:
-                            if ( self.doublePrecisionCache ) {
-                                if ( !CPTDataTypeEqualToDataType(dataType, self.doubleDataType)) {
-                                    let mutableData = data
-                                    mutableData.dataType = self.doubleDataType;
-                                    data                 = mutableData;
-                                }
-                            }
-                            else {
-                                if ( !CPTDataTypeEqualToDataType(dataType, self.decimalDataType)) {
-                                    let mutableData = data
-                                    mutableData.dataType = self.decimalDataType;
-                                    data                 = mutableData;
-                                }
-                            }
-                            break;
-                            
-                        case .decimal:
-                            if ( !CPTDataTypeEqualToDataType(dataType, self.decimalDataType)) {
-                                let mutableData = data
-                                mutableData.dataType = self.decimalDataType;
-                                data                 = mutableData;
-                            }
-                            break;
-                            
-                        case .double:
-                            if ( !CPTDataTypeEqualToDataType(dataType, self.doubleDataType)) {
-                                let mutableData = data
-                                mutableData.dataType = self.doubleDataType;
-                                data                 = mutableData;
-                            }
-                            break;
-                        }
-                        
-                        // add the data to the cache
-                        let bufferLength = rowCount * dataType.sampleBytes;
-                        
-                        switch ( data.dataOrder ) {
-                        case .rowsFirst:
-                            let sourceEnd = (const int8_t *)(data.bytes) + data.length;
-                            
-                            for fieldNum in 0..<fieldCount {
-                                let tempData = NSMutableData alloc] initWithLength:bufferLength];
-                                
-                                if ( CPTDataTypeEqualToDataType(dataType, self.doubleDataType)) {
-                                    const double *sourceData = data samplePointerAtIndex:0, fieldNum];
-                                    double *destData         = tempData.mutableBytes;
-                                    
-                                    while ( sourceData < sourceEnd ) {
-                                        destData = sourceData
-                                        destData += 1
-                                        sourceData += fieldCount
-                                    }
-                                }
-                                else {
-                                    let sourceData = data.samplePointerAtIndex(0, fieldNum)
-                                    let destData         = tempData
-                                    
-                                    while sourceData < sourceEnd {
-                                        *destData++ = *sourceData;
-                                        sourceData += fieldCount;
-                                    }
-                                }
-                                
-                                CPTMutableNumericData *tempNumericData = CPTMutableNumericData alloc] initWithData:tempData
-                                dataType:dataType
-                                shape:nil];
-                                
-                                self.cacheNumbers(tempNumericData, forField:fieldNum, atRecordIndex:indexRange.location)
-                            }
-                            hasData = true;
-                            break;
-                            
-                        case .columnsFirst:
-                            for  fieldNum in 0..<fieldCount {
-                                let samples = data.samplePointerAtIndex(0, fieldNum)
-                                let tempData    = NSData(bytes: samples,  length:bufferLength)
-                                
-                                let tempNumericData = CPTMutableNumericData ( initWithData:tempData,
-                                dataType:dataType,
-                                shape:nil)
-                                
-                                self.cacheNumbers(tempNumericData,
-                                                  forField:fieldNum,
-                                                  atRecordIndex:indexRange.location)
-                            }
-                            hasData = true
-                        }
-                    }
-                }
-            }
-        }
+//        if (( theDataSource?.dataForPlot(plot: indexRange:) ) != nil) {
+//            let data = theDataSource?.dataForPlot!(plot: self, indexRange:indexRange)
+//
+//            if data is CPTNumericData  {
+//                let sampleCount = data.numberOfSamples;
+//                let dataType  = data.dataType;
+//
+//                if ((sampleCount > 0) && (data.numberOfDimensions == 2)) {
+//                    let theShape    = data.shape;
+//                    let rowCount   = theShape[0]
+//                    let fieldCount = theShape[1]
+//
+//                    if ( fieldCount > 0 ) {
+//                        // convert data type if needed
+//                        switch ( self.cachePrecision ) {
+//                        case .auto:
+//                            if ( self.doublePrecisionCache ) {
+//                                if ( !CPTDataTypeEqualToDataType(dataType, self.doubleDataType)) {
+//                                    let mutableData = data
+//                                    mutableData.dataType = self.doubleDataType;
+//                                    data                 = mutableData;
+//                                }
+//                            }
+//                            else {
+//                                if ( !CPTDataTypeEqualToDataType(dataType, self.decimalDataType)) {
+//                                    let mutableData = data
+//                                    mutableData.dataType = self.decimalDataType;
+//                                    data                 = mutableData;
+//                                }
+//                            }
+//                            break;
+//
+//                        case .decimal:
+//                            if ( !CPTDataTypeEqualToDataType(dataType, self.decimalDataType)) {
+//                                let mutableData = data
+//                                mutableData.dataType = self.decimalDataType;
+//                                data                 = mutableData;
+//                            }
+//                            break;
+//
+//                        case .double:
+//                            if ( !CPTDataTypeEqualToDataType(dataType, self.doubleDataType)) {
+//                                let mutableData = data
+//                                mutableData.dataType = self.doubleDataType;
+//                                data                 = mutableData;
+//                            }
+//                            break;
+//                        }
+//
+//                        // add the data to the cache
+//                        let bufferLength = rowCount * dataType.sampleBytes;
+//
+//                        switch ( data.dataOrder ) {
+//                        case .rowsFirst:
+//                            let sourceEnd = (const int8_t *)(data.bytes) + data.length;
+//
+//                            for fieldNum in 0..<fieldCount {
+//                                let tempData = NSMutableData alloc] initWithLength:bufferLength];
+//
+//                                if ( CPTDataTypeEqualToDataType(dataType, self.doubleDataType)) {
+//                                    const double *sourceData = data samplePointerAtIndex:0, fieldNum];
+//                                    double *destData         = tempData.mutableBytes;
+//
+//                                    while ( sourceData < sourceEnd ) {
+//                                        destData = sourceData
+//                                        destData += 1
+//                                        sourceData += fieldCount
+//                                    }
+//                                }
+//                                else {
+//                                    let sourceData = data.samplePointerAtIndex(0, fieldNum)
+//                                    let destData         = tempData
+//
+//                                    while sourceData < sourceEnd {
+//                                        *destData++ = *sourceData;
+//                                        sourceData += fieldCount;
+//                                    }
+//                                }
+//
+//                                CPTMutableNumericData *tempNumericData = CPTMutableNumericData alloc] initWithData:tempData
+//                                dataType:dataType
+//                                shape:nil];
+//
+//                                self.cacheNumbers(tempNumericData, forField:fieldNum, atRecordIndex:indexRange.location)
+//                            }
+//                            hasData = true;
+//                            break;
+//
+//                        case .columnsFirst:
+//                            for  fieldNum in 0..<fieldCount {
+//                                let samples = data.samplePointerAtIndex(0, fieldNum)
+//                                let tempData    = NSData(bytes: samples,  length:bufferLength)
+//
+//                                let tempNumericData = CPTMutableNumericData ( initWithData:tempData,
+//                                dataType:dataType,
+//                                shape:nil)
+//
+//                                self.cacheNumbers(tempNumericData,
+//                                                  forField:fieldNum,
+//                                                  atRecordIndex:indexRange.location)
+//                            }
+//                            hasData = true
+//                        }
+//                    }
+//                }
+//            }
+//        }
         return hasData;
     }
 }
