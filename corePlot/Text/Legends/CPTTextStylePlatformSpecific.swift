@@ -212,7 +212,7 @@ extension String {
 //        if ( [self respondsToSelector:@selector(boundingRectWithSize:options:attributes:context:)] ) {
         rect = self.boundingRect(with: CGSize(width: 10000.0, height: 10000.0),
                     options: [.usesLineFragmentOrigin , .usesFontLeading , .truncatesLastVisibleLine],
-                    attributes:style.attributes(),
+                    attributes:style.attributes,
                     context:nil)
         
         var textSize = rect.size

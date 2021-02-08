@@ -116,7 +116,7 @@ class CPTAnimation: NSObject {
         let boundObject = animationOperation.boundObject
         let period = animationOperation.period
         
-        if animationOperation.delegate || (boundObject != nil && period != nil && !(period?.startValue == period?.endValue)) {
+        if animationOperation.delegate || (boundObject != nil && period != nil && !(period.startValue == period?.endValue)) {
             animationQueue.async(execute: { [self] in
                 animationOperations.append(animationOperation)
                 
@@ -354,8 +354,8 @@ class CPTAnimation: NSObject {
                     // wrapped scalars and structs
                     NSValue *value = (NSValue *)tweenedValue;
                     
-                    NSUInteger bufferSize = 0;
-                    NSGetSizeAndAlignment(value.objCType, &bufferSize, NULL);
+                    let bufferSize = 0
+                    NSGetSizeAndAlignment(value.objCType, &bufferSize, nil);
                     
                     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[boundObject methodSignatureForSelector:boundSetter]];
                     invocation.target   = boundObject;

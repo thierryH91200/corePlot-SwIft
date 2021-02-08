@@ -288,7 +288,7 @@ public class CPTPlot: CPTAnnotationHostLayer {
         super.draw(in: context)
         
         weak var  theDelegate = self.delegatePlot
-        theDelegate?.didFinishDrawing(plot: self)
+        theDelegate?.didFinishDrawing!(plot: self)
     }
     
     // MARK: - Animation

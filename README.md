@@ -124,3 +124,7 @@ https://stackoverflow.com/questions/52065329/swift-better-way-to-remove-a-specif
 self.plots = self.plots.filter { $0 != plotToRemove } // Keeps only what is
 
 ### 17-01-21 finish class CPTPlotSymbol
+
+# extension xcode enabled
+
+https://github.com/nicklockwood/SwiftFormat/issues/494

@@ -45,7 +45,7 @@ class CPTLegendEntry: NSObject {
     var _titleSize =  CGSize()
     var titleSize : CGSize {
         get {
-//            let titleSize = CGSize()
+            //            let titleSize = CGSize()
             let styledTitle = self.attributedTitle
             
             if ( styledTitle.length > 0 ) {
@@ -95,18 +95,17 @@ class CPTLegendEntry: NSObject {
         let styledTitle = self.attributedTitle
         
         if (styledTitle.length > 0)  {
-            if let method = styledTitle.drawInRect(rect: textRect, context:context) {
-                method
+            styledTitle.drawInRect(rect: textRect, context:context)
+        }
+        else {
+            var theTitle = styledTitle.string;
+            
+            if  theTitle == ""  {
+                theTitle = self.title
             }
-            else {
-                var theTitle = styledTitle.string;
-                
-                if  theTitle == ""  {
-                    theTitle = self.title
-                }
-                theTitle.drawInRect(rect: textRect, style: self.textStyle!, context: context)
-            }
+            theTitle.drawInRect(rect: textRect, style: self.textStyle!, context: context)
         }
     }
 }
+
 

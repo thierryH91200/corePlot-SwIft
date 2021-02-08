@@ -66,7 +66,7 @@ enum CPTSign : Int {
 /**
  *  @brief Locations around the edge of a rectangle.
  **/
-enum CPTRectAnchor : Int {
+enum CPTRectAnchor : CaseIterable {
     case bottomLeft ///< The bottom left corner
     case bottom ///< The bottom center
     case bottomRight ///< The bottom right corner
@@ -80,13 +80,13 @@ enum CPTRectAnchor : Int {
 /**
  *  @brief Label and constraint alignment constants.
  **/
-enum CPTAlignment : Int {
-    case left ///< Align horizontally to the left side.
-    case center ///< Align horizontally to the center.
-    case right ///< Align horizontally to the right side.
-    case top ///< Align vertically to the top.
-    case middle ///< Align vertically to the middle.
-    case bottom ///< Align vertically to the bottom.
+enum CPTAlignment : CaseIterable {
+    case left       ///< Align horizontally to the left side.
+    case center     ///< Align horizontally to the center.
+    case right      ///< Align horizontally to the right side.
+    case top        ///< Align vertically to the top.
+    case middle     ///< Align vertically to the middle.
+    case bottom     ///< Align vertically to the bottom.
 }
 
 typealias CPTEdgeInsets = NSEdgeInsets

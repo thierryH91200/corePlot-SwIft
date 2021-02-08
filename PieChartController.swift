@@ -82,7 +82,7 @@ extension PieChartController: CPTPieChartDataSource  {
         let label = CPTTextLayer(newText:"\(index)")
         
         if let textStyle = label.textStyle?.mutableCopy() as? CPTMutableTextStyle {
-            textStyle.color = CPTColor.lightGray
+            textStyle.color = NSUIColor.lightGray
             label.textStyle = textStyle
         }
         return label

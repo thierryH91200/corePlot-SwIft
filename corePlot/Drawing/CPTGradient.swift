@@ -331,4 +331,254 @@ class CPTGradient: NSObject {
         }
         set {}
     }
+    
+    func newColorAtPosition( position: CGFloat) -> CGColor? {
+        
+        var position = position
+        let components = [CGFloat(0.0), CGFloat(0.0), CGFloat(0.0), CGFloat(0.0)]
+        let gradientColor: CGColor? = nil
+        
+        switch blendingMode {
+        case .linear:
+            CPTLinearEvaluation(self, &position, components)
+        case .chromatic:
+            CPTChromaticEvaluation(self, &position, components)
+        case .inverseChromatic:
+            CPTInverseChromaticEvaluation(self, &position, components)
+        default:
+            break
+        }
+        
+        #if targetEnvironment(simulator) || os(iOS)
+        let colorComponents = [components[0], components[1], components[2], components[3]]
+        gradientColor = CGColor(colorSpace: colorspace.cgColorSpace, components: &colorComponents)
+        #else
+        gradientColor = UIColor(red: components[0], green: components[1], blue: components[2], alpha: components[3]).cgColor
+        
+        #endif
+        return gradientColor;
+        
+        
+    }
+    
+    // MARK: - Core Graphics
+    func CPTLinearEvaluation(_ info: CPTGradient, _ inEval: CGFloat, _ outEval: [CGFloat]) {
+        
+        
+        let position = inEval
+        var outEval = outEval
+        let gradient = info
+        
+        // This grabs the first two colors in the sequence
+        var color1 = gradient.elementList;
+        
+        if color1 == nil {
+            outEval = [CGFloat](repeating: 1.0, count: 4)
+            return
+        }
+        
+        var color2 = color1?.nextElement;
+
+        // make sure first color and second color are on other sides of position
+        while ( color2 != nil && color2!.position < position ) {
+            color1 = color2
+        color2 = color1?.nextElement;
+        }
+        // if we don't have another color then make next color the same color
+        if color2 == nil {
+            color2 = color1;
+        }
+
+        // ----------FailSafe settings----------
+        // color1.red   = 1; color2.red   = 0;
+        // color1.green = 1; color2.green = 0;
+        // color1.blue  = 1; color2.blue  = 0;
+        // color1.alpha = 1; color2.alpha = 1;
+        // color1.position = 0.5;
+        // color2.position = 0.5;
+        // -------------------------------------
+
+        if ( position <= color1?.position ) {
+            out[0] = color1.color.red;
+            out[1] = color1.color.green;
+            out[2] = color1.color.blue;
+            out[3] = color1.color.alpha;
+        }
+        else if ( position >= color2.position ) {
+            out[0] = color2.color.red;
+            out[1] = color2.color.green;
+            out[2] = color2.color.blue;
+            out[3] = color2.color.alpha;
+        }
+        else {
+            // adjust position so that it goes from 0 to 1 in the range from color 1 & 2's position
+            position = (position - color1.position) / (color2.position - color1.position);
+
+            out[0] = (color2.color.red - color1.color.red) * position + color1.color.red;
+            out[1] = (color2.color.green - color1.color.green) * position + color1.color.green;
+            out[2] = (color2.color.blue - color1.color.blue) * position + color1.color.blue;
+            out[3] = (color2.color.alpha - color1.color.alpha) * position + color1.color.alpha;
+        }
+    }
+
+    // Chromatic Evaluation -
+    // This blends colors by their Hue, Saturation, and Value(Brightness) right now I just
+    // transform the RGB values stored in the CPTGradientElements to HSB, in the future I may
+    // streamline it to avoid transforming in and out of HSB colorspace *for later*
+    //
+    // For the chromatic blend we shift the hue of color1 to meet the hue of color2. To do
+    // this we will add to the hue's angle (if we subtract we'll be doing the inverse
+    // chromatic...scroll down more for that). All we need to do is keep adding to the hue
+    // until we wrap around the color wheel and get to color2.
+    void CPTChromaticEvaluation(void *__nullable info, const CGFloat *__nonnull in, CGFloat *__nonnull out)
+    {
+        CGFloat position      = *in;
+        CPTGradient *gradient = (__bridge CPTGradient *)info;
+
+        // This grabs the first two colors in the sequence
+        CPTGradientElement *color1 = gradient.elementList;
+
+        if ( color1 == NULL ) {
+            out[0] = out[1] = out[2] = out[3] = CPTFloat(1.0);
+            return;
+        }
+
+        CPTGradientElement *color2 = color1.nextElement;
+
+        CGFloat c1[4];
+        CGFloat c2[4];
+
+        // make sure first color and second color are on other sides of position
+        while ( color2 != NULL && color2.position < position ) {
+            color1 = color2;
+            color2 = color1.nextElement;
+        }
+
+        // if we don't have another color then make next color the same color
+        if ( color2 == NULL ) {
+            color2 = color1;
+        }
+
+        c1[0] = color1.color.red;
+        c1[1] = color1.color.green;
+        c1[2] = color1.color.blue;
+        c1[3] = color1.color.alpha;
+
+        c2[0] = color2.color.red;
+        c2[1] = color2.color.green;
+        c2[2] = color2.color.blue;
+        c2[3] = color2.color.alpha;
+
+        CPTTransformRGB_HSV(c1);
+        CPTTransformRGB_HSV(c2);
+        CPTResolveHSV(c1, c2);
+
+        if ( c1[0] > c2[0] ) {        // if color1's hue is higher than color2's hue then
+            c2[0] += CPTFloat(360.0); // we need to move c2 one revolution around the wheel
+        }
+
+        if ( position <= color1.position ) {
+            out[0] = c1[0];
+            out[1] = c1[1];
+            out[2] = c1[2];
+            out[3] = c1[3];
+        }
+        else if ( position >= color2.position ) {
+            out[0] = c2[0];
+            out[1] = c2[1];
+            out[2] = c2[2];
+            out[3] = c2[3];
+        }
+        else {
+            // adjust position so that it goes from 0 to 1 in the range from color 1 & 2's position
+            position = (position - color1.position) / (color2.position - color1.position);
+
+            out[0] = (c2[0] - c1[0]) * position + c1[0];
+            out[1] = (c2[1] - c1[1]) * position + c1[1];
+            out[2] = (c2[2] - c1[2]) * position + c1[2];
+            out[3] = (c2[3] - c1[3]) * position + c1[3];
+        }
+
+        CPTTransformHSV_RGB(out);
+    }
+
+    // Inverse Chromatic Evaluation -
+    // Inverse Chromatic is about the same story as Chromatic Blend, but here the Hue
+    // is strictly decreasing, that is we need to get from color1 to color2 by decreasing
+    // the 'angle' (i.e. 90º . 180º would be done by subtracting 270º and getting -180º...
+    // which is equivalent to 180º mod 360º
+    void CPTInverseChromaticEvaluation(void *__nullable info, const CGFloat *__nonnull in, CGFloat *__nonnull out)
+    {
+        CGFloat position      = *in;
+        CPTGradient *gradient = (__bridge CPTGradient *)info;
+
+        // This grabs the first two colors in the sequence
+        CPTGradientElement *color1 = gradient.elementList;
+
+        if ( color1 == NULL ) {
+            out[0] = out[1] = out[2] = out[3] = CPTFloat(1.0);
+            return;
+        }
+
+        CPTGradientElement *color2 = color1.nextElement;
+
+        CGFloat c1[4];
+        CGFloat c2[4];
+
+        // make sure first color and second color are on other sides of position
+        while ( color2 != NULL && color2.position < position ) {
+            color1 = color2;
+            color2 = color1.nextElement;
+        }
+
+        // if we don't have another color then make next color the same color
+        if ( color2 == NULL ) {
+            color2 = color1;
+        }
+
+        c1[0] = color1.color.red;
+        c1[1] = color1.color.green;
+        c1[2] = color1.color.blue;
+        c1[3] = color1.color.alpha;
+
+        c2[0] = color2.color.red;
+        c2[1] = color2.color.green;
+        c2[2] = color2.color.blue;
+        c2[3] = color2.color.alpha;
+
+        CPTTransformRGB_HSV(c1);
+        CPTTransformRGB_HSV(c2);
+        CPTResolveHSV(c1, c2);
+
+        if ( c1[0] < c2[0] ) {        // if color1's hue is higher than color2's hue then
+            c1[0] += CPTFloat(360.0); // we need to move c2 one revolution back on the wheel
+        }
+        if ( position <= color1.position ) {
+            out[0] = c1[0];
+            out[1] = c1[1];
+            out[2] = c1[2];
+            out[3] = c1[3];
+        }
+        else if ( position >= color2.position ) {
+            out[0] = c2[0];
+            out[1] = c2[1];
+            out[2] = c2[2];
+            out[3] = c2[3];
+        }
+        else {
+            // adjust position so that it goes from 0 to 1 in the range from color 1 & 2's position
+            position = (position - color1.position) / (color2.position - color1.position);
+
+            out[0] = (c2[0] - c1[0]) * position + c1[0];
+            out[1] = (c2[1] - c1[1]) * position + c1[1];
+            out[2] = (c2[2] - c1[2]) * position + c1[2];
+            out[3] = (c2[3] - c1[3]) * position + c1[3];
+        }
+
+        CPTTransformHSV_RGB(out);
+    }
+
+
+
+
 }

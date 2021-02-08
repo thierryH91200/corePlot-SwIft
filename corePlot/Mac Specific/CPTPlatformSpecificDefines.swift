@@ -7,21 +7,17 @@
 
 import AppKit
 
-
-typealias NSUIColor = NSColor ///< Platform-native color.
-typealias CPTNativeImage = NSImage ///< Platform-native image format.
-public typealias CPTNativeEvent = NSEvent ///< Platform-native OS event.
-typealias CPTNativeFont = NSFont ///< Platform-native font.
-
+typealias NSUIColor = NSColor /// < Platform-native color.
+typealias CPTNativeImage = NSImage /// < Platform-native image format.
+public typealias CPTNativeEvent = NSEvent /// < Platform-native OS event.
+typealias CPTNativeFont = NSFont /// < Platform-native font.
 
 extension CPTLayer {
-    
     /** @brief Gets an image of the layer contents.
      *  @return A native image representation of the layer content.
      **/
-    func imageOfLayer() -> CPTNativeImage
-    {
-        let boundsSize = self.bounds.size;
+    func imageOfLayer() -> CPTNativeImage {
+        let boundsSize = self.bounds.size
         
         // Figure out the scale of pixels to points
         var scale = CGFloat(0.0)
@@ -30,21 +26,21 @@ extension CPTLayer {
             scale = self.hostingView.window.backingScaleFactor
         }
         
-        if ((scale == 0.0) && CALayer.instancesRespond(to: #selector(getter: contentsScale))) {
+        if scale == 0.0, CALayer.instancesRespond(to: #selector(getter: contentsScale)) {
             scale = self.contentsScale
         }
         
-        if ( scale == 0.0 ) {
-            let myWindow = self.graph?.hostingView?.window;
+        if scale == 0.0 {
+            let myWindow = self.graph?.hostingView?.window
             
-            if (( myWindow ) != nil) {
-                scale = myWindow!.backingScaleFactor;
+            if myWindow != nil {
+                scale = myWindow!.backingScaleFactor
             }
             else {
-                scale = NSScreen.main!.backingScaleFactor;
+                scale = NSScreen.main!.backingScaleFactor
             }
         }
-        scale = max(scale, CGFloat(1.0));
+        scale = max(scale, CGFloat(1.0))
         
         let layerImage = NSBitmapImageRep(bitmapDataPlanes: nil,
                                           pixelsWide: Int(boundsSize.width * scale),
@@ -58,10 +54,10 @@ extension CPTLayer {
                                           bitsPerPixel: 0)
         
         // Setting the size communicates the dpi; enables proper scaling for Retina screens
-        layerImage?.size = NSSizeFromCGSize(boundsSize);
+        layerImage?.size = NSSizeFromCGSize(boundsSize)
         
         let bitmapContext = NSGraphicsContext(bitmapImageRep: layerImage!)
-        let context       = bitmapContext?.cgContext
+        let context = bitmapContext?.cgContext
         
         context!.clear(CGRect(x: 0.0, y: 0.0, width: boundsSize.width, height: boundsSize.height))
         context!.setAllowsAntialiasing(true)
@@ -71,54 +67,46 @@ extension CPTLayer {
         
         let image = NSImage(size: boundsSize)
         image.addRepresentation(layerImage!)
-        return image;
+        return image
     }
 }
 
-// MARK:- NSAttributedString
+// MARK: - NSAttributedString
 
 extension NSAttributedString {
-    
     /** @brief Draws the styled text into the given graphics context.
      *  @param rect The bounding rectangle in which to draw the text.
      *  @param context The graphics context to draw into.
      **/
-    func drawInRect(rect: CGRect, context: CGContext)
-    {
+    func drawInRect(rect: CGRect, context: CGContext) {
         NSUIGraphicsPushContext(context)
-        self.draw( rect :NSRectFromCGRect, options:CPTStringDrawingOptions)
+        self.draw(rect: NSRectFromCGRect, options: CPTStringDrawingOptions)
         NSUIGraphicsPopContext()
     }
     
     /**
      *  @brief Computes the size of the styled text when drawn rounded up to the nearest whole number in each dimension.
      **/
-    func sizeAsDrawn() -> CGSize
-    {
+    func sizeAsDrawn() -> CGSize {
         var rect = CGRect()
         
-        if self.respondsToSelector(to: #selector(boundingRectWithSize( options:context:))) {
-            rect = self.boundingRectWithSize(CGSize(10000.0, 10000.0), options: CPTStringDrawingOptions, context:nil)
+        if self.respondsToSelector(to: #selector(boundingRectWithSize(options:context:))) {
+            rect = self.boundingRectWithSize(CGSize(10000.0, 10000.0), options: CPTStringDrawingOptions, context: nil)
         }
-        else
-        {
-            rect = self.boundingRectWithSize(CGSize(10000.0, 10000.0),  options: CPTStringDrawingOptions)
+        else {
+            rect = self.boundingRectWithSize(CGSize(10000.0, 10000.0), options: CPTStringDrawingOptions)
         }
         var textSize = rect.size
-        textSize.width  = ceil(textSize.width)
+        textSize.width = ceil(textSize.width)
         textSize.height = ceil(textSize.height)
         return textSize
     }
 }
 
-
-
-
 #if os(OSX)
 import AppKit
 
 public extension NSBezierPath {
-    
     var cgPath: CGPath {
         let path = CGMutablePath()
         let points = NSPointArray.allocate(capacity: 3)
@@ -140,6 +128,5 @@ public extension NSBezierPath {
         }
         return path
     }
-    
 }
 #endif

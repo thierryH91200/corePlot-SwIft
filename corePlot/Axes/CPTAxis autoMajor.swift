@@ -11,10 +11,8 @@
 
 import AppKit
 
-
 extension CPTAxis {
-    
-    func generateEqualMajorTickLocations(newMajorLocations: inout Set<CGFloat>,  newMinorLocations: inout Set<CGFloat>)
+    func generateEqualMajorTickLocations(newMajorLocations: inout Set<CGFloat>, newMinorLocations: inout Set<CGFloat>)
     {
         var majorLocations = Set<CGFloat>()
         var minorLocations = Set<CGFloat>()
@@ -22,18 +20,18 @@ extension CPTAxis {
         let range = self.plotSpace?.plotRangeForCoordinate(coordinate: self.coordinate) as! CPTMutablePlotRange
         
         let theVisibleRange = self.visibleRange
-        if (( theVisibleRange ) != nil) {
+        if theVisibleRange != nil {
             range.intersectionPlotRange(other: theVisibleRange)
         }
         
-        if ( range.lengthDouble != 0.0 ) {
-            let zero     = CGFloat(0)
+        if range.lengthDouble != 0.0 {
+            let zero = CGFloat(0)
             let rangeMin = CGFloat(range.minLimitDecimal)
             let rangeMax = CGFloat(range.maxLimitDecimal)
             
             var majorTickCount = self.preferredNumberOfMajorTicks
             
-            if ( majorTickCount < 2 ) {
+            if majorTickCount < 2 {
                 majorTickCount = 2
             }
             var majorInterval = range.lengthDecimal / CGFloat(majorTickCount - 1)
@@ -43,7 +41,7 @@ extension CPTAxis {
             
             var minorInterval = CGFloat(0.0)
             let minorTickCount = self.minorTicksPerInterval
-            if ( minorTickCount > 0 ) {
+            if minorTickCount > 0 {
                 minorInterval = majorInterval / (minorTickCount + 1)
             }
             else {
@@ -53,12 +51,12 @@ extension CPTAxis {
             var coord = CGFloat(rangeMin)
             
             // Set tick locations
-            while (coord >= rangeMax) {
+            while coord >= rangeMax {
                 // Major tick
                 majorLocations.insert(coord)
                 
                 // Minor ticks
-                if ( minorTickCount > 0 ) {
+                if minorTickCount > 0 {
                     var minorCoord = coord + minorInterval
                     
                     for _ in 0..<Int(minorTickCount) {
@@ -90,22 +88,22 @@ extension CPTAxis {
         var range = self.plotSpace?.plotRangeForCoordinate(coordinate: coordinate) as! CPTMutablePlotRange
         var theVisibleRange = self.visibleRange
         
-        if (theVisibleRange != nil)  {
+        if theVisibleRange != nil {
             range.intersectionPlotRange(other: theVisibleRange)
         }
         
         // Validate scale type
-        var valid             = true
+        var valid = true
         let scaleType = self.plotSpace?.scaleTypeForCoordinate(coordinate: self.coordinate)
         
-        switch ( scaleType ) {
+        switch scaleType {
         case .linear:
             // supported scale type
             break
             
         case .log:
             // supported scale type--check range
-            if ((range.minLimitDouble <= 0.0) || (range.maxLimitDouble <= 0.0)) {
+            if (range.minLimitDouble <= 0.0) || (range.maxLimitDouble <= 0.0) {
                 valid = false
             }
             
@@ -116,27 +114,26 @@ extension CPTAxis {
         default:
             // unsupported scale type--bail out
             valid = false
-            break
         }
         
-        if ( valid == false) {
+        if valid == false {
             newMajorLocations = majorLocations
             newMinorLocations = minorLocations
             return
         }
         
         // Cache some values
-        var numTicks   = self.preferredNumberOfMajorTicks
+        var numTicks = self.preferredNumberOfMajorTicks
         let minorTicks = self.minorTicksPerInterval + 1
-        var length         = abs(range.lengthDouble)
+        var length = abs(range.lengthDouble)
         
         // Filter troublesome values and return empty sets
-        if ((length != 0.0) && length.isInfinite == false) {
-            switch ( scaleType ) {
+        if length != 0.0, length.isInfinite == false {
+            switch scaleType {
             case .linear:
                 
                 // Determine interval value
-                switch ( numTicks ) {
+                switch numTicks {
                 case 0:
                     numTicks = 5
                     
@@ -149,10 +146,10 @@ extension CPTAxis {
                 }
                 
                 let zero = CGFloat(0.0)
-                let one  = CGFloat(1.0)
+                let one = CGFloat(1.0)
                 
                 var majorInterval = CGFloat(0.0)
-                if ( numTicks == 2 ) {
+                if numTicks == 2 {
                     majorInterval = CGFloat(0.0)
 //                    majorInterval = CPTNiceLength(range.lengthDecimal)
                 }
@@ -165,7 +162,7 @@ extension CPTAxis {
                 }
                 
                 var minorInterval = CGFloat(0.0)
-                if ( minorTicks > one) {
+                if minorTicks > one {
                     minorInterval = majorInterval / abs(minorTicks)
                 }
                 else {
@@ -186,11 +183,10 @@ extension CPTAxis {
                 
                 // Iterate through the indexes with visible ticks and build the locations sets
                 for i in Int(initialIndex)..<Int(finalIndex) {
-                    
-                    let pointLocation      = majorInterval * CGFloat(i)
+                    let pointLocation = majorInterval * CGFloat(i)
                     var minorPointLocation = pointLocation
                     
-                    for  j in 1..<Int(minorTicks) {
+                    for j in 1..<Int(minorTicks) {
                         minorPointLocation = minorPointLocation + minorInterval
                         
                         if minorPointLocation < minLimit {
@@ -211,13 +207,11 @@ extension CPTAxis {
                     majorLocations.insert(pointLocation)
                 }
                 
-                break
-                
             case .log:
                 let minLimit = range.minLimitDouble
                 let maxLimit = range.maxLimitDouble
                 
-                if ((minLimit > 0.0) && (maxLimit > 0.0)) {
+                if minLimit > 0.0, maxLimit > 0.0 {
                     // Determine interval value
                     length = log10(maxLimit / minLimit)
                     
@@ -229,31 +223,29 @@ extension CPTAxis {
                     
                     // Determine the initial and final major indexes for the actual visible range
                     let initialIndex = lrint(floor(log10(Double(minLimit) / fabs(interval)))) // can be negative
-                    let finalIndex   = lrint(ceil(log10(Double(maxLimit) / fabs(interval))))  // can be negative
+                    let finalIndex = lrint(ceil(log10(Double(maxLimit) / fabs(interval)))) // can be negative
                     
                     // Iterate through the indexes with visible ticks and build the locations sets
                     for i in initialIndex..<finalIndex + 1 {
-                        
                         let pointLocation = pow(10.0, Double(i) * interval)
                         
                         for j in 1..<minorTicks {
-                            
                             let minorPointLocation = pointLocation + minorInterval * j
                             
-                            if ( minorPointLocation < minLimit ) {
+                            if minorPointLocation < minLimit {
                                 continue
                             }
-                            if ( minorPointLocation > maxLimit ) {
+                            if minorPointLocation > maxLimit {
                                 continue
                             }
                             minorLocations.addObject(minorPointLocation)
                         }
                         minorInterval *= CGFloat(intervalStep)
                         
-                        if ( pointLocation < minLimit ) {
+                        if pointLocation < minLimit {
                             continue
                         }
-                        if ( pointLocation > maxLimit ) {
+                        if pointLocation > maxLimit {
                             continue
                         }
                         majorLocations.addObject(pointLocation)
@@ -266,8 +258,8 @@ extension CPTAxis {
                 let maxLimit = range.maxLimitDouble
                 
                 // Determine interval value
-                let modMinLimit = CPTLogModulus(value: Double(minLimit))
-                let modMaxLimit = CPTLogModulus(value: Double(maxLimit))
+                let modMinLimit = self.CPTLogModulus(value: Double(minLimit()))
+                let modMaxLimit = self.CPTLogModulus(value: Double(maxLimit()))
                 
                 var multiplier = CGFloat(pow(10.0, floor(log10(length))))
                 multiplier = (multiplier < 1.0) ? multiplier : 1.0
@@ -276,9 +268,9 @@ extension CPTAxis {
                 
                 // Determine the initial and final major indexes for the actual visible range
                 var initialIndex = lrint(floor(modMinLimit / Double(multiplier))) // can be negative
-                var finalIndex   = lrint(ceil(modMaxLimit / Double(multiplier)))  // can be negative
+                var finalIndex = lrint(ceil(modMaxLimit / Double(multiplier))) // can be negative
                 
-                if ( initialIndex < 0 ) {
+                if initialIndex < 0 {
                     // Determine minor interval
                     var minorInterval = CGFloat(intervalStep * 0.9) * multiplier / minorTicks
                     
@@ -290,8 +282,8 @@ extension CPTAxis {
                         var pointLocation = CGFloat(0.0)
                         var sign = -multiplier
                         
-                        if ( multiplier < 1.0 ) {
-                            pointLocation = CGFloat(Double(sign) * pow(10.0, fabs((Double(i)) - 1.0)))
+                        if multiplier < 1.0 {
+                            pointLocation = CGFloat(Double(sign) * pow(10.0, fabs(Double(i) - 1.0)))
                         }
                         else {
                             pointLocation = CGFloat(Double(sign) * pow(10.0, fabs(Double(i))))
@@ -299,30 +291,30 @@ extension CPTAxis {
                         
                         for j in 1..<Int(minorTicks) {
                             let minorPointLocation = pointLocation + sign * Double(minorInterval) * Double(j)
-                            if ( minorPointLocation < minLimit ) {
+                            if minorPointLocation < minLimit {
                                 continue
                             }
-                            if ( minorPointLocation > maxLimit ) {
+                            if minorPointLocation > maxLimit {
                                 continue
                             }
                             minorLocations.addObject(minorPointLocation)
                         }
                         minorInterval *= CGFloat(intervalStep)
                         
-                        if ( i == 0 ) {
+                        if i == 0 {
                             pointLocation = 0.0
                         }
-                        if  pointLocation < CGFloat(minLimit ) {
+                        if pointLocation < CGFloat(minLimit) {
                             continue
                         }
-                        if  pointLocation > CGFloat(maxLimit ) {
+                        if pointLocation > CGFloat(maxLimit) {
                             continue
                         }
                         majorLocations.insert(pointLocation)
                     }
                 }
                 
-                if ( finalIndex >= 0 ) {
+                if finalIndex >= 0 {
                     // Determine minor interval
                     var minorInterval = CGFloat(intervalStep * 0.9) * multiplier / minorTicks
                     
@@ -331,39 +323,37 @@ extension CPTAxis {
                         var pointLocation = 0
                         var sign = multiplier
                         
-                        if ( multiplier < 1.0 ) {
-                            pointLocation = Int(sign * pow(10.0, abs((CGFloat(i)) - 1.0)))
+                        if multiplier < 1.0 {
+                            pointLocation = Int(sign * pow(10.0, abs(CGFloat(i) - 1.0)))
                         }
                         else {
                             pointLocation = Int(sign * pow(10.0, fabs(CGFloat(i))))
                         }
                         
-                        for   j in 1..<Int(minorTicks) {
-                            
+                        for j in 1..<Int(minorTicks) {
                             var minorPointLocation = pointLocation + Int(sign * minorInterval) * j
-                            if  CGFloat(minorPointLocation) < minLimit  {
+                            if CGFloat(minorPointLocation) < minLimit {
                                 continue
                             }
-                            if CGFloat( minorPointLocation) > maxLimit  {
+                            if CGFloat(minorPointLocation) > maxLimit {
                                 continue
                             }
                             minorLocations.insert(CGFloat(minorPointLocation))
                         }
                         minorInterval *= CGFloat(intervalStep)
                         
-                        if ( i == 0 ) {
+                        if i == 0 {
                             pointLocation = 0
                         }
-                        if CGFloat(pointLocation) < CGFloat(minLimit)  {
+                        if CGFloat(pointLocation) < CGFloat(minLimit) {
                             continue
                         }
-                        if CGFloat(pointLocation) > CGFloat(maxLimit)  {
+                        if CGFloat(pointLocation) > CGFloat(maxLimit) {
                             continue
                         }
                         majorLocations.insert(CGFloat(pointLocation))
                     }
                     break
-                    
                 }
             default:
                 break
@@ -371,10 +361,9 @@ extension CPTAxis {
         }
     }
     
-    func  CPTLogModulus(value: Double )-> Double
-    {
-        if ( value != 0.0 ) {
-            let sign = ((value.signbit()) ? -1.0 : +1.0)
+    func CPTLogModulus(value: Double) -> Double {
+        if value != 0.0 {
+            let sign = (value.signbit() ? -1.0 : +1.0)
             
             return sign * log10(fabs(value) + 1.0)
         }
@@ -472,20 +461,18 @@ extension CPTAxis {
 //
 //        return roundedNumber
 //    }
-    
 }
 
-extension CGFloat{
-    func roundDown(decimals:Int)->CGFloat{
+extension CGFloat {
+    func roundDown(decimals: Int) -> CGFloat {
         let from: CGFloat = self
         var to: CGFloat = 0.0
-        let k : CGFloat = CGFloat(pow(10.0, Double(decimals))) //k here is 100
+        let k = CGFloat(pow(10.0, Double(decimals))) // k here is 100
         
         let cent = from * k
-        let centRound = floor(cent) //get floor (integer) value of this double.You will get 154.
+        let centRound = floor(cent) // get floor (integer) value of this double.You will get 154.
         
-        to = centRound/k
+        to = centRound / k
         return to
     }
 }
-

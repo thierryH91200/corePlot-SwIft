@@ -21,16 +21,16 @@ extension CPTPieChart {
                             forKey: NSBindingName.PieSliceFills.rawValue,
                             atRecordIndex:indexRange.location)
         }
-        else if (theDataSource?.sliceFillForPieChart(self, recordIndex: indexRange) != nil) {
+        else if (theDataSource?.sliceFillForPieChart(self, idx: indexRange) != nil) {
             needsLegendUpdate = true
             
             let nilObject = (CPTPlot nilData)
             let nilFill : CPTFill?
-            var array = [Any]()
+            var array = [Any?]()
             var maxIndex = NSMaxRange(indexRange);
             
             for idx in indexRange.location..<maxIndex {
-                let fill = theDataSource?.sliceFillForPieChart(self, idx:idx)
+                let fill = theDataSource?.sliceFillForPieChart!(self, idx:idx)
                 if (( fill ) != nil) {
                     array.append(fill as Any)
                 }
@@ -39,7 +39,7 @@ extension CPTPieChart {
                 }
             }
             
-            self.cacheArray(array: array,
+            self.cacheArray(array: array as [Any],
                             forKey:NSBindingName.PieSliceFills.rawValue,
                             atRecordIndex:indexRange.location)
         }

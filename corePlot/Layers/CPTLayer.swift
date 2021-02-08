@@ -21,7 +21,7 @@ public class CPTLayer : CALayer
     
     var graph  : CPTGraph?     = nil
     var identifier  : String?
-
+    
     var maskingPath :  CGPath? {
         set {   }
         get {
@@ -40,7 +40,7 @@ public class CPTLayer : CALayer
             }
         }
     }
-
+    
     public override var isHidden: Bool {
         get {
             return super.isHidden
@@ -54,7 +54,7 @@ public class CPTLayer : CALayer
             }
         }
     }
-
+    
     var _paddingLeft : CGFloat = 0.0
     var paddingLeft : CGFloat {
         get { return  _paddingLeft }
@@ -65,7 +65,7 @@ public class CPTLayer : CALayer
             }
         }
     }
-
+    
     var _paddingTop   : CGFloat = 0.0
     var paddingTop : CGFloat {
         get { return  _paddingLeft }
@@ -76,7 +76,7 @@ public class CPTLayer : CALayer
             }
         }
     }
-
+    
     var _paddingRight : CGFloat = 0.0
     var paddingRight : CGFloat {
         get { return  _paddingLeft }
@@ -87,7 +87,7 @@ public class CPTLayer : CALayer
             }
         }
     }
-
+    
     var _paddingBottom : CGFloat = 0.0
     var paddingBottom : CGFloat {
         get { return  _paddingLeft }
@@ -98,7 +98,7 @@ public class CPTLayer : CALayer
             }
         }
     }
-
+    
     var masksToBorder     = false;
     
     var _shadow   : CPTShadow? = nil
@@ -139,7 +139,7 @@ public class CPTLayer : CALayer
             super.position = newValue
         }
     }
-
+    
     var renderingRecursively = false
     var useFastRendering     = false
     
@@ -163,7 +163,7 @@ public class CPTLayer : CALayer
             }
         }
     }
-
+    
     init ( frame : CGRect) {
         
         paddingLeft          = 0.0
@@ -244,7 +244,7 @@ public class CPTLayer : CALayer
         }
         shadow?.setShadowInContext(context:  context)
     }
-
+    
     public override var cornerRadius: CGFloat {
         get {
             return super.cornerRadius
@@ -387,5 +387,416 @@ public class CPTLayer : CALayer
         //        }
         context.concatenate(sublayerTransform);
     }
+    
+    public override func layoutSublayers()
+    {
+        let selfBounds = self.bounds;
+        let mySublayers = self.sublayers;
+        
+        if (mySublayers!.count > 0) {
+            
+            var  leftPadding = CGFloat(0)
+            var  topPadding = CGFloat(0)
+            var  rightPadding = CGFloat(0)
+            var  bottomPadding = CGFloat(0)
+            
+            self.sublayerMargin(left: &leftPadding ,top: &topPadding, right:&rightPadding, bottom:&bottomPadding)
+            
+            var subLayerSize = selfBounds.size;
+            subLayerSize.width  -= leftPadding + rightPadding;
+            subLayerSize.width   = max(subLayerSize.width, CGFloat(0.0));
+            subLayerSize.width   = round(subLayerSize.width);
+            subLayerSize.height -= topPadding + bottomPadding;
+            subLayerSize.height  = max(subLayerSize.height, CGFloat(0.0));
+            subLayerSize.height  = round(subLayerSize.height);
+            
+            var subLayerFrame = CGRect()
+            subLayerFrame.origin = CGPoint(x: round(leftPadding), y: round(bottomPadding));
+            subLayerFrame.size   = subLayerSize;
+            
+            let excludedSublayers = self.sublayersExcludedFromAutomaticLayout()
+            
+            for  subLayer in mySublayers! {
+                if ( subLayer is CPTLayer) == true && (excludedSublayers?.contains(subLayer )) == false {
+                    subLayer.frame = subLayerFrame
+                }
+            }
+        }
+    }
+    
+    @objc func sublayersExcludedFromAutomaticLayout() -> CPTSublayerSet? {
+        return nil
+    }
+    
+    func sublayerMargin( left: inout CGFloat, top: inout CGFloat, right: inout CGFloat, bottom: inout CGFloat )
+    {
+        left   = self.paddingLeft
+        top    = self.paddingTop
+        right  = self.paddingRight
+        bottom = self.paddingBottom
+    }
+    
+    func pixelAlign()
+    {
+        let scale           = self.contentsScale;
+        let currentPosition = self.position;
+        
+        let boundsSize = self.bounds.size;
+        let frameSize  = self.frame.size;
+        
+        var newPosition = CGPoint()
+        
+        if ( boundsSize.equalTo(frameSize)) { // rotated 0° or 180°
+            let anchor = self.anchorPoint;
+            
+            let newAnchor = CGPoint(x: boundsSize.width * anchor.x,
+                                    y: boundsSize.height * anchor.y);
+            
+            if ( scale == CGFloat(1.0)) {
+                newPosition.x = ceil(currentPosition.x - newAnchor.x - CGFloat(0.5)) + newAnchor.x;
+                newPosition.y = ceil(currentPosition.y - newAnchor.y - CGFloat(0.5)) + newAnchor.y;
+            }
+            else {
+                newPosition.x = ceil((currentPosition.x - newAnchor.x) * scale - CGFloat(0.5)) / scale + newAnchor.x;
+                newPosition.y = ceil((currentPosition.y - newAnchor.y) * scale - CGFloat(0.5)) / scale + newAnchor.y;
+            }
+        }
+        else if ((boundsSize.width == frameSize.height) && (boundsSize.height == frameSize.width)) { // rotated 90° or 270°
+            let anchor = self.anchorPoint;
+            
+            let newAnchor = CGPoint(x: boundsSize.height * anchor.y,
+                                    y: boundsSize.width * anchor.x);
+            
+            if ( scale == CGFloat(1.0)) {
+                newPosition.x = ceil(currentPosition.x - newAnchor.x - CGFloat(0.5)) + newAnchor.x;
+                newPosition.y = ceil(currentPosition.y - newAnchor.y - CGFloat(0.5)) + newAnchor.y;
+            }
+            else {
+                newPosition.x = ceil((currentPosition.x - newAnchor.x) * scale - CGFloat(0.5)) / scale + newAnchor.x;
+                newPosition.y = ceil((currentPosition.y - newAnchor.y) * scale - CGFloat(0.5)) / scale + newAnchor.y;
+            }
+        }
+        else {
+            if ( scale == CGFloat(1.0)) {
+                newPosition.x = round(currentPosition.x);
+                newPosition.y = round(currentPosition.y);
+            }
+            else {
+                newPosition.x = round(currentPosition.x * scale) / scale;
+                newPosition.y = round(currentPosition.y * scale) / scale;
+            }
+        }
+        self.position = newPosition;
+    }
+    
+    // MARK: Masking
+    
+    // default path is the rounded rect layer bounds
+    
+    func sublayerMaskingPath() -> CGPath
+    {
+        return self.innerBorderPath!;
+    }
+    
+    func applyyMaskToContext(context: CGContext)
+    {
+        let mySuperlayer = self.superlayer as? CPTLayer
+        if mySuperlayer != nil {
+            let sup = mySuperlayer!
+            
+            sup.applySublayerMaskToContext(context: context, forSublayer: self, withOffset: CGPoint.zero)
+        }
+        
+        let maskPath = maskingPath
+        if let maskPath = maskPath {
+            context.addPath(maskPath)
+            context.clip()
+        }
+    }
+    
+    public override func setNeedsLayout() {
+        super.setNeedsLayout()
+        
+        let theGraph = graph
+        if let theGraph = theGraph {
+            NotificationCenter.send(
+                name: .CPTGraphNeedsRedrawNotification,
+                object: theGraph)
+        }
+    }
+    
+    public override func setNeedsDisplay() {
+        super.setNeedsDisplay()
+        
+        let theGraph = graph
+        
+        if let theGraph = theGraph {
+            NotificationCenter.send(
+                name: .CPTGraphNeedsRedrawNotification,
+                object: theGraph)
+        }
+    }
+    
+    
+    // MARK: Sublayers
+    public override var sublayers : [CALayer]?  {
+        get {
+            return super.sublayers
+        }
+        set {
+            super.sublayers = newValue
+            
+            let scale    = self.contentsScale;
+            for layer in newValue!  {
+                if layer is CPTLayer {
+                    layer.contentsScale = scale
+                }
+            }
+        }
+    }
+    
+    public override func addSublayer(_ layer: CALayer )
+    {
+        super.addSublayer(layer)
+        if layer is CPTLayer  {
+            layer.contentsScale = self.contentsScale;
+        }
+    }
+    
+    public override func insertSublayer(_ layer: CALayer, at idx:UInt32)
+    {
+        super.insertSublayer(layer , at:idx)
+        if layer is CPTLayer {
+            layer.contentsScale = self.contentsScale
+        }
+    }
+    
+    public override func insertSublayer(_ layer: CALayer, below sibling: CALayer? )
+    {
+        super.insertSublayer(layer, below:sibling)
+        if layer is CPTLayer {
+            layer.contentsScale = self.contentsScale
+        }
+    }
+    
+    public override func insertSublayer(_ layer: CALayer, above sibling: CALayer? )
+    {
+        super.insertSublayer(layer, above:sibling)
+        if  layer is CPTLayer {
+            layer.contentsScale = self.contentsScale
+        }
+    }
+    
+    public override func replaceSublayer(_ layer: CALayer , with newLayer: CALayer )
+    {
+        super.replaceSublayer(layer, with: newLayer)
+        if layer is CPTLayer {
+            layer.contentsScale = self.contentsScale
+        }
+    }
+    
+    // MARK: -Accessors
+    public override var contentsScale : CGFloat {
+        get {
+            var scale = CGFloat(1.0);
+            scale = super.contentsScale
+            return scale;
+        }
+        set {
+            if ( self.contentsScale != newValue ) {
+                super.contentsScale = newValue;
+                self.setNeedsDisplay()
+                
+                let sublayers = super.sublayers
+                for subLayer in sublayers! {
+                    if ( subLayer is CPTLayer ) {
+                        subLayer.contentsScale = newValue
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    // MARK: - Drawing
+    public override func display()
+    {
+        guard self.isHidden == false else {return}
+        
+        _ = NSApp.effectiveAppearance //{
+        let oldAppearance = NSAppearance.current
+        NSAppearance.current = self.graph?.hostingView?.effectiveAppearance
+        
+        super.display()
+        NSAppearance.current = oldAppearance;
+        //        }
+        //        else {
+        //            super.display()
+        //        }
+    }
+    
+    @objc func drawInContext(context: CGContext)
+    {
+        self.useFastRendering = true
+        self.renderAsVectorInContext(context: context)
+        self.useFastRendering = false
+    }
+    
+    /**
+     * @brief Recurs@objc ively marks this layer and all sublayers as needing to be redrawn.
+     **/
+    @objc func setNeedsDisplayAllLayers() {
+        self.setNeedsDisplay()
+        
+        for subLayer in self.sublayers!  {
+            let sub = subLayer as! CPTLayer
+            //            if let setNeedsDisplayAllLayers = sub.setNeedsDisplayAllLayers() {
+            sub.setNeedsDisplayAllLayers()
+            //            }
+            //            else {
+            //                subLayer.setNeedsDisplay()
+            //            }
+        }
+    }
+    
+    func renderAsVectorInContext(context: CGContext)
+    {
+        // This is where subclasses do their drawing
+        if ( self.renderingRecursively == true ) {
+            self.applyMaskToContext(context: context)
+        }
+        self.shadow?.shadowInContext(context: context)
+    }
+    
+    /** @brief Draws layer content and the content of all sublayers into the provided graphics context.
+     *  @param context The graphics context to draw into.
+     **/
+    func recursivelyRenderInContext( context : CGContext)
+    {
+        guard self.isHidden == false else { return}
+        // render self
+        context.saveGState()
+        
+        self.applyTransform(transform3D: self.transform, context:context)
+        
+        self.renderingRecursively = true;
+        if self.masksToBounds == false  {
+            context.restoreGState()
+        }
+        self.renderAsVectorInContext(context: context)
+        if self.masksToBounds == false {
+            context.restoreGState()
+        }
+        self.renderingRecursively = false;
+        
+        // render sublayers
+        let sublayersCopy = self.sublayers
+        for currentSublayer in sublayersCopy! {
+            let currentSublayer = currentSublayer
+            context.saveGState();
+            
+            // Shift origin of context to match starting coordinate of sublayer
+            let currentSublayerFrameOrigin = currentSublayer.frame.origin;
+            let currentSublayerBounds       = currentSublayer.bounds;
+            context.translateBy(x: currentSublayerFrameOrigin.x - currentSublayerBounds.origin.x,
+                                y: currentSublayerFrameOrigin.y - currentSublayerBounds.origin.y);
+            self.applyTransform(transform3D: self.sublayerTransform, context:context)
+            
+            if currentSublayer is CPTLayer == true {
+                
+                let currentSublayer = currentSublayer as! CPTLayer
+                currentSublayer.recursivelyRenderInContext(context: context)
+            }
+            else {
+                if ( self.masksToBounds ) {
+                    context.clip(to: currentSublayer.bounds);
+                }
+                currentSublayer.draw(in: context)
+            }
+            context.restoreGState();
+        }
+        context.restoreGState();
+    }
+    
+    
+    func applyTransform(transform3D: CATransform3D, context: CGContext)
+    {
+        if ( !CATransform3DIsIdentity(transform3D)) {
+            if ( CATransform3DIsAffine(transform3D)) {
+                let  selfBounds    = self.bounds;
+                let anchorPoint  = self.anchorPoint;
+                let anchorOffset = CGPoint( x: selfBounds.origin.x + anchorPoint.x * selfBounds.size.width,
+                                            y: selfBounds.origin.y + anchorPoint.y * selfBounds.size.height);
+                
+                var affineTransform = CGAffineTransform(translationX: -anchorOffset.x, y: -anchorOffset.y);
+                affineTransform = affineTransform.concatenating(CATransform3DGetAffineTransform(transform3D));
+                affineTransform = affineTransform.translatedBy(x: anchorOffset.x, y: anchorOffset.y);
+                
+                let transformedBounds = selfBounds.applying(affineTransform);
+                
+                context.translateBy(x: -transformedBounds.origin.x, y: -transformedBounds.origin.y);
+                context.concatenate(affineTransform);
+            }
+        }
+    }
+    
+    /** @brief Updates the layer layout if needed and then draws layer content and the content of all sublayers into the provided graphics context.
+     *  @param context The graphics context to draw into.
+     */
+    func layoutAndRender(context: CGContext)
+    {
+        self.layoutIfNeeded()
+        self.recursivelyRenderInContext(context: context)
+    }
+    
+    /** @brief Draws layer content and the content of all sublayers into a PDF document.
+     *  @return PDF representation of the layer content.
+     **/
+    func dataForPDFRepresentationOfLayer () -> Data
+    {
+        let pdfData = Data()
+        let  dataConsumer = CGDataConsumer(data: pdfData as! CFMutableData)
+            
+        var mediaBox = CGRect(x: 0.0, y: 0.0, width: bounds.size.width, height: bounds.size.height)
+        let pdfContext = CGContext(consumer: dataConsumer!, mediaBox: &mediaBox, nil)
+        
+        NSUIGraphicsPushContext(pdfContext!)
+        
+        pdfContext?.beginPage(mediaBox: &mediaBox)
+        layoutAndRender(context: pdfContext!)
+        pdfContext?.endPage()
+        pdfContext?.closePDF()
+        
+        NSUIGraphicsPopContext()
+        return pdfData;
+    }
+    
+    //MARK: - Responder Chain and User interaction
+    func pointingDeviceDownEvent(event : CPTNativeEvent,atPoint interactionPoint :CGPoint) -> Bool
+    {
+        return false;
+    }
+    
+    func pointingDeviceUpEvent(event : CPTNativeEvent , atPoint: CGPoint)-> Bool
+    {
+        return false;
+    }
+    
+    func pointingDeviceDraggedEvent(event : CPTNativeEvent, atPoint: CGPoint)-> Bool
+    {
+        return false;
+    }
+    
+    func pointingDeviceCancelledEvent(event: CPTNativeEvent ) -> Bool
+    {
+        return false;
+    }
+    
+    func scrollWheelEvent(event : CPTNativeEvent, fromPoint:CGPoint, toPoint:CGPoint) -> Bool
+    {
+        return false
+    }
+    
+    
     
 }

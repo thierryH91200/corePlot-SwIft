@@ -204,15 +204,16 @@ public class CPTBarPlot: CPTPlot {
                     let dataBytes      = locationData.mutableBytes;
                     let dataEnd        = dataBytes + indexRange.length;
                     while ( dataBytes < dataEnd ) {
-                        dataBytes++    = locationDecimal;
+                        dataBytes    = locationDecimal
+                        dataBytes += 1
                         locationDecimal = locationDecimal! + delta;
                     }
                 }
-                self cacheNumbers(locationData, forField:CPTBarPlotFieldBarLocation, atRecordIndex:indexRange.location)
+                self.cacheNumbers (locationData, forField: CPTBarPlotField.location.rawValue,atRecordIndexidxnumbers: locationData, forField: CPTBarPlotField.location.rawValue, atRecordIndexidx:indexRange.location)
             }
             else if (( theDataSource ) != nil) {
                 // Get locations from the datasource
-                let newBarLocations = self numbersFromDataSourceForField:CPTBarPlotFieldBarLocation, recordIndexRange:indexRange)
+                let newBarLocations = self.numbersFromDataSourceForField(CPTBarPlotField.location, recordIndexRange:indexRange)
                 [self cacheNumbers:newBarLocations forField:CPTBarPlotFieldBarLocation atRecordIndex:indexRange.location];
             }
             else {

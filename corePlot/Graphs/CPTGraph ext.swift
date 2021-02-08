@@ -498,7 +498,7 @@ extension CPTGraph {
                 var theTitleAnnotation = self.titleAnnotation;
                 
                 if ( attributedTitle.string != "" ) {
-                    self.titleTextStyle = CPTTextStyle( textStyleWithAttributes:[attributedTitle attributesAtIndex:0, effectiveRange:nil)
+                    self.titleTextStyle = CPTTextStyle( textStyleWithAttribute(attributedTitle.attributesAtIndex(0, effectiveRange:nil)))
                     self.title = attributedTitle.string
                     
                     if (( theTitleAnnotation ) != nil) {
@@ -506,15 +506,15 @@ extension CPTGraph {
                     }
                     else {
                         let frameLayer = self.plotAreaFrame;
-                        if ( frameLayer ) {
-                        let newTitleAnnotation = CPTLayerAnnotation( frameLayer)
-                        let newTextLayer             = [[CPTTextLayer alloc] initWithAttributedText:attributedTitle];
-                        newTitleAnnotation.contentLayer       = newTextLayer;
-                        newTitleAnnotation.displacement       = self.titleDisplacement;
-                        newTitleAnnotation.rectAnchor         = self.titlePlotAreaFrameAnchor;
-                        newTitleAnnotation.contentAnchorPoint = self.contentAnchorForRectAnchor(self.titlePlotAreaFrameAnchor)
-                        self.addAnnotation(newTitleAnnotation)
-                        self.titleAnnotation = newTitleAnnotation;
+                        if (( frameLayer ) != nil) {
+                            let newTitleAnnotation = CPTLayerAnnotation( newAnchorLayer: frameLayer)
+                            let newTextLayer             = CPTTextLayer(attributedText: attributedTitle)
+                            newTitleAnnotation.contentLayer       = newTextLayer;
+                            newTitleAnnotation.displacement       = self.titleDisplacement;
+                            newTitleAnnotation.rectAnchor         = self.titlePlotAreaFrameAnchor;
+                            newTitleAnnotation.contentAnchorPoint = self.contentAnchorForRectAnchor(anchor: self.titlePlotAreaFrameAnchor!)
+                            self.addAnnotation(newTitleAnnotation)
+                            self.titleAnnotation = newTitleAnnotation;
                         }
                     }
                 }
@@ -573,7 +573,6 @@ extension CPTGraph {
     /// @endcond
     
     // MARK: - Event Handling
-    
     override func pointingDeviceDownEvent(event : CPTNativeEvent,  atPoint interactionPoint: CGPoint) ->Bool
     {
         // Plots

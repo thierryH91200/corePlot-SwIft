@@ -176,7 +176,7 @@ public class CPTPieChart: CPTPlot {
                                   atRecordIndexidx: indexRange)
             }
             else {
-                self.cacheNumbers(numbers: nil, forField: CPTPieChartField.sliceWidth.rawValue, atRecordIndexidx: <#Int#>)
+                self.cacheNumbers(numbers: nil, forField: CPTPieChartField.sliceWidth.rawValue, atRecordIndexidx: 0)
             }
         }
         self.updateNormalizedData()

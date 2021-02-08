@@ -930,17 +930,17 @@ class CPTUtilities : NSObject {
     func CPTAlignIntegralRectToUserSpace(context: CGContext , rect: CGRect )->CGRect
     {
         var rect = rect
-        rect = context.convertToDeviceSpace(rect);
+        rect = context.convertToDeviceSpace(rect)
         
         let oldOrigin = rect.origin;
         
-        rect.origin.x   = round(rect.origin.x);
-        rect.size.width = round(oldOrigin.x + rect.size.width) - rect.origin.x;
+        rect.origin.x   = round(rect.origin.x)
+        rect.size.width = round(oldOrigin.x + rect.size.width) - rect.origin.x
         
         rect.origin.y    = ceil(rect.maxY - CGFloat(0.5));
-        rect.size.height = ceil(oldOrigin.y - CGFloat(0.5) - rect.origin.y);
+        rect.size.height = ceil(oldOrigin.y - CGFloat(0.5) - rect.origin.y)
         
-        return context.convertToUserSpace(rect);
+        return context.convertToUserSpace(rect)
     }
     
     func CPTAlignBorderedRectToUserSpace(context: CGContext, rect: CGRect, borderLineStyle: CPTLineStyle)-> CGRect
@@ -965,8 +965,7 @@ class CPTUtilities : NSObject {
         else {
             borderRect = CPTAlignRectToUserSpace(context: context, rect: rect);
         }
-        
-        return borderRect;
+        return borderRect
     }
     //
     // MARK: String formatting for Core Graphics structs
